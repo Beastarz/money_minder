@@ -37,35 +37,35 @@ class _moneyMinderFrameState extends State<moneyMinderFrame> {
         title: const Text('MoneyMinder'),
       ),
       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-        indicatorColor: Colors.blue.shade100,
-        selectedIndex: selectedIndex,
-        destinations: <Widget>[
-          NavigationDestination(
-              icon: Icon(Icons.account_balance_wallet_outlined),
-              selectedIcon: Icon(Icons.account_balance_wallet),
-              label: 'Accounts'
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.category_outlined),
-              selectedIcon: Icon(Icons.category),
-              label: 'Categories'
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.list_alt_outlined),
-              selectedIcon: Icon(Icons.list_alt),
-              label: 'Transactions'
-          ),
-          NavigationDestination(
-              icon: Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart),
-              label: 'Overview'
-          ),
-        ]
+          onDestinationSelected: (int index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+          indicatorColor: Colors.blue.shade100,
+          selectedIndex: selectedIndex,
+          destinations: <Widget>[
+            NavigationDestination(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                selectedIcon: Icon(Icons.account_balance_wallet),
+                label: 'Accounts'
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.category_outlined),
+                selectedIcon: Icon(Icons.category),
+                label: 'Categories'
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.list_alt_outlined),
+                selectedIcon: Icon(Icons.list_alt),
+                label: 'Transactions'
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.bar_chart_outlined),
+                selectedIcon: Icon(Icons.bar_chart),
+                label: 'Overview'
+            ),
+          ]
       ),
       body: [Accounts(), Categories(), Transactions(), Overview()][selectedIndex]
     );
