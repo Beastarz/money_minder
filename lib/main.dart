@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/pages/account.dart';
+import 'package:money_minder/pages/categories.dart';
+import 'package:money_minder/pages/overview.dart';
+import 'package:money_minder/pages/transactions.dart';
 import 'package:money_minder/util/bottomNavBar.dart';
 
 void main() {
@@ -13,7 +17,7 @@ class moneyMinder extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      home: const moneyMinderFrame(),
+      home: moneyMinderFrame(),
     );
   }
 }
@@ -27,6 +31,21 @@ class moneyMinderFrame extends StatefulWidget {
 
 class _moneyMinderFrameState extends State<moneyMinderFrame> {
 
+
+  final List<Widget> _pages = [
+    const Account(),
+    const Categories(),
+    const Transactions(),
+    const Overview(),
+  ];
+  int _selectedIndex = 0;
+
+  void _onTabChange (int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +54,10 @@ class _moneyMinderFrameState extends State<moneyMinderFrame> {
           "MoneyMinder",
         )
       ),
-      bottomNavigationBar: SafeArea(child: BottomNavbar()),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavbar(
+        onTabChange: _onTabChange,
+      )
     );
   }
 }
