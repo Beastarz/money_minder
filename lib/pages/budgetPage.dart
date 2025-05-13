@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Account extends StatelessWidget {
-  const Account({super.key});
+class BudgetPage extends StatelessWidget {
+  const BudgetPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: const Center(
-        child: Text('Account'),
+        child: Text('Budget'),
       ),
     );
   }

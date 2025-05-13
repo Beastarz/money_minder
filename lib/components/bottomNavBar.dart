@@ -1,8 +1,9 @@
+import "package:flashy_tab_bar2/flashy_tab_bar2.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
 class BottomNavbar extends StatelessWidget {
-  void Function(int)? onTabChange;
+  void Function(int) onTabChange;
   BottomNavbar({
     super.key,
     required this.onTabChange,
@@ -23,22 +24,25 @@ class BottomNavbar extends StatelessWidget {
           tabs: const [
             GButton(
                 icon: Icons.account_balance_wallet_outlined,
-                text: 'Account'
+                text: 'Accs'
             ),
             GButton(
                 icon: Icons.category_outlined,
-                text: 'Categories'
+                text: 'Cats'
             ),
             GButton(
                 icon: Icons.list_alt_outlined,
-                text: 'Transactions'
+                text: 'Txns'
+            ),
+            GButton(
+                icon: Icons.attach_money_outlined,
+                text: 'Bdgt'
             ),
             GButton(
                 icon: Icons.bar_chart_outlined,
-                text: 'Overview'
+                text: 'Stats'
             ),
           ]
-
       )
     );
   }

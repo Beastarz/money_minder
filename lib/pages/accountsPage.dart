@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SharedAccount extends StatelessWidget {
-  const SharedAccount({super.key});
+class AccountsPage extends StatelessWidget {
+  const AccountsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: const Center(
-        child: Text('SharedAccount'),
+        child: Text('Accounts'),
       ),
     );
   }

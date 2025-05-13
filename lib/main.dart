@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/pages/account.dart';
-import 'package:money_minder/pages/categories.dart';
-import 'package:money_minder/pages/overview.dart';
-import 'package:money_minder/pages/transactions.dart';
-import 'package:money_minder/util/bottomNavBar.dart';
+import 'package:money_minder/pages/accountsPage.dart';
+import 'package:money_minder/pages/budgetPage.dart';
+import 'package:money_minder/pages/categoriesPage.dart';
+import 'package:money_minder/pages/statisticsPage.dart';
+import 'package:money_minder/pages/transactionsPage.dart';
+import 'package:money_minder/components/bottomNavBar.dart';
 
 void main() {
   runApp(const moneyMinder());
@@ -33,10 +34,11 @@ class _moneyMinderFrameState extends State<moneyMinderFrame> {
 
 
   final List<Widget> _pages = [
-    const Account(),
-    const Categories(),
-    const Transactions(),
-    const Overview(),
+    const AccountsPage(),
+    const CategoriesPage(),
+    const TransactionsPage(),
+    const BudgetPage(),
+    const statisticsPage(),
   ];
   int _selectedIndex = 0;
 
