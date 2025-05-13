@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/pages/accountsPage.dart';
-import 'package:money_minder/pages/budgetPage.dart';
-import 'package:money_minder/pages/categoriesPage.dart';
-import 'package:money_minder/pages/statisticsPage.dart';
-import 'package:money_minder/pages/transactionsPage.dart';
+import 'package:money_minder/pages/accounts_page.dart';
+import 'package:money_minder/pages/budget_page.dart';
+import 'package:money_minder/pages/categories_page.dart';
+import 'package:money_minder/pages/statistics_page.dart';
+import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottomNavBar.dart';
 
 void main() {
