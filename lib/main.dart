@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'pages/accounts.dart';
-import 'pages/categories.dart';
-import 'pages/transactions.dart';
-import 'pages/overview.dart';
+import 'package:money_minder/pages/account.dart';
+import 'package:money_minder/pages/categories.dart';
+import 'package:money_minder/pages/overview.dart';
+import 'package:money_minder/pages/transactions.dart';
+import 'package:money_minder/util/bottomNavBar.dart';
 
 void main() {
   runApp(const moneyMinder());
@@ -14,8 +15,9 @@ class moneyMinder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      home: const moneyMinderFrame(),
+      home: moneyMinderFrame(),
     );
   }
 }
@@ -28,46 +30,34 @@ class moneyMinderFrame extends StatefulWidget {
 }
 
 class _moneyMinderFrameState extends State<moneyMinderFrame> {
-  int selectedIndex = 0;
+
+
+  final List<Widget> _pages = [
+    const Account(),
+    const Categories(),
+    const Transactions(),
+    const Overview(),
+  ];
+  int _selectedIndex = 0;
+
+  void _onTabChange (int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MoneyMinder'),
+        title: Text(
+          "MoneyMinder",
+        )
       ),
-      bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
-          indicatorColor: Colors.blue.shade100,
-          selectedIndex: selectedIndex,
-          destinations: <Widget>[
-            NavigationDestination(
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                selectedIcon: Icon(Icons.account_balance_wallet),
-                label: 'Accounts'
-            ),
-            NavigationDestination(
-                icon: Icon(Icons.category_outlined),
-                selectedIcon: Icon(Icons.category),
-                label: 'Categories'
-            ),
-            NavigationDestination(
-                icon: Icon(Icons.list_alt_outlined),
-                selectedIcon: Icon(Icons.list_alt),
-                label: 'Transactions'
-            ),
-            NavigationDestination(
-                icon: Icon(Icons.bar_chart_outlined),
-                selectedIcon: Icon(Icons.bar_chart),
-                label: 'Overview'
-            ),
-          ]
-      ),
-      body: [Accounts(), Categories(), Transactions(), Overview()][selectedIndex]
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavbar(
+        onTabChange: _onTabChange,
+      )
     );
   }
 }
