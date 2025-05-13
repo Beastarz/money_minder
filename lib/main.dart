@@ -4,7 +4,7 @@ import 'package:money_minder/pages/budget_page.dart';
 import 'package:money_minder/pages/categories_page.dart';
 import 'package:money_minder/pages/statistics_page.dart';
 import 'package:money_minder/pages/transactions_page.dart';
-import 'package:money_minder/components/bottomNavBar.dart';
+import 'package:money_minder/components/bottom_navbar.dart';
 
 void main() {
   runApp(const moneyMinder());
