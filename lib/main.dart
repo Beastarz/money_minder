@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:money_minder/pages/accounts_page.dart';
 import 'package:money_minder/pages/budget_page.dart';
 import 'package:money_minder/pages/categories_page.dart';
@@ -6,31 +7,32 @@ import 'package:money_minder/pages/statistics_page.dart';
 import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_navbar.dart';
 
+
 void main() {
-  runApp(const moneyMinder());
+  runApp(const MoneyMinder());
 }
 
-class moneyMinder extends StatelessWidget {
-  const moneyMinder({super.key});
+class MoneyMinder extends StatelessWidget {
+  const MoneyMinder({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      home: moneyMinderFrame(),
+      home: MoneyMinderFrame(),
     );
   }
 }
 
-class moneyMinderFrame extends StatefulWidget {
-  const moneyMinderFrame({super.key});
+class MoneyMinderFrame extends StatefulWidget {
+  const MoneyMinderFrame({super.key});
 
   @override
-  State<moneyMinderFrame> createState() => _moneyMinderFrameState();
+  State<MoneyMinderFrame> createState() => _MoneyMinderFrameState();
 }
 
-class _moneyMinderFrameState extends State<moneyMinderFrame> {
+class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
 
   final List<Widget> _pages = [
