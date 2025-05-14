@@ -1,10 +1,9 @@
-import "package:flashy_tab_bar2/flashy_tab_bar2.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
 class BottomNavbar extends StatelessWidget {
-  void Function(int)? onTabChange;
-  BottomNavbar({
+  final void Function(int)? onTabChange;
+  const BottomNavbar({
     super.key,
     required this.onTabChange,
   });
@@ -12,7 +11,7 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       child: GNav(
           onTabChange: onTabChange,
           color: Colors.grey[400],
@@ -20,6 +19,7 @@ class BottomNavbar extends StatelessWidget {
           tabBackgroundColor: Colors.grey.shade100,
           tabActiveBorder: Border.all(color: Colors.white),
           mainAxisAlignment: MainAxisAlignment.center,
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.045, vertical: 15),
           tabBorderRadius: 20,
           tabs: const [
             GButton(
