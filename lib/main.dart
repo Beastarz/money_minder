@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/appbar.dart';
 
 import 'package:money_minder/pages/accounts_page.dart';
 import 'package:money_minder/pages/budget_page.dart';
@@ -6,6 +7,8 @@ import 'package:money_minder/pages/categories_page.dart';
 import 'package:money_minder/pages/statistics_page.dart';
 import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_navbar.dart';
+
+import 'components/appbar_drawer.dart';
 
 
 void main() {
@@ -40,7 +43,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     const CategoriesPage(),
     const TransactionsPage(),
     const BudgetPage(),
-    const statisticsPage(),
+    const StatisticsPage(),
   ];
   int _selectedIndex = 0;
 
@@ -53,11 +56,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "MoneyMinder",
-        )
-      ),
+      appBar: MMAppBar(selectedIndex: _selectedIndex,),
+      drawer: AppbarDrawer(),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
