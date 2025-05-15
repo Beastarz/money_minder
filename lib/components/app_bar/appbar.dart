@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/api/accounts_api.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 
 import '../../style/app_color.dart';
 import 'accounts_filter.dart';
@@ -81,6 +81,8 @@ class _MMAppBarState extends State<MMAppBar> {
             context: context,
             builder: (BuildContext context) {
               return DraggableScrollableSheet(
+                expand: true,
+                initialChildSize: 1.0,
                 builder: (BuildContext context, ScrollController scrollController) {
                   return SingleChildScrollView(
                     controller: scrollController,

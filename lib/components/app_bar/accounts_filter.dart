@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/api/accounts_api.dart';
+import 'package:money_minder/models/account.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -14,19 +15,20 @@ class AccountsFilter extends StatefulWidget {
 class _AccountsFilterState extends State<AccountsFilter> {
   AccountsApi accountsApi = AccountsApi();
 
-  List<Map<String, dynamic>> accounts = [];
+  List<Account> accounts = [];
+  List<int> selectedAccounts = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _loadAccounts();
   }
 
   Future<void> _loadAccounts() async {
     try {
       List<Map<String, dynamic>> res = await accountsApi.getAllAccounts();
       setState(() {
-        accounts = res;
+        accounts = res.map((e) => Account(e)).toList();
       });
       print(accounts);
     } catch (e) {
@@ -37,69 +39,130 @@ class _AccountsFilterState extends State<AccountsFilter> {
     }
   }
 
+  void _handleSelect(int index, bool isSelected) {
+    if (isSelected) {
+      if (!selectedAccounts.contains(index)) {
+        selectedAccounts.add(index);
+      }
+    } else {
+      selectedAccounts.remove(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'Period',
-          style: TextStyle(
-              color: AppColor.lightText,
-              fontSize: AppSize.heading1,
-              fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0,10,0,0),
+          child: Text(
+            'Accounts Filter',
+            style: TextStyle(
+                color: AppColor.lightText,
+                fontSize: AppSize.heading1,
+                fontWeight: FontWeight.bold),
+          ),
         ),
         const SizedBox(height: 20),
         Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _periodTile(context, 'Select range', Icons.edit_calendar,
-                width: MediaQuery.of(context).size.width * 0.84 + 12),
-            _periodTile(context, 'All time', Icons.all_inclusive),
-            _periodTile(context, 'Week\n11 – 17 May', Icons.calendar_view_week),
-            _periodTile(context, 'Today\n15 May', Icons.today),
-            _periodTile(context, 'Select day', Icons.date_range),
-            _periodTile(context, 'Month\nMay 2025', Icons.calendar_month),
-            _periodTile(context, 'Year\n2025', Icons.calendar_today),
-          ],
-        ),
+          spacing: 10,
+          runSpacing: 10,
+          children: accounts.asMap().entries.map((entry) {
+            return AccountTile(
+              index: entry.key,
+              account: entry.value,
+              onSelect: (isSelected) {
+                _handleSelect(entry.key, isSelected);
+              },
+            );
+          }).toList(),
+        )
       ],
     );
   }
 }
 
-Widget _periodTile(BuildContext context, String label, IconData icon,
-    {double height = 0, double width = 0}) {
-  return MaterialButton(
-    onPressed: () {},
-    height: height == 0 ? MediaQuery
-        .of(context)
-        .size
-        .width * 0.30 : height,
-    minWidth: width == 0 ? MediaQuery
-        .of(context)
-        .size
-        .width * 0.42 : width,
-    padding: EdgeInsets.all(AppSize.smallPadding),
-    color: AppColor.primary,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppSize.borderRadius),
-    ),
-    child: Column(
-      children: [
-        Icon(icon, color: AppColor.lightIcon, size: AppSize.bigIcon),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-              color: AppColor.lightText,
-              fontSize: AppSize.heading2
+class AccountTile extends StatefulWidget {
+  final Account account;
+  final int index;
+  final Function onSelect;
+
+  const AccountTile({super.key,required this.index, required this.account, required this.onSelect});
+
+  @override
+  State<AccountTile> createState() => _AccountTileState();
+}
+
+class _AccountTileState extends State<AccountTile> {
+
+  late bool _isSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _isSelected = widget.account.isIncludesInTotal;
+  }
+
+  void _handleTap() {
+      setState(() {
+        _isSelected = !_isSelected;
+        widget.onSelect(_isSelected);
+      });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: _handleTap,
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSize.borderRadius),
+      ),
+
+      child: Container(
+        height: 65,
+        width: MediaQuery.of(context).size.width * 0.42 ,
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: _isSelected ? widget.account.color : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppSize.borderRadius),
+          border: Border.all(
+            color: _isSelected ? Colors.transparent : widget.account.color,
+            width: 2,
           ),
-          textAlign: TextAlign.center,
         ),
-      ],
-    ),
-  );
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            widget.account.icon,
+            const SizedBox(height: 8),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.25,
+              child: Column(
+                children: [
+                  Text(
+                    widget.account.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: _isSelected ? AppColor.lightText : widget.account.color,
+                        fontSize: AppSize.heading3
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    widget.account.balance.toStringAsFixed(2),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: _isSelected ? AppColor.lightText : widget.account.color,
+                        fontSize: AppSize.heading3
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
