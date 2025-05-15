@@ -15,7 +15,7 @@ class Account {
     name = map['name'];
     balance = map['balance'];
     icon = Icon(
-      IconData(map['icon'] as int),
+      IconData(map['icon'] as int, fontFamily: 'MaterialIcons'),
     );
     color = Color(map['color'] as int);
     description = map['description'];

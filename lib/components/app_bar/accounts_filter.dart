@@ -134,11 +134,16 @@ class _AccountTileState extends State<AccountTile> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            widget.account.icon,
-            const SizedBox(height: 8),
+            Icon(
+              widget.account.icon.icon,
+              color: _isSelected ? AppColor.lightText : widget.account.color,
+              size: AppSize.heading1,
+            ),
+            const SizedBox(width: 8,),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.25,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     widget.account.name,
@@ -150,7 +155,7 @@ class _AccountTileState extends State<AccountTile> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    widget.account.balance.toStringAsFixed(2),
+                    ' ${widget.account.balance.toStringAsFixed(2)}',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: _isSelected ? AppColor.lightText : widget.account.color,
