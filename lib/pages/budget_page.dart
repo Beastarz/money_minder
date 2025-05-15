@@ -9,7 +9,7 @@ class BudgetPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CalendarAppBar(
-        tapable: false,
+        tappable: false,
         selectedDate: "15052025",
         onDateTap: () {},
       ),

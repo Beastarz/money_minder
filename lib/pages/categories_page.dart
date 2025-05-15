@@ -9,7 +9,7 @@ class CategoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CalendarAppBar(
-        tapable: true,
+        tappable: true,
         selectedDate: "15052025",
         onDateTap: () {},
       ),

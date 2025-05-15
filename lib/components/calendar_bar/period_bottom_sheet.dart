@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
+
 class PeriodBottomSheet extends StatelessWidget {
   const PeriodBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(AppSize.bigPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'Period',
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
+                color: AppColor.lightText,
+                fontSize: AppSize.heading1,
                 fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
@@ -23,6 +26,8 @@ class PeriodBottomSheet extends StatelessWidget {
             spacing: 12,
             runSpacing: 12,
             children: [
+              _periodTile(context, 'Select range', Icons.edit_calendar,
+                width: MediaQuery.of(context).size.width * 0.84 + 12),
               _periodTile(context, 'All time', Icons.all_inclusive),
               _periodTile(context, 'Week\n11 – 17 May', Icons.calendar_view_week),
               _periodTile(context, 'Today\n15 May', Icons.today),
@@ -36,23 +41,27 @@ class PeriodBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _periodTile(BuildContext context, String label, IconData icon) {
+  Widget _periodTile(BuildContext context, String label, IconData icon,
+    {double height = 0, double width = 0}) {
     return MaterialButton(
       onPressed: () {},
-      height: MediaQuery.of(context).size.width * 0.30,
-      minWidth: MediaQuery.of(context).size.width * 0.42,
-      padding: const EdgeInsets.all(12),
-      color: Color(0xFF2C2C2E),
+      height: height == 0 ? MediaQuery.of(context).size.width * 0.30 : height,
+      minWidth: width == 0 ? MediaQuery.of(context).size.width * 0.42 : width,
+      padding: EdgeInsets.all(AppSize.smallPadding),
+      color: AppColor.primary,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppSize.borderRadius),
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.white),
+          Icon(icon, color: AppColor.lightIcon, size: AppSize.bigIcon),
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
+            style: TextStyle(
+                color: AppColor.lightText,
+                fontSize: AppSize.heading2
+            ),
             textAlign: TextAlign.center,
           ),
         ],

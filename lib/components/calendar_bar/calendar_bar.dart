@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
+
 class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool tapable;
+  final bool tappable;
   final String selectedDate;
   final VoidCallback onDateTap;
 
   const CalendarAppBar({
     super.key,
-    required this.tapable,
+    required this.tappable,
     required this.selectedDate,
     required this.onDateTap,
   });
@@ -27,15 +30,15 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             IconButton(
               onPressed: () {},
-              icon: const Icon(
+              icon: Icon(
                   Icons.keyboard_double_arrow_left_rounded,
-                  color: Colors.black,
-                  size: 30,
+                  color: AppColor.darkIcon,
+                  size: AppSize.bigIcon,
               ),
             ),
             MaterialButton(
               onPressed: () {
-                if (!tapable) {
+                if (!tappable) {
                   return;
                 }
                 showModalBottomSheet(
@@ -43,22 +46,7 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   ),
-                  backgroundColor: Color(0xFF1C1C1E),
-                    // DraggableScrollableSheet(
-                    //   expand: false, // allows it to take only needed height initially
-                    //   builder: (context, scrollController) {
-                    //     return SingleChildScrollView(
-                    //       controller: scrollController, // link the scroll controller
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(16.0),
-                    //         child: Column(
-                    //           children: List.generate(30, (index) => ListTile(
-                    //             title: Text('Item $index', style: const TextStyle(color: Colors.white)),
-                    //           )),
-                    //         ),
-                    //       ),
-                    //     );
-// Dark background
+                  backgroundColor: AppColor.secondary,
                   builder: (context) {
                     return DraggableScrollableSheet(
                       expand: false,
@@ -75,27 +63,30 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
                 );
               },
               height: 50,
-              color: Color(0xFF2C2C2E),
+              color: AppColor.primary,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(AppSize.borderRadius),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                       Icons.calendar_today,
-                      color: Colors.white,
-                      size: 20,
+                      color: AppColor.lightIcon,
+                      size: AppSize.smallIcon,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Thu, 15 May 2025',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: AppColor.lightText,
+                        fontSize: AppSize.heading3,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(
+                  Icon(
                       Icons.keyboard_arrow_down,
-                      color: Colors.white,
+                      color: AppColor.lightIcon,
                       size: 20,
                   ),
                 ],
@@ -103,10 +94,10 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(
+                icon: Icon(
                     Icons.keyboard_double_arrow_right_rounded,
-                    color: Colors.black,
-                    size: 30,
+                    color: AppColor.darkIcon,
+                    size: AppSize.bigIcon,
                 ),
               ),
             ]
