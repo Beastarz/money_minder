@@ -1,51 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/api/accounts_api.dart';
 
+import '../../style/app_color.dart';
 import 'accounts_filter.dart';
 
 // TODO: Add appbar buttons functionality, account filter functionality
-class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
-  MMAppBar( {super.key, required this.selectedIndex});
+class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
+  const MMAppBar( {super.key, required this.selectedIndex});
 
   final int selectedIndex;
 
-  // TODO: Add buttons functionality
-  final functionButtons = <IconButton>[
-    IconButton(
-      icon: Icon(
-        Icons.add,
-        color: Colors.grey[800],
-      ),
-      onPressed: () {},
-    ),
-    IconButton(
-      icon: Icon(
-        Icons.edit,
-        color: Colors.grey[800],
-      ),
-      onPressed: () {},
-    ),
-    IconButton(
-      icon: Icon(
-        Icons.search,
-        color: Colors.grey[800],
-      ),
-      onPressed: () {},
-    ),
-    IconButton(
-      icon: Icon(
-        Icons.edit,
-        color: Colors.grey[800],
-      ),
-      onPressed: () {},
-    ),
-    IconButton(
-      icon: Icon(
-        Icons.location_on_outlined,
-        color: Colors.grey[800],
-      ),
-      onPressed: () {},
-    ),
-  ];
+  @override
+  State<MMAppBar> createState() => _MMAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _MMAppBarState extends State<MMAppBar> {
+  AccountsApi accountsApi = AccountsApi();
+
+  double balance = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedAccountBalance();
+  }
+
+  Future<void> _loadSelectedAccountBalance() async {
+    try {
+      double res = await accountsApi.getSelectedAccountBalance();
+      setState(() {
+        balance = res;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        balance = 0;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +63,8 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
                 fontSize: 15,
               )
             ),
-            // TODO: Get balance from database
             Text(
-              'SGD 5024.90',
+              balance.toStringAsFixed(2),
               style: TextStyle(
                 color: Colors.grey[800],
                 fontSize: 21,
@@ -79,10 +74,19 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         ),
         onPressed: () {
           showModalBottomSheet(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            backgroundColor: AppColor.secondary,
             context: context,
             builder: (BuildContext context) {
-              return SizedBox.expand(
-                child: AccountsFilter(),
+              return DraggableScrollableSheet(
+                builder: (BuildContext context, ScrollController scrollController) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    child: AccountsFilter()
+                  );
+                }
               );
             }
           );
@@ -90,7 +94,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
       ),
       centerTitle: true,
       actions: [
-        functionButtons[selectedIndex],
+        functionButtons[widget.selectedIndex],
         IconButton(
           icon: Icon(
             Icons.public,
@@ -103,7 +107,42 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
       ]
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+final functionButtons = <IconButton>[
+  IconButton(
+    icon: Icon(
+      Icons.add,
+      color: Colors.grey[800],
+    ),
+    onPressed: () {},
+  ),
+  IconButton(
+    icon: Icon(
+      Icons.edit,
+      color: Colors.grey[800],
+    ),
+    onPressed: () {},
+  ),
+  IconButton(
+    icon: Icon(
+      Icons.search,
+      color: Colors.grey[800],
+    ),
+    onPressed: () {},
+  ),
+  IconButton(
+    icon: Icon(
+      Icons.edit,
+      color: Colors.grey[800],
+    ),
+    onPressed: () {},
+  ),
+  IconButton(
+    icon: Icon(
+      Icons.location_on_outlined,
+      color: Colors.grey[800],
+    ),
+    onPressed: () {},
+  ),
+];
