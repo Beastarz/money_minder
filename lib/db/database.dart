@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseService {
@@ -20,9 +22,13 @@ class DatabaseService {
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (Database db, int version) async {
-        // Create the Account table
-        await db.execute('''
+      onCreate: _onCreate,
+    );
+  }
+
+  FutureOr<void> _onCreate(Database db, int version) async {
+    // Create the Account table
+    await db.execute('''
           CREATE TABLE accounts(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -35,8 +41,8 @@ class DatabaseService {
           )
         ''');
 
-        // Create the Categories table
-        await db.execute('''
+    // Create the Categories table
+    await db.execute('''
           CREATE TABLE categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -46,8 +52,8 @@ class DatabaseService {
           )
         ''');
 
-        // Create the Transaction table
-        await db.execute('''
+    // Create the Transaction table
+    await db.execute('''
           CREATE TABLE transactions(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT, -- Storing date as TEXT (ISO8601 format is recommended)
@@ -66,8 +72,8 @@ class DatabaseService {
           )
         ''');
 
-        // Create the Sub Categories table
-        await db.execute('''
+    // Create the Sub Categories table
+    await db.execute('''
           CREATE TABLE sub_categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -76,8 +82,11 @@ class DatabaseService {
             FOREIGN KEY (main_category_id) REFERENCES categories(id)
           )
         ''');
-      }
-    );
   }
-
 }
+
+/// Get the database instance
+//Database db = await DatabaseService.instance.database;
+
+// Example: Insert a new item
+// int id = await db.insert('items', {'name': 'New Item', 'value': 10});
