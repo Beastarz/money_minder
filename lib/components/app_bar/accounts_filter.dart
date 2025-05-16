@@ -29,13 +29,13 @@ class _AccountsFilterState extends State<AccountsFilter> {
 
   Future<void> _loadAccounts() async {
     try {
-      List<Map<String, dynamic>> res = await accountsApi.getAllAccounts();
+      List<Account> res = await accountsApi.getAllAccounts();
       setState(() {
-        accounts = res.map((e) => Account(e)).toList();
+        accounts = res;
       });
       for (Account account in accounts) {
         if (account.isIncludesInTotal) {
-          widget.selectedAccounts.add(account.id);
+          widget.selectedAccounts.agitdd(account.id);
         }
       }
     } catch (e) {

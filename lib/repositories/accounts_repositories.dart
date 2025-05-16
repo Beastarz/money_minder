@@ -1,27 +1,30 @@
 import '../db/database.dart';
+import '../models/account.dart';
 
 class AccountsApi {
 
   DatabaseService dbService = DatabaseService.instance;
 
-  Future<void> createAccount(Map<String, dynamic> account) async {
+  Future<void> createAccount(Account account) async {
     final db = await dbService.database;
-    await db.insert('accounts', account);
+    await db.insert('accounts', account.toMap());
   }
 
-  Future<List<Map<String, dynamic>>> getAllAccounts() async {
+  Future<List<Account>> getAllAccounts() async {
     final db = await dbService.database;
-    return await db.query('accounts');
+     List<Map<String, dynamic>> result = await db.query('accounts');
+     return result.map((row) => Account(row)).toList();
   }
 
-  Future<void> updateAccount(Map<String, dynamic> account) async {
+  Future<void> updateAccount(Account account) async {
     final db = await dbService.database;
-    await db.update('accounts', account, where: 'id = ?', whereArgs: [account['id']]);
+    Map<String, dynamic> accountMap = account.toMap();
+    await db.update('accounts', accountMap, where: 'id = ?', whereArgs: [accountMap['id']]);
   }
 
-  Future<void> deleteAccount(int id) async {
+  Future<void> deleteAccount(Account account) async {
     final db = await dbService.database;
-    await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
+    await db.delete('accounts', where: 'id = ?', whereArgs: [account.id]);
   }
 
   Future<double> getSelectedAccountBalance() async {

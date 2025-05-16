@@ -47,15 +47,14 @@ class _MMAppBarState extends State<MMAppBar> {
 
   Future<void> _handleSelect(List<int> selectedAccount) async {
     try{
-      List<Map<String, dynamic>> res = await accountsApi.getAllAccounts();
-      for (Map<String, dynamic> account in res) {
-        Account acc = Account(account);
-        if (selectedAccount.contains(acc.id)) {
-          acc.isIncludesInTotal = true;
+      List<Account> res = await accountsApi.getAllAccounts();
+      for (Account account in res) {
+        if (selectedAccount.contains(account.id)) {
+          account.isIncludesInTotal = true;
         } else {
-          acc.isIncludesInTotal = false;
+          account.isIncludesInTotal = false;
         }
-        await accountsApi.updateAccount(acc.toMap());
+        await accountsApi.updateAccount(account);
       }
       _loadSelectedAccountBalance();
     } catch (e) {
