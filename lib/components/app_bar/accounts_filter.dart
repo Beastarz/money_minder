@@ -35,7 +35,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
       });
       for (Account account in accounts) {
         if (account.isIncludesInTotal) {
-          widget.selectedAccounts.agitdd(account.id);
+          widget.selectedAccounts.add(account.id);
         }
       }
     } catch (e) {
