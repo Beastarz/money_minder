@@ -50,6 +50,7 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
                   builder: (context) {
                     return DraggableScrollableSheet(
                       expand: false,
+                      initialChildSize: 0.80,
                       builder: (context, ScrollController scrollController) =>
                           SingleChildScrollView(
                             controller: scrollController,
