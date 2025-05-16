@@ -19,7 +19,10 @@ class BottomNavbar extends StatelessWidget {
           tabBackgroundColor: Colors.grey.shade100,
           tabActiveBorder: Border.all(color: Colors.white),
           mainAxisAlignment: MainAxisAlignment.center,
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.045, vertical: 15),
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.045,
+              vertical: 15
+          ),
           tabBorderRadius: 20,
           tabs: const [
             GButton(
