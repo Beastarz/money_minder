@@ -22,7 +22,9 @@ class _AccountsFilterState extends State<AccountsFilter> {
   @override
   void initState() {
     super.initState();
+    widget.selectedAccounts.clear();
     _loadAccounts();
+
   }
 
   Future<void> _loadAccounts() async {
@@ -52,7 +54,6 @@ class _AccountsFilterState extends State<AccountsFilter> {
     } else {
       widget.selectedAccounts.remove(accountId);
     }
-    print(widget.selectedAccounts);
   }
 
   @override
