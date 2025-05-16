@@ -6,7 +6,9 @@ import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
 class AccountsFilter extends StatefulWidget {
-  const AccountsFilter({super.key});
+  final List<int> selectedAccounts;
+
+  const AccountsFilter({super.key, required this.selectedAccounts});
 
   @override
   State<AccountsFilter> createState() => _AccountsFilterState();
@@ -16,7 +18,6 @@ class _AccountsFilterState extends State<AccountsFilter> {
   AccountsApi accountsApi = AccountsApi();
 
   List<Account> accounts = [];
-  List<int> selectedAccounts = [];
 
   @override
   void initState() {
@@ -30,7 +31,11 @@ class _AccountsFilterState extends State<AccountsFilter> {
       setState(() {
         accounts = res.map((e) => Account(e)).toList();
       });
-      print(accounts);
+      for (Account account in accounts) {
+        if (account.isIncludesInTotal) {
+          widget.selectedAccounts.add(account.id);
+        }
+      }
     } catch (e) {
       print(e);
       setState(() {
@@ -39,14 +44,15 @@ class _AccountsFilterState extends State<AccountsFilter> {
     }
   }
 
-  void _handleSelect(int index, bool isSelected) {
+  void _handleSelect(int accountId, bool isSelected) {
     if (isSelected) {
-      if (!selectedAccounts.contains(index)) {
-        selectedAccounts.add(index);
+      if (!widget.selectedAccounts.contains(accountId)) {
+        widget.selectedAccounts.add(accountId);
       }
     } else {
-      selectedAccounts.remove(index);
+      widget.selectedAccounts.remove(accountId);
     }
+    print(widget.selectedAccounts);
   }
 
   @override
@@ -54,26 +60,15 @@ class _AccountsFilterState extends State<AccountsFilter> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0,10,0,0),
-          child: Text(
-            'Accounts Filter',
-            style: TextStyle(
-                color: AppColor.lightText,
-                fontSize: AppSize.heading1,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
         const SizedBox(height: 20),
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: accounts.asMap().entries.map((entry) {
+          children: accounts.map((account) {
             return AccountTile(
-              index: entry.key,
-              account: entry.value,
+              account: account,
               onSelect: (isSelected) {
-                _handleSelect(entry.key, isSelected);
+                _handleSelect(account.id, isSelected);
               },
             );
           }).toList(),
@@ -85,10 +80,9 @@ class _AccountsFilterState extends State<AccountsFilter> {
 
 class AccountTile extends StatefulWidget {
   final Account account;
-  final int index;
   final Function onSelect;
 
-  const AccountTile({super.key,required this.index, required this.account, required this.onSelect});
+  const AccountTile({super.key, required this.account, required this.onSelect});
 
   @override
   State<AccountTile> createState() => _AccountTileState();

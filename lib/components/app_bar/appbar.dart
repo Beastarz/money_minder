@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 
+import '../../models/account.dart';
 import '../../style/app_color.dart';
+import '../../style/app_size.dart';
 import 'accounts_filter.dart';
 
 // TODO: Add appbar buttons functionality, account filter functionality
@@ -21,6 +23,7 @@ class _MMAppBarState extends State<MMAppBar> {
   AccountsApi accountsApi = AccountsApi();
 
   double balance = 0;
+  List<int> selectedAccounts = [];
 
   @override
   void initState() {
@@ -39,6 +42,24 @@ class _MMAppBarState extends State<MMAppBar> {
       setState(() {
         balance = 0;
       });
+    }
+  }
+
+  Future<void> _handleSelect(List<int> selectedAccount) async {
+    try{
+      List<Map<String, dynamic>> res = await accountsApi.getAllAccounts();
+      for (Map<String, dynamic> account in res) {
+        Account acc = Account(account);
+        if (selectedAccount.contains(acc.id)) {
+          acc.isIncludesInTotal = true;
+        } else {
+          acc.isIncludesInTotal = false;
+        }
+        await accountsApi.updateAccount(acc.toMap());
+      }
+      _loadSelectedAccountBalance();
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -80,15 +101,70 @@ class _MMAppBarState extends State<MMAppBar> {
             backgroundColor: AppColor.secondary,
             context: context,
             builder: (BuildContext context) {
-              return DraggableScrollableSheet(
-                expand: true,
-                initialChildSize: 1.0,
-                builder: (BuildContext context, ScrollController scrollController) {
-                  return SingleChildScrollView(
-                    controller: scrollController,
-                    child: AccountsFilter()
-                  );
-                }
+              return Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[700],
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.18,
+                        ),
+                        Center(
+                          child: Text(
+                            'Accounts Filter',
+                            style: TextStyle(
+                                color: AppColor.lightText,
+                                fontSize: AppSize.heading1,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _handleSelect(selectedAccounts);
+                            });
+                            selectedAccounts = [];
+                            Navigator.pop(context);
+                          },
+                          color: AppColor.secondary,
+                          icon: Row(
+                              children: [
+                                Icon(
+                                  Icons.check,
+                                  color: AppColor.lightText,
+                                ),
+                                const SizedBox(width: 5,),
+                                Text(
+                                    'Apply',
+                                    style: TextStyle(
+                                      color: AppColor.lightText,
+                                    )
+                                ),
+                              ]
+                          )
+                        ),
+                      ]
+                    ),
+                  ),
+                  Expanded(
+                    child: DraggableScrollableSheet(
+                      expand: true,
+                      initialChildSize: 1.0,
+                      minChildSize: 0.9,
+                      builder: (BuildContext context, ScrollController scrollController) {
+                        return SingleChildScrollView(
+                          controller: scrollController,
+                          child: AccountsFilter(selectedAccounts: selectedAccounts,)
+                        );
+                      }
+                    ),
+                  ),
+                ],
               );
             }
           );
