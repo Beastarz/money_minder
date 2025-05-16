@@ -7,6 +7,7 @@ import 'package:money_minder/pages/categories_page.dart';
 import 'package:money_minder/pages/statistics_page.dart';
 import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
+import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
 
@@ -18,11 +19,16 @@ void main() {
 class MoneyMinder extends StatelessWidget {
   const MoneyMinder({super.key});
 
+  /// TODO: Toggle between dark mode and light mode
+  final ThemeMode _themeMode = ThemeMode.light;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true),
+      theme: AppThemes.lightTheme,   // Light theme config
+      darkTheme: AppThemes.darkTheme, // Dark theme config
+      themeMode: _themeMode,         // Current theme mode
       home: MoneyMinderFrame(),
     );
   }
