@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// the page that shows the shared accounts
 class SharedAccountsPage extends StatelessWidget {
   const SharedAccountsPage({super.key});
 

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
+/// the button that will appear in the period bottom sheet
 class PeriodTile extends StatelessWidget {
 
+  /// variables
   final BuildContext parentContext;
   final String label;
   final IconData icon;
@@ -35,12 +37,11 @@ class PeriodTile extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon, color: AppColor.lightIcon, size: AppSize.bigIcon),
+          Icon(icon),
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
-                color: AppColor.lightText,
                 fontSize: AppSize.heading2
             ),
             textAlign: TextAlign.center,

@@ -97,7 +97,7 @@ class _MMAppBarState extends State<MMAppBar> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            backgroundColor: AppColor.secondary,
+            backgroundColor: AppColor.primary,
             context: context,
             builder: (BuildContext context) {
               return Column(

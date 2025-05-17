@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/calendar_bar/calendar_bar.dart';
 
+/// page that shows the transactions
 class TransactionsPage extends StatelessWidget {
   const TransactionsPage({super.key});
 

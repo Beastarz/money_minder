@@ -19,21 +19,22 @@ class CalendarSelectorHelper {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
+            colorScheme: ColorScheme.light(
               primary: AppColor.tertiary,
-              onPrimary: AppColor.primary,
+              onPrimary: AppColor.quaternary,
               surface: AppColor.primary, // Modal background
-              onSurface: AppColor.lightText, // Text color,
+              onSurface: AppColor.darkText, // Text color,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: AppColor.lightText,
+                foregroundColor: AppColor.darkText,
               ),
             ),
-            textTheme: TextTheme(
-              // Change this for input text style
-              titleMedium: TextStyle(color: AppColor.lightText),
-            ),
+            // textTheme: TextTheme(
+            //   // Change this for input text style
+            //   bodyMedium: TextStyle(color: AppColor.darkText),
+            //   titleMedium: TextStyle(color: AppColor.darkText),
+            // ),
           ),
           child: child!,
         );
@@ -60,26 +61,26 @@ class CalendarSelectorHelper {
       confirmText: 'Confirm',
       errorFormatText: 'Invalid date format',
       errorInvalidText: 'Invalid date',
-      // barrierColor: AppColor.primary,
       initialDateRange: DateTimeRange(start: now, end: now),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
+            colorScheme: ColorScheme.light(
               primary: AppColor.tertiary,
-              onPrimary: AppColor.primary,
+              onPrimary: AppColor.quaternary,
+              secondary: AppColor.secondary,
               surface: AppColor.primary,
-              onSurface: AppColor.lightText,
+              onSurface: AppColor.darkText,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                  foregroundColor: AppColor.lightText
+                  foregroundColor: AppColor.darkText
               ),
             ),
-            textTheme: TextTheme(
-              // Change this for input text style
-              titleMedium: TextStyle(color: AppColor.lightText),
-            ),
+          //   textTheme: const TextTheme().copyWith(
+          //     bodySmall: TextStyle(color: AppColor.darkText), // For the days of the month
+          //     titleMedium: TextStyle(color: AppColor.darkText),
+          // ),
           ),
           child: child!,
         );

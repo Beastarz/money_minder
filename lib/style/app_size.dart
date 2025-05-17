@@ -14,7 +14,7 @@ class AppSize {
   static final double smallPadding = 12;
 
   /// icon size
-  static final double smallIcon = 20;
+  static final double smallIcon = 25;
   static final double bigIcon = 30;
 
   /// gap between the widget

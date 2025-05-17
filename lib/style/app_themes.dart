@@ -1,24 +1,36 @@
 import 'package:flutter/material.dart';
 import 'app_color.dart';
+import 'app_size.dart';
 
 /// A central class to manage light and dark themes for the app.
 class AppThemes {
+
   /// Light theme configuration using custom colors.
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    scaffoldBackgroundColor: AppColor.secondary,
+    scaffoldBackgroundColor: AppColor.primary,
     primaryColor: AppColor.primary,
-    iconTheme: IconThemeData(color: AppColor.darkIcon),
+    iconTheme: IconThemeData(
+        color: AppColor.darkIcon,
+        size: AppSize.bigIcon,
+    ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: AppColor.darkText),
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: AppColor.tertiary,
-      iconTheme: IconThemeData(color: AppColor.darkIcon),
+      backgroundColor: AppColor.secondary,
+      iconTheme: IconThemeData(
+          color: AppColor.darkIcon,
+          size: AppSize.smallIcon
+      ),
       titleTextStyle: TextStyle(
         color: AppColor.darkText,
-        fontSize: 20,
+        fontSize: AppSize.heading2,
       ),
+    ),
+    buttonTheme: ButtonThemeData(
+      buttonColor: AppColor.quaternary,
+      textTheme: ButtonTextTheme.primary,
     ),
   );
 
