@@ -58,23 +58,20 @@ class _AccountsFilterState extends State<AccountsFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 20),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: accounts.map((account) {
-            return AccountTile(
-              account: account,
-              onSelect: (isSelected) {
-                _handleSelect(account.id, isSelected);
-              },
-            );
-          }).toList(),
-        )
-      ],
+    return GridView.count(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 2,
+      padding: const EdgeInsets.all(10),
+      children: accounts.map((account) {
+              return AccountTile(
+                account: account,
+                onSelect: (isSelected) {
+                  _handleSelect(account.id, isSelected);
+                },
+              );
+            }).toList(),
     );
   }
 }
@@ -108,59 +105,68 @@ class _AccountTileState extends State<AccountTile> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _handleTap,
-      customBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSize.borderRadius),
-      ),
-
-      child: Container(
-        height: 65,
-        width: MediaQuery.of(context).size.width * 0.42 ,
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: _isSelected ? widget.account.color : Colors.transparent,
+    return GridTile(
+      child: InkWell(
+        onTap: _handleTap,
+        customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.borderRadius),
-          border: Border.all(
-            color: _isSelected ? Colors.transparent : widget.account.color,
-            width: 2,
-          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              widget.account.icon.icon,
-              color: _isSelected ? AppColor.lightText : widget.account.color,
-              size: AppSize.heading1,
+        splashColor: Colors.transparent,
+        child: Container(
+          height: 65,
+          width: MediaQuery.of(context).size.width * 0.42 ,
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _isSelected ? widget.account.color : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppSize.borderRadius),
+            border: Border.all(
+              color: _isSelected ? Colors.transparent : widget.account.color,
+              width: 2,
             ),
-            const SizedBox(width: 8,),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.25,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.account.name,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: _isSelected ? AppColor.lightText : widget.account.color,
-                        fontSize: AppSize.heading3
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    ' ${widget.account.balance.toStringAsFixed(2)}',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: _isSelected ? AppColor.lightText : widget.account.color,
-                        fontSize: AppSize.heading3
-                    ),
-                  ),
-                ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Icon(
+                  widget.account.icon.icon,
+                  color: _isSelected ? AppColor.lightText : widget.account.color,
+                  size: AppSize.bigIcon,
+                ),
               ),
-            ),
-          ],
+              Flexible(
+                flex: 3,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.25,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.account.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: _isSelected ? AppColor.lightText : widget.account.color,
+                            fontSize: AppSize.heading3
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        widget.account.balance.toStringAsFixed(2),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: _isSelected ? AppColor.lightText : widget.account.color,
+                            fontSize: AppSize.heading2
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

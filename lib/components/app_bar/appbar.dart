@@ -153,13 +153,10 @@ class _MMAppBarState extends State<MMAppBar> {
                   Expanded(
                     child: DraggableScrollableSheet(
                       expand: true,
-                      initialChildSize: 1.0,
-                      minChildSize: 0.9,
+                      initialChildSize: 1,
+                      minChildSize: 0.2,
                       builder: (BuildContext context, ScrollController scrollController) {
-                        return SingleChildScrollView(
-                          controller: scrollController,
-                          child: AccountsFilter(selectedAccounts: selectedAccounts,)
-                        );
+                        return AccountsFilter(selectedAccounts: selectedAccounts);
                       }
                     ),
                   ),
