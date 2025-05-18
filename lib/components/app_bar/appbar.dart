@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/account.dart';
+import '../../repositories/currency_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import 'accounts_filter.dart';
 
-// TODO: Add appbar buttons functionality, account filter functionality
 class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
   const MMAppBar( {super.key, required this.selectedIndex});
 
@@ -20,15 +22,31 @@ class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
 }
 
 class _MMAppBarState extends State<MMAppBar> {
-  AccountsApi accountsApi = AccountsApi();
+  AccountsRepository accountsApi = AccountsRepository();
+  CurrencyRepositories currencyApi = CurrencyRepositories();
 
   double balance = 0;
   List<int> selectedAccounts = [];
+  Currency mainCurrency = Currency.of('sgd');
 
   @override
   void initState() {
     super.initState();
     _loadSelectedAccountBalance();
+    _getMainCurrency();
+  }
+
+  void _getMainCurrency() async {
+    try {
+      Currency res = await currencyApi.getMainCurrency();
+      setState(() {
+        mainCurrency = res;
+      });
+    } catch(e) {
+      setState(() {
+        mainCurrency = Currency.of('sgd');
+      });
+    }
   }
 
   Future<void> _loadSelectedAccountBalance() async {
@@ -75,20 +93,19 @@ class _MMAppBarState extends State<MMAppBar> {
       ),
       title: TextButton(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'All Accounts',
+              'My Accounts',
               style: TextStyle(
                 color: Colors.grey[800],
                 fontSize: 15,
               )
             ),
-            Text(
-              balance.toStringAsFixed(2),
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 21,
-              )
+            BalanceText(
+              balance: balance,
+              currencyName: mainCurrency.toString(),
+              mainAxisAlignment: MainAxisAlignment.center,
             ),
           ],
         ),
@@ -108,8 +125,12 @@ class _MMAppBarState extends State<MMAppBar> {
                       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.close, color: AppColor.lightIcon,)
+                        ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.18,
                         ),
@@ -122,6 +143,7 @@ class _MMAppBarState extends State<MMAppBar> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
+                        const Spacer(),
                         IconButton(
                           onPressed: () {
                             setState(() {
@@ -135,13 +157,13 @@ class _MMAppBarState extends State<MMAppBar> {
                               children: [
                                 Icon(
                                   Icons.check,
-                                  color: AppColor.lightText,
+                                  color: AppColor.lightIcon,
                                 ),
                                 const SizedBox(width: 5,),
                                 Text(
                                     'Apply',
                                     style: TextStyle(
-                                      color: AppColor.lightText,
+                                      color: AppColor.lightIcon,
                                     )
                                 ),
                               ]
@@ -154,7 +176,6 @@ class _MMAppBarState extends State<MMAppBar> {
                     child: DraggableScrollableSheet(
                       expand: true,
                       initialChildSize: 1,
-                      minChildSize: 0.2,
                       builder: (BuildContext context, ScrollController scrollController) {
                         return AccountsFilter(selectedAccounts: selectedAccounts);
                       }

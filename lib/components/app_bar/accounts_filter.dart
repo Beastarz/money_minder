@@ -15,7 +15,7 @@ class AccountsFilter extends StatefulWidget {
 }
 
 class _AccountsFilterState extends State<AccountsFilter> {
-  AccountsApi accountsApi = AccountsApi();
+  AccountsRepository accountsApi = AccountsRepository();
 
   List<Account> accounts = [];
 
@@ -58,20 +58,53 @@ class _AccountsFilterState extends State<AccountsFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 2,
-      padding: const EdgeInsets.all(10),
-      children: accounts.map((account) {
-              return AccountTile(
-                account: account,
-                onSelect: (isSelected) {
-                  _handleSelect(account.id, isSelected);
-                },
-              );
-            }).toList(),
+    List<AccountType> accountTypes = AccountType.values;
+    return ListView(
+      physics: ScrollPhysics(),
+      shrinkWrap: true,
+      children:  accountTypes.map((accountType) {
+        return accounts.where((acc) => acc.type == accountType).isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 8, 0),
+                    child: Text(
+                      accountType.name[0].toUpperCase() + accountType.name.substring(1),
+                      style: TextStyle(
+                        fontSize: AppSize.heading2,
+                        fontWeight: FontWeight.bold,
+                        color: AppColor.lightText,
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.grey[700],
+                    thickness: 1,
+                    indent: 10,
+                    endIndent: 10,
+                  ),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 2.5,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(10),
+                    children: accounts.where((acc) => acc.type == accountType).map((account) {
+                      return AccountTile(
+                        account: account,
+                        onSelect: (isSelected) {
+                          _handleSelect(account.id, isSelected);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              )
+            : Container();
+      }).toList(),
     );
   }
 }
@@ -126,43 +159,40 @@ class _AccountTileState extends State<AccountTile> {
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Flexible(
-                flex: 1,
-                child: Icon(
-                  widget.account.icon.icon,
-                  color: _isSelected ? AppColor.lightText : widget.account.color,
-                  size: AppSize.bigIcon,
-                ),
+              Icon(
+                widget.account.icon.icon,
+                color: _isSelected ? AppColor.lightText : widget.account.color,
+                size: AppSize.bigIcon,
               ),
-              Flexible(
-                flex: 3,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        widget.account.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: _isSelected ? AppColor.lightText : widget.account.color,
-                            fontSize: AppSize.heading3
-                        ),
-                        textAlign: TextAlign.center,
+              SizedBox(width: 8,),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.account.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: _isSelected ? AppColor.lightText : widget.account.color,
+                          fontSize: AppSize.heading3
                       ),
-                      Text(
-                        widget.account.balance.toStringAsFixed(2),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: _isSelected ? AppColor.lightText : widget.account.color,
-                            fontSize: AppSize.heading2
-                        ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      widget.account.currency.toString() + widget.account.balance.toStringAsFixed(2),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: _isSelected ? AppColor.lightText : widget.account.color,
+                          fontSize: AppSize.heading3 * 1.05
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],

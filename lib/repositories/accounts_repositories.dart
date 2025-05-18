@@ -1,7 +1,10 @@
+import 'package:money_minder/models/currency.dart';
+
 import '../db/database.dart';
 import '../models/account.dart';
+import 'currency_repositories.dart';
 
-class AccountsApi {
+class AccountsRepository {
 
   DatabaseService dbService = DatabaseService.instance;
 
@@ -30,10 +33,12 @@ class AccountsApi {
   Future<double> getSelectedAccountBalance() async {
     final db = await dbService.database;
     final result = await db.query('accounts', where: 'includes_in_total = 1');
+    final Currency mainCurrency = await CurrencyRepositories().getMainCurrency();
     double total = 0;
     if (result.isNotEmpty) {
       for (var row in result){
-        total += row['balance'] as double;
+        Account account = Account(row);
+        total += Currency.convert(account.currency, mainCurrency, account.balance);
       }
     }
     return total;
