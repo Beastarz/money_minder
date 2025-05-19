@@ -160,14 +160,14 @@ class _MMAppBarState extends State<MMAppBar> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            backgroundColor: AppColor.primary,
+            backgroundColor: AppColor.secondary,
             context: context,
             builder: (BuildContext context) {
               return Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[700],
+                      color: AppColor.secondary,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
@@ -180,7 +180,7 @@ class _MMAppBarState extends State<MMAppBar> {
                           child: Text(
                             'Accounts Filter',
                             style: TextStyle(
-                                color: AppColor.lightText,
+                                color: AppColor.darkText,
                                 fontSize: AppSize.heading1,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -198,13 +198,13 @@ class _MMAppBarState extends State<MMAppBar> {
                               children: [
                                 Icon(
                                   Icons.check,
-                                  color: AppColor.lightText,
+                                  color: AppColor.darkText,
                                 ),
                                 const SizedBox(width: 5,),
                                 Text(
                                     'Apply',
                                     style: TextStyle(
-                                      color: AppColor.lightText,
+                                      color: AppColor.darkText,
                                     )
                                 ),
                               ]

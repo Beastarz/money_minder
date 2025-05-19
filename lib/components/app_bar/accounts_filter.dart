@@ -74,7 +74,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
                       style: TextStyle(
                         fontSize: AppSize.heading2,
                         fontWeight: FontWeight.bold,
-                        color: AppColor.lightText,
+                        color: AppColor.darkText,
                       ),
                     ),
                   ),
