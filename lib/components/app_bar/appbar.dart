@@ -131,132 +131,117 @@ class _MMAppBarState extends State<MMAppBar> {
     ];
 
     return AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            color: Colors.grey[800],
-          ),
-          onPressed: Scaffold
-              .of(context)
-              .openDrawer,
+      leading: IconButton(
+        icon: Icon(
+          Icons.menu,
+          color: Colors.grey[800],
         ),
-        title: TextButton(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                    'My Accounts',
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontSize: 15,
-                    )
-                ),
-                BalanceText(
-                  balance: balance,
-                  currencyName: mainCurrency.toString(),
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ),
-              ],
+        onPressed: Scaffold.of(context).openDrawer,
+      ),
+      title: TextButton(
+        child: Column(
+          children: [
+            Text(
+              'My Accounts',
+              style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 15,
+              )
             ),
-            onPressed: () {
-              showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20)),
-                  ),
-                  backgroundColor: AppColor.secondary,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Column(
+            BalanceText(
+              balance: balance,
+              currencyName: mainCurrency.toString(),
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ],
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            backgroundColor: AppColor.primary,
+            context: context,
+            builder: (BuildContext context) {
+              return Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[700],
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[700],
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20)),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.18,
+                        ),
+                        Center(
+                          child: Text(
+                            'Accounts Filter',
+                            style: TextStyle(
+                                color: AppColor.lightText,
+                                fontSize: AppSize.heading1,
+                                fontWeight: FontWeight.bold),
                           ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _handleSelect(selectedAccounts);
+                            });
+                            selectedAccounts = [];
+                            Navigator.pop(context);
+                          },
+                          color: AppColor.secondary,
+                          icon: Row(
                               children: [
-                                IconButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    icon: Icon(
-                                      Icons.close, color: AppColor.lightIcon,)
+                                Icon(
+                                  Icons.check,
+                                  color: AppColor.lightText,
                                 ),
-                                SizedBox(
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width * 0.18,
-                                ),
-                                Center(
-                                  child: Text(
-                                    'Accounts Filter',
+                                const SizedBox(width: 5,),
+                                Text(
+                                    'Apply',
                                     style: TextStyle(
-                                        color: AppColor.lightText,
-                                        fontSize: AppSize.heading1,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                const Spacer(),
-                                IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _handleSelect(selectedAccounts);
-                                      });
-                                      selectedAccounts = [];
-                                      Navigator.pop(context);
-                                    },
-                                    color: AppColor.secondary,
-                                    icon: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.check,
-                                            color: AppColor.lightIcon,
-                                          ),
-                                          const SizedBox(width: 5,),
-                                          Text(
-                                              'Apply',
-                                              style: TextStyle(
-                                                color: AppColor.lightIcon,
-                                              )
-                                          ),
-                                        ]
+                                      color: AppColor.lightText,
                                     )
                                 ),
                               ]
-                          ),
+                          )
                         ),
-                        Expanded(
-                          child: DraggableScrollableSheet(
-                              expand: true,
-                              initialChildSize: 1,
-                              builder: (BuildContext context,
-                                  ScrollController scrollController) {
-                                return AccountsFilter(
-                                    selectedAccounts: selectedAccounts);
-                              }
-                          ),
-                        ),
-                      ],
-                    );
-                  }
+                      ]
+                    ),
+                  ),
+                  Expanded(
+                    child: DraggableScrollableSheet(
+                      expand: true,
+                      initialChildSize: 1,
+                      minChildSize: 0.2,
+                      builder: (BuildContext context, ScrollController scrollController) {
+                        return AccountsFilter(selectedAccounts: selectedAccounts);
+                      }
+                    ),
+                  ),
+                ],
               );
             }
-        ),
-        centerTitle: true,
-        actions: [
-          functionButtons[widget.selectedIndex],
-          IconButton(
-            icon: Icon(
-              Icons.public,
-              color: Colors.grey[800],
-            ),
-            onPressed: () {
-              // TODO: Add online space functionality
-            },
-          )
-        ]
+          );
+        }
+      ),
+      centerTitle: true,
+      actions: [
+        functionButtons[widget.selectedIndex],
+        IconButton(
+          icon: Icon(
+            Icons.public,
+            color: Colors.grey[800],
+          ),
+          onPressed: () {
+            // TODO: Add online space functionality
+          },
+        )
+      ]
     );
   }
 }
