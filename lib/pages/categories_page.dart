@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/categories_page/categories_page_content.dart';
 
 import '../components/calendar_bar/calendar_bar.dart';
 
@@ -14,9 +15,7 @@ class CategoriesPage extends StatelessWidget {
         selectedDate: "15052025",
         onDateTap: () {},
       ),
-      body: const Center(
-        child: Text('Categories'),
-      ),
+      body: CategoriesPageContent(),
     );
   }
 }

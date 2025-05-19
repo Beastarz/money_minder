@@ -2,9 +2,9 @@
 class AppSize {
   /// font size
   static final double heading1 = 25;
-  static final double heading2 = 20;
-  static final double heading3 = 15;
-  static final double paragraph = 12;
+  static final double heading2 = 22;
+  static final double heading3 = 18;
+  static final double paragraph = 15;
 
   /// border radius for the widget
   static final double borderRadius = 16;
