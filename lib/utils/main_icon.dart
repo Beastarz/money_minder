@@ -6,10 +6,15 @@ import '../style/app_size.dart';
 class MainIcon extends StatelessWidget {
   final Icon icon;
   final Color color;
-  final bool rounded;
+  final bool isRound;
   final bool isMain;
 
-  const MainIcon({super.key, required this.icon, required this.color, this.rounded = true, this.isMain = false});
+  const MainIcon({super.key,
+    required this.icon,
+    required this.color,
+    this.isRound = true,
+    this.isMain = false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +22,8 @@ class MainIcon extends StatelessWidget {
       height: AppSize.mainIcon * 1.5,
       width: AppSize.mainIcon * 1.5,
       decoration: BoxDecoration(
-        borderRadius: rounded ? null : BorderRadius.circular(12),
-        shape: rounded ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: isRound ? null : BorderRadius.circular(12),
+        shape: isRound ? BoxShape.circle : BoxShape.rectangle,
         color: color,
         border: Border.all(
           color: Colors.white,

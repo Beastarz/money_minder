@@ -25,6 +25,7 @@ abstract class Currency {
 
   List<double> get rates;
   Currencies currency();
+  String get fullName;
 
   @override
   String toString() {
@@ -41,6 +42,9 @@ class _SGD extends Currency {
     return Currencies.sgd;
   }
 
+  @override
+  String get fullName => 'Singapore Dollar --SGD';
+
 }
 
 class _MYR extends Currency {
@@ -51,4 +55,7 @@ class _MYR extends Currency {
   Currencies currency() {
     return Currencies.myr;
   }
+
+  @override
+  String get fullName => 'Malaysia Ringgit --MYR';
 }

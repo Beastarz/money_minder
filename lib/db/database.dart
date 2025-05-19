@@ -39,7 +39,8 @@ class DatabaseService {
             is_main INTEGER DEFAULT 0, -- Using INTEGER for boolean (0 for false, 1 for true)
             includes_in_total INTEGER DEFAULT 1, -- Using INTEGER for boolean (0 for false, 1 for true)
             type TEXT NOT NULL, -- 'accounts'/ 'savings'
-            currency TEXT DEFAULT 'sgd' -- 'sgd' / 'myr' for now
+            currency TEXT DEFAULT 'sgd', -- 'sgd' / 'myr' for now
+            position INTEGER NOT NULL
           )
         ''');
 
@@ -95,12 +96,12 @@ class DatabaseService {
         ''');
 
     await db.execute('''
-      INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency) VALUES
-      ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd'), -- account_balance_wallet, Green
-      ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr'),
-      ('Savings Account', 0xe53b, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd'), -- account_balance, Blue
-      ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'accounts', 'sgd'), -- credit_card, Red
-      ('Investment Fund', 0xeb4f, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd'); -- trending_up, Orange (Exclude from total)
+      INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
+      ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
+      ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
+      ('Savings Account', 0xe53b, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
+      ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'accounts', 'sgd', 3), -- credit_card, Red
+      ('Investment Fund', 0xeb4f, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd', 4); -- trending_up, Orange (Exclude from total)
     ''');
 
 

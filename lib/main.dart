@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
+import 'package:money_minder/pages/accounts/add_accounts_page.dart';
 
-import 'package:money_minder/pages/accounts_page.dart';
+import 'package:money_minder/pages/accounts/main_accounts_page.dart';
 import 'package:money_minder/pages/budget_page.dart';
 import 'package:money_minder/pages/categories_page.dart';
 import 'package:money_minder/pages/statistics_page.dart';
@@ -23,6 +24,9 @@ class MoneyMinder extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
+      routes: {
+        '/add_account' : (context) => AddAccountPage(context),
+      },
       home: MoneyMinderFrame(),
     );
   }

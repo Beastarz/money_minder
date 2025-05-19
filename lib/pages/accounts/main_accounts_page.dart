@@ -4,9 +4,9 @@ import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
-import '../models/currency.dart';
-import '../repositories/currency_repositories.dart';
-import '../style/app_size.dart';
+import '../../models/currency.dart';
+import '../../repositories/currency_repositories.dart';
+import '../../style/app_size.dart';
 
 class AccountsPage extends StatefulWidget {
   const AccountsPage({super.key});
@@ -68,7 +68,7 @@ class _AccountsPageState extends State<AccountsPage> {
         ),
         body: TabBarView(
           children: AccountType.values.map((accountType) {
-            Iterable<Account> acc = accounts.where((acc) => acc.type == accountType);
+            List<Account> acc = accounts.where((acc) => acc.type == accountType).toList();
             return acc.isNotEmpty
                 ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,16 +99,27 @@ class _AccountsPageState extends State<AccountsPage> {
                       indent: 10,
                       endIndent: 10,
                     ),
-                    ListView.builder(
+                    ReorderableListView.builder(
                       physics: ScrollPhysics(),
                       shrinkWrap: true,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       itemCount: acc.length,
+                      onReorder: (int oldIndex, int newIndex) {
+                        setState(() {
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          final Account item = accounts.removeAt(acc.elementAt(oldIndex).position);
+                          accounts.insert(acc.elementAt(newIndex).position, item);
+                          accountsApi.updateAccountPosition(accounts);
+                          _loadAccounts();
+                        });
+                      },
                       itemBuilder: (BuildContext context, int index) {
                         Account account = acc.elementAt(index);
-
                         return ListTile(
-                          leading: MainIcon(icon: account.icon, color: account.color, rounded: false,),
+                          key: ValueKey(account.id),
+                          leading: MainIcon(icon: account.icon, color: account.color, isRound: false,),
                           title: Text(
                             account.name + (account.isMain ? '★' : ''),
                             style: TextStyle(

@@ -36,13 +36,20 @@ class _MMAppBarState extends State<MMAppBar> {
     _getMainCurrency();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    accountsApi.close();
+    currencyApi.close();
+  }
+
   void _getMainCurrency() async {
     try {
       Currency res = await currencyApi.getMainCurrency();
       setState(() {
         mainCurrency = res;
       });
-    } catch(e) {
+    } catch (e) {
       setState(() {
         mainCurrency = Currency.of('sgd');
       });
@@ -64,13 +71,13 @@ class _MMAppBarState extends State<MMAppBar> {
   }
 
   Future<void> _handleSelect(List<int> selectedAccount) async {
-    try{
+    try {
       List<Account> res = await accountsApi.getAllAccounts();
       for (Account account in res) {
         if (selectedAccount.contains(account.id)) {
-          account.isIncludesInTotal = true;
+          account = account.copyWith(isIncludesInTotal: true);
         } else {
-          account.isIncludesInTotal = false;
+          account = account.copyWith(isIncludesInTotal: false);
         }
         await accountsApi.updateAccount(account);
       }
@@ -80,164 +87,176 @@ class _MMAppBarState extends State<MMAppBar> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
+    final functionButtons = <IconButton>[
+      IconButton(
         icon: Icon(
-          Icons.menu,
+          Icons.add,
           color: Colors.grey[800],
         ),
-        onPressed: Scaffold.of(context).openDrawer,
-      ),
-      title: TextButton(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'My Accounts',
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 15,
-              )
-            ),
-            BalanceText(
-              balance: balance,
-              currencyName: mainCurrency.toString(),
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          ],
-        ),
         onPressed: () {
-          showModalBottomSheet(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          Navigator.pushNamed(context, '/add_account');
+
+        },
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.edit,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.search,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.edit,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.location_on_outlined,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+    ];
+
+    return AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu,
+            color: Colors.grey[800],
+          ),
+          onPressed: Scaffold
+              .of(context)
+              .openDrawer,
+        ),
+        title: TextButton(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                    'My Accounts',
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 15,
+                    )
+                ),
+                BalanceText(
+                  balance: balance,
+                  currencyName: mainCurrency.toString(),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ),
+              ],
             ),
-            backgroundColor: AppColor.secondary,
-            context: context,
-            builder: (BuildContext context) {
-              return Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[700],
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+            onPressed: () {
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20)),
+                  ),
+                  backgroundColor: AppColor.secondary,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Column(
                       children: [
-                        IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Icon(Icons.close, color: AppColor.lightIcon,)
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.18,
-                        ),
-                        Center(
-                          child: Text(
-                            'Accounts Filter',
-                            style: TextStyle(
-                                color: AppColor.lightText,
-                                fontSize: AppSize.heading1,
-                                fontWeight: FontWeight.bold),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[700],
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20)),
                           ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _handleSelect(selectedAccounts);
-                            });
-                            selectedAccounts = [];
-                            Navigator.pop(context);
-                          },
-                          color: AppColor.secondary,
-                          icon: Row(
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(
-                                  Icons.check,
-                                  color: AppColor.lightIcon,
+                                IconButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: Icon(
+                                      Icons.close, color: AppColor.lightIcon,)
                                 ),
-                                const SizedBox(width: 5,),
-                                Text(
-                                    'Apply',
+                                SizedBox(
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.18,
+                                ),
+                                Center(
+                                  child: Text(
+                                    'Accounts Filter',
                                     style: TextStyle(
-                                      color: AppColor.lightIcon,
+                                        color: AppColor.lightText,
+                                        fontSize: AppSize.heading1,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                const Spacer(),
+                                IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _handleSelect(selectedAccounts);
+                                      });
+                                      selectedAccounts = [];
+                                      Navigator.pop(context);
+                                    },
+                                    color: AppColor.secondary,
+                                    icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.check,
+                                            color: AppColor.lightIcon,
+                                          ),
+                                          const SizedBox(width: 5,),
+                                          Text(
+                                              'Apply',
+                                              style: TextStyle(
+                                                color: AppColor.lightIcon,
+                                              )
+                                          ),
+                                        ]
                                     )
                                 ),
                               ]
-                          )
+                          ),
                         ),
-                      ]
-                    ),
-                  ),
-                  Expanded(
-                    child: DraggableScrollableSheet(
-                      expand: true,
-                      initialChildSize: 1,
-                      builder: (BuildContext context, ScrollController scrollController) {
-                        return AccountsFilter(selectedAccounts: selectedAccounts);
-                      }
-                    ),
-                  ),
-                ],
+                        Expanded(
+                          child: DraggableScrollableSheet(
+                              expand: true,
+                              initialChildSize: 1,
+                              builder: (BuildContext context,
+                                  ScrollController scrollController) {
+                                return AccountsFilter(
+                                    selectedAccounts: selectedAccounts);
+                              }
+                          ),
+                        ),
+                      ],
+                    );
+                  }
               );
             }
-          );
-        }
-      ),
-      centerTitle: true,
-      actions: [
-        functionButtons[widget.selectedIndex],
-        IconButton(
-          icon: Icon(
-            Icons.public,
-            color: Colors.grey[800],
-          ),
-          onPressed: () {
-            // TODO: Add online space functionality
-          },
-        )
-      ]
+        ),
+        centerTitle: true,
+        actions: [
+          functionButtons[widget.selectedIndex],
+          IconButton(
+            icon: Icon(
+              Icons.public,
+              color: Colors.grey[800],
+            ),
+            onPressed: () {
+              // TODO: Add online space functionality
+            },
+          )
+        ]
     );
   }
 }
-
-final functionButtons = <IconButton>[
-  IconButton(
-    icon: Icon(
-      Icons.add,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.edit,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.search,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.edit,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.location_on_outlined,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-];
