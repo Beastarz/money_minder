@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// the page that shows the accounts
 class AccountsPage extends StatelessWidget {
   const AccountsPage({super.key});
 

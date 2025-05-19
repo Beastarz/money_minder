@@ -1,8 +1,14 @@
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
+import "../../style/app_color.dart";
+
+/// bottom navigation bar that will appear at every pages
 class BottomNavbar extends StatelessWidget {
+
+  /// [onTabChange] is a callback function that will be called when the tab is changed
   final void Function(int)? onTabChange;
+
   const BottomNavbar({
     super.key,
     required this.onTabChange,
@@ -15,9 +21,9 @@ class BottomNavbar extends StatelessWidget {
       child: GNav(
           onTabChange: onTabChange,
           color: Colors.grey[400],
-          activeColor: Colors.grey.shade700,
-          tabBackgroundColor: Colors.grey.shade100,
-          tabActiveBorder: Border.all(color: Colors.white),
+          activeColor: AppColor.darkText,
+          tabBackgroundColor: AppColor.secondary,
+          tabActiveBorder: Border.all(color: AppColor.primary),
           mainAxisAlignment: MainAxisAlignment.center,
           padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width * 0.045,

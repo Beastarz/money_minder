@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/calendar_bar/calendar_bar.dart';
 
+/// page that shows the statistics
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({super.key});
 

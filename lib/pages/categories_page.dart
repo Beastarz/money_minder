@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/calendar_bar/calendar_bar.dart';
 
+/// the page that shows the categories
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
 
