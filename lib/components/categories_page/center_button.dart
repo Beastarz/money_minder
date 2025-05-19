@@ -43,6 +43,7 @@ class CenterButton extends StatelessWidget {
               Text(
                 isExpense ? 'Expenses' : 'Income',
                 style: TextStyle(
+                    color: AppColor.darkText,
                     fontSize: AppSize.heading1,
                 ),
                 textAlign: TextAlign.center,
@@ -57,14 +58,18 @@ class CenterButton extends StatelessWidget {
                 '\$${isExpense? totalExpense : totalIncome}',
                 style: TextStyle(
                   fontSize: AppSize.heading2,
-                  color: Colors.redAccent,
+                  color: isExpense
+                      ? Colors.redAccent
+                      : CupertinoColors.activeGreen,
                 ),
               ),
               Text(
                 '\$${isExpense? totalIncome : totalExpense}',
                 style: TextStyle(
                   fontSize: AppSize.heading3,
-                  color: CupertinoColors.activeGreen,
+                  color: isExpense
+                      ? CupertinoColors.activeGreen
+                      : Colors.redAccent,
                 ),
               )
             ],

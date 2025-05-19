@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 class AppColor {
 
   /// color for the widget background
-  static final Color primary = Color(0xFFF8F9FA); /// light grey
-  static final Color secondary = Color(0xFFDEE2E6); /// light purple
-  static final Color tertiary = Color(0xFFADB5BD); /// dark purple
-  static final Color quaternary = Color(0xFF343A40); /// dark grey
+  static final Color primary = Color(0xFFF8F9FA);
+  static final Color secondary = Color(0xFFDEE2E6);
+  static final Color tertiary = Color(0xFFADB5BD);
+  static final Color quaternary = Color(0xFF343A40);
 
   /// color for the icon
   static final Color lightIcon = Colors.white;
