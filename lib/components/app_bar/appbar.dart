@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/providers/account_provider.dart';
+import 'package:money_minder/utils/balance_text.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/account.dart';
+import '../../providers/currency_provider.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import 'accounts_filter.dart';
 
-// TODO: Add appbar buttons functionality, account filter functionality
 class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
   const MMAppBar( {super.key, required this.selectedIndex});
 
@@ -20,51 +22,64 @@ class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
 }
 
 class _MMAppBarState extends State<MMAppBar> {
-  AccountsApi accountsApi = AccountsApi();
-
-  double balance = 0;
-  List<int> selectedAccounts = [];
 
   @override
   void initState() {
     super.initState();
-    _loadSelectedAccountBalance();
+    context.read<AccountProvider>().fetchSelectedAccountBalance();
+    context.read<AccountProvider>().fetchAccounts();
+    context.read<CurrencyProvider>().fetchMainCurrency();
   }
-
-  Future<void> _loadSelectedAccountBalance() async {
-    try {
-      double res = await accountsApi.getSelectedAccountBalance();
-      setState(() {
-        balance = res;
-      });
-    } catch (e) {
-      print(e);
-      setState(() {
-        balance = 0;
-      });
-    }
-  }
-
-  Future<void> _handleSelect(List<int> selectedAccount) async {
-    try{
-      List<Account> res = await accountsApi.getAllAccounts();
-      for (Account account in res) {
-        if (selectedAccount.contains(account.id)) {
-          account.isIncludesInTotal = true;
-        } else {
-          account.isIncludesInTotal = false;
-        }
-        await accountsApi.updateAccount(account);
-      }
-      _loadSelectedAccountBalance();
-    } catch (e) {
-      print(e);
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
+    final balance = context.select<AccountProvider, double>((provider) => provider.selectedAccountBalance);
+    final mainCurrency = context.select<CurrencyProvider, Currency>((provider) => provider.mainCurrency);
+
+    List<int> selectedAccounts = context.select<AccountProvider, List<int>>((provider) {
+      return provider.accounts.where((account) => account.isIncludesInTotal).map((account) => account.id).toList();
+    });
+
+    final functionButtons = <IconButton>[
+      IconButton(
+        icon: Icon(
+          Icons.add,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/add_account');
+        },
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.edit,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.search,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.edit,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.location_on_outlined,
+          color: Colors.grey[800],
+        ),
+        onPressed: () {},
+      ),
+    ];
+
     return AppBar(
       leading: IconButton(
         icon: Icon(
@@ -77,18 +92,16 @@ class _MMAppBarState extends State<MMAppBar> {
         child: Column(
           children: [
             Text(
-              'All Accounts',
+              'My Accounts',
               style: TextStyle(
                 color: Colors.grey[800],
                 fontSize: 15,
               )
             ),
-            Text(
-              balance.toStringAsFixed(2),
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 21,
-              )
+            BalanceText(
+              balance: balance,
+              currencyName: mainCurrency.toString(),
+              mainAxisAlignment: MainAxisAlignment.center,
             ),
           ],
         ),
@@ -97,14 +110,14 @@ class _MMAppBarState extends State<MMAppBar> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            backgroundColor: AppColor.primary,
+            backgroundColor: AppColor.secondary,
             context: context,
             builder: (BuildContext context) {
               return Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[700],
+                      color: AppColor.secondary,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
@@ -117,16 +130,14 @@ class _MMAppBarState extends State<MMAppBar> {
                           child: Text(
                             'Accounts Filter',
                             style: TextStyle(
-                                color: AppColor.lightText,
+                                color: AppColor.darkText,
                                 fontSize: AppSize.heading1,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         IconButton(
                           onPressed: () {
-                            setState(() {
-                              _handleSelect(selectedAccounts);
-                            });
+                            context.read<AccountProvider>().updateSelectedAccount(selectedAccounts);
                             selectedAccounts = [];
                             Navigator.pop(context);
                           },
@@ -135,13 +146,13 @@ class _MMAppBarState extends State<MMAppBar> {
                               children: [
                                 Icon(
                                   Icons.check,
-                                  color: AppColor.lightText,
+                                  color: AppColor.darkText,
                                 ),
                                 const SizedBox(width: 5,),
                                 Text(
                                     'Apply',
                                     style: TextStyle(
-                                      color: AppColor.lightText,
+                                      color: AppColor.darkText,
                                     )
                                 ),
                               ]
@@ -182,41 +193,3 @@ class _MMAppBarState extends State<MMAppBar> {
     );
   }
 }
-
-final functionButtons = <IconButton>[
-  IconButton(
-    icon: Icon(
-      Icons.add,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.edit,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.search,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.edit,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-  IconButton(
-    icon: Icon(
-      Icons.location_on_outlined,
-      color: Colors.grey[800],
-    ),
-    onPressed: () {},
-  ),
-];

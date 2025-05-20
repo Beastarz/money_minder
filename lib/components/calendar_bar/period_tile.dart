@@ -48,6 +48,6 @@ class PeriodTile extends StatelessWidget {
           ),
         ],
       ),
-    );;
+    );
   }
 }
