@@ -6,15 +6,68 @@ class CategoriesSheet extends StatelessWidget {
   CategoriesSheet({super.key});
 
   // Data for the category icons and labels (default)
-  final List<Map<String, String>> _categories = [
-    {'label': 'Groceries', 'icon': 'lib/assets/icons/groceries.svg'}, // Use svgs
-    {'label': 'Leisure', 'icon': 'lib/assets/icons/ticket.svg'},
-    {'label': 'Health', 'icon': 'lib/assets/icons/health.svg'},
-    {'label': 'Transport', 'icon': 'lib/assets/icons/bus.svg'},
-    {'label': 'Restaurant', 'icon': 'lib/assets/icons/restaurant.svg'},
-    {'label': 'Gifts', 'icon': 'lib/assets/icons/gift.svg'},
-    {'label': 'Family', 'icon': 'lib/assets/icons/home.svg'},
-    {'label': 'Shopping', 'icon': 'lib/assets/icons/shopping.svg'},
+  final List<CategoriesButtonProps> _categories = [
+    CategoriesButtonProps(
+      label: 'Groceries',
+      iconPath: 'lib/assets/icons/groceries.svg',
+      color: Colors.blueAccent,
+      expense: 9999.00,
+      budget: 20000.00,
+    ),
+    CategoriesButtonProps(
+      label: 'Leisure',
+      iconPath: 'lib/assets/icons/ticket.svg',
+      color: Colors.redAccent,
+      expense: 100.00,
+      budget: 200.00,
+    ),
+    CategoriesButtonProps(
+      label: 'Health',
+      iconPath: 'lib/assets/icons/health.svg',
+      color: Colors.greenAccent,
+      expense: 100.00,
+      budget: 200.00,
+    ),
+    CategoriesButtonProps(
+      label: 'Transport',
+      iconPath: 'lib/assets/icons/bus.svg',
+      color: Colors.grey,
+      expense: 20,
+      budget: 0,
+    ),
+    CategoriesButtonProps(
+      label: 'Restaurant',
+      iconPath: 'lib/assets/icons/restaurant.svg',
+      color: Colors.orangeAccent,
+      expense: 130.00,
+      budget: 240.00,
+    ),CategoriesButtonProps(
+      label: 'Gift',
+      iconPath: 'lib/assets/icons/gift.svg',
+      color: Colors.pinkAccent,
+      expense: 30.00,
+      budget: 50.00,
+    ),CategoriesButtonProps(
+      label: 'Family',
+      iconPath: 'lib/assets/icons/home.svg',
+      color: Colors.deepPurpleAccent,
+      expense: 20.00,
+      budget: 130.00,
+    ),CategoriesButtonProps(
+      label: 'Shopping',
+      iconPath: 'lib/assets/icons/shopping.svg',
+      color: Colors.brown,
+      expense: 50.00,
+      budget: 350.00,
+    ),
+    CategoriesButtonProps(
+      label: 'Sport',
+      iconPath: 'lib/assets/icons/running.svg',
+      color: Colors.yellow,
+      expense: 50.00,
+      budget: 350.00,
+    ),
+    AddCategoriesButtonProps(),
   ];
 
   @override
@@ -26,18 +79,14 @@ class CategoriesSheet extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: 0.8,
             crossAxisCount: isSmallScreen ? 3 : 4,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 20.0,
+            crossAxisSpacing: 4.0,
           ),
           itemCount: _categories.length,
           itemBuilder: (context, index) {
             return CategoriesButton(
-                label: _categories[index]['label'] ?? 'Unknown',
-                iconPath: _categories[index]['icon'] ?? '',
-                categoriesButtonOnPressed: () {
-                  print('Clicked on ${_categories[index]['label']}');
-                }
+              props: _categories[index],
             );
           },
         ),

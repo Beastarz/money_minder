@@ -27,6 +27,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     return Scaffold(
       // No AppBar here, as you only need the body content
       body: Padding(
@@ -41,7 +42,9 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
                 isExpense: _isExpense
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.width * 0.05,
+              height: MediaQuery.of(context).size.width * (
+                  isSmallScreen ? 0.05 : 0.1
+              ),
             ), // Center button at the top
             CategoriesSheet(),
           ],

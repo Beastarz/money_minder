@@ -27,8 +27,8 @@ class CenterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center( // Center the button horizontally
       child: SizedBox(
-        width: min(MediaQuery.of(context).size.width * 0.5, 250),
-        height: min(MediaQuery.of(context).size.width * 0.5, 250),
+        width: MediaQuery.of(context).size.width * 0.5,
+        height: MediaQuery.of(context).size.width * 0.5,
         child: ElevatedButton(
           onPressed: centerButtonOnPressed,
           style: ElevatedButton.styleFrom(
