@@ -41,9 +41,9 @@ class AddCategoriesButtonProps extends CategoriesButtonProps {
 class CategoriesButton extends StatelessWidget {
 
   /// variable
-  CategoriesButtonProps props;
+  final CategoriesButtonProps props;
 
-  CategoriesButton({
+  const CategoriesButton({
     super.key,
     required this.props,
   });
@@ -69,6 +69,8 @@ class CategoriesButton extends StatelessWidget {
       height: 30,
     );
 
+    // button background color gradient reflect the portion of
+    // expense over budget
     Widget buttonContent = Container(
         width: 50,
         height: 50,
@@ -79,35 +81,34 @@ class CategoriesButton extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          shape: BoxShape.circle, // Make the container circular
-          border: props.isAddButton
+          shape: BoxShape.circle,
+          border: props.isAddButton // addButton does not have solid border
           ? Border.all(
             color: Colors.transparent,
             width: 0,
           )
           : Border.all(
-            color: props.color, // Border color, transparent for add button
+            color: props.color,
             width: 2.0,
           )
         ),
-        child: Material( // Material for ink splash effects if needed
+        child: Material(
           color: Colors.transparent, // Make Material widget transparent
           shape: const CircleBorder(), // Match shape for ink effects
           clipBehavior: Clip.antiAlias, // Clip ink effects to circle
-          child: InkWell( // Use InkWell for tap effects if ElevatedButton is too complex here
+          child: InkWell(
             onTap: () {
-              // Handle button tap
               print("${props.label} button tapped!");
             },
             customBorder: const CircleBorder(),
-            splashColor: props.color.withAlpha((0.2 * 255).round()), // Optional splash
-            highlightColor: props.color.withAlpha((0.1 * 255).round()), // Optional highlight
+            splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()), // Optional splash
+            highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()), // Optional highlight
             child: Center(child: buttonIcon),
           ),
         ),
     );
 
-    // build the button
+    // add dotted border to add button
     Widget button = props.isAddButton
       ? DottedBorder(
         options: CircularDottedBorderOptions(

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,14 +8,14 @@ class CenterButton extends StatelessWidget {
 
   /// variable
   // toggle between expenses and income
-  void Function()? centerButtonOnPressed;
+  final void Function()? centerButtonOnPressed;
   // track if currently showing expense or income
-  bool isExpense;
+  final bool isExpense;
 
   final double totalIncome = 1000.00;
   final double totalExpense = 500.00;
 
-  CenterButton({
+  const CenterButton({
     super.key,
     required this.centerButtonOnPressed,
     required this.isExpense,
