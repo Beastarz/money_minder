@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
+// For displaying text with currency and balance
 class BalanceText extends StatelessWidget {
   final double balance;
   final String currencyName;
   final bool showColor;
   final MainAxisAlignment mainAxisAlignment;
+  final bool isLight;
+  final double size;
 
   const BalanceText({
     super.key,
     required this.balance,
     required this.currencyName,
     this.showColor = false,
-    this.mainAxisAlignment = MainAxisAlignment.start
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.isLight = false,
+    this.size = 21,
   });
 
   @override
@@ -23,6 +28,9 @@ class BalanceText extends StatelessWidget {
         : Colors.grey[800]
         : Colors.red
         : Colors.grey[800];
+    if (isLight) {
+      color = Colors.white;
+    }
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.4,
       child: Row(
@@ -32,7 +40,7 @@ class BalanceText extends StatelessWidget {
           currencyName,
             style: TextStyle(
               color: color,
-              fontSize: 18,
+              fontSize: size - 4,
             )
           ),
           const SizedBox(width: 4,),
@@ -41,7 +49,8 @@ class BalanceText extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: color,
-                fontSize: 21,
+                fontWeight: FontWeight.w500,
+                fontSize: size,
               )
           ),
         ],

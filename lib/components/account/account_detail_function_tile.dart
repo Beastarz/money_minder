@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
+
+/// the button that will appear in the period bottom sheet
+class AccountDetailFunctionTile extends StatelessWidget {
+
+  /// variables
+  final BuildContext parentContext;
+  final String label;
+  final Icon icon;
+  final void Function()? onPressed;
+
+  const AccountDetailFunctionTile({
+    super.key,
+    required this.parentContext,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: onPressed,
+      height: MediaQuery.of(parentContext).size.width * 0.15,
+      minWidth: MediaQuery.of(parentContext).size.width * 0.42,
+      padding: EdgeInsets.all(AppSize.smallPadding),
+      color: AppColor.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSize.borderRadius),
+      ),
+      elevation: 1,
+      child: Column(
+        children: [
+          icon,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+                fontSize: AppSize.heading2
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}

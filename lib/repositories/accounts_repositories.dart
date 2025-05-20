@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -41,9 +40,18 @@ class AccountsRepository {
     await batch.commit();
   }
 
-  Future<void> deleteAccount(Account account) async {
+  Future<void> updateMainAccount(Account account) async {
     final db = await dbService.database;
-    await db.delete('accounts', where: 'id = ?', whereArgs: [account.id]);
+    Map<String, dynamic> mainAccount = await db.query('accounts', where: 'is_main = 1').then((value) => value.first);
+    Account prevMainAccount = Account.fromMap(mainAccount).copyWith(isMain: false);
+    await db.update('accounts', prevMainAccount.toMap(), where: 'id = ?', whereArgs: [prevMainAccount.id]);
+    account = account.copyWith(isMain: true);
+    await db.update('accounts', account.toMap(), where: 'id = ?', whereArgs: [account.id]);
+  }
+
+  Future<void> deleteAccount(int id) async {
+    final db = await dbService.database;
+    await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<double> getSelectedAccountBalance() async {

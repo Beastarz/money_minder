@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/account_provider.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
@@ -15,35 +16,9 @@ class AccountsFilter extends StatefulWidget {
 }
 
 class _AccountsFilterState extends State<AccountsFilter> {
-  AccountsRepository accountsApi = AccountsRepository();
-
-  List<Account> accounts = [];
-
   @override
   void initState() {
     super.initState();
-    widget.selectedAccounts.clear();
-    _loadAccounts();
-
-  }
-
-  Future<void> _loadAccounts() async {
-    try {
-      List<Account> res = await accountsApi.getAllAccounts();
-      setState(() {
-        accounts = res;
-      });
-      for (Account account in accounts) {
-        if (account.isIncludesInTotal) {
-          widget.selectedAccounts.add(account.id);
-        }
-      }
-    } catch (e) {
-      print(e);
-      setState(() {
-        accounts = [];
-      });
-    }
   }
 
   void _handleSelect(int accountId, bool isSelected) {
@@ -58,6 +33,8 @@ class _AccountsFilterState extends State<AccountsFilter> {
 
   @override
   Widget build(BuildContext context) {
+    final accounts = context.read<AccountProvider>().accounts;
+
     List<AccountType> accountTypes = AccountType.values;
     return ListView(
       physics: ScrollPhysics(),

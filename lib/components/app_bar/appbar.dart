@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/currency.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/providers/account_provider.dart';
 import 'package:money_minder/utils/balance_text.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/account.dart';
-import '../../repositories/currency_repositories.dart';
+import '../../providers/currency_provider.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import 'accounts_filter.dart';
@@ -22,73 +22,24 @@ class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
 }
 
 class _MMAppBarState extends State<MMAppBar> {
-  AccountsRepository accountsApi = AccountsRepository();
-  CurrencyRepositories currencyApi = CurrencyRepositories();
-
-  double balance = 0;
-  List<int> selectedAccounts = [];
-  Currency mainCurrency = Currency.of('sgd');
 
   @override
   void initState() {
     super.initState();
-    _loadSelectedAccountBalance();
-    _getMainCurrency();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    accountsApi.close();
-    currencyApi.close();
-  }
-
-  void _getMainCurrency() async {
-    try {
-      Currency res = await currencyApi.getMainCurrency();
-      setState(() {
-        mainCurrency = res;
-      });
-    } catch (e) {
-      setState(() {
-        mainCurrency = Currency.of('sgd');
-      });
-    }
-  }
-
-  Future<void> _loadSelectedAccountBalance() async {
-    try {
-      double res = await accountsApi.getSelectedAccountBalance();
-      setState(() {
-        balance = res;
-      });
-    } catch (e) {
-      print(e);
-      setState(() {
-        balance = 0;
-      });
-    }
-  }
-
-  Future<void> _handleSelect(List<int> selectedAccount) async {
-    try {
-      List<Account> res = await accountsApi.getAllAccounts();
-      for (Account account in res) {
-        if (selectedAccount.contains(account.id)) {
-          account = account.copyWith(isIncludesInTotal: true);
-        } else {
-          account = account.copyWith(isIncludesInTotal: false);
-        }
-        await accountsApi.updateAccount(account);
-      }
-      _loadSelectedAccountBalance();
-    } catch (e) {
-      print(e);
-    }
+    context.read<AccountProvider>().fetchSelectedAccountBalance();
+    context.read<AccountProvider>().fetchAccounts();
+    context.read<CurrencyProvider>().fetchMainCurrency();
   }
 
   @override
   Widget build(BuildContext context) {
+    final balance = context.select<AccountProvider, double>((provider) => provider.selectedAccountBalance);
+    final mainCurrency = context.select<CurrencyProvider, Currency>((provider) => provider.mainCurrency);
+
+    List<int> selectedAccounts = context.select<AccountProvider, List<int>>((provider) {
+      return provider.accounts.where((account) => account.isIncludesInTotal).map((account) => account.id).toList();
+    });
+
     final functionButtons = <IconButton>[
       IconButton(
         icon: Icon(
@@ -97,7 +48,6 @@ class _MMAppBarState extends State<MMAppBar> {
         ),
         onPressed: () {
           Navigator.pushNamed(context, '/add_account');
-
         },
       ),
       IconButton(
@@ -187,9 +137,7 @@ class _MMAppBarState extends State<MMAppBar> {
                         ),
                         IconButton(
                           onPressed: () {
-                            setState(() {
-                              _handleSelect(selectedAccounts);
-                            });
+                            context.read<AccountProvider>().updateSelectedAccount(selectedAccounts);
                             selectedAccounts = [];
                             Navigator.pop(context);
                           },

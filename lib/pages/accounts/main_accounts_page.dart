@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/providers/account_provider.dart';
+import 'package:money_minder/providers/currency_provider.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
+import 'package:provider/provider.dart';
 
+import '../../components/account/account_detail_sheet.dart';
 import '../../models/currency.dart';
-import '../../repositories/currency_repositories.dart';
 import '../../style/app_size.dart';
 
 class AccountsPage extends StatefulWidget {
@@ -16,47 +18,19 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
-  AccountsRepository accountsApi = AccountsRepository();
-  CurrencyRepositories currencyApi = CurrencyRepositories();
-
-  List<Account> accounts = [];
-  Currency mainCurrency = Currency.of('sgd');
 
   @override
   void initState() {
     super.initState();
-    _loadAccounts();
-    _getMainCurrency();
-  }
-
-  void _getMainCurrency() async {
-    try {
-      Currency res = await currencyApi.getMainCurrency();
-      setState(() {
-        mainCurrency = res;
-      });
-    } catch(e) {
-      setState(() {
-        mainCurrency = Currency.of('sgd');
-      });
-    }
-  }
-
-  void _loadAccounts() async {
-    try {
-      List<Account> res = await accountsApi.getAllAccounts();
-      setState(() {
-        accounts = res;
-      });
-    } catch (e) {
-      setState(() {
-        accounts = [];
-      });
-    }
+    context.read<AccountProvider>().fetchAccounts();
+    context.read<CurrencyProvider>().fetchMainCurrency();
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Account> accounts = context.watch<AccountProvider>().accounts;
+    final Currency mainCurrency = context.watch<CurrencyProvider>().mainCurrency;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -111,8 +85,7 @@ class _AccountsPageState extends State<AccountsPage> {
                           }
                           final Account item = accounts.removeAt(acc.elementAt(oldIndex).position);
                           accounts.insert(acc.elementAt(newIndex).position, item);
-                          accountsApi.updateAccountPosition(accounts);
-                          _loadAccounts();
+                          context.read<AccountProvider>().updateAccountPosition(accounts);
                         });
                       },
                       itemBuilder: (BuildContext context, int index) {
@@ -130,6 +103,19 @@ class _AccountsPageState extends State<AccountsPage> {
                             balance: account.balance,
                             currencyName: account.currency.toString(),
                             showColor: true,
+                          ),
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            useSafeArea: true,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
+                              ),
+                            ),
+                            builder: (BuildContext context) {
+                              return AccountDetailSheet(account: account);
+                            },
                           ),
                         );
                       },

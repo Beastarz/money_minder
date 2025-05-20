@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/account_provider.dart';
+import '../../providers/currency_provider.dart';
 
 class AddAccountPage extends StatefulWidget {
-  const AddAccountPage(BuildContext context, {super.key});
+  const AddAccountPage({super.key});
 
   @override
   State<AddAccountPage> createState() => _AddAccountPageState();
 }
 
 class _AddAccountPageState extends State<AddAccountPage> {
-  CurrencyRepositories currencyRepositories = CurrencyRepositories();
-  AccountsRepository accountsRepository = AccountsRepository();
 
   bool _includeInTotalBalance = true;
   Icon icon = Icon(Icons.abc_rounded);
   Color color = Colors.blueGrey;
   AccountType accountType = AccountType.accounts;
-  List<Currency> currencies = [];
   Currency mainCurrency = Currency.of('sgd');
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -29,8 +28,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
 
   @override
   void initState() {
-    _getMainCurrency();
-    _getCurrencies();
+    context.read<CurrencyProvider>().fetchCurrencies();
     super.initState();
   }
 
@@ -39,40 +37,12 @@ class _AddAccountPageState extends State<AddAccountPage> {
     _nameController.dispose();
     _descriptionController.dispose();
     _accountBalanceController.dispose();
-    currencyRepositories.close();
-    accountsRepository.close();
     super.dispose();
-  }
-
-  void _getCurrencies() async {
-    try {
-      List<Currency> res = await currencyRepositories.getCurrencies();
-      setState(() {
-        currencies = res;
-      });
-    } catch (e) {
-      setState(() {
-        currencies = [];
-      });
-    }
-  }
-
-  void _getMainCurrency() async {
-    try {
-      Currency res = await currencyRepositories.getMainCurrency();
-      setState(() {
-        mainCurrency = res;
-      });
-    } catch(e) {
-      setState(() {
-        mainCurrency = Currency.of('sgd');
-      });
-    }
   }
 
   void _handleSubmit() async {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
       return;
     }
     try {
@@ -86,17 +56,17 @@ class _AddAccountPageState extends State<AddAccountPage> {
         type: accountType,
         currency: mainCurrency,
       );
-      await accountsRepository.createAccount(accountData);
-      print('success');
+      context.read<AccountProvider>().addAccount(accountData);
       Navigator.pop(context);
     } catch(e) {
       print(e);
-      print('failed');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Currency> currencies = context.read<CurrencyProvider>().currencies;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
