@@ -12,6 +12,7 @@ class CenterButton extends StatelessWidget {
   // track if currently showing expense or income
   final bool isExpense;
 
+  // default values for testing
   final double totalIncome = 1000.00;
   final double totalExpense = 500.00;
 
@@ -25,15 +26,14 @@ class CenterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center( // Center the button horizontally
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.5,
-        height: MediaQuery.of(context).size.width * 0.5,
-        child: ElevatedButton(
+        width: MediaQuery.of(context).size.width * 0.3,
+        height: MediaQuery.of(context).size.width * 0.3,
+        child: MaterialButton(
           onPressed: centerButtonOnPressed,
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: EdgeInsets.zero,
-            backgroundColor: AppColor.secondary,
-          ),
+          padding: EdgeInsets.zero,
+          shape: const CircleBorder(),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: AppSize.gap,
@@ -41,8 +41,8 @@ class CenterButton extends StatelessWidget {
               Text(
                 isExpense ? 'Expenses' : 'Income',
                 style: TextStyle(
-                    color: AppColor.darkText,
-                    fontSize: AppSize.heading1,
+                  color: AppColor.darkText,
+                  fontSize: AppSize.heading1,
                 ),
                 textAlign: TextAlign.center,
               ),

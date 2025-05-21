@@ -1,6 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:money_minder/components/categories_page/categories_page_helper.dart';
 
 import '../../style/app_color.dart';
 
@@ -9,19 +9,17 @@ class CategoriesButtonProps {
   /// variable
   final String label;
   final String iconPath;
-  // final void Function()? categoriesButtonOnPressed;
   Color color;
-  double expense;
-  double budget;
+  double actualAmount;
+  double expectedAmount;
   bool isAddButton;
 
   CategoriesButtonProps({
     required this.label,
     required this.iconPath,
-    // required this.categoriesButtonOnPressed,
     required this.color,
-    required this.expense,
-    required this.budget,
+    required this.actualAmount,
+    required this.expectedAmount,
     this.isAddButton = false,
   });
 }
@@ -32,8 +30,8 @@ class AddCategoriesButtonProps extends CategoriesButtonProps {
     label: 'Add',
     iconPath: 'lib/assets/icons/add.svg',
     color: AppColor.secondary,
-    expense: 0,
-    budget: 0,
+    actualAmount: 0,
+    expectedAmount: 0,
     isAddButton: true, // Override parent's default for showDetail
   );
 }
@@ -41,6 +39,7 @@ class AddCategoriesButtonProps extends CategoriesButtonProps {
 class CategoriesButton extends StatelessWidget {
 
   /// variable
+  // props contains all the data required to build a category button
   final CategoriesButtonProps props;
 
   const CategoriesButton({
@@ -54,20 +53,12 @@ class CategoriesButton extends StatelessWidget {
 
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
-    double fraction = props.budget == 0
+    double fraction = props.expectedAmount == 0
         ? 0.00
-        : 1 - (props.expense / props.budget);
+        : 1 - (props.actualAmount / props.expectedAmount);
 
     // Use SvgPicture.asset for SVG icons
-    Widget buttonIcon = SvgPicture.asset(
-      props.iconPath,
-      colorFilter: ColorFilter.mode(
-        AppColor.lightIcon,
-        BlendMode.srcIn,
-      ),
-      width: 30,
-      height: 30,
-    );
+    Widget buttonIcon = CategoriesPageHelper.generateButtonIcon(props.iconPath);
 
     // button background color gradient reflect the portion of
     // expense over budget
@@ -93,16 +84,16 @@ class CategoriesButton extends StatelessWidget {
           )
         ),
         child: Material(
-          color: Colors.transparent, // Make Material widget transparent
-          shape: const CircleBorder(), // Match shape for ink effects
-          clipBehavior: Clip.antiAlias, // Clip ink effects to circle
+          color: Colors.transparent, // Make Material widget transparent, to see the gradient underneath
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {
-              print("${props.label} button tapped!");
+              // print("${props.label} button tapped!");
             },
             customBorder: const CircleBorder(),
-            splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()), // Optional splash
-            highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()), // Optional highlight
+            splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
+            highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()),
             child: Center(child: buttonIcon),
           ),
         ),
@@ -139,10 +130,10 @@ class CategoriesButton extends StatelessWidget {
           children: [
             const SizedBox(height: 2),
             Text(
-              props.budget != 0
-              ? '\$${props.expense.toStringAsFixed(2)} / '
-                  '${props.budget.toStringAsFixed(2)}'
-              : '\$${props.expense.toStringAsFixed(2)}',
+              props.expectedAmount != 0
+              ? '\$${props.actualAmount.toStringAsFixed(2)} / '
+                  '${props.expectedAmount.toStringAsFixed(2)}'
+              : '\$${props.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
+import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
 import '../../style/app_size.dart';
 import 'categories_sheet.dart';
@@ -37,16 +38,26 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
             SizedBox(
               height: MediaQuery.of(context).size.width * 0.05,
             ),
-            CenterButton(
-                centerButtonOnPressed: centerButtonOnPressed,
-                isExpense: _isExpense
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CenterPieChart(
+                    isExpense: _isExpense,
+                ),
+                CenterButton(
+                  centerButtonOnPressed: centerButtonOnPressed,
+                  isExpense: _isExpense,
+                )
+              ],
             ),
             SizedBox(
               height: MediaQuery.of(context).size.width * (
                   isSmallScreen ? 0.05 : 0.1
               ),
             ), // Center button at the top
-            CategoriesSheet(),
+            CategoriesSheet(
+              isExpense: _isExpense,
+            ),
           ],
         ),
       ),
