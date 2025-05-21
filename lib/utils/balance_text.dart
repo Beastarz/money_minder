@@ -32,7 +32,7 @@ class BalanceText extends StatelessWidget {
       color = Colors.white;
     }
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.4,
+      width: MediaQuery.of(context).size.width * 0.4 * size / 21,
       child: Row(
         mainAxisAlignment: mainAxisAlignment,
         children: [

@@ -142,7 +142,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                Spacer(),
                 IconButton(
                     onPressed: () {},
                     icon: MainIcon(icon: _icon, color: _color, isRound: false,)
