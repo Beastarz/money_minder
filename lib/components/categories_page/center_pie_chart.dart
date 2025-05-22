@@ -2,36 +2,36 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../style/app_size.dart';
+import 'categories_button.dart';
 import 'categories_page_helper.dart';
 
-class CenterPieChart extends StatefulWidget {
+class CenterPieChart extends StatelessWidget {
 
   /// variable
   // track if currently showing expense or income
   final bool isExpense;
+  final int pieTouchedIndex;
+  final void Function(FlTouchEvent, PieTouchResponse?)? touchCallback;
 
   const CenterPieChart({
     super.key,
     required this.isExpense,
+    required this.pieTouchedIndex,
+    required this.touchCallback,
   });
-
-  @override
-  State<CenterPieChart> createState() => _CenterPieChartState();
-}
-
-class _CenterPieChartState extends State<CenterPieChart> {
-
-  /// variable
-  // indicate which pie chart section is touched
-  int pieTouchedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
 
+    // generate list of categories
+    List<CategoriesButtonProps> list =
+      CategoriesPageHelper.getCategoriesList(isExpense);
+    double totalAmount = CategoriesPageHelper.getTotalAmount(list);
+
     // generate PieData for the pie chart
     List<PieChartSectionData> pieData =
-      CategoriesPageHelper.getCategoriesList(widget.isExpense)
-        .asMap()
+      list.asMap()
         .entries
         .map((entry) {
             final index = entry.key;
@@ -40,8 +40,14 @@ class _CenterPieChartState extends State<CenterPieChart> {
             return PieChartSectionData(
               value: data.actualAmount,
               color: data.color,
-              showTitle: false,
-              radius: isTouched ? 30 : 20,
+              showTitle: isTouched,
+              title: "${(data.actualAmount / totalAmount * 100)
+                  .toStringAsFixed(2)}%",
+              titleStyle: TextStyle(
+                fontSize: AppSize.paragraph,
+              ),
+              titlePositionPercentageOffset: 2,
+              radius: isTouched ? 25 : 15,
             );
     }).toList();
 
@@ -53,18 +59,7 @@ class _CenterPieChartState extends State<CenterPieChart> {
           PieChartData(
             sections: pieData,
             pieTouchData: PieTouchData(
-              touchCallback:
-                  (FlTouchEvent e, PieTouchResponse? r) {
-                if (r != null && r.touchedSection != null) {
-                  setState(() {
-                    if (pieTouchedIndex == r.touchedSection!.touchedSectionIndex) {
-                      pieTouchedIndex = -1;
-                      return;
-                    }
-                    pieTouchedIndex = r.touchedSection!.touchedSectionIndex;
-                  });
-                }
-              },
+              touchCallback: touchCallback,
             ),
           ),
         ),

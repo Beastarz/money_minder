@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_page_helper.dart';
@@ -7,36 +9,42 @@ import '../../style/app_color.dart';
 class CategoriesButtonProps {
 
   /// variable
-  final String label;
-  final String iconPath;
-  Color color;
-  double actualAmount;
-  double expectedAmount;
-  bool isAddButton;
+  final int index; // index of the button in the list, affecting the sequence
+  final String label; // button label
+  final String iconPath; // path to the icon
+  final Color color; // button color
+  final double actualAmount; // expense / income
+  final double expectedAmount; // budget / expected income
+  int pieTouchedIndex = -1; // the index of the clicked pie data
+  final bool isAddButton; // indicated if it is the addButton
 
   CategoriesButtonProps({
+    required this.index,
     required this.label,
     required this.iconPath,
     required this.color,
     required this.actualAmount,
     required this.expectedAmount,
+    this.pieTouchedIndex = -1,
     this.isAddButton = false,
   });
 }
 
 class AddCategoriesButtonProps extends CategoriesButtonProps {
-  AddCategoriesButtonProps() // No need for parameters if they are all defaulted
+  AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
       : super(
+    index: index,
     label: 'Add',
     iconPath: 'lib/assets/icons/add.svg',
     color: AppColor.secondary,
     actualAmount: 0,
     expectedAmount: 0,
+    pieTouchedIndex: -1,
     isAddButton: true, // Override parent's default for showDetail
   );
 }
 
-class CategoriesButton extends StatelessWidget {
+class CategoriesButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
@@ -47,15 +55,79 @@ class CategoriesButton extends StatelessWidget {
     required this.props,
   });
 
-  // Widget for the category buttons
+  @override
+  State<CategoriesButton> createState() =>
+      _CategoriesButtonState();
+}
+
+class _CategoriesButtonState extends State<CategoriesButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  Timer? _pauseTimer; // Timer for the 1-second pause
+  bool isLooping = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      // Duration for one way (either enlarge or shrink)
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2) // Enlarge to 130%
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    // Listen to the animation status
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        // This means the animation has returned to its start (shrink completed)
+        if (isLooping) {
+          // PAUSE for 1 second
+          _pauseTimer = Timer(const Duration(milliseconds: 250), () {
+            // After 1 second, REVERSE the animation (shrink back)
+            if (mounted) { // Ensure the widget is still in the tree
+              _controller.forward();
+            }
+          });
+        }
+      }
+    });
+  }
+
+  void _triggerPop() {
+    // If not already animating, and timer isn't active (to prevent re-trigger during pause)
+    if (!_controller.isAnimating && (_pauseTimer == null || !_pauseTimer!.isActive)) {
+      _controller.forward(from: 0.0); // Start the enlarge animation from the beginning
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
+    CategoriesButtonProps props = widget.props;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
     double fraction = props.expectedAmount == 0
         ? 0.00
         : 1 - (props.actualAmount / props.expectedAmount);
+
+    setState(() {
+      isLooping = props.pieTouchedIndex == props.index;
+    });
+    // if the pieData corresponding to this categories is clicked
+    // trigger the animation
+    if (props.pieTouchedIndex == props.index) {
+      _triggerPop();
+    }
 
     // Use SvgPicture.asset for SVG icons
     Widget buttonIcon = CategoriesPageHelper.generateButtonIcon(props.iconPath);
@@ -63,9 +135,9 @@ class CategoriesButton extends StatelessWidget {
     // button background color gradient reflect the portion of
     // expense over budget
     Widget buttonContent = Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [topColor, topColor, bottomColor, bottomColor], // Define the colors for the gradient
             stops: [0.0, fraction, fraction, 1.0], // Define the stops for the gradient
@@ -74,43 +146,52 @@ class CategoriesButton extends StatelessWidget {
           ),
           shape: BoxShape.circle,
           border: props.isAddButton // addButton does not have solid border
-          ? Border.all(
+              ? Border.all(
             color: Colors.transparent,
             width: 0,
           )
-          : Border.all(
+              : Border.all(
             color: props.color,
             width: 2.0,
           )
+      ),
+      child: Material(
+        color: Colors.transparent, // Make Material widget transparent, to see the gradient underneath
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {
+            // _triggerPop();
+          },
+          customBorder: const CircleBorder(),
+          splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
+          highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()),
+          child: Center(child: buttonIcon),
         ),
-        child: Material(
-          color: Colors.transparent, // Make Material widget transparent, to see the gradient underneath
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () {
-              // print("${props.label} button tapped!");
-            },
-            customBorder: const CircleBorder(),
-            splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
-            highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()),
-            child: Center(child: buttonIcon),
-          ),
-        ),
+      ),
     );
 
-    // add dotted border to add button
-    Widget button = props.isAddButton
-      ? DottedBorder(
-        options: CircularDottedBorderOptions(
-          dashPattern: [6, 3],
-          strokeWidth: 2,
-          padding: EdgeInsets.zero,
-          color: AppColor.tertiary,
-        ),
-        child: buttonContent
+    // add dotted border and animation to add button
+    Widget button = AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
+        child: props.isAddButton
+            ? DottedBorder(
+            options: CircularDottedBorderOptions(
+              dashPattern: [6, 3],
+              strokeWidth: 2,
+              padding: EdgeInsets.zero,
+              color: AppColor.tertiary,
+            ),
+            child: buttonContent
         )
-      : buttonContent;
+            : buttonContent
+    );
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -131,9 +212,9 @@ class CategoriesButton extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               props.expectedAmount != 0
-              ? '\$${props.actualAmount.toStringAsFixed(2)} / '
+                  ? '\$${props.actualAmount.toStringAsFixed(2)} / '
                   '${props.expectedAmount.toStringAsFixed(2)}'
-              : '\$${props.actualAmount.toStringAsFixed(2)}',
+                  : '\$${props.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -141,7 +222,7 @@ class CategoriesButton extends StatelessWidget {
             ),
           ],
         )
-        : const SizedBox(height: 0),
+            : const SizedBox(height: 0),
       ],
     );
   }
