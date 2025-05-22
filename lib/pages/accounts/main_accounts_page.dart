@@ -114,7 +114,9 @@ class _AccountsPageState extends State<AccountsPage> {
                               ),
                             ),
                             builder: (BuildContext context) {
-                              return AccountDetailSheet(account: account);
+                              return SingleChildScrollView(
+                                  child: AccountDetailSheet(account: account),
+                              );
                             },
                           ),
                         );

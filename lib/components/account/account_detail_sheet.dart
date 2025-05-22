@@ -33,7 +33,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
             borderRadius: BorderRadius.circular(16),
             color: AppColor.secondary
         ),
-        height: MediaQuery.of(context).size.height* 0.7,
+        height: 500,
         width: MediaQuery.of(context).size.width,
         child: Column(
           spacing: 12,
@@ -121,7 +121,8 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                       Navigator.pushNamed(context, '/edit_account', arguments: {'account': widget.account});
                     }
                 ),
-                AccountDetailFunctionTile(
+                isMain ? Container()
+                    : AccountDetailFunctionTile(
                     parentContext: context,
                     label: 'Delete',
                     icon: Icon(Icons.delete_outline, color: Colors.red,),

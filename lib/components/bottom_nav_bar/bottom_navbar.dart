@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
 import "../../style/app_color.dart";
-import "../../style/app_size.dart";
 
 /// bottom navigation bar that will appear at every pages
 class BottomNavbar extends StatelessWidget {
@@ -27,11 +26,10 @@ class BottomNavbar extends StatelessWidget {
           tabActiveBorder: Border.all(color: AppColor.primary),
           mainAxisAlignment: MainAxisAlignment.center,
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.040,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
               vertical: 15
           ),
           tabBorderRadius: 20,
-          textSize: AppSize.paragraph,
           tabs: const [
             GButton(
                 icon: Icons.account_balance_wallet_outlined,
