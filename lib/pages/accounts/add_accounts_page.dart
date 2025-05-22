@@ -116,7 +116,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                Spacer(),
                 IconButton(
                   onPressed: () {},
                   icon: MainIcon(icon: icon, color: color, isRound: false,)
@@ -165,7 +165,6 @@ class _AddAccountPageState extends State<AddAccountPage> {
                             accountType = AccountType.savings;
                           });
                           Navigator.pop(context);
-                          // Handle savings account selection
                         },
                       ),
                     ]

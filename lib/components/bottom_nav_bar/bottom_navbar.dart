@@ -26,7 +26,7 @@ class BottomNavbar extends StatelessWidget {
           tabActiveBorder: Border.all(color: AppColor.primary),
           mainAxisAlignment: MainAxisAlignment.center,
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.045,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
               vertical: 15
           ),
           tabBorderRadius: 20,
