@@ -11,11 +11,14 @@ class CategoriesSheet extends StatelessWidget {
   final bool isExpense;
   // the index of the pie data that is currently selected
   final int pieTouchedIndex;
+  // callback function when the categories button is pressed
+  final void Function(int) categoriesButtonOnPressed;
 
   const CategoriesSheet({
     super.key,
     required this.isExpense,
     required this.pieTouchedIndex,
+    required this.categoriesButtonOnPressed,
   });
 
   @override
@@ -45,6 +48,7 @@ class CategoriesSheet extends StatelessWidget {
               categories[index].pieTouchedIndex = pieTouchedIndex;
               return CategoriesButton(
                 props: categories[index],
+                categoriesButtonOnPressed: categoriesButtonOnPressed,
               );
             },
           ),

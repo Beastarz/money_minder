@@ -49,10 +49,13 @@ class CategoriesButton extends StatefulWidget {
   /// variable
   // props contains all the data required to build a category button
   final CategoriesButtonProps props;
+  // callback function when the categories button is pressed
+  final void Function(int) categoriesButtonOnPressed;
 
   const CategoriesButton({
     super.key,
     required this.props,
+    required this.categoriesButtonOnPressed,
   });
 
   @override
@@ -161,7 +164,10 @@ class _CategoriesButtonState extends State<CategoriesButton>
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            // _triggerPop();
+            if (props.isAddButton) {
+              return;
+            }
+            widget.categoriesButtonOnPressed(props.index);
           },
           customBorder: const CircleBorder(),
           splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
