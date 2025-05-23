@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/calendar_bar/calendar_bar.dart';
+import '../components/calendar_bar/calendar_appbar.dart';
 
 /// page that shows the statistics
 class StatisticsPage extends StatelessWidget {
@@ -9,11 +9,11 @@ class StatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CalendarAppBar(
-        tappable: true,
-        selectedDate: "15052025",
-        onDateTap: () {},
-      ),
+      // appBar: CalendarAppBar(
+      //   tappable: true,
+      //   selectedDate: "15052025",
+      //   onDateTap: () {},
+      // ),
       body: const Center(
         child: Text('Statistics'),
       ),

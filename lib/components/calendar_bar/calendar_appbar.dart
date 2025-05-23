@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
+import 'package:money_minder/models/date_filter.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
 /// an app bar that can show the selected period of time
-class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool tappable;
-  final String selectedDate;
-  final VoidCallback onDateTap;
+class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final TabController tabController;
+  final int currentPageIndex;
+  final void Function(int) onUpdateCurrentPageIndex;
+  final bool isTappable;
+  final String dateString;
+  final int maxIndex;
+  final DateFilterType dateFilterType;
 
   const CalendarAppBar({
     super.key,
-    required this.tappable,
-    required this.selectedDate,
-    required this.onDateTap,
+    required this.tabController,
+    required this.currentPageIndex,
+    required this.onUpdateCurrentPageIndex,
+    required this.dateString,
+    required this.maxIndex,
+    this.isTappable = true,
+    required this.dateFilterType,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(70); // Adjust height as needed
+  State<CalendarAppBar> createState() => _CalendarAppBarState();
 
+  @override
+  Size get preferredSize => const Size.fromHeight(70);
+}
+
+class _CalendarAppBarState extends State<CalendarAppBar> {
+
+ // Adjust height as needed
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -32,7 +48,15 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
 
               /// go previous
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (!widget.isTappable) {
+                    return;
+                  }
+                  if (widget.currentPageIndex == 0) {
+                    return;
+                  }
+                  widget.onUpdateCurrentPageIndex(widget.currentPageIndex - 1);
+                },
                 icon: Icon(
                   Icons.keyboard_double_arrow_left_rounded,
                 ),
@@ -43,7 +67,7 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                 /// show bottom sheet once it is pressed
                 onPressed: () {
-                  if (!tappable) {
+                  if (!widget.isTappable) {
                     return;
                   }
                   showModalBottomSheet(
@@ -61,7 +85,10 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
                               controller: scrollController,
                               child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
-                                  child: const PeriodBottomSheet()
+                                  child: PeriodBottomSheet(
+                                    onUpdateCurrentPageIndex: widget.onUpdateCurrentPageIndex,
+                                    dateFilterType: widget.dateFilterType,
+                                  )
                               ),
                             ),
                       );
@@ -83,7 +110,7 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Thu, 15 May 2025',
+                      widget.dateString,
                       style: TextStyle(
                         color: AppColor.darkText,
                         fontSize: AppSize.heading3,
@@ -101,7 +128,15 @@ class CalendarAppBar extends StatelessWidget implements PreferredSizeWidget {
 
               /// go next
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (!widget.isTappable) {
+                    return;
+                  }
+                  if (widget.currentPageIndex == widget.maxIndex) {
+                    return;
+                  }
+                  widget.onUpdateCurrentPageIndex(widget.currentPageIndex + 1);
+                },
                 icon: Icon(
                   Icons.keyboard_double_arrow_right_rounded,
                 ),

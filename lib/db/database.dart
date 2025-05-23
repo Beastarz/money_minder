@@ -96,6 +96,13 @@ class DatabaseService {
         ''');
 
     await db.execute('''
+          CREATE TABLE date_filter(
+            type TEXT NOT NULL,
+            duration INTEGER -- Duration in days
+          )
+        ''');
+
+    await db.execute('''
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
       ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
       ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
@@ -146,6 +153,11 @@ class DatabaseService {
       INSERT INTO currencies (name, is_main) VALUES
       ('sgd', 1),
       ('myr', 0);
+    ''');
+
+    await db.execute('''
+      INSERT INTO date_filter (type) VALUES
+      ('month');
     ''');
   }
 }

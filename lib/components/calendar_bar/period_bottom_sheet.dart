@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/calendar_bar/period_tile.dart';
 import 'package:money_minder/components/calendar_bar/calendar_selector_helper.dart';
+import 'package:money_minder/models/date_filter.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/date_filter_provider.dart';
 import '../../style/app_size.dart';
 
 /// bottom sheet that will appear when the user taps on the calendar icon
-class PeriodBottomSheet extends StatelessWidget {
-  const PeriodBottomSheet({super.key});
+class PeriodBottomSheet extends StatefulWidget {
+  final void Function(int) onUpdateCurrentPageIndex;
+  final DateFilterType dateFilterType;
+
+  const PeriodBottomSheet({super.key, required this.onUpdateCurrentPageIndex, required this.dateFilterType});
+
+  @override
+  State<PeriodBottomSheet> createState() => _PeriodBottomSheetState();
+}
+
+class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
+  late DateFilterType selectedFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedFilter = widget.dateFilterType;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +53,14 @@ class PeriodBottomSheet extends StatelessWidget {
                   label: 'Select range',
                   icon: Icons.edit_calendar,
                   onPressed: () {
-                    CalendarSelectorHelper.showCustomDateRangePicker(context);
+                    CalendarSelectorHelper.showCustomDateRangePicker(context, (startDate, duration) {
+                        context.read<DateFilterProvider>().updateDateFilter(DateFilter.fromSelectedRange(startDate, duration));
+                        widget.onUpdateCurrentPageIndex(50);
+                        Navigator.pop(context);
+                    });
                   },
-                  width: MediaQuery.of(context).size.width * 0.84 + 12
+                  width: MediaQuery.of(context).size.width * 0.84 + 12,
+                  isSelected: selectedFilter == DateFilterType.range
               ),
 
               /// select any date
@@ -45,8 +69,13 @@ class PeriodBottomSheet extends StatelessWidget {
                   label: 'Select day',
                   icon: Icons.date_range,
                   onPressed: () {
-                    CalendarSelectorHelper.selectDate(context);
-                  }
+                    CalendarSelectorHelper.selectDate(context, (date) {
+                      context.read<DateFilterProvider>().updateDateFilter(DateFilter.fromSelectedDate(date));
+                      widget.onUpdateCurrentPageIndex(50);
+                      Navigator.pop(context);
+                    });
+                  },
+                isSelected: false,
               ),
 
               /// from the first day of using the app until now
@@ -54,39 +83,86 @@ class PeriodBottomSheet extends StatelessWidget {
                   parentContext:context,
                   label: 'All time',
                   icon: Icons.all_inclusive,
-                  onPressed: () {}
+                  onPressed: () {
+                    setState(() {
+                      selectedFilter = DateFilterType.all;
+                    });
+                    context.read<DateFilterProvider>()
+                        .updateDateFilter(DateFilter.fromType(DateFilterType.all));
+                    widget.onUpdateCurrentPageIndex(0);
+                    Navigator.pop(context);
+                  },
+                  isSelected: selectedFilter == DateFilterType.all,
+
               ),
 
               /// set today
               PeriodTile(
                   parentContext: context,
-                  label: 'Today\n15 May',
+                  label: 'Today',
                   icon: Icons.today,
-                  onPressed: () {}
+                  onPressed: () {
+                    setState(() {
+                      selectedFilter = DateFilterType.day;
+                    });
+                    context.read<DateFilterProvider>()
+                        .updateDateFilter(DateFilter.fromDuration(DateFilterType.day, Duration(days: 1)));
+                    widget.onUpdateCurrentPageIndex(50);
+                    Navigator.pop(context);
+                  },
+                  isSelected: selectedFilter == DateFilterType.day,
               ),
 
               /// set current week
               PeriodTile(
                   parentContext: context,
-                  label: 'Week\n11 – 17 May',
+                  label: 'Week',
                   icon: Icons.calendar_view_week,
-                  onPressed: () {}
+                  onPressed: () {
+                    setState(() {
+                      selectedFilter = DateFilterType.week;
+                    });
+                    context.read<DateFilterProvider>()
+                        .updateDateFilter(DateFilter.fromDuration(DateFilterType.week, Duration(days: 7)));
+                    widget.onUpdateCurrentPageIndex(50);
+                    Navigator.pop(context);
+                  },
+
+                  isSelected: selectedFilter == DateFilterType.week,
               ),
 
               /// set current month
               PeriodTile(
                   parentContext: context,
-                  label: 'Month\nMay 2025',
+                  label: 'Month',
                   icon: Icons.calendar_month,
-                  onPressed: () {}
+                  onPressed: () {
+                    setState(() {
+                      selectedFilter = DateFilterType.month;
+                    });
+                    context.read<DateFilterProvider>()
+                        .updateDateFilter(DateFilter.fromType(DateFilterType.month));
+                    Navigator.pop(context);
+                    widget.onUpdateCurrentPageIndex(50);
+                  },
+                  isSelected: selectedFilter == DateFilterType.month,
               ),
 
               /// set current year
               PeriodTile(
                   parentContext: context,
-                  label: 'Year\n2025',
+                  label: 'Year',
                   icon: Icons.calendar_today,
-                  onPressed: () {}
+                  onPressed: () {
+                    setState(() {
+                      selectedFilter = DateFilterType.year;
+                    });
+                    context.read<DateFilterProvider>()
+                        .updateDateFilter(DateFilter.fromType(DateFilterType.year));
+                    Navigator.pop(context);
+                    widget.onUpdateCurrentPageIndex(25);
+                  },
+                  isSelected: selectedFilter == DateFilterType.year,
               ),
             ],
           ),

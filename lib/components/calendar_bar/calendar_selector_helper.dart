@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/date_filter.dart';
+import '../../providers/date_filter_provider.dart';
 import '../../style/app_color.dart';
 
 class CalendarSelectorHelper {
-  static Future<void> selectDate(BuildContext context) async {
-    Navigator.pop(context);
+  static Future<void> selectDate(BuildContext context, Function(DateTime) callback) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -43,12 +45,11 @@ class CalendarSelectorHelper {
 
     if (pickedDate != null) {
       // Use pickedDate
+      callback(pickedDate);
     }
   }
 
-  static Future<void> showCustomDateRangePicker(BuildContext context) async {
-
-    Navigator.pop(context);
+  static Future<void> showCustomDateRangePicker(BuildContext context, Function(DateTime, Duration) callback) async {
 
     final DateTime now = DateTime.now();
 
@@ -88,8 +89,7 @@ class CalendarSelectorHelper {
     );
 
     if (picked != null) {
-      debugPrint('Range: ${picked.start} to ${picked.end}');
-      // Update your state here
+      callback(picked.start, picked.duration);
     }
   }
 

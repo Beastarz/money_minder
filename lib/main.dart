@@ -11,6 +11,7 @@ import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/providers/account_provider.dart';
 import 'package:money_minder/providers/currency_provider.dart';
+import 'package:money_minder/providers/date_filter_provider.dart';
 import 'package:money_minder/style/app_themes.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +34,7 @@ class MoneyMinder extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AccountProvider>(create: (_) => AccountProvider()),
         ChangeNotifierProvider<CurrencyProvider>(create: (_) => CurrencyProvider()),
+        ChangeNotifierProvider<DateFilterProvider>(create: (_) => DateFilterProvider()),
         // Add more providers here
       ],
       child: MaterialApp(
@@ -59,6 +61,11 @@ class MoneyMinderFrame extends StatefulWidget {
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<DateFilterProvider>().fetchDateFilter();
+  }
 
   final List<Widget> _pages = [
     const AccountsPage(),
