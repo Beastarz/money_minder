@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
-import 'package:provider/provider.dart';
 
 import '../components/calendar_bar/calendar_appbar.dart';
 import '../models/date_filter.dart';
 import '../models/transaction.dart';
-import '../providers/date_filter_provider.dart';
 import '../repositories/date_filter_repositories.dart';
 
 /// page that shows the transactions

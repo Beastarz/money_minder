@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/date_filter.dart';
-import '../../providers/date_filter_provider.dart';
 import '../../style/app_color.dart';
 
 class CalendarSelectorHelper {

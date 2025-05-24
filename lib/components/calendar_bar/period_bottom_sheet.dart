@@ -3,9 +3,7 @@ import 'package:money_minder/components/calendar_bar/period_tile.dart';
 import 'package:money_minder/components/calendar_bar/calendar_selector_helper.dart';
 import 'package:money_minder/models/date_filter.dart';
 import 'package:money_minder/repositories/date_filter_repositories.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/date_filter_provider.dart';
 import '../../style/app_size.dart';
 
 /// bottom sheet that will appear when the user taps on the calendar icon

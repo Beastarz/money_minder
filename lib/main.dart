@@ -11,7 +11,6 @@ import 'package:money_minder/pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/providers/account_provider.dart';
 import 'package:money_minder/providers/currency_provider.dart';
-import 'package:money_minder/providers/date_filter_provider.dart';
 import 'package:money_minder/style/app_themes.dart';
 import 'package:provider/provider.dart';
 

@@ -41,7 +41,7 @@ class DateFilter {
 
   /// for selected date
   DateFilter.fromSelectedDate(this.startDate) {
-    this.duration = Duration(days: 1);
+    duration = Duration(days: 1);
     type = DateFilterType.day;
     _initDates();
   }

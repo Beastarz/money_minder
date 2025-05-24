@@ -2,9 +2,6 @@ import 'package:money_minder/db/database.dart';
 import 'package:sqflite/sqflite.dart' as sqf;
 import 'package:money_minder/models/transaction.dart';
 
-
-import '';
-
 class TransactionsRepositories {
   DatabaseService dbService = DatabaseService.instance;
 
