@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../components/calendar_bar/calendar_bar.dart';
+import '../../components/calendar_bar/calendar_bar.dart';
 
-/// page that shows the transactions
-class TransactionsPage extends StatelessWidget {
-  const TransactionsPage({super.key});
+/// the page that shows the budget
+class BudgetPage extends StatelessWidget {
+  const BudgetPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CalendarAppBar(
-        tappable: true,
+        tappable: false,
         selectedDate: "15052025",
         onDateTap: () {},
       ),
       body: const Center(
-        child: Text('Transactions'),
+        child: Text('Budget'),
       ),
     );
   }
