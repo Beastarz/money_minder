@@ -15,54 +15,61 @@ enum DateFilterType {
 class DateFilter {
   late DateFilterType type;
   Duration? duration;
-  DateTime startDate = DateTime(DateTime.now().toLocal().year, DateTime.now().toLocal().month, DateTime.now().toLocal().day);
-  DateTime? endDate;
-  List<DateTime> dates = [];
+  DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+  /// a list of start dates, use this to filter transactions
+  List<DateTime> startDates = [];
+
+  /// the index to locate initial page to show
   int initialPageIndex = 0;
 
-  // for all time, year, and month
+  /// for all time, year, and month
   DateFilter.fromType(this.type) {
     _initDates();
   }
 
-  // for week, day, range
+  /// for week, day, range
   DateFilter.fromDuration(this.type, this.duration) {
     _initDates();
   }
 
-  // for selected range or date
+  /// for selected range
   DateFilter.fromSelectedRange(this.startDate, this.duration) {
     type = DateFilterType.range;
     _initDates();
   }
 
+  /// for selected date
   DateFilter.fromSelectedDate(this.startDate) {
     this.duration = Duration(days: 1);
     type = DateFilterType.day;
     _initDates();
   }
 
+  /// initializes starting dates based on the type of date filter
   _initDates() {
     switch(type) {
       case DateFilterType.all:
-        dates.add(DateTime(2000));
+        startDates.add(DateTime(2000));
       case DateFilterType.year:
-        dates.add(DateTime(startDate.year));
+        startDate = DateTime(startDate.year);
+        startDates.add(startDate);
         DateTime fw = startDate.copyWith(year: startDate.year + 1);
         DateTime bw = startDate.copyWith(year: startDate.year - 1);
-        for (int i = startDate.year - 1; i >= 2000; i--) {
-          dates.add(fw);
-          dates.insert(0, bw);
+        for (int i = 0; i < 50; i++) {
+          startDates.add(fw);
+          startDates.insert(0, bw);
           fw = fw.copyWith(year: fw.year + 1);
           bw = bw.copyWith(year: bw.year - 1);
         }
       case DateFilterType.month:
-        dates.add(DateTime(startDate.year, startDate.month ));
+        startDate = DateTime(startDate.year, startDate.month);
+        startDates.add(startDate);
         DateTime fw = startDate.copyWith(month: startDate.month + 1);
         DateTime bw = startDate.copyWith(month: startDate.month - 1);
         for (int i = 0; i < 50; i++) {
-          dates.add(fw);
-          dates.insert(0, bw);
+          startDates.add(fw);
+          startDates.insert(0, bw);
           fw = fw.copyWith(month: fw.month + 1);
           bw = bw.copyWith(month: bw.month - 1);
         }
@@ -71,12 +78,12 @@ class DateFilter {
           return;
         }
         startDate= startDate.subtract(Duration(days: startDate.weekday));
-        dates.add(startDate);
+        startDates.add(startDate);
         DateTime fw = startDate.add(duration!);
         DateTime bw = startDate.subtract(duration!);
         for (int i = 0; i < 50; i++) {
-          dates.add(fw);
-          dates.insert(0, bw);
+          startDates.add(fw);
+          startDates.insert(0, bw);
           fw = fw.add(duration!);
           bw = bw.subtract(duration!);
         }
@@ -84,20 +91,21 @@ class DateFilter {
         if (duration == null) {
           return;
         }
-        dates.add(startDate);
+        startDates.add(startDate);
         DateTime fw = startDate.add(duration!);
         DateTime bw = startDate.subtract(duration!);
         for (int i = 0; i < 50; i++) {
-          dates.add(fw);
-          dates.insert(0, bw);
+          startDates.add(fw);
+          startDates.insert(0, bw);
           fw = fw.add(duration!);
           bw = bw.subtract(duration!);
         }
     }
-    initialPageIndex = (dates.length / 2).floor();
-    dates.add(DateTime(2100));
+    initialPageIndex = (startDates.length / 2).floor();
+    startDates.add(DateTime(2100));
   }
 
+  /// convert map from database to DateFilter
   factory DateFilter.fromMap(Map<String, dynamic> map) {
     if (map['duration'] == null) {
       return DateFilter.fromType(DateFilter.toDateFilterType(map['type']));
@@ -105,6 +113,7 @@ class DateFilter {
     return DateFilter.fromDuration(DateFilter.toDateFilterType(map['type']) ,Duration(days: map['duration']));
   }
 
+  /// convert string to DateFilterType
   static DateFilterType toDateFilterType(String label) {
     switch(label) {
       case('all'):
@@ -124,6 +133,7 @@ class DateFilter {
     }
   }
 
+  /// convert DateFilter to map for database
   Map<String, dynamic> toMap() {
     return {
       'type': type.name,
@@ -131,25 +141,26 @@ class DateFilter {
     };
   }
 
+  /// convert DateFilter to string for display
   String convertString(int index) {
-    if (index < 0 || index > dates.length - 1) {
+    if (index < 0 || index > startDates.length - 1) {
       return '';
     }
     switch(type) {
       case DateFilterType.all:
         return 'All Time';
       case DateFilterType.year:
-        return 'YEAR ${dates[index].year.toString()}';
+        return 'YEAR ${startDates[index].year.toString()}';
       case DateFilterType.month:
-        return formatDate(dates[index], [M.toUpperCase(), ' ', yyyy]);
+        return formatDate(startDates[index], [M.toUpperCase(), ' ', yyyy]);
       case DateFilterType.day:
-        return formatDate(dates[index], [d, ' ', M.toUpperCase(), ' ', yyyy]);
+        return formatDate(startDates[index], [d, ' ', M.toUpperCase(), ' ', yyyy]);
       default:
-        if (dates[index].month == dates[index + 1].month) {
-          return '${dates[index].day} - ${formatDate(dates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
+        if (startDates[index].month == startDates[index + 1].month) {
+          return '${startDates[index].day} - ${formatDate(startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
         }
-        return '${formatDate(dates[index], [d, ' ', M.toUpperCase()])} '
-            '- ${formatDate(dates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
+        return '${formatDate(startDates[index], [d, ' ', M.toUpperCase()])} '
+            '- ${formatDate(startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
     }
   }
 }

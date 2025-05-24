@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/calendar_bar/period_tile.dart';
 import 'package:money_minder/components/calendar_bar/calendar_selector_helper.dart';
 import 'package:money_minder/models/date_filter.dart';
+import 'package:money_minder/repositories/date_filter_repositories.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/date_filter_provider.dart';
@@ -9,10 +10,10 @@ import '../../style/app_size.dart';
 
 /// bottom sheet that will appear when the user taps on the calendar icon
 class PeriodBottomSheet extends StatefulWidget {
-  final void Function(int) onUpdateCurrentPageIndex;
+  final void Function(DateFilter) onUpdateDateFilter;
   final DateFilterType dateFilterType;
 
-  const PeriodBottomSheet({super.key, required this.onUpdateCurrentPageIndex, required this.dateFilterType});
+  const PeriodBottomSheet({super.key, required this.onUpdateDateFilter, required this.dateFilterType});
 
   @override
   State<PeriodBottomSheet> createState() => _PeriodBottomSheetState();
@@ -54,8 +55,8 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                   icon: Icons.edit_calendar,
                   onPressed: () {
                     CalendarSelectorHelper.showCustomDateRangePicker(context, (startDate, duration) {
-                        context.read<DateFilterProvider>().updateDateFilter(DateFilter.fromSelectedRange(startDate, duration));
-                        widget.onUpdateCurrentPageIndex(50);
+                        DateFilterRepositories().updateDateFilter(DateFilter.fromSelectedRange(startDate, duration));
+                        widget.onUpdateDateFilter(DateFilter.fromSelectedRange(startDate, duration));
                         Navigator.pop(context);
                     });
                   },
@@ -70,8 +71,8 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                   icon: Icons.date_range,
                   onPressed: () {
                     CalendarSelectorHelper.selectDate(context, (date) {
-                      context.read<DateFilterProvider>().updateDateFilter(DateFilter.fromSelectedDate(date));
-                      widget.onUpdateCurrentPageIndex(50);
+                      DateFilterRepositories().updateDateFilter(DateFilter.fromSelectedDate(date));
+                      widget.onUpdateDateFilter(DateFilter.fromSelectedDate(date));
                       Navigator.pop(context);
                     });
                   },
@@ -87,9 +88,9 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                     setState(() {
                       selectedFilter = DateFilterType.all;
                     });
-                    context.read<DateFilterProvider>()
+                    DateFilterRepositories()
                         .updateDateFilter(DateFilter.fromType(DateFilterType.all));
-                    widget.onUpdateCurrentPageIndex(0);
+                    widget.onUpdateDateFilter(DateFilter.fromType(DateFilterType.all));
                     Navigator.pop(context);
                   },
                   isSelected: selectedFilter == DateFilterType.all,
@@ -105,9 +106,9 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                     setState(() {
                       selectedFilter = DateFilterType.day;
                     });
-                    context.read<DateFilterProvider>()
+                    DateFilterRepositories()
                         .updateDateFilter(DateFilter.fromDuration(DateFilterType.day, Duration(days: 1)));
-                    widget.onUpdateCurrentPageIndex(50);
+                    widget.onUpdateDateFilter(DateFilter.fromDuration(DateFilterType.day, Duration(days: 1)));
                     Navigator.pop(context);
                   },
                   isSelected: selectedFilter == DateFilterType.day,
@@ -122,9 +123,9 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                     setState(() {
                       selectedFilter = DateFilterType.week;
                     });
-                    context.read<DateFilterProvider>()
+                    DateFilterRepositories()
                         .updateDateFilter(DateFilter.fromDuration(DateFilterType.week, Duration(days: 7)));
-                    widget.onUpdateCurrentPageIndex(50);
+                    widget.onUpdateDateFilter(DateFilter.fromDuration(DateFilterType.week, Duration(days: 7)));
                     Navigator.pop(context);
                   },
 
@@ -140,10 +141,10 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                     setState(() {
                       selectedFilter = DateFilterType.month;
                     });
-                    context.read<DateFilterProvider>()
+                    DateFilterRepositories()
                         .updateDateFilter(DateFilter.fromType(DateFilterType.month));
                     Navigator.pop(context);
-                    widget.onUpdateCurrentPageIndex(50);
+                    widget.onUpdateDateFilter(DateFilter.fromType(DateFilterType.month));
                   },
                   isSelected: selectedFilter == DateFilterType.month,
               ),
@@ -157,10 +158,10 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
                     setState(() {
                       selectedFilter = DateFilterType.year;
                     });
-                    context.read<DateFilterProvider>()
+                    DateFilterRepositories()
                         .updateDateFilter(DateFilter.fromType(DateFilterType.year));
                     Navigator.pop(context);
-                    widget.onUpdateCurrentPageIndex(25);
+                    widget.onUpdateDateFilter(DateFilter.fromType(DateFilterType.year));
                   },
                   isSelected: selectedFilter == DateFilterType.year,
               ),

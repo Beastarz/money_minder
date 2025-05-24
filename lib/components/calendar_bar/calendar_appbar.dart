@@ -14,12 +14,14 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String dateString;
   final int maxIndex;
   final DateFilterType dateFilterType;
+  final void Function(DateFilter) onUpdateDateFilter;
 
   const CalendarAppBar({
     super.key,
     required this.tabController,
     required this.currentPageIndex,
     required this.onUpdateCurrentPageIndex,
+    required this.onUpdateDateFilter,
     required this.dateString,
     required this.maxIndex,
     this.isTappable = true,
@@ -67,9 +69,6 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
 
                 /// show bottom sheet once it is pressed
                 onPressed: () {
-                  if (!widget.isTappable) {
-                    return;
-                  }
                   showModalBottomSheet(
                     context: context,
                     shape: RoundedRectangleBorder(
@@ -86,7 +85,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                               child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: PeriodBottomSheet(
-                                    onUpdateCurrentPageIndex: widget.onUpdateCurrentPageIndex,
+                                    onUpdateDateFilter: widget.onUpdateDateFilter,
                                     dateFilterType: widget.dateFilterType,
                                   )
                               ),

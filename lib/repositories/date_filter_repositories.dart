@@ -6,6 +6,7 @@ import '../models/date_filter.dart';
 class DateFilterRepositories {
   DatabaseService dbService = DatabaseService.instance;
 
+  /// get date filter from database
   Future<DateFilter> getDateFilter() async {
     Database db = await dbService.database;
 
@@ -16,6 +17,7 @@ class DateFilterRepositories {
     return DateFilter.fromType(DateFilterType.month);
   }
 
+  /// update date filter to database
   Future<void> updateDateFilter(DateFilter dateFilter) async {
     Database db = await dbService.database;
     await db.rawDelete('DELETE FROM date_filter');

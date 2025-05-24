@@ -20,13 +20,6 @@ class AccountsPage extends StatefulWidget {
 class _AccountsPageState extends State<AccountsPage> {
 
   @override
-  void initState() {
-    super.initState();
-    context.read<AccountProvider>().fetchAccounts();
-    context.read<CurrencyProvider>().fetchMainCurrency();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final List<Account> accounts = context.watch<AccountProvider>().accounts;
     final Currency mainCurrency = context.watch<CurrencyProvider>().mainCurrency;

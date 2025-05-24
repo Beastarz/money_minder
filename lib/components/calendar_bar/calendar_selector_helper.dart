@@ -89,7 +89,7 @@ class CalendarSelectorHelper {
     );
 
     if (picked != null) {
-      callback(picked.start, picked.duration);
+      callback(picked.start, Duration(days: picked.duration.inDays + 1));
     }
   }
 

@@ -34,7 +34,6 @@ class MoneyMinder extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AccountProvider>(create: (_) => AccountProvider()),
         ChangeNotifierProvider<CurrencyProvider>(create: (_) => CurrencyProvider()),
-        ChangeNotifierProvider<DateFilterProvider>(create: (_) => DateFilterProvider()),
         // Add more providers here
       ],
       child: MaterialApp(
@@ -60,11 +59,14 @@ class MoneyMinderFrame extends StatefulWidget {
 }
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
+  int _selectedIndex = 2;
 
   @override
   void initState() {
     super.initState();
-    context.read<DateFilterProvider>().fetchDateFilter();
+    context.read<CurrencyProvider>().fetchMainCurrency();
+    context.read<AccountProvider>().fetchAccounts();
+
   }
 
   final List<Widget> _pages = [
@@ -74,7 +76,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     const BudgetPage(),
     const StatisticsPage(),
   ];
-  int _selectedIndex = 0;
+
 
   void _onTabChange (int index) {
     setState(() {
@@ -90,6 +92,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
+        selectedIndex: _selectedIndex,
       )
     );
   }
