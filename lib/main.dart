@@ -4,10 +4,10 @@ import 'package:money_minder/pages/accounts/add_accounts_page.dart';
 import 'package:money_minder/pages/accounts/edit_account_page.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
-import 'package:money_minder/pages/budget_page.dart';
-import 'package:money_minder/pages/categories_page.dart';
-import 'package:money_minder/pages/statistics_page.dart';
-import 'package:money_minder/pages/transactions_page.dart';
+import 'package:money_minder/pages/main_pages/budget_page.dart';
+import 'package:money_minder/pages/main_pages/categories_page.dart';
+import 'package:money_minder/pages/main_pages/statistics_page.dart';
+import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/providers/account_provider.dart';
 import 'package:money_minder/providers/currency_provider.dart';

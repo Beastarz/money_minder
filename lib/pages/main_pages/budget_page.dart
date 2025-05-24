@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/calendar_bar/calendar_appbar.dart';
+import '../../components/calendar_bar/calendar_appbar.dart';
 
 /// the page that shows the budget
 class BudgetPage extends StatelessWidget {
@@ -14,9 +14,9 @@ class BudgetPage extends StatelessWidget {
       //   selectedDate: "15052025",
       //   onDateTap: () {},
       // ),
-      body: const Center(
-        child: Text('Budget'),
-      ),
+      // body: const Center(
+      //   child: Text('Budget'),
+      // ),
     );
   }
 }

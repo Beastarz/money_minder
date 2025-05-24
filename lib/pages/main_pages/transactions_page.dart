@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 
-import '../components/calendar_bar/calendar_appbar.dart';
-import '../models/date_filter.dart';
-import '../models/transaction.dart';
-import '../repositories/date_filter_repositories.dart';
+import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../models/date_filter.dart';
+import '../../models/transaction.dart';
+import '../../repositories/date_filter_repositories.dart';
 
 /// page that shows the transactions
 class TransactionsPage extends StatefulWidget {
@@ -20,7 +20,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
   late int _currentPageIndex;
   List<Transaction> transactions = [];
   DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
-  bool isTappable = true;
 
   @override
   void initState() {
@@ -43,7 +42,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
 
   Future<void> fetchDateFilter() async {
     var res = await DateFilterRepositories().getDateFilter();
-    print(res.type);
     setState(() {
       dateFilter = res;
       _currentPageIndex = dateFilter.initialPageIndex;
@@ -65,9 +63,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     /// map this to categories and transactions page
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateFilter.startDates);
 
-    // for (var element in groupedTransactions) {
-    //   print(element.map((e) => e.toString()).toList());
-    // }
 
     return Scaffold(
       appBar: CalendarAppBar(
@@ -77,11 +72,9 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
         dateString: dateFilter.convertString(_currentPageIndex),
         maxIndex: dateFilter.startDates.length - 2,
         dateFilterType: dateFilter.type,
-        isTappable: isTappable,
         onUpdateDateFilter: _updateDateFilter,
       ),
-      body: !isTappable ? Center(child: Text(groupedTransactions[0].join('\n')),) :
-      PageView(
+      body: PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
         children: groupedTransactions.map((e) => Center(child: Text(e.join('\n')))).toList()
@@ -90,7 +83,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
   }
 
   void _handlePageViewChanged(int currentPageIndex) {
-    print(currentPageIndex);
     _tabController.index = currentPageIndex;
     setState(() {
       _currentPageIndex = currentPageIndex;
@@ -109,7 +101,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     setState(() {
       this.dateFilter = dateFilter;
       _currentPageIndex = dateFilter.initialPageIndex;
-      print(_currentPageIndex);
       _pageViewController.jumpToPage(_currentPageIndex);
       _tabController.index = _currentPageIndex;
     });

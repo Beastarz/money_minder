@@ -14,6 +14,7 @@ class PeriodTile extends StatelessWidget {
   final double height;
   final double width;
   final bool isSelected;
+  final String? selected;
 
   const PeriodTile({
     super.key,
@@ -23,14 +24,18 @@ class PeriodTile extends StatelessWidget {
     required this.onPressed,
     this.height = 0,
     this.width = 0,
-    required this.isSelected,
+    this.isSelected = false,
+    this.selected,
   });
 
   @override
   Widget build(BuildContext context) {
+
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+
     return MaterialButton(
       onPressed: onPressed,
-      height: height == 0 ? MediaQuery.of(parentContext).size.width * 0.30 : height,
+      height: height == 0 ? MediaQuery.of(parentContext).size.width * 0.25 : height,
       minWidth: width == 0 ? MediaQuery.of(parentContext).size.width * 0.42 : width,
       padding: EdgeInsets.all(AppSize.smallPadding),
       color: isSelected ? AppColor.tertiary : AppColor.primary,
@@ -39,12 +44,31 @@ class PeriodTile extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon),
+          Icon(
+            icon,
+            size: isSmallScreen
+              ? AppSize.smallIcon
+              : AppSize.bigIcon
+          ),
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
-                fontSize: AppSize.heading2
+                fontSize: isSmallScreen
+                  ? AppSize.heading3
+                  : AppSize.heading2
+            ),
+            textAlign: TextAlign.center,
+          ),
+          selected == null
+          ? const SizedBox.shrink()
+          : Text(
+            selected ?? '',
+            style: TextStyle(
+              fontSize: isSmallScreen
+              ? AppSize.paragraph
+              : AppSize.heading2,
+              fontWeight: FontWeight.w200,
             ),
             textAlign: TextAlign.center,
           ),
