@@ -3,6 +3,10 @@ import 'package:money_minder/models/currency.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CurrencyRepositories {
+  CurrencyRepositories._privateConstructor();
+
+  static final CurrencyRepositories instance = CurrencyRepositories._privateConstructor();
+
   DatabaseService dbService = DatabaseService.instance;
 
   Future<List<Currency>> getCurrencies() async {

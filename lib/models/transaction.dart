@@ -1,11 +1,12 @@
+import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 
 class Transaction {
   int id;
   DateTime date;
   String type;
-  int fromAccountId;
-  int? toAccountId;
+  Account fromAccount;
+  Account? toAccount;
   int? toCategoryId;
   double amount;
   Currency currency;
@@ -17,8 +18,8 @@ class Transaction {
     required this.id,
     required this.date,
     required this.type,
-    required this.fromAccountId,
-    required this.toAccountId,
+    required this.fromAccount,
+    required this.toAccount,
     required this.toCategoryId,
     required this.amount,
     required this.currency,
@@ -28,13 +29,13 @@ class Transaction {
   });
 
   /// use this to convert map to transaction
-  factory Transaction.fromMap(Map<String, dynamic> map) {
+  factory Transaction.fromMap(Map<String, dynamic> map, Account fromAccount, Account? toAccount) {
     return Transaction(
       id: map['id'],
       date: DateTime.parse(map['date']),
       type: map['type'],
-      fromAccountId: map['from_account_id'],
-      toAccountId: map['to_account_id'],
+      fromAccount: fromAccount,
+      toAccount: toAccount,
       toCategoryId: map['to_category_id'],
       amount: map['amount'],
       currency: Currency.of(map['currency']),
@@ -61,7 +62,7 @@ class Transaction {
   /// temp
   @override
   String toString() {
-    return date.toString() + ' ' + type + ' ' + amount.toStringAsFixed(2) + ' ' + note;
+    return 'from: ' + fromAccount.name + ' ' + amount.toStringAsFixed(2) + ' ' + (toAccount == null ? 'null' : toAccount!.name);
   }
 
 }

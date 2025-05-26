@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/currency_repositories.dart';
 
 import '../../models/account.dart';
 import '../../models/currency.dart';
-import '../../providers/account_provider.dart';
-import '../../providers/currency_provider.dart';
 import '../../utils/main_icon.dart';
 
 class EditAccountPage extends StatefulWidget {
-  const EditAccountPage({super.key});
+  const EditAccountPage({super.key, required this.account, required this.onReload});
+
+  final Account account;
+  final void Function() onReload;
 
   @override
   State<EditAccountPage> createState() => _EditAccountPageState();
@@ -17,21 +19,18 @@ class EditAccountPage extends StatefulWidget {
 class _EditAccountPageState extends State<EditAccountPage> {
 
   late Account account;
-  bool _includeInTotalBalance = true;
-  Icon _icon = Icon(Icons.abc_rounded);
-  Color _color = Colors.blueGrey;
-  AccountType _accountType = AccountType.accounts;
-  Currency _mainCurrency = Currency.of('sgd');
-  late final TextEditingController _nameController = TextEditingController();
-  late final TextEditingController _descriptionController = TextEditingController();
-  late final TextEditingController _accountBalanceController = TextEditingController(text: '0');
-
-  bool _initialLoad = true;
+  List<Currency> currencies = [];
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _accountBalanceController = TextEditingController(text: '0');
 
 
   @override
   void initState() {
-    context.read<CurrencyProvider>().fetchCurrencies();
+    account = widget.account;
+    _nameController.text = account.name;
+    _descriptionController.text = account.description;
+    _accountBalanceController.text = account.balance.toString();
     super.initState();
   }
 
@@ -43,53 +42,33 @@ class _EditAccountPageState extends State<EditAccountPage> {
     super.dispose();
   }
 
-  void _handleSubmit(Account updatedAccount) async {
+  Future<void> fetchCurrencies() async {
+    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
+    setState(() {
+      currencies = res;
+    });
+  }
+
+  void _handleSubmit() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
       return;
     }
-    try {
-      await context.read<AccountProvider>()
-          .updateAccount(updatedAccount
-          .copyWith(
-        name: _nameController.text,
-        icon: _icon,
-        color: _color,
-        description: _descriptionController.text,
-        isIncludesInTotal: _includeInTotalBalance,
-        type: _accountType,
-        currency: _mainCurrency,
-      ));
-    } catch(e) {
-      print(e);
-    }
-  }
-
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_initialLoad) {
-      Map<String, dynamic> args = ModalRoute
-          .of(context)!
-          .settings
-          .arguments as Map<String, dynamic>;
-      Account accountFromArgs = args['account'];
-      setState(() {
-        account = accountFromArgs;
-        _nameController.text = account.name;
-        _descriptionController.text = account.description;
-        _accountBalanceController.text = account.balance.toString();
-        _icon = account.icon;
-        _color = account.color;
-      });
-      _initialLoad = false;
-    }
+    Account updatedAccount = account.copyWith(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      balance: double.parse(_accountBalanceController.text),
+    );
+    () async {
+      await AccountsRepository.instance.updateAccount(updatedAccount);
+      widget.onReload();
+    }();
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Currency> currencies = context.read<CurrencyProvider>().currencies;
 
     return Scaffold(
       appBar: AppBar(
@@ -104,11 +83,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: TextButton(
-              onPressed: () {
-                _handleSubmit(account);
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
+              onPressed: _handleSubmit,
               style: TextButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
@@ -145,7 +120,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 Spacer(),
                 IconButton(
                     onPressed: () {},
-                    icon: MainIcon(icon: _icon, color: _color, isRound: false,)
+                    icon: MainIcon(icon: account.icon, color: account.color, isRound: false,)
                 ),
               ],
             ),
@@ -165,7 +140,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 leading: Icon(Icons.account_balance_wallet_outlined),
                 // Placeholder icon
                 title: Text('Type'),
-                subtitle: Text(_accountType.name[0].toUpperCase() + _accountType.name.substring(1)),
+                subtitle: Text(account.type.name[0].toUpperCase() + account.type.name.substring(1)),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () => showDialog(
                     context: context,
@@ -178,7 +153,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               subtitle: Text('for regular expenses: cash, card, bank card, etc'),
                               onTap: () {
                                 setState(() {
-                                  _accountType = AccountType.accounts;
+                                  account = account.copyWith(type: AccountType.accounts);
                                 });
                                 Navigator.pop(dialogContext);
                               },
@@ -188,7 +163,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               subtitle: Text('for saving money: savings account, wishes, trip, etc'),
                               onTap: () {
                                 setState(() {
-                                  _accountType = AccountType.savings;
+                                  account = account.copyWith(type: AccountType.savings);
                                 });
                                 Navigator.pop(dialogContext);
                                 // Handle savings account selection
@@ -204,7 +179,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
               leading: Icon(Icons.attach_money),
               // Placeholder icon
               title: Text('Account currency'),
-              subtitle: Text(_mainCurrency.fullName),
+              subtitle: Text(account.currency.fullName),
               trailing: Icon(Icons.chevron_right),
               onTap: () => showDialog(
                   context: context,
@@ -215,7 +190,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                           title: Text(currency.fullName),
                           onTap: () {
                             setState(() {
-                              _mainCurrency = currency;
+                              account = account.copyWith(currency: currency);
                             });
                             Navigator.pop(context);
                           }
@@ -260,7 +235,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         decimal: true,
                       ),
                       decoration: InputDecoration(
-                        prefixText: _mainCurrency.toString(),
+                        prefixText: account.currency.toString(),
                         border: InputBorder.none,
                       ),
                     ),
@@ -271,10 +246,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
             Divider(height: 1, indent: 16, endIndent: 16),
             SwitchListTile(
               title: Text('Include in total balance'),
-              value: _includeInTotalBalance,
+              value: account.isIncludesInTotal,
               onChanged: (bool value) {
                 setState(() {
-                  _includeInTotalBalance = value;
+                  account = account.copyWith(isIncludesInTotal: value);
                 });
               },
               activeColor: Colors.blueAccent, // Color of the switch when on
@@ -307,7 +282,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  context.read<AccountProvider>().deleteAccount(account.id);
+                                  () async {
+                                    await AccountsRepository.instance.deleteAccount(account.id);
+                                    widget.onReload();
+                                  }();
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                   Navigator.pop(context);

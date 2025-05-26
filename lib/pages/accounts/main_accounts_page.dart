@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
-import 'package:money_minder/providers/account_provider.dart';
-import 'package:money_minder/providers/currency_provider.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/account/account_detail_sheet.dart';
 import '../../models/currency.dart';
 import '../../style/app_size.dart';
 
 class AccountsPage extends StatefulWidget {
-  const AccountsPage({super.key});
+  const AccountsPage({super.key, required this.accounts, required this.mainCurrency, required this.onReload});
+
+  final List<Account> accounts;
+  final Currency mainCurrency;
+  final void Function() onReload;
 
   @override
   State<AccountsPage> createState() => _AccountsPageState();
@@ -21,8 +23,8 @@ class _AccountsPageState extends State<AccountsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Account> accounts = context.watch<AccountProvider>().accounts;
-    final Currency mainCurrency = context.watch<CurrencyProvider>().mainCurrency;
+    final List<Account> accounts = widget.accounts;
+    final Currency mainCurrency = widget.mainCurrency;
 
     return DefaultTabController(
       length: 2,
@@ -66,54 +68,64 @@ class _AccountsPageState extends State<AccountsPage> {
                       indent: 10,
                       endIndent: 10,
                     ),
-                    ReorderableListView.builder(
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount: acc.length,
-                      onReorder: (int oldIndex, int newIndex) {
-                        setState(() {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          final Account item = accounts.removeAt(acc.elementAt(oldIndex).position);
-                          accounts.insert(acc.elementAt(newIndex).position, item);
-                          context.read<AccountProvider>().updateAccountPosition(accounts);
-                        });
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        Account account = acc.elementAt(index);
-                        return ListTile(
-                          key: ValueKey(account.id),
-                          leading: MainIcon(icon: account.icon, color: account.color, isRound: false,),
-                          title: Text(
-                            account.name + (account.isMain ? '★' : ''),
-                            style: TextStyle(
-                              fontSize: AppSize.heading2,
-                            ),
-                          ),
-                          subtitle: BalanceText(
-                            balance: account.balance,
-                            currencyName: account.currency.toString(),
-                            showColor: true,
-                          ),
-                          onTap: () => showModalBottomSheet(
-                            context: context,
-                            useSafeArea: true,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
+                    Expanded(
+                      child: ReorderableListView.builder(
+                        physics: ScrollPhysics(),
+                        scrollController: ScrollController(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        itemCount: acc.length,
+                        onReorder: (int oldIndex, int newIndex) async {
+                            if (oldIndex < newIndex) {
+                              newIndex -= 1;
+                            }
+                            setState(() {
+                              final Account item = accounts.removeAt(acc.elementAt(oldIndex).position);
+                              accounts.insert(acc.elementAt(newIndex).position, item);
+                            });
+                            await AccountsRepository.instance.updateAccountPosition(accounts);
+                            widget.onReload();
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          Account account = acc.elementAt(index);
+                          return ListTile(
+                            key: ValueKey(account.id),
+                            leading: MainIcon(icon: account.icon, color: account.color, isRound: false,),
+                            title: Text(
+                              account.name + (account.isMain ? '★' : ''),
+                              style: TextStyle(
+                                fontSize: AppSize.heading2,
                               ),
                             ),
-                            builder: (BuildContext context) {
-                              return SingleChildScrollView(
-                                  child: AccountDetailSheet(account: account),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                            subtitle: BalanceText(
+                              balance: account.balance,
+                              currencyName: account.currency.toString(),
+                              showColor: true,
+                            ),
+                            onTap: () => showModalBottomSheet(
+                              context: context,
+                              useRootNavigator: true,
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                ),
+                              ),
+                              builder: (BuildContext context) {
+                                return SafeArea(
+                                  top: false,
+                                  left: false,
+                                  right: false,
+                                  child: SingleChildScrollView(
+                                      child: AccountDetailSheet(account: account, onReload: widget.onReload),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
             )
