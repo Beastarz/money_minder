@@ -40,7 +40,7 @@ class Account {
       name: map['name'],
       balance: map['balance'],
       icon: Icon(
-        IconData(map['icon'] as int, fontFamily: 'MaterialIcons'),
+        IconData(map['icon'] as int, fontFamily: 'MaterialSymbolsOutlined'),
       ),
       color: Color(map['color'] as int),
       description: map['description'],

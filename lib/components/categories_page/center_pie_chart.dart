@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_size.dart';
 import 'categories_button.dart';
-import 'categories_page_helper.dart';
 
 class CenterPieChart extends StatelessWidget {
 
@@ -13,21 +12,20 @@ class CenterPieChart extends StatelessWidget {
   final bool isExpense;
   final int pieTouchedIndex;
   final void Function(FlTouchEvent, PieTouchResponse?)? touchCallback;
+  final List<CategoryButtonProps> list;
+  final double totalAmount;
 
   const CenterPieChart({
     super.key,
     required this.isExpense,
     required this.pieTouchedIndex,
     required this.touchCallback,
+    required this.list,
+    required this.totalAmount,
   });
 
   @override
   Widget build(BuildContext context) {
-
-    // generate list of categories
-    List<CategoriesButtonProps> list =
-      CategoriesPageHelper.getCategoriesList(isExpense);
-    double totalAmount = CategoriesPageHelper.getTotalAmount(list);
 
     // generate PieData for the pie chart
     List<PieChartSectionData> pieData =

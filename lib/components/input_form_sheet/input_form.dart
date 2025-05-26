@@ -194,9 +194,9 @@ class _InputFormState extends State<InputForm> {
         if (_operators.contains(lastChar)) {
           // Replace the operator if it's already there
           if (buttonText == 'x') {
-            buttonText = '*';
+            buttonText = inputLen == 1 ? '0*' : '*';
           } else if (buttonText == '÷') {
-            buttonText = '/';
+            buttonText = inputLen == 1 ? '0/' : '/';
           }
           _currentAmount =
               _currentAmount.substring(0, _currentAmount.length - 1)
