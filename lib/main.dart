@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
-import 'package:money_minder/pages/accounts/add_accounts_page.dart';
-import 'package:money_minder/pages/accounts/edit_account_page.dart';
+import 'package:money_minder/models/account.dart';
+import 'package:money_minder/models/currency.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
 import 'package:money_minder/pages/main_pages/budget_page.dart';
@@ -9,10 +9,9 @@ import 'package:money_minder/pages/main_pages/categories_page.dart';
 import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
-import 'package:money_minder/providers/account_provider.dart';
-import 'package:money_minder/providers/currency_provider.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
-import 'package:provider/provider.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
 
@@ -29,22 +28,16 @@ class MoneyMinder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AccountProvider>(create: (_) => AccountProvider()),
-        ChangeNotifierProvider<CurrencyProvider>(create: (_) => CurrencyProvider()),
-        // Add more providers here
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppThemes.lightTheme,   // Light theme config
-        darkTheme: AppThemes.darkTheme, // Dark theme config
-        themeMode: _themeMode,         // Current theme mode
-        routes: {
-          '/add_account' : (context) => AddAccountPage(),
-          '/edit_account' : (context) => EditAccountPage(),
-        },
-        home: MoneyMinderFrame(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppThemes.lightTheme,   // Light theme config
+      darkTheme: AppThemes.darkTheme, // Dark theme config
+      themeMode: _themeMode,         // Current theme mode
+      home: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: MoneyMinderFrame()
       ),
     );
   }
@@ -59,41 +52,68 @@ class MoneyMinderFrame extends StatefulWidget {
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
+  List<Account> _accounts = [];
+  Currency _mainCurrency = Currency.of('sgd');
 
   @override
   void initState() {
     super.initState();
-    context.read<CurrencyProvider>().fetchMainCurrency();
-    context.read<AccountProvider>().fetchAccounts();
-
+    _fetchAccounts();
+    _fetchMainCurrency();
   }
 
-  final List<Widget> _pages = [
-    const AccountsPage(),
-    const CategoriesPage(),
-    const TransactionsPage(),
-    const BudgetPage(),
-    const StatisticsPage(),
-  ];
-
-
-  void _onTabChange (int index) {
+  Future<void> _fetchAccounts() async {
+    List<Account> res = await AccountsRepository.instance.getAllAccounts();
     setState(() {
-      _selectedIndex = index;
+      _accounts = res;
+    });
+  }
+
+  Future<void> _fetchMainCurrency() async {
+    Currency res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _mainCurrency = res;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
+
+    final List<Widget> pages = [
+      AccountsPage(
+          accounts: _accounts,
+          mainCurrency: _mainCurrency,
+          onReload: _fetchAccounts,
+      ),
+      const CategoriesPage(),
+      TransactionsPage(
+        filteredAccountIds: filteredAccounts.map((e) => e.id).toList(),
+      ),
+      const BudgetPage(),
+      const StatisticsPage(),
+    ];
+
     return Scaffold(
-      appBar: MMAppBar(selectedIndex: _selectedIndex,),
+      appBar: MMAppBar(
+        selectedIndex: _selectedIndex,
+        filteredAccounts: filteredAccounts,
+        onReload: _fetchAccounts,
+        mainCurrency: _mainCurrency,
+      ),
       drawer: AppbarDrawer(),
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
         selectedIndex: _selectedIndex,
       )
     );
+  }
+
+  void _onTabChange (int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
 

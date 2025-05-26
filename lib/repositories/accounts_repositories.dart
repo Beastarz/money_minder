@@ -1,11 +1,13 @@
-import 'package:money_minder/models/currency.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../db/database.dart';
 import '../models/account.dart';
-import 'currency_repositories.dart';
 
 class AccountsRepository {
+
+  AccountsRepository._privateConstructor();
+
+  static final AccountsRepository instance = AccountsRepository._privateConstructor();
 
   DatabaseService dbService = DatabaseService.instance;
 
@@ -26,6 +28,22 @@ class AccountsRepository {
     final db = await dbService.database;
     Map<String, dynamic> accountMap = account.toMap();
     await db.update('accounts', accountMap, where: 'id = ?', whereArgs: [accountMap['id']]);
+  }
+
+  Future<void> updateSelectedAccount(List<int> selectedAccount) async {
+    final db = await dbService.database;
+    final batch = db.batch();
+    List<Account> res = await instance.getAllAccounts();
+    for (Account account in res) {
+      if (selectedAccount.contains(account.id)) {
+        account = account.copyWith(isIncludesInTotal: true);
+      } else {
+        account = account.copyWith(isIncludesInTotal: false);
+      }
+      batch.update('accounts', account.toMap(), where: 'id = ?',
+          whereArgs: [account.id]);
+    }
+    await batch.commit();
   }
 
   Future<void> updateAccountPosition(List<Account> accounts) async {
@@ -54,21 +72,6 @@ class AccountsRepository {
     await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<double> getSelectedAccountBalance() async {
-    final db = await dbService.database;
-    final result = await db.query('accounts', where: 'includes_in_total = 1');
-    final Currency mainCurrency = await CurrencyRepositories()
-        .getMainCurrency();
-    double total = 0;
-    if (result.isNotEmpty) {
-      for (var row in result) {
-        Account account = Account.fromMap(row);
-        total +=
-            Currency.convert(account.currency, mainCurrency, account.balance);
-      }
-    }
-    return total;
-  }
 
   Future<void> close() async {
     final db = await dbService.database;

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/account_provider.dart';
-import '../../providers/currency_provider.dart';
+import '../../repositories/currency_repositories.dart';
 
 class AddAccountPage extends StatefulWidget {
-  const AddAccountPage({super.key});
+  const AddAccountPage({super.key, required this.onAddAccount});
+
+  final void Function() onAddAccount;
 
   @override
   State<AddAccountPage> createState() => _AddAccountPageState();
@@ -21,6 +22,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   Color color = Colors.blueGrey;
   AccountType accountType = AccountType.accounts;
   Currency mainCurrency = Currency.of('sgd');
+  List<Currency> currencies = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _accountBalanceController = TextEditingController(text: '0');
@@ -28,8 +30,15 @@ class _AddAccountPageState extends State<AddAccountPage> {
 
   @override
   void initState() {
-    context.read<CurrencyProvider>().fetchCurrencies();
     super.initState();
+    fetchCurrencies();
+  }
+
+  Future<void> fetchCurrencies() async {
+    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
+    setState(() {
+      currencies = res;
+    });
   }
 
   @override
@@ -56,7 +65,8 @@ class _AddAccountPageState extends State<AddAccountPage> {
         type: accountType,
         currency: mainCurrency,
       );
-      context.read<AccountProvider>().addAccount(accountData);
+      await AccountsRepository.instance.createAccount(accountData);
+      widget.onAddAccount();
       Navigator.pop(context);
     } catch(e) {
       print(e);
@@ -65,7 +75,6 @@ class _AddAccountPageState extends State<AddAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Currency> currencies = context.read<CurrencyProvider>().currencies;
 
     return Scaffold(
       appBar: AppBar(
