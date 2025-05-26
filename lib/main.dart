@@ -4,10 +4,10 @@ import 'package:money_minder/pages/accounts/add_accounts_page.dart';
 import 'package:money_minder/pages/accounts/edit_account_page.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
-import 'package:money_minder/pages/budget_page.dart';
-import 'package:money_minder/pages/categories_page.dart';
-import 'package:money_minder/pages/statistics_page.dart';
-import 'package:money_minder/pages/transactions_page.dart';
+import 'package:money_minder/pages/main_pages/budget_page.dart';
+import 'package:money_minder/pages/main_pages/categories_page.dart';
+import 'package:money_minder/pages/main_pages/statistics_page.dart';
+import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/providers/account_provider.dart';
 import 'package:money_minder/providers/currency_provider.dart';
@@ -58,7 +58,15 @@ class MoneyMinderFrame extends StatefulWidget {
 }
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
+  int _selectedIndex = 2;
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<CurrencyProvider>().fetchMainCurrency();
+    context.read<AccountProvider>().fetchAccounts();
+
+  }
 
   final List<Widget> _pages = [
     const AccountsPage(),
@@ -67,7 +75,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     const BudgetPage(),
     const StatisticsPage(),
   ];
-  int _selectedIndex = 0;
+
 
   void _onTabChange (int index) {
     setState(() {
@@ -83,6 +91,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
+        selectedIndex: _selectedIndex,
       )
     );
   }

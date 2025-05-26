@@ -96,6 +96,13 @@ class DatabaseService {
         ''');
 
     await db.execute('''
+          CREATE TABLE date_filter(
+            type TEXT NOT NULL,
+            duration INTEGER -- Duration in days
+          )
+        ''');
+
+    await db.execute('''
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
       ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
       ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
@@ -129,23 +136,29 @@ class DatabaseService {
     await db.execute('''
       INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, amount2, currency2, note) VALUES
       -- Expense: Groceries from Main Wallet
-      ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', NULL, NULL, 'Weekly groceries'),
+      ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Restaurant from Credit Card
-      ('2025-05-14', 'expense', 3, NULL, 1, 30.50, 'SGD', NULL, NULL, 'Dinner with friends'),
+      ('2025-05-14', 'expense', 3, NULL, 1, 30.50, 'SGD', 30.50, 'SGD', 'Dinner with friends'),
       -- Income: Monthly Salary to Savings Account
-      ('2025-05-15', 'income', NULL, 2, 3, 3500.00, 'SGD', NULL, NULL, 'May salary'),
+      ('2025-05-15', 'income', 2, NULL, 3, 3500.00, 'SGD', 3500, 'SGD', 'May salary'),
       -- Transfer: From Main Wallet to Savings Account
-      ('2025-05-15', 'transfer', 1, 2, NULL, 500.00, 'SGD', NULL, NULL, 'Transfer to savings'),
+      ('2025-05-15', 'transfer', 1, 2, NULL, 500.00, 'SGD', 500, 'SGD', 'Transfer to savings'),
       -- Expense: Public Transport from Main Wallet
-      ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', NULL, NULL, 'Bus fare'),
+      ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', 3.8, 'SGD', 'Bus fare'),
       -- Expense: Movie from Main Wallet (using Leisure category)
-      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', NULL, NULL, 'Movie ticket');
+      ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'SGD', 10, 'MYR', 'Go jb'),
+      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 15, 'SGD', 'Movie ticket');
     ''');
 
     await db.execute('''
       INSERT INTO currencies (name, is_main) VALUES
       ('sgd', 1),
       ('myr', 0);
+    ''');
+
+    await db.execute('''
+      INSERT INTO date_filter (type) VALUES
+      ('month');
     ''');
   }
 }
