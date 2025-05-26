@@ -8,7 +8,9 @@ import '../../repositories/date_filter_repositories.dart';
 
 /// page that shows the transactions
 class TransactionsPage extends StatefulWidget {
-  const TransactionsPage({super.key});
+  const TransactionsPage({super.key, required this.filteredAccountIds});
+
+  final List<int> filteredAccountIds;
 
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();
@@ -59,9 +61,12 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    List<Transaction> transactionsByAccount = transactions.where((t) => widget.filteredAccountIds.contains(t.fromAccount.id)
+        || widget.filteredAccountIds.contains(t.toAccount?.id)).toList();
+
 
     /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateFilter.startDates);
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactionsByAccount, dateFilter.startDates);
 
 
     return Scaffold(

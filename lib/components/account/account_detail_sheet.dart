@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/account/account_detail_function_tile.dart';
 import 'package:money_minder/models/account.dart';
-import 'package:money_minder/providers/account_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:money_minder/pages/accounts/edit_account_page.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -11,8 +11,9 @@ import '../../utils/main_icon.dart';
 
 class AccountDetailSheet extends StatefulWidget {
   final Account account;
+  final void Function() onReload;
 
-  const AccountDetailSheet({super.key, required this.account});
+  const AccountDetailSheet({super.key, required this.account, required this.onReload});
 
   @override
   State<AccountDetailSheet> createState() => _AccountDetailSheetState();
@@ -118,7 +119,15 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     label: 'Edit',
                     icon: Icon(Icons.edit_outlined, color: Colors.deepOrangeAccent,),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/edit_account', arguments: {'account': widget.account});
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditAccountPage(
+                                  account: widget.account,
+                                  onReload: widget.onReload
+                              )
+                          )
+                      );
                     }
                 ),
                 isMain ? Container()
@@ -142,7 +151,10 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    context.read<AccountProvider>().deleteAccount(widget.account.id);
+                                    () async {
+                                      await AccountsRepository.instance.deleteAccount(widget.account.id);
+                                      widget.onReload();
+                                    }();
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   },
@@ -161,7 +173,10 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     icon: Icon(isMain ? Icons.star : Icons.star_outline, color: Colors.amber,),
                     onPressed: () {
                       if(!isMain) {
-                        context.read<AccountProvider>().updateMainAccount(widget.account);
+                        () async {
+                          await AccountsRepository.instance.updateMainAccount(widget.account);
+                          widget.onReload();
+                        }();
                         setState(() {
                           isMain = true;
                         });

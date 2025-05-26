@@ -1,44 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
-import 'package:money_minder/providers/account_provider.dart';
+import 'package:money_minder/pages/accounts/add_accounts_page.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/balance_text.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/currency_provider.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import 'accounts_filter.dart';
 
-class MMAppBar extends StatefulWidget implements PreferredSizeWidget{
-  const MMAppBar( {super.key, required this.selectedIndex});
+class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
+  const MMAppBar( {super.key,
+    required this.selectedIndex,
+    required this.filteredAccounts,
+    required this.mainCurrency,
+    required this.onReload,
+  });
 
   final int selectedIndex;
-
-  @override
-  State<MMAppBar> createState() => _MMAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _MMAppBarState extends State<MMAppBar> {
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<AccountProvider>().fetchSelectedAccountBalance();
-    context.read<AccountProvider>().fetchAccounts();
-    context.read<CurrencyProvider>().fetchMainCurrency();
-  }
+  final List<Account> filteredAccounts;
+  final void Function() onReload;
+  final Currency mainCurrency;
 
   @override
   Widget build(BuildContext context) {
-    final balance = context.select<AccountProvider, double>((provider) => provider.selectedAccountBalance);
-    final mainCurrency = context.select<CurrencyProvider, Currency>((provider) => provider.mainCurrency);
-
-    List<int> selectedAccounts = context.select<AccountProvider, List<int>>((provider) {
-      return provider.accounts.where((account) => account.isIncludesInTotal).map((account) => account.id).toList();
-    });
+    List<int> selectedAccountId = filteredAccounts.map((account) => account.id).toList();
 
     final functionButtons = <IconButton>[
       IconButton(
@@ -47,7 +33,10 @@ class _MMAppBarState extends State<MMAppBar> {
           color: Colors.grey[800],
         ),
         onPressed: () {
-          Navigator.pushNamed(context, '/add_account');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddAccountPage(onAddAccount: onReload)),
+          );
         },
       ),
       IconButton(
@@ -99,7 +88,7 @@ class _MMAppBarState extends State<MMAppBar> {
               )
             ),
             BalanceText(
-              balance: balance,
+              balance: getAccountBalance(filteredAccounts, mainCurrency),
               currencyName: mainCurrency.toString(),
               mainAxisAlignment: MainAxisAlignment.center,
             ),
@@ -137,8 +126,11 @@ class _MMAppBarState extends State<MMAppBar> {
                         ),
                         IconButton(
                           onPressed: () {
-                            context.read<AccountProvider>().updateSelectedAccount(selectedAccounts);
-                            selectedAccounts = [];
+                            () async {
+                              await AccountsRepository.instance
+                                  .updateSelectedAccount(selectedAccountId);
+                              onReload();
+                            }();
                             Navigator.pop(context);
                           },
                           color: AppColor.secondary,
@@ -163,11 +155,11 @@ class _MMAppBarState extends State<MMAppBar> {
                   ),
                   Expanded(
                     child: DraggableScrollableSheet(
-                      expand: true,
+                      expand: false,
                       initialChildSize: 1,
                       minChildSize: 0.2,
                       builder: (BuildContext context, ScrollController scrollController) {
-                        return AccountsFilter(selectedAccounts: selectedAccounts);
+                        return SafeArea(child: AccountsFilter(selectedAccounts: selectedAccountId,));
                       }
                     ),
                   ),
@@ -179,7 +171,7 @@ class _MMAppBarState extends State<MMAppBar> {
       ),
       centerTitle: true,
       actions: [
-        functionButtons[widget.selectedIndex],
+        functionButtons[selectedIndex],
         IconButton(
           icon: Icon(
             Icons.public,
@@ -192,4 +184,16 @@ class _MMAppBarState extends State<MMAppBar> {
       ]
     );
   }
+
+  double getAccountBalance(List<Account> accounts, Currency mainCurrency) {
+    double total = 0;
+    for (var account in accounts) {
+      total +=
+          Currency.convert(account.currency, mainCurrency, account.balance);
+    }
+    return total;
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

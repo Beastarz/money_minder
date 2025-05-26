@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
-import 'package:provider/provider.dart';
+import 'package:money_minder/repositories/accounts_repositories.dart';
 
-import '../../providers/account_provider.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
@@ -16,9 +15,19 @@ class AccountsFilter extends StatefulWidget {
 }
 
 class _AccountsFilterState extends State<AccountsFilter> {
+  List<Account> accounts = [];
+
   @override
   void initState() {
+    fetchAccounts();
     super.initState();
+  }
+
+  Future<void> fetchAccounts() async {
+    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    setState(() {
+      accounts = res;
+    });
   }
 
   void _handleSelect(int accountId, bool isSelected) {
@@ -32,8 +41,12 @@ class _AccountsFilterState extends State<AccountsFilter> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final accounts = context.read<AccountProvider>().accounts;
 
     List<AccountType> accountTypes = AccountType.values;
     return ListView(
