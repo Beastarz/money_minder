@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../style/app_color.dart';
-import 'calculator_button.dart';
+import 'input_form_button.dart';
 
-class CalculatorHelper {
+class InputFormHelper {
 
-  // convert the button texts to CalculatorButtonProps, every button take 1
+  // convert the button texts to InputFormButtonProps, every button take 1
   // space by default
   // buttonTexts: the list of button texts
-  // return: the list of CalculatorButtonProps
-  static List<CalculatorButtonProps> convertToCalButProps(
+  // return: the list of InputFormButtonProps
+  static List<InputFormButtonProps> convertToCalButProps(
       List<String> buttonTexts, Map<String, IconData>? iconMap) {
     iconMap ??= {};
-    List<CalculatorButtonProps> buttonProps = [];
+    List<InputFormButtonProps> buttonProps = [];
     for (int i = 0; i < buttonTexts.length; i++) {
       if (iconMap.containsKey(buttonTexts[i])) {
-        buttonProps.add(CalculatorButtonProps(
+        buttonProps.add(InputFormButtonProps(
           text: buttonTexts[i],
           icon: iconMap[buttonTexts[i]],
           backgroundColor: AppColor.primary,
@@ -23,7 +23,7 @@ class CalculatorHelper {
         ));
         continue;
       }
-      buttonProps.add(CalculatorButtonProps(
+      buttonProps.add(InputFormButtonProps(
         text: buttonTexts[i],
         backgroundColor: AppColor.primary,
         textColor: AppColor.darkText,

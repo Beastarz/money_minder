@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
-class CalculatorButtonProps {
+class InputFormButtonProps {
   final String text; // the text to display on the button
   final IconData? icon; // the icon to display on the button
   final Color backgroundColor; // the background color of the button
   final Color textColor; // the text color of the button
 
-  CalculatorButtonProps({
+  InputFormButtonProps({
     required this.text,
     this.icon,
     required this.backgroundColor,
@@ -17,14 +17,14 @@ class CalculatorButtonProps {
   });
 }
 
-class CalculatorButton extends StatelessWidget {
+class InputFormButton extends StatelessWidget {
 
   /// variable
-  final CalculatorButtonProps props;
+  final InputFormButtonProps props;
   final VoidCallback onPressed;// the function to call when the button is pressed
 
 
-  const CalculatorButton({
+  const InputFormButton({
     super.key,
     required this.props,
     required this.onPressed,

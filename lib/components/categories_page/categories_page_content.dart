@@ -1,14 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/calculator_sheet/calculator_sheet.dart';
-import 'package:money_minder/components/calculator_sheet/top_card.dart';
+import 'package:money_minder/components/input_form_sheet/input_form_sheet.dart';
+import 'package:money_minder/components/input_form_sheet/top_card.dart';
 import 'package:money_minder/components/categories_page/categories_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
 import '../../style/app_size.dart';
-import '../calculator_sheet/calculator.dart';
-import '../calculator_sheet/calculator_helper.dart';
+import '../input_form_sheet/input_form.dart';
+import '../input_form_sheet/input_form_helper.dart';
 import 'categories_page_helper.dart';
 import 'categories_sheet.dart';
 
@@ -52,10 +52,10 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
         final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
         double titleSize = (isSmallScreen ? AppSize.heading2 : AppSize.heading1) * 1.5;
         double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
-        return CalculatorSheet(
+        return InputFormSheet(
           // Define the button layout as seen in the image
-          calculator: Calculator(
-            buttonProps: CalculatorHelper.convertToCalButProps([
+          inputForm: InputForm(
+            buttonProps: InputFormHelper.convertToCalButProps([
               '÷', '7', '8', '9', 'C',
               'x', '4', '5', '6', '<',
               '-', '1', '2', '3', 'calendar',

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import 'calculator.dart';
+import 'input_form.dart';
 
-class CalculatorSheet extends StatelessWidget {
+class InputFormSheet extends StatelessWidget {
 
   final Widget topContent; // the widget to display at the top of the sheet
-  final Calculator calculator; // the calculator widget
+  final InputForm inputForm; // the input form widget
 
-  const CalculatorSheet({
+  const InputFormSheet({
     super.key,
     required this.topContent,
-    required this.calculator,
+    required this.inputForm,
   });
 
   @override
@@ -33,7 +33,7 @@ class CalculatorSheet extends StatelessWidget {
           topContent,
           Container(
             padding: EdgeInsets.all(AppSize.bigPadding),
-            child: calculator,
+            child: inputForm,
           )
         ],
       ),
