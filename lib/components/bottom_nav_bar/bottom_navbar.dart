@@ -8,10 +8,12 @@ class BottomNavbar extends StatelessWidget {
 
   /// [onTabChange] is a callback function that will be called when the tab is changed
   final void Function(int)? onTabChange;
+  final int selectedIndex;
 
   const BottomNavbar({
     super.key,
     required this.onTabChange,
+    required this.selectedIndex,
   });
 
   @override
@@ -20,6 +22,7 @@ class BottomNavbar extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       child: GNav(
           onTabChange: onTabChange,
+          selectedIndex: selectedIndex,
           color: Colors.grey[400],
           activeColor: AppColor.darkText,
           tabBackgroundColor: AppColor.secondary,

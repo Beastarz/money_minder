@@ -16,7 +16,7 @@ class CategoriesPageContent extends StatefulWidget {
   const CategoriesPageContent({super.key});
 
   @override
-  _CategoriesPageContentState createState() => _CategoriesPageContentState();
+  State<CategoriesPageContent>createState() => _CategoriesPageContentState();
 }
 
 class _CategoriesPageContentState extends State<CategoriesPageContent> {

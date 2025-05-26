@@ -36,7 +36,7 @@ class Calculator extends StatefulWidget {
   });
 
   @override
-  _CalculatorState createState() => _CalculatorState();
+  State<Calculator> createState() => _CalculatorState();
 }
 
 class _CalculatorState extends State<Calculator> {
@@ -147,9 +147,9 @@ class _CalculatorState extends State<Calculator> {
                         label: 'Select day',
                         icon: Icons.date_range,
                         onPressed: () {
-                          CalendarSelectorHelper.selectDate(context);
+                          CalendarSelectorHelper.selectDate(context, (date) => {});
                         },
-                        width: MediaQuery.of(context).size.width * 0.84 + 12
+                        width: MediaQuery.of(context).size.width * 0.84 + 12,
                     ),
 
                     /// select yesterday

@@ -13,6 +13,7 @@ class PeriodTile extends StatelessWidget {
   final void Function()? onPressed;
   final double height;
   final double width;
+  final bool isSelected;
   final String? selected;
 
   const PeriodTile({
@@ -21,9 +22,10 @@ class PeriodTile extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onPressed,
-    this.selected,
     this.height = 0,
     this.width = 0,
+    this.isSelected = false,
+    this.selected,
   });
 
   @override
@@ -36,7 +38,7 @@ class PeriodTile extends StatelessWidget {
       height: height == 0 ? MediaQuery.of(parentContext).size.width * 0.25 : height,
       minWidth: width == 0 ? MediaQuery.of(parentContext).size.width * 0.42 : width,
       padding: EdgeInsets.all(AppSize.smallPadding),
-      color: AppColor.primary,
+      color: isSelected ? AppColor.tertiary : AppColor.primary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSize.borderRadius),
       ),
@@ -69,7 +71,7 @@ class PeriodTile extends StatelessWidget {
               fontWeight: FontWeight.w200,
             ),
             textAlign: TextAlign.center,
-          )
+          ),
         ],
       ),
     );

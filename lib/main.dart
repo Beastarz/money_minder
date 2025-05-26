@@ -58,7 +58,15 @@ class MoneyMinderFrame extends StatefulWidget {
 }
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
+  int _selectedIndex = 2;
 
+  @override
+  void initState() {
+    super.initState();
+    context.read<CurrencyProvider>().fetchMainCurrency();
+    context.read<AccountProvider>().fetchAccounts();
+
+  }
 
   final List<Widget> _pages = [
     const AccountsPage(),
@@ -67,7 +75,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     const BudgetPage(),
     const StatisticsPage(),
   ];
-  int _selectedIndex = 0;
+
 
   void _onTabChange (int index) {
     setState(() {
@@ -83,6 +91,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
+        selectedIndex: _selectedIndex,
       )
     );
   }

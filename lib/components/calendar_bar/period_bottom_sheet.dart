@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import '../../style/app_size.dart';
 
 /// bottom sheet that will appear when the user taps on the calendar icon
-class PeriodBottomSheet extends StatelessWidget {
-
-  /// variables
-  // title of the bottom sheet
-  final String title;
-  // widgets that will be displayed in the bottom sheet
+class PeriodBottomSheet extends StatefulWidget {
   final List<Widget> children;
+  final String title;
 
-  const PeriodBottomSheet({
-    super.key,
-    required this.title,
-    required this.children,
-  });
+  const PeriodBottomSheet({super.key, required this.children, required this.title});
+
+  @override
+  State<PeriodBottomSheet> createState() => _PeriodBottomSheetState();
+}
+
+class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,7 @@ class PeriodBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Period',
+            widget.title,
             style: TextStyle(
                 fontSize: AppSize.heading1,
                 fontWeight: FontWeight.bold),
@@ -35,7 +33,7 @@ class PeriodBottomSheet extends StatelessWidget {
             alignment: WrapAlignment.center,
             spacing: 12,
             runSpacing: 12,
-            children: children
+            children: widget.children,
           ),
         ],
       ),
