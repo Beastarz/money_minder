@@ -105,6 +105,7 @@ class _AccountsPageState extends State<AccountsPage> {
                             onTap: () => showModalBottomSheet(
                               context: context,
                               useRootNavigator: true,
+                              isScrollControlled: true,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(16),

@@ -49,7 +49,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
     });
   }
 
-  void _handleSubmit() async {
+  void _handleSubmit() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
       return;
@@ -59,8 +59,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
       description: _descriptionController.text,
       balance: double.parse(_accountBalanceController.text),
     );
-    await AccountsRepository.instance.updateAccount(updatedAccount);
-    widget.onReload();
+    () async {
+      await AccountsRepository.instance.updateAccount(updatedAccount);
+      widget.onReload();
+    }();
     Navigator.pop(context);
     Navigator.pop(context);
   }

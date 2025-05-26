@@ -49,7 +49,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
     super.dispose();
   }
 
-  void _handleSubmit() async {
+  void _handleSubmit() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
       return;
@@ -65,8 +65,10 @@ class _AddAccountPageState extends State<AddAccountPage> {
         type: accountType,
         currency: mainCurrency,
       );
-      await AccountsRepository.instance.createAccount(accountData);
-      widget.onAddAccount();
+      () async {
+        await AccountsRepository.instance.createAccount(accountData);
+        widget.onAddAccount();
+      }();
       Navigator.pop(context);
     } catch(e) {
       print(e);

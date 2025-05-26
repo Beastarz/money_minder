@@ -125,9 +125,12 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
                           ),
                         ),
                         IconButton(
-                          onPressed: () async {
-                            await AccountsRepository.instance.updateSelectedAccount(selectedAccountId);
-                            onReload();
+                          onPressed: () {
+                            () async {
+                              await AccountsRepository.instance
+                                  .updateSelectedAccount(selectedAccountId);
+                              onReload();
+                            }();
                             Navigator.pop(context);
                           },
                           color: AppColor.secondary,
@@ -152,11 +155,11 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
                   ),
                   Expanded(
                     child: DraggableScrollableSheet(
-                      expand: true,
+                      expand: false,
                       initialChildSize: 1,
                       minChildSize: 0.2,
                       builder: (BuildContext context, ScrollController scrollController) {
-                        return AccountsFilter(selectedAccounts: selectedAccountId,);
+                        return SafeArea(child: AccountsFilter(selectedAccounts: selectedAccountId,));
                       }
                     ),
                   ),
