@@ -30,29 +30,23 @@ class CategoriesSheet extends StatelessWidget {
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
 
-    return Expanded( // Use Expanded to make the grid take up remaining space
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(AppSize.smallPadding),
-          child: GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 0.8,
-              crossAxisCount: isSmallScreen ? 3 : 4,
-              crossAxisSpacing: 4.0,
-            ),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              categories[index].pieTouchedIndex = pieTouchedIndex;
-              return CategoriesButton(
-                props: categories[index],
-                categoriesButtonOnPressed: categoriesButtonOnPressed,
-              );
-            },
-          ),
-        ),
+    return GridView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      padding: EdgeInsets.all(AppSize.smallPadding),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        childAspectRatio: 0.8,
+        crossAxisCount: isSmallScreen ? 3 : 4,
+        crossAxisSpacing: 4.0,
       ),
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        categories[index].pieTouchedIndex = pieTouchedIndex;
+        return CategoriesButton(
+          props: categories[index],
+          categoriesButtonOnPressed: categoriesButtonOnPressed,
+        );
+      },
     );
   }
 }
