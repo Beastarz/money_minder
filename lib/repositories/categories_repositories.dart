@@ -5,7 +5,19 @@ class CategoriesRepositories {
 
   DatabaseService dbService = DatabaseService.instance;
 
-  Future<List<Category>> getAllCategories(bool isExpense) async {
+  CategoriesRepositories._privateConstructor();
+
+  static final CategoriesRepositories instance = CategoriesRepositories._privateConstructor();
+
+  Future<List<Category>> getAllCategories() async {
+    final db = await dbService.database;
+    List<Map<String, dynamic>> result = await db.query(
+        'categories',
+        orderBy: 'position ASC');
+    return result.map((row) => Category.fromMap(row)).toList();
+  }
+
+  Future<List<Category>> getCategoriesByType(bool isExpense) async {
     final db = await dbService.database;
     List<Map<String, dynamic>> result = await db.query(
         'categories',

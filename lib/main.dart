@@ -11,9 +11,11 @@ import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
+import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'models/transaction.dart';
 
 
 void main() {
@@ -53,6 +55,7 @@ class MoneyMinderFrame extends StatefulWidget {
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
   List<Account> _accounts = [];
+  List<Transaction> _transactions = [];
   Currency _mainCurrency = Currency.of('sgd');
 
   @override
@@ -60,6 +63,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     super.initState();
     _fetchAccounts();
     _fetchMainCurrency();
+    _fetchTransactions();
   }
 
   Future<void> _fetchAccounts() async {
@@ -76,6 +80,13 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
+  Future<void> _fetchTransactions() async {
+    List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
+    setState(() {
+      _transactions = res;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
@@ -89,6 +100,9 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       const CategoriesPage(),
       TransactionsPage(
         filteredAccountIds: filteredAccounts.map((e) => e.id).toList(),
+        filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),
+        mainCurrency: _mainCurrency,
+        transactions: _transactions,
       ),
       const BudgetPage(),
       const StatisticsPage(),
