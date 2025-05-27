@@ -48,10 +48,12 @@ class DatabaseService {
     await db.execute('''
           CREATE TABLE categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            label TEXT NOT NULL,
+            position INTEGER, -- the sequence of the category
             icon INTEGER, -- Storing icon's codePoint as TEXT
             color INTEGER, -- Storing color value (e.g., hex string)
-            budget REAL DEFAULT 0.0
+            is_expense INTEGER NOT NULL DEFAULT 0, -- Using INTEGER for boolean (0 for false, 1 for true)
+            expected_amount REAL DEFAULT 0.0
           )
         ''');
 
@@ -106,30 +108,30 @@ class DatabaseService {
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
       ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
       ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
-      ('Savings Account', 0xe53b, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
+      ('Savings Account', 0xe84f, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
       ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'accounts', 'sgd', 3), -- credit_card, Red
-      ('Investment Fund', 0xeb4f, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd', 4); -- trending_up, Orange (Exclude from total)
+      ('Investment Fund', 0xe8e5, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd', 4); -- trending_up, Orange (Exclude from total)
     ''');
 
 
     await db.execute('''
-      INSERT INTO categories (name, icon, color, budget) VALUES
-      ('Food', 0xe561, 0xFFFF5722, 300.00), -- restaurant, Deep Orange
-      ('Transport', 0xf054f, 0xFF673AB7, 150.00), -- directions_bus, Deep Purple
-      ('Salary', 0xe88f, 0xFF8BC34A, 0.00), -- attach_money, Light Green (Income category)
-      ('Leisure', 0xe3e8, 0xFF00BCD4, 200.00); -- gamepad, Cyan
+      INSERT INTO categories (label, position, icon, color, is_expense, expected_amount) VALUES
+      ('Food', 0, 0xe56c, 0xFFFF5722, 1, 300.00), -- restaurant, Deep Orange
+      ('Transport', 1, 0xe530, 0xFF673AB7, 1, 150.00), -- directions_bus, Deep Purple
+      ('Salary', 0, 0xe227, 0xFF8BC34A, 0, 0.00), -- attach_money, Light Green (Income category)
+      ('Leisure', 2,  0xe30f, 0xFF00BCD4, 1, 200.00); -- gamepad, Cyan
     ''');
 
 
     await db.execute('''
       INSERT INTO sub_categories (name, icon, main_category_id) VALUES
-      ('Groceries', 0xe567, 1), -- shopping_cart (Belongs to Food)
-      ('Restaurants', 0xe56c, 1), -- restaurant_menu (Belongs to Food)
-      ('Public Transport', 0xe53d, 2), -- directions_transit (Belongs to Transport)
-      ('Fuel', 0xe553, 2), -- local_gas_station (Belongs to Transport)
-      ('Monthly Salary', 0xe88f, 3), -- attach_money (Belongs to Salary) - Using same icon as main category for simplicity
-      ('Movies', 0xe40a, 4), -- movie (Belongs to Leisure)
-      ('Hobbies', 0xe3f4, 4); -- games (Belongs to Leisure)
+      ('Groceries', 0xe8cc, 1), -- shopping_cart (Belongs to Food)
+      ('Restaurants', 0xe561, 1), -- restaurant_menu (Belongs to Food)
+      ('Public Transport', 0xe535, 2), -- directions_transit (Belongs to Transport)
+      ('Fuel', 0xe546, 2), -- local_gas_station (Belongs to Transport)
+      ('Monthly Salary', 0xe227, 3), -- attach_money (Belongs to Salary) - Using same icon as main category for simplicity
+      ('Movies', 0xe02c, 4), -- movie (Belongs to Leisure)
+      ('Hobbies', 0xe021, 4); -- games (Belongs to Leisure)
     ''');
 
 

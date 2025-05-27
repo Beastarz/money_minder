@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/categories_page/categories_page_helper.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -12,17 +11,15 @@ class CenterButton extends StatelessWidget {
   final void Function()? centerButtonOnPressed;
   // track if currently showing expense or income
   final bool isExpense;
+  final double totalExpense;
+  final double totalIncome;
 
-  // default values for testing
-  final double totalIncome = CategoriesPageHelper.getTotalAmount(
-      CategoriesPageHelper.getCategoriesList(false));
-  final double totalExpense = CategoriesPageHelper.getTotalAmount(
-      CategoriesPageHelper.getCategoriesList(true));
-
-  CenterButton({
+  const CenterButton({
     super.key,
     required this.centerButtonOnPressed,
     required this.isExpense,
+    required this.totalExpense,
+    required this.totalIncome,
   });
 
   @override
@@ -49,8 +46,6 @@ class CenterButton extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              // You can add a pie chart icon here using an Image.asset or SvgPicture.
-              // If you have a pie chart SVG, use SvgPicture.
 
 
               // in expense mode, showing the total expense, then total income

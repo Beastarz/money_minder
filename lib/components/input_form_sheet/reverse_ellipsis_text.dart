@@ -24,7 +24,6 @@ class ReverseEllipsisText extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         // Create a TextPainter to measure the text
-        print(text);
         final TextPainter textPainter = TextPainter(
           text: TextSpan(text: text, style: effectiveTextStyle),
           maxLines: maxLines,
@@ -69,7 +68,6 @@ class ReverseEllipsisText extends StatelessWidget {
             displayString = '...'; // Fallback if no portion from end fits
           }
 
-          print(text + '\n' + displayString);
           return Text(
             displayString,
             style: effectiveTextStyle,
@@ -78,7 +76,6 @@ class ReverseEllipsisText extends StatelessWidget {
           );
         } else {
           // No overflow, display original text
-          print(text);
           return Text(
             text,
             style: effectiveTextStyle,

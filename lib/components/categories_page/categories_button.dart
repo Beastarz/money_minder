@@ -2,26 +2,25 @@ import 'dart:async';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/categories_page/categories_page_helper.dart';
 
 import '../../style/app_color.dart';
 
-class CategoriesButtonProps {
+class CategoryButtonProps {
 
   /// variable
   final int index; // index of the button in the list, affecting the sequence
   final String label; // button label
-  final String iconPath; // path to the icon
+  final Icon icon; // icon of the categories
   final Color color; // button color
   final double actualAmount; // expense / income
   final double expectedAmount; // budget / expected income
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
 
-  CategoriesButtonProps({
+  CategoryButtonProps({
     required this.index,
     required this.label,
-    required this.iconPath,
+    required this.icon,
     required this.color,
     required this.actualAmount,
     required this.expectedAmount,
@@ -30,12 +29,14 @@ class CategoriesButtonProps {
   });
 }
 
-class AddCategoriesButtonProps extends CategoriesButtonProps {
+class AddCategoriesButtonProps extends CategoryButtonProps {
   AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
       : super(
     index: index,
     label: 'Add',
-    iconPath: 'lib/assets/icons/add.svg',
+    icon: Icon(
+      IconData(0xe145, fontFamily: "MaterialSymbolsOutlined")
+    ),
     color: AppColor.secondary,
     actualAmount: 0,
     expectedAmount: 0,
@@ -48,9 +49,9 @@ class CategoriesButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
-  final CategoriesButtonProps props;
+  final CategoryButtonProps props;
   // callback function when the categories button is pressed
-  final void Function(int) categoriesButtonOnPressed;
+  final void Function(CategoryButtonProps) categoriesButtonOnPressed;
 
   const CategoriesButton({
     super.key,
@@ -116,7 +117,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
 
   @override
   Widget build(BuildContext context) {
-    CategoriesButtonProps props = widget.props;
+    CategoryButtonProps props = widget.props;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
     double fraction = props.expectedAmount == 0
@@ -131,9 +132,6 @@ class _CategoriesButtonState extends State<CategoriesButton>
     if (props.pieTouchedIndex == props.index) {
       _triggerPop();
     }
-
-    // Use SvgPicture.asset for SVG icons
-    Widget buttonIcon = CategoriesPageHelper.generateButtonIcon(props.iconPath);
 
     // button background color gradient reflect the portion of
     // expense over budget
@@ -167,12 +165,12 @@ class _CategoriesButtonState extends State<CategoriesButton>
             if (props.isAddButton) {
               return;
             }
-            widget.categoriesButtonOnPressed(props.index);
+            widget.categoriesButtonOnPressed(props);
           },
           customBorder: const CircleBorder(),
           splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
           highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()),
-          child: Center(child: buttonIcon),
+          child: Center(child: props.icon),
         ),
       ),
     );

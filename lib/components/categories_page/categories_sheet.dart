@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/categories_page/categories_page_helper.dart';
 
 import '../../style/app_size.dart';
 import 'categories_button.dart';
@@ -12,13 +11,16 @@ class CategoriesSheet extends StatelessWidget {
   // the index of the pie data that is currently selected
   final int pieTouchedIndex;
   // callback function when the categories button is pressed
-  final void Function(int) categoriesButtonOnPressed;
+  final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  // the list of categories to be shown
+  final List<CategoryButtonProps> categories;
 
   const CategoriesSheet({
     super.key,
     required this.isExpense,
     required this.pieTouchedIndex,
     required this.categoriesButtonOnPressed,
+    required this.categories,
   });
 
   @override
@@ -26,9 +28,6 @@ class CategoriesSheet extends StatelessWidget {
 
     // check if screen is small
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    // generate list of categories
-    final List<CategoriesButtonProps> categories =
-      CategoriesPageHelper.getCategoriesList(isExpense);
 
 
     return Expanded( // Use Expanded to make the grid take up remaining space

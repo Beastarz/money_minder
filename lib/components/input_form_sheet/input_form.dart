@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/calculator_sheet/calculator_button.dart';
-import 'package:money_minder/components/calculator_sheet/reverse_ellipsis_text.dart';
+import 'package:money_minder/components/input_form_sheet/input_form_button.dart';
+import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/style/app_color.dart';
 
@@ -12,41 +12,36 @@ import '../calendar_bar/calendar_selector_helper.dart';
 import '../calendar_bar/period_tile.dart';
 
 
-/// to use CalculatorScreen, you need to pass in a list of CalculatorButtonProps
+/// to use InputForm, you need to pass in a list of InputFormButtonProps
 /// List<String> buttonTexts = ['1', '2', '3', ....]
 /// backspace is '<', calendar is 'calendar'
 /// check is '✓' (!!!!! don't enter this, it is handled explicitly, cause it
-///   need to swap between '=' and '✓'. It is contained in calculator by default)
-/// final buttonProps = CalculatorHelper.convertToCalButProps(buttonTexts)
-/// CalculatorScreen(buttonProps: buttonProps);
-///
-/// in builder, pass in context, as we will need to show another modal bottom
-/// sheet inside this modal bottom sheet, need to have Scaffold as its parent
-class Calculator extends StatefulWidget {
+///   need to swap between '=' and '✓'. It is contained in input form by default)
+/// final buttonProps = InputFormHelper.convertToCalButProps(buttonTexts)
+/// InputForm(buttonProps: buttonProps);
+class InputForm extends StatefulWidget {
   
   /// variable
-  // the button on the calculator
-  final List<CalculatorButtonProps> buttonProps;
-  // final Widget topContent;
+  // the button on the inputForm
+  final List<InputFormButtonProps> buttonProps;
   
-  const Calculator({
+  const InputForm({
     super.key,
     required this.buttonProps,
-    // required this.topContent,
   });
 
   @override
-  State<Calculator> createState() => _CalculatorState();
+  State<InputForm> createState() => _InputFormState();
 }
 
-class _CalculatorState extends State<Calculator> {
+class _InputFormState extends State<InputForm> {
   String _currentAmount = '0'; // This will be displayed in the UI
   final String _currency = '\$'; // Default currency symbol
   final List<String> _operators = ['+', '-', 'x', '÷', '*', '/']; // operator symbol
   final List<String> _numbers = ['0']; // numbers in input (remove all operator)
   String _lastButton = '✓';
 
-  // This method would be called by the calculator buttons
+  // This method would be called by the input form buttons
   void _onButtonPressed(String buttonText) {
     setState(() {
 
@@ -199,9 +194,9 @@ class _CalculatorState extends State<Calculator> {
         if (_operators.contains(lastChar)) {
           // Replace the operator if it's already there
           if (buttonText == 'x') {
-            buttonText = '*';
+            buttonText = inputLen == 1 ? '0*' : '*';
           } else if (buttonText == '÷') {
-            buttonText = '/';
+            buttonText = inputLen == 1 ? '0/' : '/';
           }
           _currentAmount =
               _currentAmount.substring(0, _currentAmount.length - 1)
@@ -263,7 +258,7 @@ class _CalculatorState extends State<Calculator> {
   @override
   Widget build(BuildContext context) {
 
-    List<CalculatorButtonProps> buttonProps = widget.buttonProps;
+    List<InputFormButtonProps> buttonProps = widget.buttonProps;
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     
     return Container(
@@ -307,7 +302,7 @@ class _CalculatorState extends State<Calculator> {
                 : AppSize.heading3 * 1.5),
           ),
           SizedBox(height: AppSize.smallPadding), // small padding
-          // Calculator Grid
+          // Input Form Grid
           Expanded(
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(), // Disable scrolling
@@ -320,8 +315,8 @@ class _CalculatorState extends State<Calculator> {
               itemCount: 20,
               itemBuilder: (context, index) {
                 return index == 19
-                    ? CalculatorButton(
-                    props: CalculatorButtonProps(
+                    ? InputFormButton(
+                    props: InputFormButtonProps(
                       text: _lastButton,
                       icon: _lastButton == '✓' ? Icons.check : null,
                       backgroundColor: Colors.greenAccent,
@@ -331,7 +326,7 @@ class _CalculatorState extends State<Calculator> {
                       _onButtonPressed(_lastButton);
                     }
                 )
-                    : CalculatorButton(
+                    : InputFormButton(
                     props: buttonProps[index],
                     onPressed: () {
                       _onButtonPressed(buttonProps[index].text);

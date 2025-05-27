@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../style/app_size.dart';
-import '../categories_page/categories_page_helper.dart';
 
 // use this to construct the topContent of the calculator sheet
 class TopCard extends StatelessWidget {
@@ -11,7 +10,7 @@ class TopCard extends StatelessWidget {
   final Widget title; // title of the card
   final Widget content; // content of the card
   final Color backgroundColor; // background color of the card
-  final String iconPath; // path of the icon
+  final Icon icon; // icon of the card
   final bool topRight; // whether to curve topRight corner
   final bool topLeft; // whether to curve topLeft corner
   final void Function()? onPressed; // callback function when the button is pressed
@@ -23,7 +22,7 @@ class TopCard extends StatelessWidget {
     required this.content,
     required this.backgroundColor,
     required this.onPressed,
-    this.iconPath = '',
+    this.icon = const Icon(Icons.add),
     this.topRight = false,
     this.topLeft = false,
   });
@@ -31,11 +30,10 @@ class TopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Widget buttonIcon = CategoriesPageHelper.generateButtonIcon(iconPath);
     Widget buttonContent = SizedBox(
       width: 40,
       height: 40,
-      child: buttonIcon
+      child: icon
     );
 
     return MaterialButton(
