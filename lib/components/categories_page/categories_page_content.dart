@@ -209,58 +209,6 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
                 categories: categories[_isExpense ? 0 : 1],
             )]
           );
-
-    //       return Scaffold(
-    //         // No AppBar here, as you only need the body content
-    //         body: Padding(
-    //           padding: EdgeInsets.all(AppSize.bigPadding),
-    //           child: Column( // Use a Column to arrange items vertically
-    //             children: [
-    //               SizedBox(
-    //                 height: MediaQuery
-    //                     .of(context)
-    //                     .size
-    //                     .width * 0.05,
-    //               ),
-    //               Stack(
-    //                 alignment: Alignment.center,
-    //                 children: [
-    //                   CenterPieChart(
-    //                     isExpense: _isExpense,
-    //                     pieTouchedIndex: _pieTouchedIndex,
-    //                     touchCallback: pieDataIsTouched,
-    //                     list: categories[_isExpense ? 0 : 1],
-    //                     totalAmount: CategoriesPageHelper.getTotalAmount(
-    //                         categories[_isExpense ? 0 : 1]
-    //                     ),
-    //                   ),
-    //                   CenterButton(
-    //                     centerButtonOnPressed: centerButtonOnPressed,
-    //                     isExpense: _isExpense,
-    //                     totalExpense: CategoriesPageHelper
-    //                         .getTotalAmount(categories[0]),
-    //                     totalIncome: CategoriesPageHelper
-    //                         .getTotalAmount(categories[1]),
-    //                   )
-    //                 ],
-    //               ),
-    //               SizedBox(
-    //                 height: MediaQuery
-    //                     .of(context)
-    //                     .size
-    //                     .width * 0.1,
-    //               ), // Center button at the top
-    //               CategoriesSheet(
-    //                 isExpense: _isExpense,
-    //                 pieTouchedIndex: _pieTouchedIndex,
-    //                 categoriesButtonOnPressed: categoriesButtonOnPressed,
-    //                 categories: categories[_isExpense ? 0 : 1],
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //         // No BottomNavigationBar here
-    //       );
         } else {
           return const Center(child: Text("No data available"));
         }
