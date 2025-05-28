@@ -88,7 +88,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
               )
             ),
             BalanceText(
-              balance: getAccountBalance(filteredAccounts, mainCurrency),
+              balance: Account.getBalance(filteredAccounts, mainCurrency),
               currencyName: mainCurrency.toString(),
               mainAxisAlignment: MainAxisAlignment.center,
             ),
@@ -183,15 +183,6 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         )
       ]
     );
-  }
-
-  double getAccountBalance(List<Account> accounts, Currency mainCurrency) {
-    double total = 0;
-    for (var account in accounts) {
-      total +=
-          Currency.convert(account.currency, mainCurrency, account.balance);
-    }
-    return total;
   }
 
   @override

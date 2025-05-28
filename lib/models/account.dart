@@ -93,6 +93,15 @@ class Account {
     };
   }
 
+  static double getBalance(List<Account> accounts, Currency mainCurrency) {
+    double total = 0;
+    for (var account in accounts) {
+      total +=
+          Currency.convert(account.currency, mainCurrency, account.balance);
+    }
+    return total;
+  }
+
   Account copyWith({int? id,
     String? name,
     double? balance,

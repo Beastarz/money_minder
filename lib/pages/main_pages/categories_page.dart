@@ -36,7 +36,7 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
     );
     fetchDateFilter();
     () async {
-      List<Transaction> res = await TransactionsRepositories().getTransactions();
+      List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
       setState(() {
         transactions = res;
       });

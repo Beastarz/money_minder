@@ -1,4 +1,5 @@
 import 'package:money_minder/models/account.dart';
+import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/currency.dart';
 
 class Transaction {
@@ -7,11 +8,10 @@ class Transaction {
   String type;
   Account fromAccount;
   Account? toAccount;
-  int? toCategoryId;
+  Category? toCategory;
   double amount;
   Currency currency;
-  double amount2;
-  Currency currency2;
+  Currency mainCurrency;
   String note;
 
   Transaction({
@@ -20,27 +20,27 @@ class Transaction {
     required this.type,
     required this.fromAccount,
     required this.toAccount,
-    required this.toCategoryId,
+    required this.toCategory,
     required this.amount,
     required this.currency,
-    required this.amount2,
-    required this.currency2,
+    required this.mainCurrency,
     required this.note,
   });
 
+  get mainAmount => Currency.convert(currency, mainCurrency, amount);
+
   /// use this to convert map to transaction
-  factory Transaction.fromMap(Map<String, dynamic> map, Account fromAccount, Account? toAccount) {
+  factory Transaction.fromMap(Map<String, dynamic> map, Account fromAccount, Account? toAccount, Category? category, Currency mainCurrency) {
     return Transaction(
       id: map['id'],
       date: DateTime.parse(map['date']),
       type: map['type'],
       fromAccount: fromAccount,
       toAccount: toAccount,
-      toCategoryId: map['to_category_id'],
+      toCategory: category,
       amount: map['amount'],
       currency: Currency.of(map['currency']),
-      amount2: map['amount2'],
-      currency2: Currency.of(map['currency2']),
+      mainCurrency: mainCurrency,
       note: map['note'],
     );
   }

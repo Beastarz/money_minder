@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/repositories/transactions_repositories.dart';
+import 'package:money_minder/components/transaction/transaction_content.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../models/date_filter.dart';
@@ -8,9 +9,18 @@ import '../../repositories/date_filter_repositories.dart';
 
 /// page that shows the transactions
 class TransactionsPage extends StatefulWidget {
-  const TransactionsPage({super.key, required this.filteredAccountIds});
+  const TransactionsPage({
+    super.key,
+    required this.filteredAccountIds,
+    required this.filteredAccountBalance,
+    required this.mainCurrency,
+    required this.transactions
+  });
 
   final List<int> filteredAccountIds;
+  final double filteredAccountBalance;
+  final Currency mainCurrency;
+  final List<Transaction> transactions;
 
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();
@@ -20,7 +30,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
   late PageController _pageViewController;
   late TabController _tabController;
   late int _currentPageIndex;
-  List<Transaction> transactions = [];
   DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
 
   @override
@@ -34,12 +43,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
         vsync: this
     );
     fetchDateFilter();
-    () async {
-      List<Transaction> res = await TransactionsRepositories().getTransactions();
-      setState(() {
-        transactions = res;
-      });
-    }();
   }
 
   Future<void> fetchDateFilter() async {
@@ -61,13 +64,13 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    List<Transaction> transactionsByAccount = transactions.where((t) => widget.filteredAccountIds.contains(t.fromAccount.id)
+    List<Transaction> transactionsByAccount = widget.transactions.where((t) => widget.filteredAccountIds.contains(t.fromAccount.id)
         || widget.filteredAccountIds.contains(t.toAccount?.id)).toList();
-
 
     /// map this to categories and transactions page
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactionsByAccount, dateFilter.startDates);
 
+    List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
 
     return Scaffold(
       appBar: CalendarAppBar(
@@ -82,8 +85,13 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       body: PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
-        children: groupedTransactions.map((e) => Center(child: Text(e.join('\n')))).toList()
-      )
+        children: groupedTransactions.indexed.map((transactions) => TransactionsContent(
+          transactions: transactions.$2,
+          initialBalance: accumulatedBalance[transactions.$1],
+          finalBalance: accumulatedBalance[transactions.$1 + 1],
+          mainCurrency: widget.mainCurrency,
+        )).toList()
+      ),
     );
   }
 
@@ -109,5 +117,21 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       _pageViewController.jumpToPage(_currentPageIndex);
       _tabController.index = _currentPageIndex;
     });
+  }
+
+  List<double> getAccumulatedBalance(List<List<Transaction>> transactionsList, double initialBalance) {
+    List<double> res = [initialBalance];
+    for (int i = transactionsList.length - 1; i >= 0; i--) {
+      double temp = res.last;
+      for (Transaction t in transactionsList[i]) {
+        if (t.type == 'expense'){
+          temp += t.mainAmount;
+        } else if (t.type == 'income') {
+          temp -= t.mainAmount;
+        }
+      }
+      res.add(temp);
+    }
+    return res.reversed.toList();
   }
 }

@@ -34,9 +34,9 @@ class CategoriesPageHelper {
   // generate data for the category icons and labels (default)
   static Future<List<List<CategoryButtonProps>>> getCategoriesList() async {
     List<Category> expenseCategories =
-      await CategoriesRepositories().getAllCategories(true);
+      await CategoriesRepositories.instance.getCategoriesByType(true);
     List<Category> incomeCategories =
-      await CategoriesRepositories().getAllCategories(false);
+      await CategoriesRepositories.instance.getCategoriesByType(false);
     return [
       convertToCatButProps(expenseCategories),
       convertToCatButProps(incomeCategories),
