@@ -24,22 +24,29 @@ class CategoriesPageHelper {
           icon: cat.icon,
           color: cat.color,
           actualAmount: 100,
-          expectedAmount: cat.expectedAmount
+          expectedAmount: cat.expectedAmount,
+          isExpense: cat.isExpense,
       ));
     }
-    result.add(AddCategoriesButtonProps(list.length));
     return result;
   }
 
-  // generate data for the category icons and labels (default)
+  // generate data for the category icons and labels (combined)
   static Future<List<List<CategoryButtonProps>>> getCategoriesList() async {
-    List<Category> expenseCategories =
-      await CategoriesRepositories.instance.getCategoriesByType(true);
-    List<Category> incomeCategories =
-      await CategoriesRepositories.instance.getCategoriesByType(false);
-    return [
-      convertToCatButProps(expenseCategories),
-      convertToCatButProps(incomeCategories),
-    ];
+    List<CategoryButtonProps> expenseCategories =
+      await getCategoriesListByType(true);
+    List<CategoryButtonProps> incomeCategories =
+      await getCategoriesListByType(false);
+    expenseCategories.add(AddCategoriesButtonProps(expenseCategories.length));
+    incomeCategories.add(AddCategoriesButtonProps(incomeCategories.length));
+    return [expenseCategories, incomeCategories];
+  }
+
+  // generate data for the category icons and labels (expense or income)
+  static Future<List<CategoryButtonProps>> getCategoriesListByType(
+      bool isExpense) async {
+    List<Category> categories =
+      await CategoriesRepositories.instance.getCategoriesByType(isExpense);
+    return convertToCatButProps(categories);
   }
 }

@@ -48,14 +48,64 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
     setState(() {
       _pieTouchedIndex = -1;
     });
+
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+    final double titleSize = (isSmallScreen ? AppSize.heading2 : AppSize.heading1) * 1.5;
+    final double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
+    final bool isExpense = prop.isExpense;
+
+    TopCard card1 = TopCard(
+      width: MediaQuery.of(context).size.width * 0.5,
+      topLeft: true,
+      title: Text(
+          "From ${isExpense ? "Account" : "Category"}",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: contentSize,
+          )
+      ),
+      content: Text(
+          isExpense ? "Card" : prop.label,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: titleSize,
+            fontWeight: FontWeight.bold,
+            overflow: TextOverflow.ellipsis,
+          )
+      ),
+      backgroundColor: isExpense ? Colors.blue : prop.color,
+      icon: isExpense ? Icon(Icons.credit_card) : prop.icon,
+      onPressed: () {},
+    );
+
+    TopCard card2 = TopCard(
+      width: MediaQuery.of(context).size.width * 0.5,
+      topRight: true,
+      title: Text(
+          "To ${isExpense ? "Category" : "Account"}",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: contentSize,
+          )
+      ),
+      content: Text(
+          isExpense ? prop.label : "Card",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontSize: titleSize,
+            fontWeight: FontWeight.bold,
+            overflow: TextOverflow.ellipsis,
+          )
+      ),
+      backgroundColor: isExpense ? prop.color : Colors.blue,
+      icon: isExpense ? prop.icon : Icon(Icons.credit_card),
+      onPressed: () {},
+    );
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
-
-        final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-        double titleSize = (isSmallScreen ? AppSize.heading2 : AppSize.heading1) * 1.5;
-        double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
         return InputFormSheet(
           // Define the button layout as seen in the image
           inputForm: InputForm(
@@ -77,54 +127,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
               ),
             ),
             child: Row(
-              children:[
-                TopCard(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  topLeft: true,
-                  title: Text(
-                    "From Account",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: contentSize,
-                    )
-                  ),
-                  content: Text(
-                    "Card",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ),
-                  backgroundColor: Colors.blue,
-                  icon: Icon(Icons.credit_card),
-                  onPressed: () {},
-                ),
-                TopCard(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  topRight: true,
-                  title: Text(
-                    "To Categories",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: contentSize,
-                    )
-                  ),
-                  content: Text(
-                    prop.label,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ),
-                  backgroundColor: prop.color,
-                  icon: prop.icon,
-                  onPressed: () {},
-                )
-              ]
+              children: [card1, card2]
             ),
           )
         );

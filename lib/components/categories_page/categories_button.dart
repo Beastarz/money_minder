@@ -14,6 +14,7 @@ class CategoryButtonProps {
   final Color color; // button color
   final double actualAmount; // expense / income
   final double expectedAmount; // budget / expected income
+  final bool isExpense; // indicated if it is expense or income
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
 
@@ -24,6 +25,7 @@ class CategoryButtonProps {
     required this.color,
     required this.actualAmount,
     required this.expectedAmount,
+    required this.isExpense,
     this.pieTouchedIndex = -1,
     this.isAddButton = false,
   });
@@ -40,6 +42,7 @@ class AddCategoriesButtonProps extends CategoryButtonProps {
     color: AppColor.secondary,
     actualAmount: 0,
     expectedAmount: 0,
+    isExpense: false,
     pieTouchedIndex: -1,
     isAddButton: true, // Override parent's default for showDetail
   );
