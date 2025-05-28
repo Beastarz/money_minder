@@ -68,7 +68,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  Timer? _pauseTimer; // Timer for the 1-second pause
+  Timer? _pauseTimer; // Timer for the 0.25 second pause
   bool isLooping = false;
 
   @override
@@ -90,9 +90,9 @@ class _CategoriesButtonState extends State<CategoriesButton>
       } else if (status == AnimationStatus.dismissed) {
         // This means the animation has returned to its start (shrink completed)
         if (isLooping) {
-          // PAUSE for 1 second
+          // PAUSE for 0.25 second
           _pauseTimer = Timer(const Duration(milliseconds: 250), () {
-            // After 1 second, REVERSE the animation (shrink back)
+            // After 0.25 second, REVERSE the animation (shrink back)
             if (mounted) { // Ensure the widget is still in the tree
               _controller.forward();
             }

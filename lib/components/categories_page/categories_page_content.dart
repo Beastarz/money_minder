@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:draggable_home/draggable_home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -170,7 +173,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
           // Data has been successfully loaded!
           // categories[0] is expenseCategories
           // categories[1] is incomeCategories
-           final List<List<CategoryButtonProps>> categories = snapshot.data!;
+          final List<List<CategoryButtonProps>> categories = snapshot.data!;
 
           if (categories.isEmpty) {
             return const Center(child: Text('No categories found.'));
