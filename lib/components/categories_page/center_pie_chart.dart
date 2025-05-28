@@ -27,6 +27,8 @@ class CenterPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+
     // generate PieData for the pie chart
     List<PieChartSectionData> pieData =
       list.asMap()
@@ -42,17 +44,21 @@ class CenterPieChart extends StatelessWidget {
               title: "${(data.actualAmount / totalAmount * 100)
                   .toStringAsFixed(2)}%",
               titleStyle: TextStyle(
-                fontSize: AppSize.paragraph,
+                fontSize: isSmallScreen ? 10 : AppSize.paragraph,
               ),
               titlePositionPercentageOffset: 2,
-              radius: isTouched ? 25 : 15,
+              radius: isTouched ? (isSmallScreen ? 20 : 25) : 15,
             );
     }).toList();
 
     return Center(
       child: SizedBox(
-        height: MediaQuery.of(context).size.width * 0.5,
-        width: MediaQuery.of(context).size.width * 0.5,
+        height: MediaQuery.of(context).size.width * (
+          isSmallScreen ? 0.4 : 0.5
+        ),
+        width: MediaQuery.of(context).size.width * (
+          isSmallScreen ? 0.4 : 0.5
+        ),
         child: PieChart(
           PieChartData(
             sections: pieData,

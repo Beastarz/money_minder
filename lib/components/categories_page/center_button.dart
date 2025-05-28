@@ -24,10 +24,17 @@ class CenterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+
     return Center( // Center the button horizontally
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.3,
-        height: MediaQuery.of(context).size.width * 0.3,
+        width: MediaQuery.of(context).size.width * (
+          isSmallScreen ? 0.2 : 0.3
+        ),
+        height: MediaQuery.of(context).size.width * (
+          isSmallScreen ? 0.2 : 0.3
+        ),
         child: MaterialButton(
           onPressed: centerButtonOnPressed,
           padding: EdgeInsets.zero,
@@ -36,13 +43,13 @@ class CenterButton extends StatelessWidget {
           highlightColor: Colors.transparent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: AppSize.gap,
+            spacing: isSmallScreen ? 5 : AppSize.gap,
             children: [
               Text(
                 isExpense ? 'Expenses' : 'Income',
                 style: TextStyle(
                   color: AppColor.darkText,
-                  fontSize: AppSize.heading1,
+                  fontSize: isSmallScreen ? 15 : AppSize.heading1,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -53,7 +60,7 @@ class CenterButton extends StatelessWidget {
               Text(
                 '\$${isExpense? totalExpense : totalIncome}',
                 style: TextStyle(
-                  fontSize: AppSize.heading2,
+                  fontSize: isSmallScreen ? 12: AppSize.heading2,
                   color: isExpense
                       ? Colors.redAccent
                       : CupertinoColors.activeGreen,
@@ -62,7 +69,7 @@ class CenterButton extends StatelessWidget {
               Text(
                 '\$${isExpense? totalIncome : totalExpense}',
                 style: TextStyle(
-                  fontSize: AppSize.heading3,
+                  fontSize: isSmallScreen ? 10 : AppSize.heading3,
                   color: isExpense
                       ? CupertinoColors.activeGreen
                       : Colors.redAccent,
