@@ -31,30 +31,28 @@ class BalanceText extends StatelessWidget {
     if (isLight) {
       color = Colors.white;
     }
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.4 * size / 21,
-      child: Row(
-        mainAxisAlignment: mainAxisAlignment,
-        children: [
-          Text(
-          currencyName,
+    return Row(
+      mainAxisAlignment: mainAxisAlignment,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+        currencyName,
+          style: TextStyle(
+            color: color,
+            fontSize: size - 4,
+          )
+        ),
+        const SizedBox(width: 4,),
+        Text(
+            balance.toStringAsFixed(2),
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: color,
-              fontSize: size - 4,
+              fontWeight: FontWeight.w500,
+              fontSize: size,
             )
-          ),
-          const SizedBox(width: 4,),
-          Text(
-              balance.toStringAsFixed(2),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w500,
-                fontSize: size,
-              )
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

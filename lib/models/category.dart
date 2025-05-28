@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../style/app_color.dart';
 
 class Category{
+  final int id;
   final String label;
   final int position;
   final Icon icon;
@@ -11,6 +12,7 @@ class Category{
   final double expectedAmount;
 
   Category({
+    required this.id,
     required this.label,
     required this.position,
     required this.icon,
@@ -21,6 +23,7 @@ class Category{
 
   factory Category.fromMap(Map<String, dynamic> map) {
     return Category(
+      id: map['id'],
       label: map['label'],
       position: map['position'],
       icon: Icon(

@@ -68,8 +68,6 @@ class DatabaseService {
             to_category_id INTEGER, -- Assuming foreign key to Categories table (for expenses/income)
             amount REAL NOT NULL, -- Using REAL for decimal amounts
             currency TEXT NOT NULL,
-            amount2 REAL, -- Assuming this is for a second currency amount
-            currency2 TEXT,
             note TEXT,
             FOREIGN KEY (from_account_id) REFERENCES accounts(id),
             FOREIGN KEY (to_account_id) REFERENCES accounts(id),
@@ -136,20 +134,20 @@ class DatabaseService {
 
 
     await db.execute('''
-      INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, amount2, currency2, note) VALUES
+      INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, note) VALUES
       -- Expense: Groceries from Main Wallet
-      ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 55.20, 'SGD', 'Weekly groceries'),
+      ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Restaurant from Credit Card
-      ('2025-05-14', 'expense', 3, NULL, 1, 30.50, 'SGD', 30.50, 'SGD', 'Dinner with friends'),
+      ('2025-05-14', 'expense', 3, NULL, 1, 30.50, 'SGD', 'Dinner with friends'),
       -- Income: Monthly Salary to Savings Account
-      ('2025-05-15', 'income', 2, NULL, 3, 3500.00, 'SGD', 3500, 'SGD', 'May salary'),
+      ('2025-05-15', 'income', 2, NULL, 3, 3500.00, 'SGD', 'May salary'),
       -- Transfer: From Main Wallet to Savings Account
-      ('2025-05-15', 'transfer', 1, 2, NULL, 500.00, 'SGD', 500, 'SGD', 'Transfer to savings'),
+      ('2025-05-15', 'transfer', 1, 2, NULL, 500.00, 'SGD', 'Transfer to savings'),
       -- Expense: Public Transport from Main Wallet
-      ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', 3.8, 'SGD', 'Bus fare'),
+      ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', 'Bus fare'),
       -- Expense: Movie from Main Wallet (using Leisure category)
-      ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'SGD', 10, 'MYR', 'Go jb'),
-      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 15, 'SGD', 'Movie ticket');
+      ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'MYR','Go jb'),
+      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 'Movie ticket');
     ''');
 
     await db.execute('''
