@@ -37,23 +37,19 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CalendarAppBarState extends State<CalendarAppBar> {
-  late DateFilterType selectedFilter;
-  bool isTappable = true;
+  DateFilterType selectedFilter = DateFilterType.month;
 
   @override
   void initState() {
     super.initState();
-    selectedFilter = widget.dateFilterType;
-    if (selectedFilter == DateFilterType.all) {
-      setState(() {
-        isTappable = false;
-      });
-    }
   }
 
  // Adjust height as needed
   @override
   Widget build(BuildContext context) {
+    bool isTappable = widget.dateFilterType != DateFilterType.all;
+    DateFilterType selectedFilter = widget.dateFilterType;
+
     return AppBar(
       automaticallyImplyLeading: false,
       flexibleSpace: Padding(
@@ -101,7 +97,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                               child: PeriodBottomSheet(
                                 title: 'Choose period',
                                 children: [
-                        
+
                                   /// set the period between any two date
                                   PeriodTile(
                                       parentContext: context,
@@ -110,10 +106,11 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       onPressed: () {
                                         CalendarSelectorHelper.showCustomDateRangePicker(
                                             context, (startDate, duration) {
-                                          DateFilterRepositories().updateDateFilter(
-                                              DateFilter.fromSelectedRange(startDate, duration));
-                                          widget.onUpdateDateFilter(
-                                              DateFilter.fromSelectedRange(startDate, duration));
+                                          () async {
+                                            await DateFilterRepositories.instance.updateDateFilter(
+                                                DateFilter.fromSelectedRange(startDate, duration));
+                                            widget.onUpdateDateFilter(DateFilter.fromSelectedRange(startDate, duration));
+                                          }();
                                           Navigator.pop(context);
                                         });
                                       },
@@ -124,7 +121,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       isSelected: selectedFilter ==
                                           DateFilterType.range
                                   ),
-                        
+
                                   /// select any date
                                   PeriodTile(
                                     parentContext: context,
@@ -133,16 +130,18 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                     onPressed: () {
                                       CalendarSelectorHelper.selectDate(
                                           context, (date) {
-                                        DateFilterRepositories().updateDateFilter(
-                                            DateFilter.fromSelectedDate(date));
-                                        widget.onUpdateDateFilter(
-                                            DateFilter.fromSelectedDate(date));
+                                        () async {
+                                          await DateFilterRepositories.instance.updateDateFilter(
+                                              DateFilter.fromSelectedDate(date));
+
+                                          widget.onUpdateDateFilter(DateFilter.fromSelectedDate(date));
+                                        }();
                                         Navigator.pop(context);
                                       });
                                     },
                                     isSelected: false,
                                   ),
-                        
+
                                   /// from the first day of using the app until now
                                   PeriodTile(
                                     parentContext: context,
@@ -152,19 +151,18 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       setState(() {
                                         selectedFilter = DateFilterType.all;
                                       });
-                                      DateFilterRepositories()
-                                          .updateDateFilter(DateFilter.fromType(
-                                          DateFilterType.all));
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromType(
-                                              DateFilterType.all));
+                                      () async {
+                                        await DateFilterRepositories.instance.updateDateFilter(
+                                            DateFilter.fromType(DateFilterType.all));
+                                        widget.onUpdateDateFilter(DateFilter.fromType(DateFilterType.all));
+                                      }();
                                       Navigator.pop(context);
                                     },
                                     isSelected: selectedFilter ==
                                         DateFilterType.all,
-                        
+
                                   ),
-                        
+
                                   /// set today
                                   PeriodTile(
                                     parentContext: context,
@@ -174,21 +172,17 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       setState(() {
                                         selectedFilter = DateFilterType.day;
                                       });
-                                      DateFilterRepositories()
-                                          .updateDateFilter(
-                                          DateFilter.fromDuration(
-                                              DateFilterType.day,
-                                              Duration(days: 1)));
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromDuration(
-                                              DateFilterType.day,
-                                              Duration(days: 1)));
+                                      () async {
+                                        await DateFilterRepositories.instance.updateDateFilter(
+                                            DateFilter.fromDuration(DateFilterType.day, Duration(days: 1)));
+                                        widget.onUpdateDateFilter(DateFilter.fromDuration(DateFilterType.day, Duration(days: 1)));
+                                      }();
                                       Navigator.pop(context);
                                     },
                                     isSelected: selectedFilter ==
                                         DateFilterType.day,
                                   ),
-                        
+
                                   /// set current week
                                   PeriodTile(
                                     parentContext: context,
@@ -198,22 +192,18 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       setState(() {
                                         selectedFilter = DateFilterType.week;
                                       });
-                                      DateFilterRepositories()
-                                          .updateDateFilter(
-                                          DateFilter.fromDuration(
-                                              DateFilterType.week,
-                                              Duration(days: 7)));
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromDuration(
-                                              DateFilterType.week,
-                                              Duration(days: 7)));
+                                      () async {
+                                        await DateFilterRepositories.instance.updateDateFilter(
+                                            DateFilter.fromDuration(DateFilterType.week, Duration(days: 7)));
+                                        widget.onUpdateDateFilter(DateFilter.fromDuration(DateFilterType.week, Duration(days: 7)));
+                                      }();
                                       Navigator.pop(context);
                                     },
-                        
+
                                     isSelected: selectedFilter ==
                                         DateFilterType.week,
                                   ),
-                        
+
                                   /// set current month
                                   PeriodTile(
                                     parentContext: context,
@@ -223,18 +213,17 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       setState(() {
                                         selectedFilter = DateFilterType.month;
                                       });
-                                      DateFilterRepositories()
-                                          .updateDateFilter(DateFilter.fromType(
-                                          DateFilterType.month));
+                                      () async {
+                                        await DateFilterRepositories.instance.updateDateFilter(
+                                            DateFilter.fromType(DateFilterType.month));
+                                        widget.onUpdateDateFilter(DateFilter.fromType(DateFilterType.month));
+                                      }();
                                       Navigator.pop(context);
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromType(
-                                              DateFilterType.month));
                                     },
                                     isSelected: selectedFilter ==
                                         DateFilterType.month,
                                   ),
-                        
+
                                   /// set current year
                                   PeriodTile(
                                     parentContext: context,
@@ -244,13 +233,12 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                       setState(() {
                                         selectedFilter = DateFilterType.year;
                                       });
-                                      DateFilterRepositories()
-                                          .updateDateFilter(DateFilter.fromType(
-                                          DateFilterType.year));
+                                      () async {
+                                        await DateFilterRepositories.instance.updateDateFilter(
+                                            DateFilter.fromType(DateFilterType.year));
+                                        widget.onUpdateDateFilter( DateFilter.fromType(DateFilterType.year));
+                                      }();
                                       Navigator.pop(context);
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromType(
-                                              DateFilterType.year));
                                     },
                                     isSelected: selectedFilter ==
                                         DateFilterType.year,

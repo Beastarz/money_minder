@@ -9,7 +9,13 @@ import '../../repositories/transactions_repositories.dart';
 
 /// the page that shows the categories
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key});
+  const CategoriesPage({super.key, required this.filteredTransactions, required this.dateFilter, required this.onDateFilterUpdate, required this.currentPageIndex, required this.onPageChange});
+
+  final List<Transaction> filteredTransactions;
+  final DateFilter dateFilter;
+  final Function(DateFilter) onDateFilterUpdate;
+  final int currentPageIndex;
+  final void Function(int) onPageChange;
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
@@ -19,66 +25,38 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
 
   late PageController _pageViewController;
   late TabController _tabController;
-  late int _currentPageIndex;
-  List<Transaction> transactions = [];
-  DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
-  bool isTappable = true;
 
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = dateFilter.initialPageIndex;
-    _pageViewController = PageController(initialPage: _currentPageIndex);
+    _pageViewController = PageController(initialPage: widget.currentPageIndex);
     _tabController = TabController(
-        length: dateFilter.startDates.length - 1,
-        initialIndex: _currentPageIndex,
+        length: widget.dateFilter.startDates.length - 1,
+        initialIndex: 50,
         vsync: this
     );
-    fetchDateFilter();
-    () async {
-      List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
-      setState(() {
-        transactions = res;
-      });
-    }();
-  }
-
-  Future<void> fetchDateFilter() async {
-    var res = await DateFilterRepositories().getDateFilter();
-    setState(() {
-      dateFilter = res;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _pageViewController.dispose();
-    _tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
 
     /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateFilter.startDates);
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(widget.filteredTransactions, widget.dateFilter.startDates);
 
     return Scaffold(
         appBar: CalendarAppBar(
           tabController: _tabController,
-          currentPageIndex: _currentPageIndex,
+          currentPageIndex: widget.currentPageIndex,
           onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-          dateString: dateFilter.convertString(_currentPageIndex),
-          maxIndex: dateFilter.startDates.length - 2,
-          dateFilterType: dateFilter.type,
-          onUpdateDateFilter: _updateDateFilter,
+          dateString: widget.dateFilter.convertString(widget.currentPageIndex),
+          maxIndex: widget.dateFilter.startDates.length - 2,
+          dateFilterType: widget.dateFilter.type,
+          onUpdateDateFilter: _onDateFilterChange,
         ),
         body: PageView(
             controller: _pageViewController,
             onPageChanged: _handlePageViewChanged,
+            physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
             //children: groupedTransactions.map((e) => Center(child: Text(e.join('\n')))).toList()
             children: [CategoriesPageContent()],
         )
@@ -87,26 +65,22 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
 
   void _handlePageViewChanged(int currentPageIndex) {
     _tabController.index = currentPageIndex;
-    setState(() {
-      _currentPageIndex = currentPageIndex;
-    });
+    widget.onPageChange(currentPageIndex);
   }
 
   void _updateCurrentPageIndex(int index) {
     _tabController.index = index;
     _pageViewController.jumpToPage(index);
+    widget.onPageChange(index);
+  }
+
+  void _onDateFilterChange(DateFilter dateFilter) async {
+    widget.onDateFilterUpdate(dateFilter);
     setState(() {
-      _currentPageIndex = index;
+      _pageViewController.jumpToPage(dateFilter.initialPageIndex);
+      _tabController.index = dateFilter.initialPageIndex;
     });
   }
 
-  void _updateDateFilter(DateFilter dateFilter) {
-    setState(() {
-      this.dateFilter = dateFilter;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
-    });
-  }
 }
 
