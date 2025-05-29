@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../categories_page/categories_button.dart';
+import 'budget_helper.dart';
 import 'budget_sheet.dart';
 
 class BudgetPageContent extends StatefulWidget {
-  const BudgetPageContent({super.key});
+  const BudgetPageContent({
+    super.key,
+    required this.expenseCats,
+    required this.incomeCats,
+    required this.totalAmounts,
+    required this.mainCurrency,
+  });
+
+  final List<CategoryButtonProps> expenseCats;
+  final List<CategoryButtonProps> incomeCats;
+  final List<double> totalAmounts;
+  final Currency mainCurrency;
 
   @override
   State<BudgetPageContent> createState() => _BudgetPageContentState();
@@ -13,19 +27,13 @@ class BudgetPageContent extends StatefulWidget {
 
 class _BudgetPageContentState extends State<BudgetPageContent> {
 
-  bool _isExpense = true;
+  String _type = "Expenses";
 
   // switch between expense sheet and income sheet
-  void switchContent(bool isExpense) {
+  void switchContent(String type) {
     setState(() {
-      _isExpense = isExpense;
+      _type = type;
     });
-  }
-
-  // Function to lighten a color by mixing it with white
-  Color _lightenColor(Color color, double factor) {
-    // factor: 0.0 means no white, 1.0 means pure white
-    return Color.lerp(color, Colors.white, factor)!;
   }
 
   @override
@@ -42,96 +50,22 @@ class _BudgetPageContentState extends State<BudgetPageContent> {
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 5,
               children: [
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          switchContent(true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(AppSize.smallPadding),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(AppSize.borderRadius),
-                              right: Radius.circular(AppSize.borderRadius * 0.5),
-                            ),
-                          ),
-                          backgroundColor: _isExpense
-                              ? Colors.redAccent
-                              : _lightenColor(Colors.redAccent, 0.9),
-                        ),
-                        child: Column(
-                            spacing: 5,
-                            children:[
-                              Text(
-                                "Expenses",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading3,
-                                    color: _isExpense
-                                        ? AppColor.lightText
-                                        : AppColor.darkText
-                                ),
-                              ),
-                              Text(
-                                "\$100",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading2,
-                                    color: _isExpense
-                                        ? AppColor.lightText
-                                        : Colors.redAccent
-                                ),
-                              )
-                            ]
-                        )
-                    )
-                ),
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          switchContent(false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(AppSize.smallPadding),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(AppSize.borderRadius * 0.5),
-                              right: Radius.circular(AppSize.borderRadius),
-                            ),
-                          ),
-                          backgroundColor: _isExpense
-                              ? _lightenColor(Colors.greenAccent, 0.9)
-                              : Colors.greenAccent,
-                        ),
-                        child: Column(
-                            spacing: 5,
-                            children:[
-                              Text(
-                                "Income",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading3,
-                                    color: _isExpense
-                                        ? AppColor.darkText
-                                        : AppColor.lightText
-                                ),
-                              ),
-                              Text(
-                                "\$100",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading2,
-                                    color: _isExpense
-                                        ? Colors.greenAccent
-                                        : AppColor.lightText
-                                ),
-                              )
-                            ]
-                        )
-                    )
-                ),
+                // expense button
+                BudgetHelper.buildCatButton(() {switchContent("Expenses");},
+                    "Expenses", _type, 1, 0.5),
+                BudgetHelper.buildCatButton(() {switchContent("Savings");},
+                    "Savings", _type, 0.5, 0.5),
+                BudgetHelper.buildCatButton(() {switchContent("Income");},
+                    "Income", _type, 0.5, 1),
               ],
             ),
 
             // budget sheet
             BudgetSheet(
-              isExpense: _isExpense,
+              type: _type,
+              cats: [widget.expenseCats, [], widget.incomeCats],
+              totalAmounts: widget.totalAmounts,
+              mainCurrency: widget.mainCurrency,
             ),
           ],
         )

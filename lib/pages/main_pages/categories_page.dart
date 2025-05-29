@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_page_content.dart';
 import 'package:money_minder/components/categories_page/categories_page_helper.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../components/categories_page/categories_button.dart';
@@ -13,6 +14,7 @@ class CategoriesPage extends StatefulWidget {
 
   final List<List<Category>> categories;
   final List<Transaction> filteredTransactions;
+  final Currency mainCurrency;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
@@ -20,12 +22,13 @@ class CategoriesPage extends StatefulWidget {
 
   const CategoriesPage({
     super.key,
-    required this.categories,
     required this.filteredTransactions,
     required this.dateFilter,
+    required this.mainCurrency,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
+    required this.categories,
   });
 
 
@@ -68,21 +71,21 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
         body:  PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
-        children: groupedTransactions.map((transaction) {
+        children: groupedTransactions.map((transactions) {
           List<double> totalAmounts = [0, 0];
           List<CategoryButtonProps> expenseCats =
             CategoriesPageHelper.convertToCatButProps(
-              widget.categories[0], transaction, totalAmounts, true, widget.dateFilter);
+              widget.categories[0], transactions, totalAmounts, true, widget.dateFilter);
           List<CategoryButtonProps> incomeCats =
             CategoriesPageHelper.convertToCatButProps(
-              widget.categories[1], transaction, totalAmounts, false, widget.dateFilter);
+              widget.categories[1], transactions, totalAmounts, false, widget.dateFilter);
           expenseCats.add(AddCategoriesButtonProps(expenseCats.length));
           incomeCats.add(AddCategoriesButtonProps(incomeCats.length));
           return CategoriesPageContent(
             categories: [expenseCats, incomeCats],
             totalAmounts: totalAmounts,
+            mainCurrency: widget.mainCurrency,
           );
-          // return Text(transaction.join('\n'));
           }
         ).toList()
       )

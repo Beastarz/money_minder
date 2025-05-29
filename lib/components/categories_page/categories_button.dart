@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
 
@@ -55,11 +56,13 @@ class CategoriesButton extends StatefulWidget {
   final CategoryButtonProps props;
   // callback function when the categories button is pressed
   final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  final Currency mainCurrency;
 
   const CategoriesButton({
     super.key,
     required this.props,
     required this.categoriesButtonOnPressed,
+    required this.mainCurrency,
   });
 
   @override
@@ -219,9 +222,9 @@ class _CategoriesButtonState extends State<CategoriesButton>
             const SizedBox(height: 2),
             Text(
               props.expectedAmount != 0
-                  ? '\$${props.actualAmount.toStringAsFixed(2)} / '
+                  ? '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)} / '
                   '${props.expectedAmount.toStringAsFixed(2)}'
-                  : '\$${props.actualAmount.toStringAsFixed(2)}',
+                  : '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,

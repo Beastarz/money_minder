@@ -68,7 +68,7 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          children: groupedTransactions.indexed.map((transactions) =>
+          children: groupedTransactions.map((transactions) =>
             StatisticsPageContent()
           ).toList()
       ),
@@ -84,23 +84,6 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
     _tabController.index = index;
     _pageViewController.jumpToPage(index);
     widget.onPageChange(index);
-  }
-
-
-  List<double> getAccumulatedBalance(List<List<Transaction>> transactionsList, double initialBalance) {
-    List<double> res = [initialBalance];
-    for (int i = transactionsList.length - 1; i >= 0; i--) {
-      double temp = res.last;
-      for (Transaction t in transactionsList[i]) {
-        if (t.type == 'expense'){
-          temp += t.mainAmount;
-        } else if (t.type == 'income') {
-          temp -= t.mainAmount;
-        }
-      }
-      res.add(temp);
-    }
-    return res.reversed.toList();
   }
 
   void _onDateFilterChange(DateFilter dateFilter) async {

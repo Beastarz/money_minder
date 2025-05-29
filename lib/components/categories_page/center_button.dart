@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
@@ -13,6 +14,7 @@ class CenterButton extends StatelessWidget {
   final bool isExpense;
   final double totalExpense;
   final double totalIncome;
+  final Currency mainCurrency;
 
   const CenterButton({
     super.key,
@@ -20,6 +22,7 @@ class CenterButton extends StatelessWidget {
     required this.isExpense,
     required this.totalExpense,
     required this.totalIncome,
+    required this.mainCurrency,
   });
 
   @override
@@ -58,7 +61,7 @@ class CenterButton extends StatelessWidget {
               // in expense mode, showing the total expense, then total income
               // in income mode, showing the total income, then total expense
               Text(
-                '\$${isExpense? totalExpense : totalIncome}',
+                '${mainCurrency.toString()} ${isExpense? totalExpense : totalIncome}',
                 style: TextStyle(
                   fontSize: isSmallScreen ? 12: AppSize.heading2,
                   color: isExpense
@@ -67,7 +70,7 @@ class CenterButton extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${isExpense? totalIncome : totalExpense}',
+                '${mainCurrency.toString()} ${isExpense? totalIncome : totalExpense}',
                 style: TextStyle(
                   fontSize: isSmallScreen ? 10 : AppSize.heading3,
                   color: isExpense

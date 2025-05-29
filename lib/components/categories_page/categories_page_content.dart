@@ -7,6 +7,7 @@ import 'package:money_minder/components/categories_page/categories_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
+import '../../models/currency.dart';
 import '../../style/app_size.dart';
 import '../input_form_sheet/input_form.dart';
 import '../input_form_sheet/input_form_helper.dart';
@@ -17,11 +18,13 @@ class CategoriesPageContent extends StatefulWidget {
   /// constructor
   final List<List<CategoryButtonProps>> categories;
   final List<double> totalAmounts;
+  final Currency mainCurrency;
 
   const CategoriesPageContent({
     super.key,
     required this.categories,
     required this.totalAmounts,
+    required this.mainCurrency,
   });
 
   @override
@@ -180,6 +183,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
             isExpense: _isExpense,
             totalExpense: widget.totalAmounts[0],
             totalIncome: widget.totalAmounts[1],
+            mainCurrency: widget.mainCurrency,
           )
         ],
       ),
@@ -190,6 +194,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
           pieTouchedIndex: _pieTouchedIndex,
           categoriesButtonOnPressed: categoriesButtonOnPressed,
           categories: categories,
+          mainCurrency: widget.mainCurrency,
       )]
     );
   }

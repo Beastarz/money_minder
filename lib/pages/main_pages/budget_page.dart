@@ -3,6 +3,9 @@ import 'package:money_minder/models/currency.dart';
 
 import '../../components/budget_page/budget_page_content.dart';
 import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../components/categories_page/categories_button.dart';
+import '../../components/categories_page/categories_page_helper.dart';
+import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
 
@@ -17,6 +20,7 @@ class BudgetPage extends StatefulWidget {
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
+    required this.categories,
   });
 
   final double filteredAccountBalance;
@@ -26,6 +30,7 @@ class BudgetPage extends StatefulWidget {
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+  final List<List<Category>> categories;
 
   @override
   State<BudgetPage> createState() => _BudgetPageState();
@@ -69,9 +74,22 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          children: groupedTransactions.indexed.map((transactions) =>
-            BudgetPageContent()
-          ).toList()
+          children: groupedTransactions.map((transactions) {
+            List<double> totalAmounts = [0, 0];
+            List<CategoryButtonProps> expenseCats =
+            CategoriesPageHelper.convertToCatButProps(
+                widget.categories[0], transactions, totalAmounts, true, widget.dateFilter);
+            List<CategoryButtonProps> incomeCats =
+            CategoriesPageHelper.convertToCatButProps(
+                widget.categories[1], transactions, totalAmounts, false, widget.dateFilter);
+            totalAmounts.insert(1, 0); // TODO: Fetch transactions
+            return BudgetPageContent(
+              expenseCats: expenseCats,
+              incomeCats: incomeCats,
+              totalAmounts: totalAmounts,
+              mainCurrency: widget.mainCurrency,
+            );
+          }).toList()
       ),
     );
   }
@@ -85,23 +103,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     _tabController.index = index;
     _pageViewController.jumpToPage(index);
     widget.onPageChange(index);
-  }
-
-
-  List<double> getAccumulatedBalance(List<List<Transaction>> transactionsList, double initialBalance) {
-    List<double> res = [initialBalance];
-    for (int i = transactionsList.length - 1; i >= 0; i--) {
-      double temp = res.last;
-      for (Transaction t in transactionsList[i]) {
-        if (t.type == 'expense'){
-          temp += t.mainAmount;
-        } else if (t.type == 'income') {
-          temp -= t.mainAmount;
-        }
-      }
-      res.add(temp);
-    }
-    return res.reversed.toList();
   }
 
   void _onDateFilterChange(DateFilter dateFilter) async {

@@ -64,6 +64,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   Currency _mainCurrency = Currency.of('sgd');
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
   int _currentPageIndex = 50;
+  DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
+  int _budgetCurrentPageIndex = 50;
 
   @override
   void initState() {
@@ -129,6 +131,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       ),
       CategoriesPage(
         filteredTransactions: filteredTransactions,
+        mainCurrency: _mainCurrency,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
@@ -146,17 +149,18 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       ),
       BudgetPage(
         filteredAccountBalance: 0,
-        mainCurrency: Currency.of('sgd'),
-        filteredTransactions: [],
-        dateFilter: DateFilter.fromType(DateFilterType.month),
+        mainCurrency: _mainCurrency,
+        filteredTransactions: filteredTransactions,
+        dateFilter: _budgetDateFilter,
         onDateFilterUpdate: _onDateFilterChange,
-        currentPageIndex: _currentPageIndex,
-        onPageChange: _onPageChange,
+        currentPageIndex: _budgetCurrentPageIndex,
+        onPageChange: _onBudgetPageChange,
+        categories: _categories,
       ),
       StatisticsPage(
         filteredAccountBalance: 0,
-        mainCurrency: Currency.of('sgd'),
-        filteredTransactions: [],
+        mainCurrency: _mainCurrency,
+        filteredTransactions: filteredTransactions,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
@@ -197,6 +201,12 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   void _onPageChange(int index) {
     setState(() {
       _currentPageIndex = index;
+    });
+  }
+
+  void _onBudgetPageChange(int index) {
+    setState(() {
+      _budgetCurrentPageIndex = index;
     });
   }
 }
