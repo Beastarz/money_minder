@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/models/date_filter.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
 import 'package:money_minder/pages/main_pages/budget_page.dart';
@@ -12,6 +13,7 @@ import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
+import 'package:money_minder/repositories/date_filter_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
@@ -60,6 +62,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   List<Transaction> _transactions = [];
   List<List<Category>> _categories = [];
   Currency _mainCurrency = Currency.of('sgd');
+  DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
+  int _currentPageIndex = 50;
 
   @override
   void initState() {
@@ -67,6 +71,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     _fetchAccounts();
     _fetchMainCurrency();
     _fetchTransactions();
+    _fetchDateFilter();
     _fetchCategories();
   }
 
@@ -102,8 +107,20 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   }
 
   @override
+  Future<void> _fetchDateFilter() async {
+    DateFilter res = await DateFilterRepositories.instance.getDateFilter();
+    setState(() {
+      _dateFilter = res;
+      _currentPageIndex = res.initialPageIndex;
+    });
+  }
+
+    @override
   Widget build(BuildContext context) {
     List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
+    List<int> filteredAccountIds = filteredAccounts.map((e) => e.id).toList();
+    List<Transaction> filteredTransactions = _transactions.where((t) => filteredAccountIds.contains(t.fromAccount.id)
+        || filteredAccountIds.contains(t.toAccount?.id)).toList();
 
     final List<Widget> pages = [
       AccountsPage(
@@ -112,17 +129,42 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
           onReload: _fetchAccounts,
       ),
       CategoriesPage(
+        filteredTransactions: filteredTransactions,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
         categories: _categories,
       ),
       TransactionsPage(
-        filteredAccountIds: filteredAccounts.map((e) => e.id).toList(),
         filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),
         mainCurrency: _mainCurrency,
-        transactions: _transactions,
+        filteredTransactions: filteredTransactions,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
       ),
-      const BudgetPage(),
-      const StatisticsPage(),
+      BudgetPage(
+        filteredAccountBalance: 0,
+        mainCurrency: Currency.of('sgd'),
+        filteredTransactions: [],
+        dateFilter: DateFilter.fromType(DateFilterType.month),
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+      ),
+      StatisticsPage(
+        filteredAccountBalance: 0,
+        mainCurrency: Currency.of('sgd'),
+        filteredTransactions: [],
+        dateFilter: DateFilter.fromType(DateFilterType.month),
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+      ),
     ];
+
 
     return Scaffold(
       appBar: MMAppBar(
@@ -143,6 +185,19 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   void _onTabChange (int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _onDateFilterChange(DateFilter dateFilter) {
+    setState(() {
+      _dateFilter = dateFilter;
+      _currentPageIndex = dateFilter.initialPageIndex;
+    });
+  }
+
+  void _onPageChange(int index) {
+    setState(() {
+      _currentPageIndex = index;
     });
   }
 }

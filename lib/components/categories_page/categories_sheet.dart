@@ -39,11 +39,11 @@ class CategoriesSheet extends StatelessWidget {
         crossAxisCount: isSmallScreen ? 3 : 4,
         crossAxisSpacing: 4.0,
       ),
-      itemCount: categories.length * 5,
+      itemCount: categories.length,
       itemBuilder: (context, index) {
-        categories[index % 4].pieTouchedIndex = pieTouchedIndex;
+        categories[index].pieTouchedIndex = pieTouchedIndex;
         return CategoriesButton(
-          props: categories[index % 4],
+          props: categories[index],
           categoriesButtonOnPressed: categoriesButtonOnPressed,
         );
       },

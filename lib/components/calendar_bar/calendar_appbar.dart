@@ -39,288 +39,325 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CalendarAppBarState extends State<CalendarAppBar> {
-  late DateFilterType selectedFilter;
-  bool isTappable = true;
+  // `selectedFilter` here is shadowed by a local variable with the same name in build.
+  // It's fine if the intention is to use the local one.
+  DateFilterType selectedFilter = DateFilterType.month;
 
   @override
   void initState() {
     super.initState();
-    selectedFilter = widget.dateFilterType;
-    if (selectedFilter == DateFilterType.all) {
-      setState(() {
-        isTappable = false;
-      });
-    }
   }
 
- // Adjust height as needed
+  // Adjust height as needed
   @override
   Widget build(BuildContext context) {
+    bool isTappable = widget.dateFilterType != DateFilterType.all;
+    // This local `selectedFilter` shadows the class field `selectedFilter`.
+    // Changes to this local variable won't affect the class field.
+    // If you intend to update the class field, remove `DateFilterType` here.
+    DateFilterType selectedFilter = widget.dateFilterType;
+
     return AppBar(
-      automaticallyImplyLeading: false,
-      flexibleSpace: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-
-            /// go previous
-            IconButton(
-              onPressed: () {
-                if (!isTappable) {
-                  return;
-                }
-                if (widget.currentPageIndex == 0) {
-                  return;
-                }
-                widget.onUpdateCurrentPageIndex(widget.currentPageIndex - 1);
-              },
-              icon: Icon(
-                Icons.keyboard_double_arrow_left_rounded,
-              ),
-            ),
-
-            /// button to select different period options
-            MaterialButton(
-
-              /// show bottom sheet once it is pressed
-              onPressed: () {
-
-                // budget page is set to month date filter as default
-                // cannot be changed, independent of other pages.
-                if (widget.disabled) {
-                  return;
-                }
-
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  backgroundColor: AppColor.secondary,
-                  builder: (context) {
-                    return SafeArea(
-                      child: SingleChildScrollView(
-                        child: SizedBox(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          child: PeriodBottomSheet(
-                            title: 'Choose period',
-                            children: [
-
-                              /// set the period between any two date
-                              PeriodTile(
-                                  parentContext: context,
-                                  label: 'Select range',
-                                  icon: Icons.edit_calendar,
-                                  onPressed: () {
-                                    CalendarSelectorHelper.showCustomDateRangePicker(
-                                        context, (startDate, duration) {
-                                      DateFilterRepositories().updateDateFilter(
-                                          DateFilter.fromSelectedRange(startDate, duration));
-                                      widget.onUpdateDateFilter(
-                                          DateFilter.fromSelectedRange(startDate, duration));
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width * 0.84 + 12,
-                                  isSelected: selectedFilter ==
-                                      DateFilterType.range
-                              ),
-
-                              /// select any date
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'Select day',
-                                icon: Icons.date_range,
-                                onPressed: () {
-                                  CalendarSelectorHelper.selectDate(
-                                      context, (date) {
-                                    DateFilterRepositories().updateDateFilter(
-                                        DateFilter.fromSelectedDate(date));
-                                    widget.onUpdateDateFilter(
-                                        DateFilter.fromSelectedDate(date));
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                isSelected: false,
-                              ),
-
-                              /// from the first day of using the app until now
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'All time',
-                                icon: Icons.all_inclusive,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedFilter = DateFilterType.all;
-                                  });
-                                  DateFilterRepositories()
-                                      .updateDateFilter(DateFilter.fromType(
-                                      DateFilterType.all));
-                                  widget.onUpdateDateFilter(
-                                      DateFilter.fromType(
-                                          DateFilterType.all));
-                                  Navigator.pop(context);
-                                },
-                                isSelected: selectedFilter ==
-                                    DateFilterType.all,
-
-                              ),
-
-                              /// set today
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'Today',
-                                icon: Icons.today,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedFilter = DateFilterType.day;
-                                  });
-                                  DateFilterRepositories()
-                                      .updateDateFilter(
-                                      DateFilter.fromDuration(
-                                          DateFilterType.day,
-                                          Duration(days: 1)));
-                                  widget.onUpdateDateFilter(
-                                      DateFilter.fromDuration(
-                                          DateFilterType.day,
-                                          Duration(days: 1)));
-                                  Navigator.pop(context);
-                                },
-                                isSelected: selectedFilter ==
-                                    DateFilterType.day,
-                              ),
-
-                              /// set current week
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'Week',
-                                icon: Icons.calendar_view_week,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedFilter = DateFilterType.week;
-                                  });
-                                  DateFilterRepositories()
-                                      .updateDateFilter(
-                                      DateFilter.fromDuration(
-                                          DateFilterType.week,
-                                          Duration(days: 7)));
-                                  widget.onUpdateDateFilter(
-                                      DateFilter.fromDuration(
-                                          DateFilterType.week,
-                                          Duration(days: 7)));
-                                  Navigator.pop(context);
-                                },
-
-                                isSelected: selectedFilter ==
-                                    DateFilterType.week,
-                              ),
-
-                              /// set current month
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'Month',
-                                icon: Icons.calendar_month,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedFilter = DateFilterType.month;
-                                  });
-                                  DateFilterRepositories()
-                                      .updateDateFilter(DateFilter.fromType(
-                                      DateFilterType.month));
-                                  Navigator.pop(context);
-                                  widget.onUpdateDateFilter(
-                                      DateFilter.fromType(
-                                          DateFilterType.month));
-                                },
-                                isSelected: selectedFilter ==
-                                    DateFilterType.month,
-                              ),
-
-                              /// set current year
-                              PeriodTile(
-                                parentContext: context,
-                                label: 'Year',
-                                icon: Icons.calendar_today,
-                                onPressed: () {
-                                  setState(() {
-                                    selectedFilter = DateFilterType.year;
-                                  });
-                                  DateFilterRepositories()
-                                      .updateDateFilter(DateFilter.fromType(
-                                      DateFilterType.year));
-                                  Navigator.pop(context);
-                                  widget.onUpdateDateFilter(
-                                      DateFilter.fromType(
-                                          DateFilterType.year));
-                                },
-                                isSelected: selectedFilter ==
-                                    DateFilterType.year,
-                              ),
-                            ],
-                          )
-                        ),
-                      ),
-                    );
-                  }
-                );
-              },
-              height: 50,
-              color: AppColor.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSize.borderRadius),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    CalendarSelectorHelper.getIcon(widget.dateFilterType),
-                    color: AppColor.darkIcon,
-                    size: AppSize.smallIcon,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.dateString,
-                    style: TextStyle(
-                      color: AppColor.darkText,
-                      fontSize: AppSize.heading3,
+                  /// go previous
+                  IconButton(
+                    onPressed: () {
+                      if (!isTappable) {
+                        return;
+                      }
+                      if (widget.currentPageIndex == 0) {
+                        return;
+                      }
+                      widget.onUpdateCurrentPageIndex(
+                          widget.currentPageIndex - 1);
+                    },
+                    icon: const Icon( // Added const
+                      Icons.keyboard_double_arrow_left_rounded,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColor.darkIcon,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
 
-            /// go next
-            IconButton(
-              onPressed: () {
-                if (!isTappable) {
-                  return;
-                }
-                if (widget.currentPageIndex == widget.maxIndex) {
-                  return;
-                }
-                widget.onUpdateCurrentPageIndex(widget.currentPageIndex + 1);
-              },
-              icon: Icon(
-                Icons.keyboard_double_arrow_right_rounded,
-              ),
-            ),
-          ]
-        ),
-      ),
+                  /// button to select different period options
+                  MaterialButton(
+                    /// show bottom sheet once it is pressed
+                    onPressed: () {
+                      // budget page is set to month date filter as default
+                      // cannot be changed, independent of other pages.
+                      if (widget.disabled) {
+                        return;
+                      }
+
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder( // Added const
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20)),
+                          ),
+                          backgroundColor: AppColor.secondary,
+                          builder: (context) {
+                            return SafeArea(
+                              child: SingleChildScrollView(
+                                child: SizedBox(
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width,
+                                    child: PeriodBottomSheet(
+                                      title: 'Choose period',
+                                      children: [
+                                        /// set the period between any two date
+                                        PeriodTile(
+                                            parentContext: context,
+                                            label: 'Select range',
+                                            icon: Icons.edit_calendar,
+                                            onPressed: () {
+                                              CalendarSelectorHelper
+                                                  .showCustomDateRangePicker(
+                                                  context, (startDate, duration) {
+                                                () async {
+                                                  await DateFilterRepositories
+                                                      .instance.updateDateFilter(
+                                                      DateFilter
+                                                          .fromSelectedRange(
+                                                          startDate, duration));
+                                                  widget.onUpdateDateFilter(
+                                                      DateFilter
+                                                          .fromSelectedRange(
+                                                          startDate, duration));
+                                                }
+                                                ();
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                            width: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width * 0.84 + 12,
+                                            isSelected: selectedFilter ==
+                                                DateFilterType.range
+                                        ),
+
+                                        /// select any date
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'Select day',
+                                          icon: Icons.date_range,
+                                          onPressed: () {
+                                            CalendarSelectorHelper.selectDate(
+                                                context, (date) {
+                                              () async {
+                                                await DateFilterRepositories
+                                                    .instance.updateDateFilter(
+                                                    DateFilter.fromSelectedDate(
+                                                        date));
+
+                                                widget.onUpdateDateFilter(
+                                                    DateFilter.fromSelectedDate(
+                                                        date));
+                                              }
+                                              ();
+                                              Navigator.pop(context);
+                                            });
+                                          },
+                                          isSelected: false,
+                                        ),
+
+                                        /// from the first day of using the app until now
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'All time',
+                                          icon: Icons.all_inclusive,
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedFilter = DateFilterType.all;
+                                            });
+                                            () async {
+                                              await DateFilterRepositories
+                                                  .instance.updateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.all));
+                                              widget.onUpdateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.all));
+                                            }
+                                            ();
+                                            Navigator.pop(context);
+                                          },
+                                          isSelected: selectedFilter ==
+                                              DateFilterType.all,
+
+                                        ),
+
+                                        /// set today
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'Today',
+                                          icon: Icons.today,
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedFilter = DateFilterType.day;
+                                            });
+                                            () async {
+                                              await DateFilterRepositories
+                                                  .instance.updateDateFilter(
+                                                  DateFilter.fromDuration(
+                                                      DateFilterType.day,
+                                                      const Duration(days: 1))); // Added const
+                                              widget.onUpdateDateFilter(
+                                                  DateFilter.fromDuration(
+                                                      DateFilterType.day,
+                                                      const Duration(days: 1))); // Added const
+                                            }
+                                            ();
+                                            Navigator.pop(context);
+                                          },
+                                          isSelected: selectedFilter ==
+                                              DateFilterType.day,
+                                        ),
+
+                                        /// set current week
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'Week',
+                                          icon: Icons.calendar_view_week,
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedFilter =
+                                                  DateFilterType.week;
+                                            });
+                                            () async {
+                                              await DateFilterRepositories
+                                                  .instance.updateDateFilter(
+                                                  DateFilter.fromDuration(
+                                                      DateFilterType.week,
+                                                      const Duration(days: 7))); // Added const
+                                              widget.onUpdateDateFilter(
+                                                  DateFilter.fromDuration(
+                                                      DateFilterType.week,
+                                                      const Duration(days: 7))); // Added const
+                                            }
+                                            ();
+                                            Navigator.pop(context);
+                                          },
+
+                                          isSelected: selectedFilter ==
+                                              DateFilterType.week,
+                                        ),
+
+                                        /// set current month
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'Month',
+                                          icon: Icons.calendar_month,
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedFilter =
+                                                  DateFilterType.month;
+                                            });
+                                            () async {
+                                              await DateFilterRepositories
+                                                  .instance.updateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.month));
+                                              widget.onUpdateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.month));
+                                            }
+                                            ();
+                                            Navigator.pop(context);
+                                          },
+                                          isSelected: selectedFilter ==
+                                              DateFilterType.month,
+                                        ),
+
+                                        /// set current year
+                                        PeriodTile(
+                                          parentContext: context,
+                                          label: 'Year',
+                                          icon: Icons.calendar_today,
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedFilter =
+                                                  DateFilterType.year;
+                                            });
+                                            () async {
+                                              await DateFilterRepositories
+                                                  .instance.updateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.year));
+                                              widget.onUpdateDateFilter(
+                                                  DateFilter.fromType(
+                                                      DateFilterType.year));
+                                            }
+                                            ();
+                                            Navigator.pop(context);
+                                          },
+                                          isSelected: selectedFilter ==
+                                              DateFilterType.year,
+                                        ),
+                                      ],
+                                    )
+                                ),
+                              ),
+                            );
+                          }
+                      );
+                    },
+                    height: 50,
+                    color: AppColor.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSize.borderRadius),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          CalendarSelectorHelper.getIcon(widget.dateFilterType),
+                          color: AppColor.darkIcon,
+                          size: AppSize.smallIcon,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          widget.dateString,
+                          style: TextStyle(
+                            color: AppColor.darkText,
+                            fontSize: AppSize.heading3,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon( // Added const
+                          Icons.keyboard_arrow_down,
+                          color: AppColor.darkIcon,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// go next
+                  IconButton(
+                    onPressed: () {
+                      if (!isTappable) {
+                        return;
+                      }
+                      if (widget.currentPageIndex == widget.maxIndex) {
+                        return;
+                      }
+                      widget.onUpdateCurrentPageIndex(
+                          widget.currentPageIndex + 1);
+                    },
+                    icon: const Icon( // Added const
+                      Icons.keyboard_double_arrow_right_rounded,
+                    ),
+                  ),
+                ]
+            )
+        )
     );
   }
 }

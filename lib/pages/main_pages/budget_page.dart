@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/budget_page/budget_page_content.dart';
+import 'package:money_minder/components/transaction/transaction_content.dart';
+import 'package:money_minder/models/currency.dart';
 
-import  '../../components/calendar_bar/calendar_appbar.dart';
+import '../../components/budget_page/budget_page_content.dart';
+import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
-import '../../repositories/date_filter_repositories.dart';
-import '../../repositories/transactions_repositories.dart';
 
-/// the page that shows the budget
+/// page that shows the transactions
 class BudgetPage extends StatefulWidget {
-  const BudgetPage({super.key});
+  const BudgetPage({
+    super.key,
+    required this.mainCurrency,
+    required this.filteredTransactions,
+    required this.dateFilter,
+    required this.filteredAccountBalance,
+    required this.onDateFilterUpdate,
+    required this.currentPageIndex,
+    required this.onPageChange,
+  });
+
+  final double filteredAccountBalance;
+  final Currency mainCurrency;
+  final List<Transaction> filteredTransactions;
+  final DateFilter dateFilter;
+  final Function(DateFilter) onDateFilterUpdate;
+  final int currentPageIndex;
+  final void Function(int) onPageChange;
 
   @override
   State<BudgetPage> createState() => _BudgetPageState();
@@ -18,94 +35,82 @@ class BudgetPage extends StatefulWidget {
 class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
-  late int _currentPageIndex;
-  List<Transaction> transactions = [];
-  DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
 
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = dateFilter.initialPageIndex;
-    _pageViewController = PageController(initialPage: _currentPageIndex);
+    _pageViewController = PageController(initialPage: widget.currentPageIndex);
     _tabController = TabController(
-        length: dateFilter.startDates.length - 1,
-        initialIndex: _currentPageIndex,
+        length: 100,
+        initialIndex: widget.currentPageIndex,
         vsync: this
     );
-    fetchDateFilter();
-    () async {
-      List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
-      setState(() {
-        transactions = res;
-      });
-    }();
-  }
-
-  Future<void> fetchDateFilter() async {
-    var res = await DateFilterRepositories().getMonthDateFilter();
-    setState(() {
-      dateFilter = res;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _pageViewController.dispose();
-    _tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
 
     /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateFilter.startDates);
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
+        widget.filteredTransactions, widget.dateFilter.startDates);
+
+    List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
+
 
     return Scaffold(
       appBar: CalendarAppBar(
         tabController: _tabController,
-        currentPageIndex: _currentPageIndex,
+        currentPageIndex: widget.currentPageIndex,
         onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-        dateString: dateFilter.convertString(_currentPageIndex),
-        maxIndex: dateFilter.startDates.length - 2,
-        dateFilterType: dateFilter.type,
-        onUpdateDateFilter: _updateDateFilter,
-        disabled: true,
+        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
+        maxIndex: widget.dateFilter.startDates.length - 2,
+        dateFilterType: widget.dateFilter.type,
+        onUpdateDateFilter: _onDateFilterChange,
       ),
       body: PageView(
-        controller: _pageViewController,
-        onPageChanged: _handlePageViewChanged,
-        children: groupedTransactions.map((transaction) => Center(
-          child: Text(transaction.join('\n')))).toList()
+          controller: _pageViewController,
+          onPageChanged: _handlePageViewChanged,
+          physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
+          children: groupedTransactions.indexed.map((transactions) =>
+            BudgetPageContent()
+          ).toList()
       ),
     );
   }
 
   void _handlePageViewChanged(int currentPageIndex) {
     _tabController.index = currentPageIndex;
-    setState(() {
-      _currentPageIndex = currentPageIndex;
-    });
+    widget.onPageChange(currentPageIndex);
   }
 
   void _updateCurrentPageIndex(int index) {
     _tabController.index = index;
     _pageViewController.jumpToPage(index);
-    setState(() {
-      _currentPageIndex = index;
-    });
+    widget.onPageChange(index);
   }
 
-  void _updateDateFilter(DateFilter dateFilter) {
+
+  List<double> getAccumulatedBalance(List<List<Transaction>> transactionsList, double initialBalance) {
+    List<double> res = [initialBalance];
+    for (int i = transactionsList.length - 1; i >= 0; i--) {
+      double temp = res.last;
+      for (Transaction t in transactionsList[i]) {
+        if (t.type == 'expense'){
+          temp += t.mainAmount;
+        } else if (t.type == 'income') {
+          temp -= t.mainAmount;
+        }
+      }
+      res.add(temp);
+    }
+    return res.reversed.toList();
+  }
+
+  void _onDateFilterChange(DateFilter dateFilter) async {
+    widget.onDateFilterUpdate(dateFilter);
     setState(() {
-      this.dateFilter = dateFilter;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
+      _pageViewController.jumpToPage(dateFilter.initialPageIndex);
+      _tabController.index = dateFilter.initialPageIndex;
     });
   }
 }
-
