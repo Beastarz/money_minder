@@ -50,7 +50,11 @@ class DateFilter {
   _initDates() {
     switch(type) {
       case DateFilterType.all:
-        startDates.add(DateTime(2000));
+        startDates.add(DateTime(1975));
+        for (int i = 0; i < 50; i++) {
+          startDates.add(DateTime(2100));
+          startDates.insert(0, DateTime(1975));
+        }
       case DateFilterType.year:
         startDate = DateTime(startDate.year);
         startDates.add(startDate);
@@ -143,12 +147,13 @@ class DateFilter {
 
   /// convert DateFilter to string for display
   String convertString(int index) {
+    if (type == DateFilterType.all) {
+      return 'ALL TIME';
+    }
     if (index < 0 || index > startDates.length - 1) {
       return '';
     }
     switch(type) {
-      case DateFilterType.all:
-        return 'All Time';
       case DateFilterType.year:
         return 'YEAR ${startDates[index].year.toString()}';
       case DateFilterType.month:

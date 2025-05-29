@@ -5,22 +5,27 @@ import 'package:money_minder/models/currency.dart';
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
-import '../../repositories/date_filter_repositories.dart';
 
 /// page that shows the transactions
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({
     super.key,
-    required this.filteredAccountIds,
-    required this.filteredAccountBalance,
     required this.mainCurrency,
-    required this.transactions
+    required this.filteredTransactions,
+    required this.dateFilter,
+    required this.filteredAccountBalance,
+    required this.onDateFilterUpdate,
+    required this.currentPageIndex,
+    required this.onPageChange,
   });
 
-  final List<int> filteredAccountIds;
   final double filteredAccountBalance;
   final Currency mainCurrency;
-  final List<Transaction> transactions;
+  final List<Transaction> filteredTransactions;
+  final DateFilter dateFilter;
+  final Function(DateFilter) onDateFilterUpdate;
+  final int currentPageIndex;
+  final void Function(int) onPageChange;
 
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();
@@ -29,62 +34,42 @@ class TransactionsPage extends StatefulWidget {
 class _TransactionsPageState extends State<TransactionsPage> with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
-  late int _currentPageIndex;
-  DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
 
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = dateFilter.initialPageIndex;
-    _pageViewController = PageController(initialPage: _currentPageIndex);
+    _pageViewController = PageController(initialPage: widget.currentPageIndex);
     _tabController = TabController(
-        length: dateFilter.startDates.length - 1,
-        initialIndex: _currentPageIndex,
+        length: 100,
+        initialIndex: widget.currentPageIndex,
         vsync: this
     );
-    fetchDateFilter();
-  }
-
-  Future<void> fetchDateFilter() async {
-    var res = await DateFilterRepositories().getDateFilter();
-    setState(() {
-      dateFilter = res;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _pageViewController.dispose();
-    _tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Transaction> transactionsByAccount = widget.transactions.where((t) => widget.filteredAccountIds.contains(t.fromAccount.id)
-        || widget.filteredAccountIds.contains(t.toAccount?.id)).toList();
 
     /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactionsByAccount, dateFilter.startDates);
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
+        widget.filteredTransactions, widget.dateFilter.startDates);
 
     List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
+
 
     return Scaffold(
       appBar: CalendarAppBar(
         tabController: _tabController,
-        currentPageIndex: _currentPageIndex,
+        currentPageIndex: widget.currentPageIndex,
         onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-        dateString: dateFilter.convertString(_currentPageIndex),
-        maxIndex: dateFilter.startDates.length - 2,
-        dateFilterType: dateFilter.type,
-        onUpdateDateFilter: _updateDateFilter,
+        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
+        maxIndex: widget.dateFilter.startDates.length - 2,
+        dateFilterType: widget.dateFilter.type,
+        onUpdateDateFilter: _onDateFilterChange,
       ),
       body: PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
+        physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
         children: groupedTransactions.indexed.map((transactions) => TransactionsContent(
           transactions: transactions.$2,
           initialBalance: accumulatedBalance[transactions.$1],
@@ -97,27 +82,15 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
 
   void _handlePageViewChanged(int currentPageIndex) {
     _tabController.index = currentPageIndex;
-    setState(() {
-      _currentPageIndex = currentPageIndex;
-    });
+    widget.onPageChange(currentPageIndex);
   }
 
   void _updateCurrentPageIndex(int index) {
     _tabController.index = index;
     _pageViewController.jumpToPage(index);
-    setState(() {
-      _currentPageIndex = index;
-    });
+    widget.onPageChange(index);
   }
 
-  void _updateDateFilter(DateFilter dateFilter) {
-    setState(() {
-      this.dateFilter = dateFilter;
-      _currentPageIndex = dateFilter.initialPageIndex;
-      _pageViewController.jumpToPage(_currentPageIndex);
-      _tabController.index = _currentPageIndex;
-    });
-  }
 
   List<double> getAccumulatedBalance(List<List<Transaction>> transactionsList, double initialBalance) {
     List<double> res = [initialBalance];
@@ -133,5 +106,13 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       res.add(temp);
     }
     return res.reversed.toList();
+  }
+
+  void _onDateFilterChange(DateFilter dateFilter) async {
+    widget.onDateFilterUpdate(dateFilter);
+    setState(() {
+      _pageViewController.jumpToPage(dateFilter.initialPageIndex);
+      _tabController.index = dateFilter.initialPageIndex;
+    });
   }
 }

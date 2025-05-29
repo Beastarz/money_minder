@@ -6,6 +6,10 @@ import '../models/date_filter.dart';
 class DateFilterRepositories {
   DatabaseService dbService = DatabaseService.instance;
 
+  DateFilterRepositories._privateConstructor();
+
+  static DateFilterRepositories instance = DateFilterRepositories._privateConstructor();
+
   /// get date filter from database
   Future<DateFilter> getDateFilter() async {
     Database db = await dbService.database;

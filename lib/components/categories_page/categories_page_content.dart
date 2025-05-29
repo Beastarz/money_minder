@@ -200,7 +200,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
                 )
               ],
             ),
-            headerExpandedHeight: 0.40,
+            headerExpandedHeight: 0.35,
             body: [
               CategoriesSheet(
                 isExpense: _isExpense,
