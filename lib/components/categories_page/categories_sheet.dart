@@ -31,7 +31,7 @@ class CategoriesSheet extends StatelessWidget {
 
 
     return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: EdgeInsets.all(AppSize.smallPadding),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -39,11 +39,11 @@ class CategoriesSheet extends StatelessWidget {
         crossAxisCount: isSmallScreen ? 3 : 4,
         crossAxisSpacing: 4.0,
       ),
-      itemCount: categories.length,
+      itemCount: categories.length * 5,
       itemBuilder: (context, index) {
-        categories[index].pieTouchedIndex = pieTouchedIndex;
+        categories[index % 4].pieTouchedIndex = pieTouchedIndex;
         return CategoriesButton(
-          props: categories[index],
+          props: categories[index % 4],
           categoriesButtonOnPressed: categoriesButtonOnPressed,
         );
       },

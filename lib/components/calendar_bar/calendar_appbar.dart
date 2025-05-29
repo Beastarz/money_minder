@@ -17,6 +17,7 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   final int maxIndex;
   final DateFilterType dateFilterType;
   final void Function(DateFilter) onUpdateDateFilter;
+  final bool disabled;
 
   const CalendarAppBar({
     super.key,
@@ -27,6 +28,7 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.dateString,
     required this.maxIndex,
     required this.dateFilterType,
+    this.disabled = false,
   });
 
   @override
@@ -83,6 +85,13 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
 
               /// show bottom sheet once it is pressed
               onPressed: () {
+
+                // budget page is set to month date filter as default
+                // cannot be changed, independent of other pages.
+                if (widget.disabled) {
+                  return;
+                }
+
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,

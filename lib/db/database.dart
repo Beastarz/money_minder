@@ -114,10 +114,10 @@ class DatabaseService {
 
     await db.execute('''
       INSERT INTO categories (label, position, icon, color, is_expense, expected_amount) VALUES
-      ('Food', 0, 0xe56c, 0xFFFF5722, 1, 300.00), -- restaurant, Deep Orange
-      ('Transport', 1, 0xe530, 0xFF673AB7, 1, 150.00), -- directions_bus, Deep Purple
+      ('Food', 2, 0xe56c, 0xFFFF5722, 1, 300.00), -- restaurant, Deep Orange
+      ('Transport', 0, 0xe530, 0xFF673AB7, 1, 150.00), -- directions_bus, Deep Purple
       ('Salary', 0, 0xe227, 0xFF8BC34A, 0, 0.00), -- attach_money, Light Green (Income category)
-      ('Leisure', 2,  0xe30f, 0xFF00BCD4, 1, 200.00); -- gamepad, Cyan
+      ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1, 200.00); -- gamepad, Cyan
     ''');
 
 

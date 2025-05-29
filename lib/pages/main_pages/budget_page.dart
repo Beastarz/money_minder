@@ -3,7 +3,9 @@ import 'package:money_minder/components/budget_page/budget_page_content.dart';
 
 import  '../../components/calendar_bar/calendar_appbar.dart';
 import '../../models/date_filter.dart';
+import '../../models/transaction.dart';
 import '../../repositories/date_filter_repositories.dart';
+import '../../repositories/transactions_repositories.dart';
 
 /// the page that shows the budget
 class BudgetPage extends StatefulWidget {
@@ -17,6 +19,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
   late int _currentPageIndex;
+  List<Transaction> transactions = [];
   DateFilter dateFilter = DateFilter.fromType(DateFilterType.month);
 
   @override
@@ -30,10 +33,16 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         vsync: this
     );
     fetchDateFilter();
+    () async {
+      List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
+      setState(() {
+        transactions = res;
+      });
+    }();
   }
 
   Future<void> fetchDateFilter() async {
-    var res = await DateFilterRepositories().getDateFilter();
+    var res = await DateFilterRepositories().getMonthDateFilter();
     setState(() {
       dateFilter = res;
       _currentPageIndex = dateFilter.initialPageIndex;
@@ -51,13 +60,9 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // List<Transaction> transactionsByAccount = widget.transactions.where((t) => widget.filteredAccountIds.contains(t.fromAccount.id)
-    //     || widget.filteredAccountIds.contains(t.toAccount?.id)).toList();
 
     /// map this to categories and transactions page
-    // List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactionsByAccount, dateFilter.startDates);
-
-    // List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateFilter.startDates);
 
     return Scaffold(
       appBar: CalendarAppBar(
@@ -68,17 +73,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         maxIndex: dateFilter.startDates.length - 2,
         dateFilterType: dateFilter.type,
         onUpdateDateFilter: _updateDateFilter,
+        disabled: true,
       ),
       body: PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
-        // children: groupedTransactions.indexed.map((transactions) => TransactionsContent(
-        //   transactions: transactions.$2,
-        //   initialBalance: accumulatedBalance[transactions.$1],
-        //   finalBalance: accumulatedBalance[transactions.$1 + 1],
-        //   mainCurrency: widget.mainCurrency,
-        // )).toList()
-        children: [BudgetPageContent()],
+        children: groupedTransactions.map((transaction) => Center(
+          child: Text(transaction.join('\n')))).toList()
       ),
     );
   }

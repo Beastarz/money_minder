@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:draggable_home/draggable_home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +10,19 @@ import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 import '../../style/app_size.dart';
 import '../input_form_sheet/input_form.dart';
 import '../input_form_sheet/input_form_helper.dart';
-import 'categories_page_helper.dart';
 import 'categories_sheet.dart';
 
 class CategoriesPageContent extends StatefulWidget {
-  const CategoriesPageContent({super.key});
+
+  /// constructor
+  final List<List<CategoryButtonProps>> categories;
+  final List<double> totalAmounts;
+
+  const CategoriesPageContent({
+    super.key,
+    required this.categories,
+    required this.totalAmounts,
+  });
 
   @override
   State<CategoriesPageContent>createState() => _CategoriesPageContentState();
@@ -30,8 +35,6 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
   bool _isExpense = true;
   // track which category is chosen
   int _pieTouchedIndex = -1;
-  // categories button props list
-  late Future<List<List<CategoryButtonProps>>> _categoriesFuture;
 
   // the center button will toggle between showing expenses and income each
   // time it is clicked.
@@ -54,7 +57,8 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
     final double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
     final bool isExpense = prop.isExpense;
 
-    TopCard card1 = TopCard(
+    // left card on top of the input form
+    final TopCard card1 = TopCard(
       width: MediaQuery.of(context).size.width * 0.5,
       topLeft: true,
       title: Text(
@@ -78,7 +82,8 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       onPressed: () {},
     );
 
-    TopCard card2 = TopCard(
+    // right card on top of the input form
+    final TopCard card2 = TopCard(
       width: MediaQuery.of(context).size.width * 0.5,
       topRight: true,
       title: Text(
@@ -153,72 +158,39 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    // Initialize the database and then fetch categories
-    _categoriesFuture = CategoriesPageHelper.getCategoriesList();
-  }
-
-  @override
   Widget build(BuildContext context) {
 
-    return FutureBuilder<List<List<CategoryButtonProps>>>(
-      future: _categoriesFuture,
-      builder: (context, snapshot) {
+    final List<CategoryButtonProps> categories =
+      widget.categories[_isExpense ? 0 : 1];
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Data is still loading, show a progress indicator
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          // An error occurred
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          // Data has been successfully loaded!
-          // categories[0] is expenseCategories
-          // categories[1] is incomeCategories
-          final List<List<CategoryButtonProps>> categories = snapshot.data!;
-
-          if (categories.isEmpty) {
-            return const Center(child: Text('No categories found.'));
-          }
-
-          return DraggableHome(
-            title: Text("Categories"),
-            headerWidget: Stack(
-              alignment: Alignment.center,
-              children: [
-                CenterPieChart(
-                  isExpense: _isExpense,
-                  pieTouchedIndex: _pieTouchedIndex,
-                  touchCallback: pieDataIsTouched,
-                  list: categories[_isExpense ? 0 : 1],
-                  totalAmount: CategoriesPageHelper.getTotalAmount(
-                      categories[_isExpense ? 0 : 1]
-                  ),
-                ),
-                CenterButton(
-                  centerButtonOnPressed: centerButtonOnPressed,
-                  isExpense: _isExpense,
-                  totalExpense: CategoriesPageHelper
-                      .getTotalAmount(categories[0]),
-                  totalIncome: CategoriesPageHelper
-                      .getTotalAmount(categories[1]),
-                )
-              ],
-            ),
-            headerExpandedHeight: 0.40,
-            body: [
-              CategoriesSheet(
-                isExpense: _isExpense,
-                pieTouchedIndex: _pieTouchedIndex,
-                categoriesButtonOnPressed: categoriesButtonOnPressed,
-                categories: categories[_isExpense ? 0 : 1],
-            )]
-          );
-        } else {
-          return const Center(child: Text("No data available"));
-        }
-      }
+    return DraggableHome(
+      title: Text("Categories"),
+      headerWidget: Stack(
+        alignment: Alignment.center,
+        children: [
+          CenterPieChart(
+            isExpense: _isExpense,
+            pieTouchedIndex: _pieTouchedIndex,
+            touchCallback: pieDataIsTouched,
+            list: categories,
+            totalAmount: widget.totalAmounts[_isExpense ? 0 : 1],
+          ),
+          CenterButton(
+            centerButtonOnPressed: centerButtonOnPressed,
+            isExpense: _isExpense,
+            totalExpense: widget.totalAmounts[0],
+            totalIncome: widget.totalAmounts[1],
+          )
+        ],
+      ),
+      headerExpandedHeight: 0.40,
+      body: [
+        CategoriesSheet(
+          isExpense: _isExpense,
+          pieTouchedIndex: _pieTouchedIndex,
+          categoriesButtonOnPressed: categoriesButtonOnPressed,
+          categories: categories,
+      )]
     );
   }
 }

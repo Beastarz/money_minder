@@ -10,11 +10,13 @@ import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'models/category.dart';
 import 'models/transaction.dart';
 
 
@@ -56,6 +58,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
   List<Account> _accounts = [];
   List<Transaction> _transactions = [];
+  List<List<Category>> _categories = [];
   Currency _mainCurrency = Currency.of('sgd');
 
   @override
@@ -64,6 +67,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     _fetchAccounts();
     _fetchMainCurrency();
     _fetchTransactions();
+    _fetchCategories();
   }
 
   Future<void> _fetchAccounts() async {
@@ -87,6 +91,16 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
+  Future<void> _fetchCategories() async {
+    List<Category> expenseCat =
+      await CategoriesRepositories.instance.getCategoriesByType(true);
+    List<Category> incomeCat =
+      await CategoriesRepositories.instance.getCategoriesByType(false);
+    setState(() {
+      _categories = [expenseCat, incomeCat];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
@@ -97,7 +111,9 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
           mainCurrency: _mainCurrency,
           onReload: _fetchAccounts,
       ),
-      const CategoriesPage(),
+      CategoriesPage(
+        categories: _categories,
+      ),
       TransactionsPage(
         filteredAccountIds: filteredAccounts.map((e) => e.id).toList(),
         filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),

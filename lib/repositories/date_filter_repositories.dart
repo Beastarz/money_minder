@@ -17,6 +17,11 @@ class DateFilterRepositories {
     return DateFilter.fromType(DateFilterType.month);
   }
 
+  /// get month date filter
+  Future<DateFilter> getMonthDateFilter() async {
+    return DateFilter.fromType(DateFilterType.month);
+  }
+
   /// update date filter to database
   Future<void> updateDateFilter(DateFilter dateFilter) async {
     Database db = await dbService.database;

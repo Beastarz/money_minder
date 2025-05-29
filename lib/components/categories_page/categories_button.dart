@@ -8,7 +8,7 @@ import '../../style/app_color.dart';
 class CategoryButtonProps {
 
   /// variable
-  final int index; // index of the button in the list, affecting the sequence
+  final int position; // index of the button in the list, affecting the sequence
   final String label; // button label
   final Icon icon; // icon of the categories
   final Color color; // button color
@@ -19,7 +19,7 @@ class CategoryButtonProps {
   final bool isAddButton; // indicated if it is the addButton
 
   CategoryButtonProps({
-    required this.index,
+    required this.position,
     required this.label,
     required this.icon,
     required this.color,
@@ -34,7 +34,7 @@ class CategoryButtonProps {
 class AddCategoriesButtonProps extends CategoryButtonProps {
   AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
       : super(
-    index: index,
+    position: index,
     label: 'Add',
     icon: Icon(
       IconData(0xe145, fontFamily: "MaterialSymbolsOutlined")
@@ -128,11 +128,11 @@ class _CategoriesButtonState extends State<CategoriesButton>
         : 1 - (props.actualAmount / props.expectedAmount);
 
     setState(() {
-      isLooping = props.pieTouchedIndex == props.index;
+      isLooping = props.pieTouchedIndex == props.position;
     });
     // if the pieData corresponding to this categories is clicked
     // trigger the animation
-    if (props.pieTouchedIndex == props.index) {
+    if (props.pieTouchedIndex == props.position) {
       _triggerPop();
     }
 
