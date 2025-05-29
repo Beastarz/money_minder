@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/transaction/transaction_content.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/budget_page/budget_page_content.dart';
@@ -54,8 +53,6 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
         widget.filteredTransactions, widget.dateFilter.startDates);
 
-    List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
-
 
     return Scaffold(
       appBar: CalendarAppBar(
@@ -66,6 +63,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
         maxIndex: widget.dateFilter.startDates.length - 2,
         dateFilterType: widget.dateFilter.type,
         onUpdateDateFilter: _onDateFilterChange,
+        disabled: true,
       ),
       body: PageView(
           controller: _pageViewController,

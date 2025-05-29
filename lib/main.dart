@@ -106,7 +106,6 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
-  @override
   Future<void> _fetchDateFilter() async {
     DateFilter res = await DateFilterRepositories.instance.getDateFilter();
     setState(() {
@@ -158,7 +157,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         filteredAccountBalance: 0,
         mainCurrency: Currency.of('sgd'),
         filteredTransactions: [],
-        dateFilter: DateFilter.fromType(DateFilterType.month),
+        dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,

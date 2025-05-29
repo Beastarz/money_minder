@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistics_page_content.dart';
-import 'package:money_minder/components/transaction/transaction_content.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
@@ -53,8 +52,6 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
     /// map this to categories and transactions page
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
         widget.filteredTransactions, widget.dateFilter.startDates);
-
-    List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
 
 
     return Scaffold(

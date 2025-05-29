@@ -7,8 +7,6 @@ import '../../components/categories_page/categories_button.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
-import '../../repositories/date_filter_repositories.dart';
-import '../../repositories/transactions_repositories.dart';
 
 /// the page that shows the categories
 class CategoriesPage extends StatefulWidget {
