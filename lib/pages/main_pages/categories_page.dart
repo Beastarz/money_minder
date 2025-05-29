@@ -72,10 +72,10 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           List<double> totalAmounts = [0, 0];
           List<CategoryButtonProps> expenseCats =
             CategoriesPageHelper.convertToCatButProps(
-              widget.categories[0], transaction, totalAmounts, true);
+              widget.categories[0], transaction, totalAmounts, true, widget.dateFilter);
           List<CategoryButtonProps> incomeCats =
             CategoriesPageHelper.convertToCatButProps(
-              widget.categories[1], transaction, totalAmounts, false);
+              widget.categories[1], transaction, totalAmounts, false, widget.dateFilter);
           expenseCats.add(AddCategoriesButtonProps(expenseCats.length));
           incomeCats.add(AddCategoriesButtonProps(incomeCats.length));
           return CategoriesPageContent(
