@@ -5,6 +5,7 @@ import 'currency.dart';
 enum AccountType {
   accounts,
   savings,
+  debts
 }
 
 class Account {
@@ -46,7 +47,11 @@ class Account {
       description: map['description'],
       isMain: map['is_main'] == 1 ? true : false,
       isIncludesInTotal: map['includes_in_total'] == 1 ? true : false,
-      type: map['type'] == 'savings' ? AccountType.savings : AccountType.accounts,
+      type: map['type'] == 'savings'
+          ? AccountType.savings
+          : map['type'] == 'debts'
+          ? AccountType.debts
+          : AccountType.accounts,
       currency: Currency.of(map['currency']),
       position: map['position'],
     );

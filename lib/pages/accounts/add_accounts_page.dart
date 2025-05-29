@@ -57,7 +57,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
     try {
       Map<String, dynamic> accountData = Account.insertAsMap(
         name: _nameController.text,
-        balance: double.parse(_accountBalanceController.text),
+        balance: double.parse(_accountBalanceController.text) * (accountType == AccountType.debts ? -1 : 1),
         icon: icon,
         color: color,
         description: _descriptionController.text,
@@ -160,7 +160,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                     children: [
                       ListTile(
                         title: Text('Regular'),
-                        subtitle: Text('for regular expenses: cash, card, bank card, etc'),
+                        subtitle: Text('For regular expenses: Cash, Card, Bank Deposits, etc'),
                         onTap: () {
                           setState(() {
                             accountType = AccountType.accounts;
@@ -170,10 +170,22 @@ class _AddAccountPageState extends State<AddAccountPage> {
                       ),
                       ListTile(
                         title: Text('Savings'),
-                        subtitle: Text('for saving money: savings account, wishes, trip, etc'),
+                        subtitle: Text('For saving money: Savings account, Wishes, Future Trip, etc'),
                         onTap: () {
                           setState(() {
                             accountType = AccountType.savings;
+                            _includeInTotalBalance = false;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Debts'),
+                        subtitle: Text('For owned debts: Credit Cards, Loans, trip, etc'),
+                        onTap: () {
+                          setState(() {
+                            accountType = AccountType.debts;
+                            _includeInTotalBalance = false;
                           });
                           Navigator.pop(context);
                         },
@@ -234,9 +246,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
                   horizontal: 16.0, vertical: 8.0),
               child: Row(
                 children: [
-                  Expanded(child: Text('Account balance')),
+                  Expanded(child: Text(accountType == AccountType.debts ? 'Debt balance' :'Account balance')),
                   SizedBox(
-                    width: 100, // Adjust width as needed
+                    width: 150, // Adjust width as needed
                     child: TextField(
                       controller: _accountBalanceController,
                       textAlign: TextAlign.end,
@@ -244,7 +256,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                         decimal: true,
                       ),
                       decoration: InputDecoration(
-                        prefixText: mainCurrency.toString(),
+                        prefixText: mainCurrency.toString() + (accountType == AccountType.debts ? ' ( - )' : ''),
                         border: InputBorder.none,
                       ),
                     ),
