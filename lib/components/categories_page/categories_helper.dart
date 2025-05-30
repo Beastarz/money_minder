@@ -1,12 +1,26 @@
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/date_filter.dart';
 
+import '../../models/budget.dart';
 import '../../models/transaction.dart';
 import 'categories_button.dart';
 
-class CategoriesPageHelper {
+class CategoriesHelper {
 
-  static double getBudgeCoefficient(DateFilter dateFilter) {
+  static List<Budget> getBudgets(List<Budget> budgets) {
+    return budgets.where((budget) => budget.type == 'category').toList();
+  }
+
+  static double getBudget(List<Budget> budgets, int catId) {
+    for (Budget b in budgets) {
+      if (b.category!.id == catId) {
+        return b.amount;
+      }
+    }
+    return 0;
+  }
+
+  static double getBudgetCoefficient(DateFilter dateFilter) {
     switch(dateFilter.type) {
       case DateFilterType.day:
         return 1 / 30;
@@ -27,6 +41,7 @@ class CategoriesPageHelper {
   static List<CategoryButtonProps> convertToCatButProps(
       List<Category> categories,
       List<Transaction> transactions,
+      List<Budget> budgets,
       List<double> totalAmounts,
       bool isExpense,
       DateFilter dateFilter
@@ -42,7 +57,7 @@ class CategoriesPageHelper {
       if (t.type == targetType) {
         int catIndex = t.toCategory!.position;
         amounts[catIndex] += t.mainAmount;
-        totalAmounts[isExpense ? 0 : 1] += t.amount;
+        totalAmounts[isExpense ? 0 : 1] += t.mainAmount;
       }
     }
 
@@ -51,9 +66,10 @@ class CategoriesPageHelper {
 
     // convert the categories to CategoryButtonProps
     List<CategoryButtonProps> result = [];
-    final double coefficient = getBudgeCoefficient(dateFilter);
+    // final double coefficient = getBudgetCoefficient(dateFilter);
     for (int i = 0; i < categories.length; i++) {
       Category category = categories[i];
+      double budget = getBudget(budgets, category.id);
       result.add(
         CategoryButtonProps(
             position: category.position,
@@ -61,7 +77,7 @@ class CategoriesPageHelper {
             icon: category.icon,
             color: category.color,
             actualAmount: amounts[category.position],
-            expectedAmount: category.expectedAmount * coefficient,
+            budget: budget,
             isExpense: category.isExpense)
       );
     }

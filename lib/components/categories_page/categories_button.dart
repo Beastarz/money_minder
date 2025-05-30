@@ -14,7 +14,7 @@ class CategoryButtonProps {
   final Icon icon; // icon of the categories
   final Color color; // button color
   final double actualAmount; // expense / income
-  final double expectedAmount; // budget / expected income
+  final double budget; // budget / expected income
   final bool isExpense; // indicated if it is expense or income
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
@@ -25,7 +25,7 @@ class CategoryButtonProps {
     required this.icon,
     required this.color,
     required this.actualAmount,
-    required this.expectedAmount,
+    required this.budget,
     required this.isExpense,
     this.pieTouchedIndex = -1,
     this.isAddButton = false,
@@ -42,7 +42,7 @@ class AddCategoriesButtonProps extends CategoryButtonProps {
     ),
     color: AppColor.secondary,
     actualAmount: 0,
-    expectedAmount: 0,
+    budget: 0,
     isExpense: false,
     pieTouchedIndex: -1,
     isAddButton: true, // Override parent's default for showDetail
@@ -126,9 +126,9 @@ class _CategoriesButtonState extends State<CategoriesButton>
     CategoryButtonProps props = widget.props;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
-    double fraction = props.expectedAmount == 0
+    double fraction = props.budget == 0
         ? 0.00
-        : 1 - (props.actualAmount / props.expectedAmount);
+        : 1 - (props.actualAmount / props.budget);
 
     setState(() {
       isLooping = props.pieTouchedIndex == props.position;
@@ -221,9 +221,9 @@ class _CategoriesButtonState extends State<CategoriesButton>
           children: [
             const SizedBox(height: 2),
             Text(
-              props.expectedAmount != 0
+              props.budget != 0
                   ? '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)} / '
-                  '${props.expectedAmount.toStringAsFixed(2)}'
+                  '${props.budget.toStringAsFixed(2)}'
                   : '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,

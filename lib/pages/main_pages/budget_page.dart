@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/budget_page/budget_helper.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/budget_page/budget_page_content.dart';
+import '../../components/budget_page/budget_tile.dart';
 import '../../components/calendar_bar/calendar_appbar.dart';
-import '../../components/categories_page/categories_button.dart';
-import '../../components/categories_page/categories_page_helper.dart';
+import '../../models/account.dart';
+import '../../models/budget.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
@@ -21,6 +23,8 @@ class BudgetPage extends StatefulWidget {
     required this.currentPageIndex,
     required this.onPageChange,
     required this.categories,
+    required this.accounts,
+    required this.budgets,
   });
 
   final double filteredAccountBalance;
@@ -31,6 +35,8 @@ class BudgetPage extends StatefulWidget {
   final int currentPageIndex;
   final void Function(int) onPageChange;
   final List<List<Category>> categories;
+  final List<Account> accounts;
+  final List<Budget> budgets;
 
   @override
   State<BudgetPage> createState() => _BudgetPageState();
@@ -75,17 +81,18 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
           children: groupedTransactions.map((transactions) {
-            List<double> totalAmounts = [0, 0];
-            List<CategoryButtonProps> expenseCats =
-            CategoriesPageHelper.convertToCatButProps(
-                widget.categories[0], transactions, totalAmounts, true, widget.dateFilter);
-            List<CategoryButtonProps> incomeCats =
-            CategoriesPageHelper.convertToCatButProps(
-                widget.categories[1], transactions, totalAmounts, false, widget.dateFilter);
-            totalAmounts.insert(1, 0); // TODO: Fetch transactions
+            List<double> totalAmounts = [0, 0, 0];
+            List<Budget> catBudget = BudgetHelper.getBudgets(widget.budgets, "category");
+            List<Budget> accBudget = BudgetHelper.getBudgets(widget.budgets, "account");
+            List<List<BudgetTileProp>> expenseProps = BudgetHelper.convertCatToBudgetTileProp(
+                widget.categories[0], transactions, catBudget, totalAmounts, true);
+            List<List<BudgetTileProp>> incomeProps = BudgetHelper.convertCatToBudgetTileProp(
+                widget.categories[1], transactions, catBudget, totalAmounts, false);
+            List<List<BudgetTileProp>> accProps = BudgetHelper.convertAccToBudgetTileProp(
+                widget.accounts, transactions, accBudget, totalAmounts);
+            List<List<List<BudgetTileProp>>> props = [expenseProps, accProps, incomeProps];
             return BudgetPageContent(
-              expenseCats: expenseCats,
-              incomeCats: incomeCats,
+              props: props,
               totalAmounts: totalAmounts,
               mainCurrency: widget.mainCurrency,
             );

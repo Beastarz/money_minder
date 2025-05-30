@@ -6,18 +6,17 @@ import '../../style/app_size.dart';
 import '../categories_page/categories_button.dart';
 import 'budget_helper.dart';
 import 'budget_sheet.dart';
+import 'budget_tile.dart';
 
 class BudgetPageContent extends StatefulWidget {
   const BudgetPageContent({
     super.key,
-    required this.expenseCats,
-    required this.incomeCats,
+    required this.props,
     required this.totalAmounts,
     required this.mainCurrency,
   });
 
-  final List<CategoryButtonProps> expenseCats;
-  final List<CategoryButtonProps> incomeCats;
+  final List<List<List<BudgetTileProp>>> props;
   final List<double> totalAmounts;
   final Currency mainCurrency;
 
@@ -63,7 +62,7 @@ class _BudgetPageContentState extends State<BudgetPageContent> {
             // budget sheet
             BudgetSheet(
               type: _type,
-              cats: [widget.expenseCats, [], widget.incomeCats],
+              props: widget.props,
               totalAmounts: widget.totalAmounts,
               mainCurrency: widget.mainCurrency,
             ),

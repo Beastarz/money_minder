@@ -11,6 +11,7 @@ import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/budget_repositories.dart';
 import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/date_filter_repositories.dart';
@@ -18,6 +19,7 @@ import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'models/budget.dart';
 import 'models/category.dart';
 import 'models/transaction.dart';
 
@@ -66,6 +68,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _currentPageIndex = 50;
   DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
   int _budgetCurrentPageIndex = 50;
+  List<Budget> _budgets = [];
 
   @override
   void initState() {
@@ -75,6 +78,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     _fetchTransactions();
     _fetchDateFilter();
     _fetchCategories();
+    _fetchBudgets();
   }
 
   Future<void> _fetchAccounts() async {
@@ -116,7 +120,14 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
-    @override
+  Future<void> _fetchBudgets() async {
+    List<Budget> res = await BudgetRepositories.instance.getBudgets();
+    setState(() {
+      _budgets = res;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
     List<int> filteredAccountIds = filteredAccounts.map((e) => e.id).toList();
@@ -137,6 +148,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
         categories: _categories,
+        budgets: _budgets,
       ),
       TransactionsPage(
         filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),
@@ -156,6 +168,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         currentPageIndex: _budgetCurrentPageIndex,
         onPageChange: _onBudgetPageChange,
         categories: _categories,
+        accounts: _accounts,
+        budgets: _budgets,
       ),
       StatisticsPage(
         filteredAccountBalance: 0,

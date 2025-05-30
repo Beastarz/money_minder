@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_page_content.dart';
-import 'package:money_minder/components/categories_page/categories_page_helper.dart';
+import 'package:money_minder/components/categories_page/categories_helper.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../components/categories_page/categories_button.dart';
+import '../../models/budget.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
@@ -14,6 +15,7 @@ class CategoriesPage extends StatefulWidget {
 
   final List<List<Category>> categories;
   final List<Transaction> filteredTransactions;
+  final List<Budget> budgets;
   final Currency mainCurrency;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
@@ -29,6 +31,7 @@ class CategoriesPage extends StatefulWidget {
     required this.currentPageIndex,
     required this.onPageChange,
     required this.categories,
+    required this.budgets,
   });
 
 
@@ -73,12 +76,15 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
         onPageChanged: _handlePageViewChanged,
         children: groupedTransactions.map((transactions) {
           List<double> totalAmounts = [0, 0];
+          List<Budget> budgets = CategoriesHelper.getBudgets(widget.budgets);
           List<CategoryButtonProps> expenseCats =
-            CategoriesPageHelper.convertToCatButProps(
-              widget.categories[0], transactions, totalAmounts, true, widget.dateFilter);
+            CategoriesHelper.convertToCatButProps(
+              widget.categories[0], transactions, budgets,
+              totalAmounts, true, widget.dateFilter);
           List<CategoryButtonProps> incomeCats =
-            CategoriesPageHelper.convertToCatButProps(
-              widget.categories[1], transactions, totalAmounts, false, widget.dateFilter);
+            CategoriesHelper.convertToCatButProps(
+              widget.categories[1], transactions, budgets,
+              totalAmounts, false, widget.dateFilter);
           expenseCats.add(AddCategoriesButtonProps(expenseCats.length));
           incomeCats.add(AddCategoriesButtonProps(incomeCats.length));
           return CategoriesPageContent(
