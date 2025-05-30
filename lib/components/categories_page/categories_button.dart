@@ -53,14 +53,14 @@ class CategoriesButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
-  final CategoryButtonProps props;
+  final CategoryButtonProps prop;
   // callback function when the categories button is pressed
   final void Function(CategoryButtonProps) categoriesButtonOnPressed;
   final Currency mainCurrency;
 
   const CategoriesButton({
     super.key,
-    required this.props,
+    required this.prop,
     required this.categoriesButtonOnPressed,
     required this.mainCurrency,
   });
@@ -123,7 +123,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
 
   @override
   Widget build(BuildContext context) {
-    CategoryButtonProps props = widget.props;
+    CategoryButtonProps props = widget.prop;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
     double fraction = props.budget == 0

@@ -89,11 +89,11 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
             List<Budget> catBudget = BudgetHelper.getBudgets(groupedBudgets[index], "category");
             List<Budget> accBudget = BudgetHelper.getBudgets(groupedBudgets[index], "account");
             List<List<BudgetTileProp>> expenseProps = BudgetHelper.convertCatToBudgetTileProp(
-                widget.categories[0], transactions, catBudget, totalAmounts, true);
+                widget.categories[0], transactions, catBudget, totalAmounts, true, widget.mainCurrency);
             List<List<BudgetTileProp>> incomeProps = BudgetHelper.convertCatToBudgetTileProp(
-                widget.categories[1], transactions, catBudget, totalAmounts, false);
+                widget.categories[1], transactions, catBudget, totalAmounts, false, widget.mainCurrency);
             List<List<BudgetTileProp>> accProps = BudgetHelper.convertAccToBudgetTileProp(
-                widget.accounts, transactions, accBudget, totalAmounts);
+                widget.accounts, transactions, accBudget, totalAmounts, widget.mainCurrency);
             List<List<List<BudgetTileProp>>> props = [expenseProps, accProps, incomeProps];
             return BudgetPageContent(
               props: props,

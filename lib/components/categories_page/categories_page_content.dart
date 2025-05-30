@@ -126,8 +126,10 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
               '<': Icons.backspace_outlined,
               'calendar': Icons.calendar_month,
               '✓': Icons.check,
-            }
-          )),
+              }
+            ),
+            mainCurrency: widget.mainCurrency,
+          ),
           topContent: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(

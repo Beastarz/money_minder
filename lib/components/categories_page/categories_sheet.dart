@@ -46,7 +46,7 @@ class CategoriesSheet extends StatelessWidget {
       itemBuilder: (context, index) {
         categories[index].pieTouchedIndex = pieTouchedIndex;
         return CategoriesButton(
-          props: categories[index],
+          prop: categories[index],
           categoriesButtonOnPressed: categoriesButtonOnPressed,
           mainCurrency: mainCurrency,
         );

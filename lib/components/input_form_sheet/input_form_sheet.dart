@@ -12,7 +12,7 @@ class InputFormSheet extends StatelessWidget {
   const InputFormSheet({
     super.key,
     required this.topContent,
-    required this.inputForm,
+    required this.inputForm
   });
 
   @override

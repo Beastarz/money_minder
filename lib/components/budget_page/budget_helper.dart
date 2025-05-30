@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/budget_page/budget_tile.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../models/account.dart';
 import '../../models/budget.dart';
@@ -16,8 +17,14 @@ class BudgetHelper {
     "Income": Colors.green,
   };
 
+  static final Map<String, String> textMap = {
+    "Expenses": "spent",
+    "Savings": "deposited",
+    "Income": "received",
+  };
+
   // Function to lighten a color by mixing it with white
-  static Color _lightenColor(Color color, double factor) {
+  static Color lightenColor(Color color, double factor) {
     // factor: 0.0 means no white, 1.0 means pure white
     return Color.lerp(color, Colors.white, factor)!;
   }
@@ -41,7 +48,7 @@ class BudgetHelper {
             ),
             backgroundColor: currentType == type
                 ? colorMap[type]
-                : _lightenColor(colorMap[type]!, 0.9),
+                : lightenColor(colorMap[type]!, 0.9),
           ),
           child: Column(
               spacing: 5,
@@ -101,6 +108,7 @@ class BudgetHelper {
       List<Budget> budgets,
       List<double> totalAmounts,
       bool isExpense,
+      Currency mainCurrency
       ) {
     // calculate the total amount of each category
     List<double> amounts = [];
@@ -131,7 +139,10 @@ class BudgetHelper {
               color: category.color,
               actualAmount: amounts[category.position],
               budget: budget,
-              type: isExpense ? "Expenses" : "Income")
+              type: isExpense ? "Expenses" : "Income",
+              isCircleBorder: true,
+              mainCurrency: mainCurrency
+          )
       );
     }
     return result;
@@ -145,6 +156,7 @@ class BudgetHelper {
       List<Transaction> transactions,
       List<Budget> budgets,
       List<double> totalAmounts,
+      Currency mainCurrency
       ) {
 
     // calculate the total amount of each savings
@@ -191,7 +203,10 @@ class BudgetHelper {
               color: account.color,
               actualAmount: amounts[i],
               budget: budget,
-              type: "Savings")
+              type: "Savings",
+              isCircleBorder: false,
+              mainCurrency: mainCurrency
+          )
       );
     }
 
