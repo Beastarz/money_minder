@@ -22,6 +22,7 @@ class TransactionsRepositories {
     List<Map<String, dynamic>> res = await db.query('transactions');
     Currency mainCurrency = await CurrencyRepositories.instance.getMainCurrency();
     List<Transaction> transactions = [];
+
     for (Map<String, dynamic> r in res) {
       Account fromAccount= accounts.firstWhere((account) => account.id == r['from_account_id']);
       Account? toAccount = r['to_account_id'] == null
