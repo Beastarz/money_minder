@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/currency.dart';
-import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../categories_page/categories_button.dart';
 import 'budget_helper.dart';
 import 'budget_sheet.dart';
 import 'budget_tile.dart';

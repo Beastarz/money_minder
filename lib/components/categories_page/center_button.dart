@@ -61,7 +61,9 @@ class CenterButton extends StatelessWidget {
               // in expense mode, showing the total expense, then total income
               // in income mode, showing the total income, then total expense
               Text(
-                '${mainCurrency.toString()} ${isExpense? totalExpense : totalIncome}',
+                '${mainCurrency.toString()} ${isExpense
+                    ? totalExpense.toStringAsFixed(2)
+                    : totalIncome.toStringAsFixed(2) }',
                 style: TextStyle(
                   fontSize: isSmallScreen ? 12: AppSize.heading2,
                   color: isExpense
@@ -70,7 +72,9 @@ class CenterButton extends StatelessWidget {
                 ),
               ),
               Text(
-                '${mainCurrency.toString()} ${isExpense? totalIncome : totalExpense}',
+                '${mainCurrency.toString()} ${isExpense
+                    ? totalIncome.toStringAsFixed(2)
+                    : totalExpense.toStringAsFixed(2) }',
                 style: TextStyle(
                   fontSize: isSmallScreen ? 10 : AppSize.heading3,
                   color: isExpense

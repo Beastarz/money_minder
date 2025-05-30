@@ -149,6 +149,7 @@ class DatabaseService {
 
     await db.execute('''
       INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, note) VALUES
+      ('2025-04-29', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Groceries from Main Wallet
       ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Restaurant from Credit Card
@@ -163,15 +164,20 @@ class DatabaseService {
       ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'MYR','Go jb'),
       ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 'Movie ticket'),
       -- Transfer: 'From Savings Account to Main Wallet
-      ('2025-05-30', 'transfer', 3, 1, NULL, 100.00, 'SGD', 'Transfer to Main Wallet');
+      ('2025-05-30', 'transfer', 3, 1, NULL, 100.00, 'SGD', 'Transfer to Main Wallet'),
+      -- Transfer: 'From Investment Account to Savings Account'
+      ('2025-05-30', 'transfer', 5, 3, NULL, 100.00, 'SGD', 'Transfer to Savings Account');
+      
     ''');
 
     await db.execute('''
       INSERT INTO budgets (amount, type, month, year, category_id, account_id) VALUES
+      (400.00, 'category', 4, 2025, 1, NULL), -- Food budget for April
       (500.00, 'category', 5, 2025, 1, NULL), -- Food budget for May 
       (300.00, 'category', 5, 2025, 2, NULL), -- Transport budget for May
-      (3500.00, 'category', 5, 2025, 3, NULL), -- income budget for May
-      (1000.00, 'account', 5, 2025, NULL, 3); -- Savings account budget for May
+      (3500.00, 'category', 5, 2025, 3, NULL), -- Income budget for May
+      (1000.00, 'account', 5, 2025, NULL, 3), -- Savings account budget for May
+      (1000.00, 'account', 5, 2025, NULL, 5); -- Investment account budget for May
     ''');
 
     await db.execute('''

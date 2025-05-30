@@ -58,8 +58,13 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
 
-    /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(widget.filteredTransactions, widget.dateFilter.startDates);
+    /// group transactions by period
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
+        widget.filteredTransactions, widget.dateFilter.startDates);
+
+    /// group budgets by period
+    List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
+        widget.budgets, widget.dateFilter);
 
     return Scaffold(
         appBar: CalendarAppBar(
@@ -74,9 +79,11 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
         body:  PageView(
         controller: _pageViewController,
         onPageChanged: _handlePageViewChanged,
-        children: groupedTransactions.map((transactions) {
+        children: groupedTransactions.indexed.map((t) {
+          int index = t.$1;
+          List<Transaction> transactions = t.$2;
           List<double> totalAmounts = [0, 0];
-          List<Budget> budgets = CategoriesHelper.getBudgets(widget.budgets);
+          List<Budget> budgets = CategoriesHelper.getBudgets(groupedBudgets[index]);
           List<CategoryButtonProps> expenseCats =
             CategoriesHelper.convertToCatButProps(
               widget.categories[0], transactions, budgets,

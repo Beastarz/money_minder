@@ -18,7 +18,6 @@ class BudgetPage extends StatefulWidget {
     required this.mainCurrency,
     required this.filteredTransactions,
     required this.dateFilter,
-    required this.filteredAccountBalance,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
@@ -27,7 +26,6 @@ class BudgetPage extends StatefulWidget {
     required this.budgets,
   });
 
-  final double filteredAccountBalance;
   final Currency mainCurrency;
   final List<Transaction> filteredTransactions;
   final DateFilter dateFilter;
@@ -60,9 +58,13 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    /// map this to categories and transactions page
+    /// group transactions by period
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
         widget.filteredTransactions, widget.dateFilter.startDates);
+
+    /// group budgets by period
+    List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
+        widget.budgets, widget.dateFilter);
 
 
     return Scaffold(
@@ -80,10 +82,12 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          children: groupedTransactions.map((transactions) {
+          children: groupedTransactions.indexed.map((t) {
+            int index = t.$1;
+            List<Transaction> transactions = t.$2;
             List<double> totalAmounts = [0, 0, 0];
-            List<Budget> catBudget = BudgetHelper.getBudgets(widget.budgets, "category");
-            List<Budget> accBudget = BudgetHelper.getBudgets(widget.budgets, "account");
+            List<Budget> catBudget = BudgetHelper.getBudgets(groupedBudgets[index], "category");
+            List<Budget> accBudget = BudgetHelper.getBudgets(groupedBudgets[index], "account");
             List<List<BudgetTileProp>> expenseProps = BudgetHelper.convertCatToBudgetTileProp(
                 widget.categories[0], transactions, catBudget, totalAmounts, true);
             List<List<BudgetTileProp>> incomeProps = BudgetHelper.convertCatToBudgetTileProp(

@@ -3,6 +3,7 @@ import 'package:money_minder/components/statistics_page/statistics_page_content.
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../models/budget.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
 
@@ -12,16 +13,16 @@ class StatisticsPage extends StatefulWidget {
     super.key,
     required this.mainCurrency,
     required this.filteredTransactions,
+    required this.budgets,
     required this.dateFilter,
-    required this.filteredAccountBalance,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
   });
 
-  final double filteredAccountBalance;
   final Currency mainCurrency;
   final List<Transaction> filteredTransactions;
+  final List<Budget> budgets;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
@@ -49,9 +50,13 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
 
-    /// map this to categories and transactions page
+    /// group transactions by period
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
         widget.filteredTransactions, widget.dateFilter.startDates);
+
+    /// group budgets by period
+    // List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
+    //     widget.budgets, widget.dateFilter);
 
 
     return Scaffold(

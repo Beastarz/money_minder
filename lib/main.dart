@@ -66,7 +66,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   Currency _mainCurrency = Currency.of('sgd');
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
   int _currentPageIndex = 50;
-  DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
+  final DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
   int _budgetCurrentPageIndex = 50;
   List<Budget> _budgets = [];
 
@@ -160,7 +160,6 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onPageChange: _onPageChange,
       ),
       BudgetPage(
-        filteredAccountBalance: 0,
         mainCurrency: _mainCurrency,
         filteredTransactions: filteredTransactions,
         dateFilter: _budgetDateFilter,
@@ -172,9 +171,9 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         budgets: _budgets,
       ),
       StatisticsPage(
-        filteredAccountBalance: 0,
         mainCurrency: _mainCurrency,
         filteredTransactions: filteredTransactions,
+        budgets: _budgets,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,

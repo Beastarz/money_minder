@@ -129,6 +129,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
     double fraction = props.budget == 0
         ? 0.00
         : 1 - (props.actualAmount / props.budget);
+    fraction = fraction < 0 ? 0 : fraction;
 
     setState(() {
       isLooping = props.pieTouchedIndex == props.position;

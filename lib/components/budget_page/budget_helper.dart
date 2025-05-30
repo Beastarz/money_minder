@@ -155,14 +155,21 @@ class BudgetHelper {
     String targetType = 'transfer';
     for (Transaction t in transactions) {
       if (t.type == targetType) {
-        bool isTransferToSavings =
+        bool fromAccIsSavings =
+            accounts[t.fromAccount.id - 1].type == AccountType.savings;
+        bool toAccIsSavings =
             accounts[t.toAccount!.id - 1].type == AccountType.savings;
-        int savingsIndex = isTransferToSavings
-            ? t.toAccount!.id - 1
-            : t.fromAccount.id - 1;
-        double amount = isTransferToSavings ? t.mainAmount : -t.mainAmount;
-        amounts[savingsIndex] += amount;
-        totalAmounts[1] += amount;
+        int toSavingsIndex = t.toAccount!.id - 1;
+        int fromSavingsIndex = t.fromAccount.id - 1;
+        double amount = t.mainAmount;
+        if (toAccIsSavings) {
+          amounts[toSavingsIndex] += amount;
+        }
+        if (fromAccIsSavings) {
+          amounts[fromSavingsIndex] -= amount;
+        }
+        totalAmounts[1] += (toAccIsSavings ? amount : 0)
+            + (fromAccIsSavings ? -amount : 0);
       }
     }
 
