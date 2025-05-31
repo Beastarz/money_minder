@@ -8,6 +8,7 @@ import '../../models/category.dart';
 import '../../models/transaction.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../../utils/show_money.dart';
 
 class BudgetHelper {
 
@@ -23,6 +24,21 @@ class BudgetHelper {
     "Income": "received",
   };
 
+  static final List<String> months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   // Function to lighten a color by mixing it with white
   static Color lightenColor(Color color, double factor) {
     // factor: 0.0 means no white, 1.0 means pure white
@@ -33,8 +49,13 @@ class BudgetHelper {
       void Function()? onPressed,
       String type,
       String currentType,
+      Currency mainCurrency,
+      double totalAmount,
+      double width,
       double leftCurve,
-      double rightCurve) {
+      double rightCurve,
+      double factor,
+      ) {
     return Expanded(
       child: ElevatedButton(
           onPressed: onPressed,
@@ -62,14 +83,15 @@ class BudgetHelper {
                           : AppColor.darkText
                   ),
                 ),
-                Text(
-                  "\$100",
-                  style: TextStyle(
-                      fontSize: AppSize.heading2,
-                      color: currentType == type
-                          ? AppColor.lightText
-                          : colorMap[type]
-                  ),
+                ShowMoney(
+                  mainCurrency: mainCurrency,
+                  amount: totalAmount,
+                  text: '',
+                  color: currentType == type
+                      ? AppColor.lightText
+                      : AppColor.darkText,
+                  factor: factor,
+                  width: width,
                 )
               ]
           )
@@ -211,5 +233,9 @@ class BudgetHelper {
     }
 
     return result;
+  }
+
+  static String generateMonthYearText(DateTime startDate) {
+    return '${months[startDate.month - 1]} ${startDate.year}';
   }
 }

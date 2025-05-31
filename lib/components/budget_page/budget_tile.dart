@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/budget_page/show_money.dart';
+import 'package:money_minder/utils/show_money.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../input_form_sheet/input_form.dart';
-import '../input_form_sheet/input_form_helper.dart';
-import '../input_form_sheet/input_form_sheet.dart';
-import '../input_form_sheet/top_card.dart';
 import 'budget_helper.dart';
-import 'main_budget_tile.dart';
 
 class BudgetTileProp {
   final String label;
@@ -33,191 +28,198 @@ class BudgetTileProp {
   });
 }
 
-class BudgetTile extends StatelessWidget {
+class BudgetTile extends StatefulWidget {
 
   final BudgetTileProp prop;
   final bool topCurve;
   final bool bottomCurve;
+  final void Function(BudgetTileProp) budgetOnPressed;
 
   const BudgetTile({
     super.key,
     required this.prop,
+    required this.budgetOnPressed,
     this.topCurve = false,
     this.bottomCurve = false,
   });
 
-  void onPressed(BuildContext context) {
+  @override
+  State<BudgetTile> createState() => _BudgetTileState();
+}
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    final double titleSize = (isSmallScreen ? AppSize.heading2 : AppSize.heading1) * 1.5;
+class _BudgetTileState extends State<BudgetTile> {
 
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (sheetContext) {
-          return InputFormSheet(
-            // Define the button layout as seen in the image
-              inputForm: InputForm(
-                  buttonProps: InputFormHelper.convertToCalButProps([
-                    '÷', '7', '8', '9', 'C',
-                    'x', '4', '5', '6', '<',
-                    '-', '1', '2', '3', 'budget',
-                    '+', '\$', '0', '.',
-                  ], {
-                    '<': Icons.backspace_outlined,
-                    'budget': Icons.scale_outlined,
-                    '✓': Icons.check,
-                  }
-                ),
-                showNotes: false,
-                defaultValue: prop.budget,
-                mainCurrency: prop.mainCurrency,
-              ),
-              topContent: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(AppSize.borderRadius)
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    TopCard(
-                      width: MediaQuery.of(context).size.width,
-                      topRight: true,
-                      topLeft: true,
-                      title: Text(
-                        prop.label,
-                        style: TextStyle(
-                          fontSize: titleSize,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      content: MainBudgetTile(
-                        prop: prop
-                      ),
-                      backgroundColor: prop.color,
-                      icon: Icon(
-                        prop.iconData,
-                        size: AppSize.bigIcon,
-                      ),
-                      isTappable: false,
-                      // cannot be pressed
-                      onPressed: null,
-                    )
-                    ]
-                ),
-              )
-          );
-        }
-    );
+  final GlobalKey _myWidgetKey = GlobalKey();
+  double? _widgetHeight;
+  double? _widgetWidth;
+
+  void _getSizeAndPosition() {
+    if (_myWidgetKey.currentContext != null) {
+      final RenderBox renderBox = _myWidgetKey.currentContext!.findRenderObject() as RenderBox;
+      setState(() {
+        _widgetHeight = renderBox.size.height;
+        _widgetWidth = renderBox.size.width;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Add a post-frame callback to get the size after the widget is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getSizeAndPosition();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final double topFactor = 1.5;
-    final double bottomFactor = 1.0;
-    double fraction = prop.budget <= 0
+    final bool isSmallScreen  = MediaQuery.of(context).size.width <= 360;
+    final double topFactor = isSmallScreen ? 1.0 : 1.5;
+    final double bottomFactor = isSmallScreen ? 0.8 : 1.0;
+    final double borderRadius = 8;
+
+    double fraction = widget.prop.budget <= 0
         ? 0.02
-        : prop.actualAmount / prop.budget;
-    fraction = fraction < 0.02 ? 0.02 : fraction;
-    Color leftColor = BudgetHelper.lightenColor(prop.color, 0.75);
-    Color rightColor = BudgetHelper.lightenColor(prop.color, 0.9);
+        : widget.prop.actualAmount / widget.prop.budget;
+    fraction = fraction.clamp(0.03, 1.00);
+    Color leftColor = BudgetHelper.lightenColor(widget.prop.color, 0.75);
+    Color rightColor = BudgetHelper.lightenColor(widget.prop.color, 0.9);
+    double width = MediaQuery.of(context).size.width * 0.4;
 
     return Container(
+      key: _myWidgetKey,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(
-              top: Radius.circular(topCurve ? AppSize.borderRadius : 0),
-              bottom: Radius.circular(bottomCurve ? AppSize.borderRadius : 0),
-          ),
-          gradient: LinearGradient(
-              colors: [leftColor, leftColor, rightColor, rightColor],
-              stops: [0, fraction, fraction, 1]
-          )
-      ),
-      child: MaterialButton(
-        onPressed: () {onPressed(context);},
-        padding: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(topCurve ? AppSize.borderRadius : 0),
-              bottom: Radius.circular(bottomCurve ? AppSize.borderRadius : 0),
-            )
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(widget.topCurve ? borderRadius : 0),
+          bottom: Radius.circular(widget.bottomCurve ? borderRadius : 0),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(AppSize.smallPadding),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
+        color: rightColor,
+      ),
+      child: Stack(
+        children: [
+
+          Container(
+            width: _widgetWidth == null ? 0 : _widgetWidth! * fraction,
+            height: _widgetHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(widget.topCurve ? borderRadius : 0),
+                bottom: Radius.circular(widget.bottomCurve ? borderRadius : 0),
+              ),
+              color: leftColor,
+            ),
+            child: Text(""),
+          ),
+
+          MaterialButton(
+            onPressed: () {
+              widget.budgetOnPressed(widget.prop);
+              },
+            padding: const EdgeInsets.all(0),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(widget.topCurve ? borderRadius : 0),
+                  bottom: Radius.circular(widget.bottomCurve ? borderRadius : 0),
+                )
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(AppSize.smallPadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 5,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(5),
+                    width: width,
                     decoration: BoxDecoration(
-                      shape: prop.isCircleBorder
-                        ? BoxShape.circle
-                        : BoxShape.rectangle,
-                      borderRadius: prop.isCircleBorder
-                        ? null
-                        : BorderRadius.circular(AppSize.borderRadius),
-                      color: prop.color,
+                      borderRadius: BorderRadius.circular(borderRadius),
                     ),
-                    child: Icon(
-                        prop.iconData,
-                        color: AppColor.primary,
-                    ),
-                  ),
-                  Column(
-                    spacing: 5,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        prop.label,
-                        style: TextStyle(
-                          fontSize: AppSize.heading3 * topFactor,
-                          overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      spacing: 5,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            shape: widget.prop.isCircleBorder
+                              ? BoxShape.circle
+                              : BoxShape.rectangle,
+                            borderRadius: widget.prop.isCircleBorder
+                              ? null
+                              : BorderRadius.circular(borderRadius),
+                            color: widget.prop.color,
+                          ),
+                          child: Icon(
+                              widget.prop.iconData,
+                              color: AppColor.primary,
+                          ),
                         ),
-                      ),
-                      ShowMoney(
-                        mainCurrency: prop.mainCurrency,
-                        amount: prop.actualAmount,
-                        text: BudgetHelper.textMap[prop.type]!,
-                        color: prop.color,
-                        factor: bottomFactor,
-                      )
-                    ],
+                        Expanded(
+                          child: Column(
+                            spacing: 5,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.prop.label,
+                                style: TextStyle(
+                                  fontSize: AppSize.heading3 * topFactor,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              ShowMoney(
+                                mainCurrency: widget.prop.mainCurrency,
+                                amount: widget.prop.actualAmount,
+                                text: BudgetHelper.textMap[widget.prop.type]!,
+                                color: widget.prop.color,
+                                factor: bottomFactor,
+                                width: width * 0.75
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                    ),
+                    child: Column(
+                      spacing: 5,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ShowMoney(
+                          mainCurrency: widget.prop.mainCurrency,
+                          amount: widget.prop.budget - widget.prop.actualAmount,
+                          text: "",
+                          color: widget.prop.color,
+                          factor: topFactor,
+                          isStart: false,
+                          width: width,
+                        ),
+                        ShowMoney(
+                          mainCurrency: widget.prop.mainCurrency,
+                          amount: widget.prop.budget,
+                          text: "budgeted",
+                          color: widget.prop.color,
+                          factor: bottomFactor,
+                          isStart: false,
+                          width: width,
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
-              Column(
-                spacing: 5,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ShowMoney(
-                    mainCurrency: prop.mainCurrency,
-                    amount: prop.budget - prop.actualAmount,
-                    text: "",
-                    color: prop.color,
-                    factor: topFactor,
-                  ),
-                  ShowMoney(
-                    mainCurrency: prop.mainCurrency,
-                    amount: prop.budget,
-                    text: "budgeted",
-                    color: prop.color,
-                    factor: bottomFactor,
-                  )
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

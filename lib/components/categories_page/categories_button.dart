@@ -9,6 +9,7 @@ import '../../style/app_color.dart';
 class CategoryButtonProps {
 
   /// variable
+  final int id;
   final int position; // index of the button in the list, affecting the sequence
   final String label; // button label
   final Icon icon; // icon of the categories
@@ -20,6 +21,7 @@ class CategoryButtonProps {
   final bool isAddButton; // indicated if it is the addButton
 
   CategoryButtonProps({
+    required this.id,
     required this.position,
     required this.label,
     required this.icon,
@@ -35,6 +37,7 @@ class CategoryButtonProps {
 class AddCategoriesButtonProps extends CategoryButtonProps {
   AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
       : super(
+    id: index,
     position: index,
     label: 'Add',
     icon: Icon(

@@ -99,6 +99,7 @@ class _BudgetPageState extends State<BudgetPage> with TickerProviderStateMixin {
               props: props,
               totalAmounts: totalAmounts,
               mainCurrency: widget.mainCurrency,
+              startDate: widget.dateFilter.startDates[index],
             );
           }).toList()
       ),

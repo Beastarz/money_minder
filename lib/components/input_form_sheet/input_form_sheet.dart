@@ -8,11 +8,13 @@ class InputFormSheet extends StatelessWidget {
 
   final Widget topContent; // the widget to display at the top of the sheet
   final InputForm inputForm; // the input form widget
+  final bool showNotes; // show notes input
 
   const InputFormSheet({
     super.key,
     required this.topContent,
-    required this.inputForm
+    required this.inputForm,
+    this.showNotes = true,
   });
 
   @override
@@ -21,7 +23,9 @@ class InputFormSheet extends StatelessWidget {
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Container(
-      height: MediaQuery.of(context).size.height * (isSmallScreen ? 0.85 : 0.65),
+      height: MediaQuery.of(context).size.height * (isSmallScreen
+          ? !showNotes ? 0.75 : 0.80
+          : !showNotes ? 0.60 : 0.65),
       decoration: BoxDecoration(
         color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
@@ -32,7 +36,10 @@ class InputFormSheet extends StatelessWidget {
         children: [
           topContent,
           Container(
-            padding: EdgeInsets.all(AppSize.bigPadding),
+            padding: EdgeInsets.all(isSmallScreen
+                ? AppSize.smallPadding
+                : AppSize.bigPadding
+            ),
             child: inputForm,
           )
         ],

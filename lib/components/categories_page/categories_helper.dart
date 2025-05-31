@@ -72,6 +72,7 @@ class CategoriesHelper {
       double budget = getBudget(budgets, category.id);
       result.add(
         CategoryButtonProps(
+            id: category.id,
             position: category.position,
             label: category.label,
             icon: category.icon,

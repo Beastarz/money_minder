@@ -71,14 +71,21 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
             fontSize: contentSize,
           )
       ),
-      content: Text(
-          isExpense ? "Card" : prop.label,
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: titleSize,
-            fontWeight: FontWeight.bold,
-            overflow: TextOverflow.ellipsis,
-          )
+      content: Padding(
+        padding: EdgeInsets.only(
+          left: AppSize.smallPadding,
+          right: AppSize.smallPadding,
+          bottom: AppSize.smallPadding,
+        ),
+        child: Text(
+            isExpense ? "Card" : prop.label,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: titleSize,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis,
+            )
+        ),
       ),
       backgroundColor: isExpense ? Colors.blue : prop.color,
       icon: isExpense ? Icon(Icons.credit_card) : prop.icon,
@@ -96,14 +103,21 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
             fontSize: contentSize,
           )
       ),
-      content: Text(
-          isExpense ? prop.label : "Card",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: titleSize,
-            fontWeight: FontWeight.bold,
-            overflow: TextOverflow.ellipsis,
-          )
+      content: Padding(
+        padding: EdgeInsets.only(
+          left: AppSize.smallPadding,
+          right: AppSize.smallPadding,
+          bottom: AppSize.smallPadding,
+        ),
+        child: Text(
+            isExpense ? prop.label : "Card",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: titleSize,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis,
+            )
+        ),
       ),
       backgroundColor: isExpense ? prop.color : Colors.blue,
       icon: isExpense ? prop.icon : Icon(Icons.credit_card),

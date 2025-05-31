@@ -55,7 +55,6 @@ class TopCard extends StatelessWidget {
         children: [
           Container(
             width: width,
-            padding: EdgeInsets.all(AppSize.bigPadding),
             decoration: BoxDecoration(
                 color : Colors.transparent,
               borderRadius: BorderRadius.only(
@@ -66,7 +65,10 @@ class TopCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                title,
+                Padding(
+                  padding: EdgeInsets.all(AppSize.smallPadding),
+                  child: title,
+                ),
                 content,
               ],
             ),
