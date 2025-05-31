@@ -38,7 +38,7 @@ class _BudgetPageContentState extends State<BudgetPageContent> {
   @override
   Widget build(BuildContext context) {
 
-    final buttonWidth = MediaQuery.of(context).size.width * 0.25;
+    final textWidth = MediaQuery.of(context).size.width * 0.15;
     final isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return SingleChildScrollView(
@@ -55,15 +55,15 @@ class _BudgetPageContentState extends State<BudgetPageContent> {
                 // expense button
                 BudgetHelper.buildCatButton(() {switchContent("Expenses");},
                     "Expenses", _type,
-                    widget.mainCurrency, widget.totalAmounts[0], buttonWidth
+                    widget.mainCurrency, widget.totalAmounts[0], textWidth
                     , 1, 0.5, isSmallScreen ? 0.8 : 1.2),
                 BudgetHelper.buildCatButton(() {switchContent("Savings");},
                     "Savings", _type,
-                    widget.mainCurrency, widget.totalAmounts[1], buttonWidth
+                    widget.mainCurrency, widget.totalAmounts[1], textWidth
                     , 0.5, 0.5, isSmallScreen ? 0.8 : 1.2),
                 BudgetHelper.buildCatButton(() {switchContent("Income");},
                     "Income", _type,
-                    widget.mainCurrency, widget.totalAmounts[2], buttonWidth
+                    widget.mainCurrency, widget.totalAmounts[2], textWidth
                     , 0.5, 1, isSmallScreen ? 0.8 : 1.2),
               ],
             ),

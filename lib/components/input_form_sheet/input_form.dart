@@ -291,9 +291,6 @@ class _InputFormState extends State<InputForm> {
     final String currency = widget.mainCurrency.toString(); // Default currency symbol
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
-    print((isSmallScreen
-        ? widget.showNotes ? 0.55 : 0.50
-        : widget.showNotes ? 0.45 : 0.40));
     return Container(
       height: MediaQuery.of(context).size.height * (isSmallScreen
           ? widget.showNotes ? 0.60 : 0.45

@@ -22,27 +22,29 @@ class InputFormSheet extends StatelessWidget {
 
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * (isSmallScreen
-          ? !showNotes ? 0.75 : 0.80
-          : !showNotes ? 0.60 : 0.65),
-      decoration: BoxDecoration(
-        color: AppColor.secondary,
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSize.borderRadius)
+    return SafeArea(
+      child: Container(
+        height: MediaQuery.of(context).size.height * (isSmallScreen
+            ? !showNotes ? 0.75 : 0.80
+            : !showNotes ? 0.60 : 0.65),
+        decoration: BoxDecoration(
+          color: AppColor.secondary,
+          borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppSize.borderRadius)
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          topContent,
-          Container(
-            padding: EdgeInsets.all(isSmallScreen
-                ? AppSize.smallPadding
-                : AppSize.bigPadding
-            ),
-            child: inputForm,
-          )
-        ],
+        child: Column(
+          children: [
+            topContent,
+            Container(
+              padding: EdgeInsets.all(isSmallScreen
+                  ? AppSize.smallPadding
+                  : AppSize.bigPadding
+              ),
+              child: inputForm,
+            )
+          ],
+        ),
       ),
     );
   }
