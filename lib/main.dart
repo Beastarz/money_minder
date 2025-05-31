@@ -149,6 +149,10 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onPageChange: _onPageChange,
         categories: _categories,
         budgets: _budgets,
+        onAddTransactionReload: () {
+          _fetchAccounts();
+          _fetchTransactions();
+        },
       ),
       TransactionsPage(
         filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),

@@ -24,6 +24,12 @@ class AccountsRepository {
      return result.map((row) => Account.fromMap(row)).toList();
   }
 
+  Future<Account> getMainAccounts() async {
+    final db = await dbService.database;
+    List<Map<String, dynamic>> result = await db.query('accounts',where: 'is_main = 1', orderBy: 'position ASC');
+    return Account.fromMap(result.first);
+  }
+
   Future<void> updateAccount(Account account) async {
     final db = await dbService.database;
     Map<String, dynamic> accountMap = account.toMap();

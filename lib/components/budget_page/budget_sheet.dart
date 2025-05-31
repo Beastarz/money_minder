@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_size.dart';
-import '../input_form_sheet/input_form.dart';
+import '../input_form_sheet/input_keyboard.dart';
 import '../input_form_sheet/input_form_helper.dart';
 import '../input_form_sheet/input_form_sheet.dart';
 import '../input_form_sheet/top_card.dart';
@@ -52,7 +52,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
         builder: (sheetContext) {
           return InputFormSheet(
             // Define the button layout as seen in the image
-            inputForm: InputForm(
+            inputForm: InputKeyboard(
               buttonProps: InputFormHelper.convertToCalButProps([
                 '÷', '7', '8', '9', 'C',
                 'x', '4', '5', '6', '<',
@@ -67,6 +67,12 @@ class _BudgetSheetState extends State<BudgetSheet> {
               showNotes: false,
               defaultValue: prop.budget,
               mainCurrency: prop.mainCurrency,
+              onSubmit: (DateTime date, double amount, String note) {
+                Navigator.pop(context);
+              },
+              onCurrencyUpdate: (Currency currency) {
+
+              },
             ),
             topContent: Container(
               decoration: BoxDecoration(

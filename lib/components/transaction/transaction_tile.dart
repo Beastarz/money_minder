@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/style/app_size.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
@@ -64,10 +65,30 @@ class TransactionTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
-                  subtitle: Text(
-                    transaction.note,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 2,
+                        children: [
+                          Icon(transaction.fromAccount.icon.icon, size: 17,),
+                          Flexible(
+                            child: Text(
+                              transaction.fromAccount.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      transaction.note == '' ? SizedBox.shrink()
+                          :Text(
+                            transaction.note,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    ],
                   ),
                   trailing: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -96,6 +117,13 @@ class TransactionTile extends StatelessWidget {
                         size: 16,
                       ),
                     ],
+                  ),
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Container();
+                    }
                   ),
                 );
               }

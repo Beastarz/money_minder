@@ -16,7 +16,7 @@ class TransactionsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<List<Transaction>> groupedTransactionsByDate = groupTransactionsByDate(transactions);
+    List<List<Transaction>> groupedTransactionsByDate = groupTransactionsByDate(transactions.reversed.toList());
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16),
       child: Column(
@@ -66,13 +66,14 @@ class TransactionsContent extends StatelessWidget {
               )
             ],
           ),
-        ] + groupedTransactionsByDate.reversed.map((t) => TransactionTile(transactions: t)).toList(),
+        ] + groupedTransactionsByDate.map((t) => TransactionTile(transactions: t)).toList(),
       ),
     );
   }
 
   List<List<Transaction>> groupTransactionsByDate(List<Transaction> transactions) {
     if (transactions.isEmpty) return [];
+    transactions.sort((a, b) => a.date.isAtSameMomentAs(b.date) ? 0 : a.date.isBefore(b.date) ? 1 : -1);
     List<List<Transaction>> res = [];
     List<Transaction> temp = [transactions.first];
     for (Transaction t in transactions.sublist(1)) {

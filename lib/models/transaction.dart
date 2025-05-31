@@ -81,8 +81,13 @@ class Transaction {
     required Currency currency,
     required String note,
   }) {
+    if (toAccountId == null && toCategoryId == null) {
+      throw Exception('toAccountId and toCategoryId cannot be null at the same time');
+    }
+    DateTime d = DateTime(date.year, date.month, date.day);
+
     return {
-      'date': date,
+      'date': d.toIso8601String(),
       'type': type.name,
       'from_account_id': fromAccountId,
       'to_account_id': toAccountId,

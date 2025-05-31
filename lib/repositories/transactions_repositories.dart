@@ -34,6 +34,9 @@ class TransactionsRepositories {
     List<Transaction> transactions = [];
 
     for (Map<String, dynamic> r in res) {
+      if (r['to_account_id'] == null && r['to_category_id'] == null) {
+        continue;
+      }
       Account fromAccount= accounts.firstWhere((account) => account.id == r['from_account_id']);
       Account? toAccount = r['to_account_id'] == null
           ? null
