@@ -2,28 +2,33 @@ import 'dart:async';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
 
 class CategoryButtonProps {
 
   /// variable
-  final int index; // index of the button in the list, affecting the sequence
+  final int id;
+  final int position; // index of the button in the list, affecting the sequence
   final String label; // button label
   final Icon icon; // icon of the categories
   final Color color; // button color
   final double actualAmount; // expense / income
-  final double expectedAmount; // budget / expected income
+  final double budget; // budget / expected income
+  final bool isExpense; // indicated if it is expense or income
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
 
   CategoryButtonProps({
-    required this.index,
+    required this.id,
+    required this.position,
     required this.label,
     required this.icon,
     required this.color,
     required this.actualAmount,
-    required this.expectedAmount,
+    required this.budget,
+    required this.isExpense,
     this.pieTouchedIndex = -1,
     this.isAddButton = false,
   });
@@ -32,14 +37,16 @@ class CategoryButtonProps {
 class AddCategoriesButtonProps extends CategoryButtonProps {
   AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
       : super(
-    index: index,
+    id: index,
+    position: index,
     label: 'Add',
     icon: Icon(
       IconData(0xe145, fontFamily: "MaterialSymbolsOutlined")
     ),
     color: AppColor.secondary,
     actualAmount: 0,
-    expectedAmount: 0,
+    budget: 0,
+    isExpense: false,
     pieTouchedIndex: -1,
     isAddButton: true, // Override parent's default for showDetail
   );
@@ -49,14 +56,16 @@ class CategoriesButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
-  final CategoryButtonProps props;
+  final CategoryButtonProps prop;
   // callback function when the categories button is pressed
   final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  final Currency mainCurrency;
 
   const CategoriesButton({
     super.key,
-    required this.props,
+    required this.prop,
     required this.categoriesButtonOnPressed,
+    required this.mainCurrency,
   });
 
   @override
@@ -68,7 +77,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  Timer? _pauseTimer; // Timer for the 1-second pause
+  Timer? _pauseTimer; // Timer for the 0.25 second pause
   bool isLooping = false;
 
   @override
@@ -90,9 +99,9 @@ class _CategoriesButtonState extends State<CategoriesButton>
       } else if (status == AnimationStatus.dismissed) {
         // This means the animation has returned to its start (shrink completed)
         if (isLooping) {
-          // PAUSE for 1 second
+          // PAUSE for 0.25 second
           _pauseTimer = Timer(const Duration(milliseconds: 250), () {
-            // After 1 second, REVERSE the animation (shrink back)
+            // After 0.25 second, REVERSE the animation (shrink back)
             if (mounted) { // Ensure the widget is still in the tree
               _controller.forward();
             }
@@ -117,19 +126,20 @@ class _CategoriesButtonState extends State<CategoriesButton>
 
   @override
   Widget build(BuildContext context) {
-    CategoryButtonProps props = widget.props;
+    CategoryButtonProps props = widget.prop;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
-    double fraction = props.expectedAmount == 0
+    double fraction = props.budget == 0
         ? 0.00
-        : 1 - (props.actualAmount / props.expectedAmount);
+        : 1 - (props.actualAmount / props.budget);
+    fraction = fraction < 0 ? 0 : fraction;
 
     setState(() {
-      isLooping = props.pieTouchedIndex == props.index;
+      isLooping = props.pieTouchedIndex == props.position;
     });
     // if the pieData corresponding to this categories is clicked
     // trigger the animation
-    if (props.pieTouchedIndex == props.index) {
+    if (props.pieTouchedIndex == props.position) {
       _triggerPop();
     }
 
@@ -215,10 +225,10 @@ class _CategoriesButtonState extends State<CategoriesButton>
           children: [
             const SizedBox(height: 2),
             Text(
-              props.expectedAmount != 0
-                  ? '\$${props.actualAmount.toStringAsFixed(2)} / '
-                  '${props.expectedAmount.toStringAsFixed(2)}'
-                  : '\$${props.actualAmount.toStringAsFixed(2)}',
+              props.budget != 0
+                  ? '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)} / '
+                  '${props.budget.toStringAsFixed(2)}'
+                  : '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,

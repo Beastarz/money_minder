@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_page_content.dart';
+import 'package:money_minder/components/categories_page/categories_helper.dart';
+import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../components/categories_page/categories_button.dart';
+import '../../models/budget.dart';
+import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
-import '../../repositories/date_filter_repositories.dart';
-import '../../repositories/transactions_repositories.dart';
 
 /// the page that shows the categories
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key, required this.filteredTransactions, required this.dateFilter, required this.onDateFilterUpdate, required this.currentPageIndex, required this.onPageChange});
 
+  final List<List<Category>> categories;
   final List<Transaction> filteredTransactions;
+  final List<Budget> budgets;
+  final Currency mainCurrency;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+
+  const CategoriesPage({
+    super.key,
+    required this.filteredTransactions,
+    required this.dateFilter,
+    required this.mainCurrency,
+    required this.onDateFilterUpdate,
+    required this.currentPageIndex,
+    required this.onPageChange,
+    required this.categories,
+    required this.budgets,
+  });
+
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
@@ -40,8 +58,13 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
 
-    /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(widget.filteredTransactions, widget.dateFilter.startDates);
+    /// group transactions by period
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
+        widget.filteredTransactions, widget.dateFilter.startDates);
+
+    /// group budgets by period
+    List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
+        widget.budgets, widget.dateFilter);
 
     return Scaffold(
         appBar: CalendarAppBar(
@@ -53,13 +76,32 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           dateFilterType: widget.dateFilter.type,
           onUpdateDateFilter: _onDateFilterChange,
         ),
-        body: PageView(
-            controller: _pageViewController,
-            onPageChanged: _handlePageViewChanged,
-            physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-            //children: groupedTransactions.map((e) => Center(child: Text(e.join('\n')))).toList()
-            children: [CategoriesPageContent()],
-        )
+        body:  PageView(
+        controller: _pageViewController,
+        onPageChanged: _handlePageViewChanged,
+        children: groupedTransactions.indexed.map((t) {
+          int index = t.$1;
+          List<Transaction> transactions = t.$2;
+          List<double> totalAmounts = [0, 0];
+          List<Budget> budgets = CategoriesHelper.getBudgets(groupedBudgets[index]);
+          List<CategoryButtonProps> expenseCats =
+            CategoriesHelper.convertToCatButProps(
+              widget.categories[0], transactions, budgets,
+              totalAmounts, true, widget.dateFilter);
+          List<CategoryButtonProps> incomeCats =
+            CategoriesHelper.convertToCatButProps(
+              widget.categories[1], transactions, budgets,
+              totalAmounts, false, widget.dateFilter);
+          expenseCats.add(AddCategoriesButtonProps(expenseCats.length));
+          incomeCats.add(AddCategoriesButtonProps(incomeCats.length));
+          return CategoriesPageContent(
+            categories: [expenseCats, incomeCats],
+            totalAmounts: totalAmounts,
+            mainCurrency: widget.mainCurrency,
+          );
+          }
+        ).toList()
+      )
     );
   }
 

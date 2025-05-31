@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
 // use this to construct the topContent of the calculator sheet
@@ -13,6 +14,7 @@ class TopCard extends StatelessWidget {
   final Icon icon; // icon of the card
   final bool topRight; // whether to curve topRight corner
   final bool topLeft; // whether to curve topLeft corner
+  final bool isTappable;
   final void Function()? onPressed; // callback function when the button is pressed
 
   const TopCard({
@@ -22,6 +24,7 @@ class TopCard extends StatelessWidget {
     required this.content,
     required this.backgroundColor,
     required this.onPressed,
+    this.isTappable = true,
     this.icon = const Icon(Icons.add),
     this.topRight = false,
     this.topLeft = false,
@@ -45,14 +48,13 @@ class TopCard extends StatelessWidget {
           topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
         ),
       ),
-      // splashColor: AppColor.tertiary,
-      // highlightColor: AppColor.tertiary,
       color: backgroundColor,
+      disabledColor: backgroundColor,
+      disabledTextColor: AppColor.lightText,
       child: Stack(
         children: [
           Container(
             width: width,
-            padding: EdgeInsets.all(AppSize.bigPadding),
             decoration: BoxDecoration(
                 color : Colors.transparent,
               borderRadius: BorderRadius.only(
@@ -63,7 +65,10 @@ class TopCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                title,
+                Padding(
+                  padding: EdgeInsets.all(AppSize.smallPadding),
+                  child: title,
+                ),
                 content,
               ],
             ),

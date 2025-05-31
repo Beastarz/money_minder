@@ -4,6 +4,7 @@ import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.d
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/style/app_color.dart';
 
+import '../../models/currency.dart';
 import '../../style/app_size.dart';
 
 import 'package:math_expressions/math_expressions.dart';
@@ -13,7 +14,7 @@ import '../calendar_bar/period_tile.dart';
 
 
 /// to use InputForm, you need to pass in a list of InputFormButtonProps
-/// List<String> buttonTexts = ['1', '2', '3', ....]
+/// List\<String\> buttonTexts = ['1', '2', '3', ....]
 /// backspace is '<', calendar is 'calendar'
 /// check is '✓' (!!!!! don't enter this, it is handled explicitly, cause it
 ///   need to swap between '=' and '✓'. It is contained in input form by default)
@@ -24,10 +25,16 @@ class InputForm extends StatefulWidget {
   /// variable
   // the button on the inputForm
   final List<InputFormButtonProps> buttonProps;
+  final bool showNotes; // show notes input
+  final double defaultValue; // default value of the input
+  final Currency mainCurrency; // default currency of the input
   
   const InputForm({
     super.key,
     required this.buttonProps,
+    this.showNotes = true,
+    this.defaultValue = 0,
+    required this.mainCurrency,
   });
 
   @override
@@ -35,8 +42,8 @@ class InputForm extends StatefulWidget {
 }
 
 class _InputFormState extends State<InputForm> {
+
   String _currentAmount = '0'; // This will be displayed in the UI
-  final String _currency = '\$'; // Default currency symbol
   final List<String> _operators = ['+', '-', 'x', '÷', '*', '/']; // operator symbol
   final List<String> _numbers = ['0']; // numbers in input (remove all operator)
   String _lastButton = '✓';
@@ -118,73 +125,85 @@ class _InputFormState extends State<InputForm> {
 
         // TODO: select currency
 
-      } else if (buttonText == 'calendar') {
+      } else if (buttonText == 'budget') {
+
+        // TODO : set budget for that month
+        showModalBottomSheet(
+            context: context,
+            builder: (sheetContext) {
+              return Container();
+            }
+        );
+
+      }else if (buttonText == 'calendar') {
 
         final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
         showModalBottomSheet(
           context: context,
           backgroundColor: AppColor.secondary,
           builder: (periodSheetContext) {
-            return DraggableScrollableSheet(
-              expand: false,
-              initialChildSize: 0.80,
-              builder: (context, ScrollController scrollController) =>
-              SingleChildScrollView(
-                controller: isSmallScreen ? scrollController : null,
-                child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: PeriodBottomSheet(
-                  title: 'Date',
-                  children: [
-                    /// select any date
-                    PeriodTile(
-                        parentContext: context,
-                        label: 'Select day',
-                        icon: Icons.date_range,
-                        onPressed: () {
-                          CalendarSelectorHelper.selectDate(context, (date) => {});
-                        },
-                        width: MediaQuery.of(context).size.width * 0.84 + 12,
-                    ),
+            return SafeArea(
+              child: DraggableScrollableSheet(
+                initialChildSize: isSmallScreen ? 1 : 0.85,
+                expand: false,
+                builder: (context, ScrollController scrollController) =>
+                SingleChildScrollView(
+                  controller: isSmallScreen ? scrollController : null,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: PeriodBottomSheet(
+                    title: 'Date',
+                    children: [
+                      /// select any date
+                      PeriodTile(
+                          parentContext: context,
+                          label: 'Select day',
+                          icon: Icons.date_range,
+                          onPressed: () {
+                            CalendarSelectorHelper.selectDate(context, (date) => {});
+                          },
+                          width: MediaQuery.of(context).size.width * 0.84 + 12,
+                      ),
 
-                    /// select yesterday
-                    PeriodTile(
+                      /// select yesterday
+                      PeriodTile(
+                          parentContext: context,
+                          label: 'Yesterday',
+                          selected: '22 May 2025',
+                          icon: Icons.mode_night_rounded,
+                          onPressed: () {},
+                      ),
+
+                      /// select today
+                      PeriodTile(
                         parentContext: context,
-                        label: 'Yesterday',
-                        selected: '22 May 2025',
-                        icon: Icons.mode_night_rounded,
+                        label: 'Today',
+                        selected: '23 May 2025',
+                        icon: Icons.sunny,
                         onPressed: () {},
-                    ),
+                      ),
 
-                    /// select today
-                    PeriodTile(
-                      parentContext: context,
-                      label: 'Today',
-                      selected: '23 May 2025',
-                      icon: Icons.sunny,
-                      onPressed: () {},
-                    ),
+                      /// select recurrence
+                      PeriodTile(
+                        parentContext: context,
+                        label: 'Recurrence',
+                        selected: 'None',
+                        icon: Icons.repeat,
+                        onPressed: () {},
+                      ),
 
-                    /// select recurrence
-                    PeriodTile(
-                      parentContext: context,
-                      label: 'Recurrence',
-                      selected: 'None',
-                      icon: Icons.repeat,
-                      onPressed: () {},
-                    ),
-
-                    /// select reminder
-                    PeriodTile(
-                      parentContext: context,
-                      label: 'Reminder',
-                      selected: 'None',
-                      icon: Icons.access_alarm_sharp,
-                      onPressed: () {},
-                    ),
-                  ]),
-                            ),
-              ));
+                      /// select reminder
+                      PeriodTile(
+                        parentContext: context,
+                        label: 'Reminder',
+                        selected: 'None',
+                        icon: Icons.access_alarm_sharp,
+                        onPressed: () {},
+                      ),
+                    ]),
+                              ),
+                )),
+            );
           }
         );
 
@@ -256,13 +275,29 @@ class _InputFormState extends State<InputForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _currentAmount = widget.defaultValue.toStringAsFixed(2);
+      _numbers.clear();
+      _numbers.add(_currentAmount);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     List<InputFormButtonProps> buttonProps = widget.buttonProps;
+    final String currency = widget.mainCurrency.toString(); // Default currency symbol
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    
+
+    print((isSmallScreen
+        ? widget.showNotes ? 0.55 : 0.50
+        : widget.showNotes ? 0.45 : 0.40));
     return Container(
-      height: MediaQuery.of(context).size.height * (isSmallScreen ? 0.60 : 0.45),
+      height: MediaQuery.of(context).size.height * (isSmallScreen
+          ? widget.showNotes ? 0.60 : 0.45
+          : widget.showNotes ? 0.45 : 0.40),
       decoration: BoxDecoration(
         color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
@@ -274,7 +309,7 @@ class _InputFormState extends State<InputForm> {
           Align(
             alignment: Alignment.center,
             child: ReverseEllipsisText(
-              '$_currency $_currentAmount',
+              '$currency $_currentAmount',
               style: TextStyle(
                 fontSize: isSmallScreen
                     ? AppSize.heading1
@@ -286,7 +321,10 @@ class _InputFormState extends State<InputForm> {
           ),
           SizedBox(height: AppSize.smallPadding), // small padding
           // Notes input
-          TextField(
+
+          !widget.showNotes
+          ? SizedBox.shrink()
+          : TextField(
             decoration: InputDecoration(
               hintText: 'Notes...',
               border: OutlineInputBorder(
@@ -301,52 +339,57 @@ class _InputFormState extends State<InputForm> {
                 ? AppSize.heading3
                 : AppSize.heading3 * 1.5),
           ),
-          SizedBox(height: AppSize.smallPadding), // small padding
+          SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
           // Input Form Grid
-          Expanded(
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                childAspectRatio: 1.2, // Adjust aspect ratio for button size
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                return index == 19
-                    ? InputFormButton(
-                    props: InputFormButtonProps(
-                      text: _lastButton,
-                      icon: _lastButton == '✓' ? Icons.check : null,
-                      backgroundColor: Colors.greenAccent,
-                      textColor: AppColor.lightText,
-                    ),
-                    onPressed: () {
-                      _onButtonPressed(_lastButton);
-                    }
-                )
-                    : InputFormButton(
-                    props: buttonProps[index],
-                    onPressed: () {
-                      _onButtonPressed(buttonProps[index].text);
-                    }
-                );
-              },
+          GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              childAspectRatio: 1.2, // Adjust aspect ratio for button size
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             ),
+            itemCount: 20,
+            itemBuilder: (context, index) {
+              return index == 19
+                  ? InputFormButton(
+                  props: InputFormButtonProps(
+                    text: _lastButton,
+                    icon: _lastButton == '✓' ? Icons.check : null,
+                    backgroundColor: Colors.greenAccent,
+                    textColor: AppColor.lightText,
+                  ),
+                  onPressed: () {
+                    _onButtonPressed(_lastButton);
+                  }
+              )
+                  : InputFormButton(
+                  props: buttonProps[index],
+                  onPressed: () {
+                    _onButtonPressed(buttonProps[index].text);
+                  }
+              );
+            },
           ),
           // show setting at the bottom
-          SizedBox(height: AppSize.smallPadding), // small padding
-          Text(
-            'Today, ${DateTime.now().day} ${
-                _getMonthName(DateTime.now().month)
-            } ${DateTime.now().year}',
-            style: TextStyle(
-                color: AppColor.darkText,
-                fontSize: isSmallScreen
-                    ? AppSize.heading3
-                    : AppSize.heading3 * 1.5),
-          )
+          !widget.showNotes
+              ? SizedBox.shrink()
+              : SizedBox(height: 4), // small padding
+
+          !widget.showNotes
+            ? SizedBox.shrink()
+            : Text(
+                'Today, ${DateTime.now().day} ${
+                    _getMonthName(DateTime.now().month)
+                } ${DateTime.now().year}',
+                style: TextStyle(
+                    color: AppColor.darkText,
+                    fontSize: isSmallScreen
+                        ? AppSize.heading3
+                        : AppSize.heading3 * 1.5),
+              )
         ],
       ),
     );
