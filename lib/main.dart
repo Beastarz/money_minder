@@ -11,12 +11,16 @@ import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/components/bottom_nav_bar/bottom_navbar.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/budget_repositories.dart';
+import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/date_filter_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'models/budget.dart';
+import 'models/category.dart';
 import 'models/transaction.dart';
 
 
@@ -58,9 +62,13 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
   List<Account> _accounts = [];
   List<Transaction> _transactions = [];
+  List<List<Category>> _categories = [];
   Currency _mainCurrency = Currency.of('sgd');
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
   int _currentPageIndex = 50;
+  final DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
+  int _budgetCurrentPageIndex = 50;
+  List<Budget> _budgets = [];
 
   @override
   void initState() {
@@ -69,6 +77,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     _fetchMainCurrency();
     _fetchTransactions();
     _fetchDateFilter();
+    _fetchCategories();
+    _fetchBudgets();
   }
 
   Future<void> _fetchAccounts() async {
@@ -92,6 +102,16 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
+  Future<void> _fetchCategories() async {
+    List<Category> expenseCat =
+      await CategoriesRepositories.instance.getCategoriesByType(true);
+    List<Category> incomeCat =
+      await CategoriesRepositories.instance.getCategoriesByType(false);
+    setState(() {
+      _categories = [expenseCat, incomeCat];
+    });
+  }
+
   Future<void> _fetchDateFilter() async {
     DateFilter res = await DateFilterRepositories.instance.getDateFilter();
     setState(() {
@@ -100,7 +120,14 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
-    @override
+  Future<void> _fetchBudgets() async {
+    List<Budget> res = await BudgetRepositories.instance.getBudgets();
+    setState(() {
+      _budgets = res;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
     List<int> filteredAccountIds = filteredAccounts.map((e) => e.id).toList();
@@ -115,10 +142,13 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       ),
       CategoriesPage(
         filteredTransactions: filteredTransactions,
+        mainCurrency: _mainCurrency,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
+        categories: _categories,
+        budgets: _budgets,
       ),
       TransactionsPage(
         filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),
@@ -129,8 +159,26 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
       ),
-      const BudgetPage(),
-      const StatisticsPage(),
+      BudgetPage(
+        mainCurrency: _mainCurrency,
+        filteredTransactions: filteredTransactions,
+        dateFilter: _budgetDateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _budgetCurrentPageIndex,
+        onPageChange: _onBudgetPageChange,
+        categories: _categories,
+        accounts: _accounts,
+        budgets: _budgets,
+      ),
+      StatisticsPage(
+        mainCurrency: _mainCurrency,
+        filteredTransactions: filteredTransactions,
+        budgets: _budgets,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+      ),
     ];
 
 
@@ -166,6 +214,12 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   void _onPageChange(int index) {
     setState(() {
       _currentPageIndex = index;
+    });
+  }
+
+  void _onBudgetPageChange(int index) {
+    setState(() {
+      _budgetCurrentPageIndex = index;
     });
   }
 }

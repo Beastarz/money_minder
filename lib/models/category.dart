@@ -9,7 +9,6 @@ class Category{
   final Icon icon;
   final Color color;
   final bool isExpense;
-  final double expectedAmount;
 
   Category({
     required this.id,
@@ -18,7 +17,6 @@ class Category{
     required this.icon,
     required this.color,
     required this.isExpense,
-    required this.expectedAmount,
   });
 
   factory Category.fromMap(Map<String, dynamic> map) {
@@ -35,7 +33,6 @@ class Category{
       ),
       color: Color(map['color'] as int),
       isExpense: map['is_expense'] == 1 ? true : false,
-      expectedAmount: map['expected_amount'],
     );
   }
 
@@ -53,7 +50,6 @@ class Category{
       'icon': icon.icon?.codePoint,
       'color': color.toARGB32().toString(),
       'is_expense': isExpense ? 0 : 1,
-      'expected_amount': expectedAmount,
     };
   }
 }

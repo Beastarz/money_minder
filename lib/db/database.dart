@@ -52,8 +52,7 @@ class DatabaseService {
             position INTEGER, -- the sequence of the category
             icon INTEGER, -- Storing icon's codePoint as TEXT
             color INTEGER, -- Storing color value (e.g., hex string)
-            is_expense INTEGER NOT NULL DEFAULT 0, -- Using INTEGER for boolean (0 for false, 1 for true)
-            expected_amount REAL DEFAULT 0.0
+            is_expense INTEGER NOT NULL DEFAULT 0 -- Using INTEGER for boolean (0 for false, 1 for true)
           )
         ''');
 
@@ -86,6 +85,21 @@ class DatabaseService {
           )
         ''');
 
+    // create the budget table
+    await db.execute('''
+          CREATE TABLE budgets(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount REAL NOT NULL, -- budget of the item (can be savings account or categories)
+            type TEXT NOT NULL, -- 'savings', 'categories'
+            month INTEGER, -- month of the budget (1 -> JAN, 2 -> FEB, ...)
+            year INTEGER, -- year of the budget
+            category_id INTEGER, -- foreign key to Categories table
+            account_id INTEGER, -- foreign key to Accounts table
+            FOREIGN KEY (category_id) REFERENCES categories(id),
+            FOREIGN KEY (account_id) REFERENCES accounts(id)
+          )
+        ''');
+
     // Create the currencies table
     await db.execute('''
           CREATE TABLE currencies(
@@ -113,11 +127,11 @@ class DatabaseService {
 
 
     await db.execute('''
-      INSERT INTO categories (label, position, icon, color, is_expense, expected_amount) VALUES
-      ('Food', 0, 0xe56c, 0xFFFF5722, 1, 300.00), -- restaurant, Deep Orange
-      ('Transport', 1, 0xe530, 0xFF673AB7, 1, 150.00), -- directions_bus, Deep Purple
-      ('Salary', 0, 0xe227, 0xFF8BC34A, 0, 0.00), -- attach_money, Light Green (Income category)
-      ('Leisure', 2,  0xe30f, 0xFF00BCD4, 1, 200.00); -- gamepad, Cyan
+      INSERT INTO categories (label, position, icon, color, is_expense) VALUES
+      ('Food', 2, 0xe56c, 0xFFFF5722, 1), -- restaurant, Deep Orange
+      ('Transport', 0, 0xe530, 0xFF673AB7, 1), -- directions_bus, Deep Purple
+      ('Salary', 0, 0xe227, 0xFF8BC34A, 0), -- attach_money, Light Green (Income category)
+      ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1); -- gamepad, Cyan
     ''');
 
 
@@ -135,6 +149,7 @@ class DatabaseService {
 
     await db.execute('''
       INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, note) VALUES
+      ('2025-04-29', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Groceries from Main Wallet
       ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
       -- Expense: Restaurant from Credit Card
@@ -142,12 +157,27 @@ class DatabaseService {
       -- Income: Monthly Salary to Savings Account
       ('2025-05-15', 'income', 2, NULL, 3, 3500.00, 'SGD', 'May salary'),
       -- Transfer: From Main Wallet to Savings Account
-      ('2025-05-15', 'transfer', 1, 2, NULL, 500.00, 'SGD', 'Transfer to savings'),
+      ('2025-05-15', 'transfer', 1, 3, NULL, 500.00, 'SGD', 'Transfer to savings'),
       -- Expense: Public Transport from Main Wallet
       ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', 'Bus fare'),
       -- Expense: Movie from Main Wallet (using Leisure category)
       ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'MYR','Go jb'),
-      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 'Movie ticket');
+      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 'Movie ticket'),
+      -- Transfer: 'From Savings Account to Main Wallet
+      ('2025-05-30', 'transfer', 3, 1, NULL, 100.00, 'SGD', 'Transfer to Main Wallet'),
+      -- Transfer: 'From Investment Account to Savings Account'
+      ('2025-05-30', 'transfer', 5, 3, NULL, 100.00, 'SGD', 'Transfer to Savings Account');
+      
+    ''');
+
+    await db.execute('''
+      INSERT INTO budgets (amount, type, month, year, category_id, account_id) VALUES
+      (400.00, 'category', 4, 2025, 1, NULL), -- Food budget for April
+      (500.00, 'category', 5, 2025, 1, NULL), -- Food budget for May 
+      (300.00, 'category', 5, 2025, 2, NULL), -- Transport budget for May
+      (3500.00, 'category', 5, 2025, 3, NULL), -- Income budget for May
+      (1000.00, 'account', 5, 2025, NULL, 3), -- Savings account budget for May
+      (1000.00, 'account', 5, 2025, NULL, 5); -- Investment account budget for May
     ''');
 
     await db.execute('''

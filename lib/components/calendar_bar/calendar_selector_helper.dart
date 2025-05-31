@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 
+import '../../models/date_filter.dart';
 import '../../style/app_color.dart';
 
 class CalendarSelectorHelper {
+
+  static IconData getIcon(DateFilterType type) {
+    switch (type) {
+      case DateFilterType.all:
+        return Icons.all_inclusive;
+      case DateFilterType.year:
+        return Icons.calendar_today;
+      case DateFilterType.month:
+        return Icons.calendar_month;
+      case DateFilterType.week:
+        return Icons.calendar_view_week;
+      case DateFilterType.day:
+        return Icons.date_range;
+      case DateFilterType.range:
+        return Icons.edit_calendar;
+    }
+  }
+
   static Future<void> selectDate(BuildContext context, Function(DateTime) callback) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
