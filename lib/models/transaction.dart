@@ -2,17 +2,23 @@ import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/currency.dart';
 
+enum TransactionType {
+  expense,
+  income,
+  transfer
+}
+
 class Transaction {
-  int id;
-  DateTime date;
-  String type;
-  Account fromAccount;
-  Account? toAccount;
-  Category? toCategory;
-  double amount;
-  Currency currency;
-  Currency mainCurrency;
-  String note;
+  final int id;
+  final DateTime date;
+  final TransactionType type;
+  final Account fromAccount;
+  final Account? toAccount;
+  final Category? toCategory;
+  final double amount;
+  final Currency currency;
+  final Currency mainCurrency;
+  final String note;
 
   Transaction({
     required this.id,
@@ -34,7 +40,11 @@ class Transaction {
     return Transaction(
       id: map['id'],
       date: DateTime.parse(map['date']),
-      type: map['type'],
+      type: map['type'] == 'expense'
+          ? TransactionType.expense
+          : map['type'] == 'transfer'
+          ? TransactionType.transfer
+          : TransactionType.income,
       fromAccount: fromAccount,
       toAccount: toAccount,
       toCategory: category,
@@ -42,6 +52,69 @@ class Transaction {
       currency: Currency.of(map['currency']),
       mainCurrency: mainCurrency,
       note: map['note'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'type': type.name,
+      'from_account_id': fromAccount.id,
+      'to_account_id': toAccount?.id,
+      'to_category_id': toCategory?.id,
+      'amount': amount,
+      'currency': currency
+          .currency()
+          .name,
+      'note': note,
+    };
+  }
+
+  static Map<String, dynamic> insertAsMap({
+    required DateTime date,
+    required TransactionType type,
+    required int fromAccountId,
+    int? toAccountId,
+    int? toCategoryId,
+    required double amount,
+    required Currency currency,
+    required String note,
+  }) {
+    return {
+      'date': date,
+      'type': type.name,
+      'from_account_id': fromAccountId,
+      'to_account_id': toAccountId,
+      'to_category_id': toCategoryId,
+      'amount': amount,
+      'currency': currency
+          .currency()
+          .name,
+      'note': note,
+    };
+  }
+
+  Transaction copyWith({
+    DateTime? date,
+    Account? fromAccount,
+    Account? toAccount,
+    Category? toCategory,
+    double? amount,
+    Currency? currency,
+    String? note,
+  }) {
+    return Transaction(
+        id: id,
+        date: date ?? this.date,
+        type: type,
+        fromAccount: fromAccount ?? this.fromAccount,
+        toAccount: toAccount ?? this.toAccount,
+        toCategory: toCategory ?? this.toCategory,
+        amount: amount ?? this.amount,
+        currency: currency ?? this.currency,
+        mainCurrency: mainCurrency,
+        note: note ?? this.note,
     );
   }
 

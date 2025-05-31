@@ -14,6 +14,16 @@ class TransactionsRepositories {
   static final TransactionsRepositories instance = TransactionsRepositories._privateConstructor();
   TransactionsRepositories._privateConstructor();
 
+  Future<void> createTransaction(Map<String, dynamic> transaction) async {
+    sqf.Database db = await dbService.database;
+    await db.insert('transactions', transaction);
+  }
+
+  Future<void> updateTransaction(Transaction transaction) async {
+    sqf.Database db = await dbService.database;
+    await db.update('transactions', transaction.toMap(), where: 'id = ?', whereArgs: [transaction.id]);
+  }
+
   Future<List<Transaction>> getTransactions() async {
     sqf.Database db = await dbService.database;
 

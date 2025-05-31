@@ -97,9 +97,9 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     for (int i = transactionsList.length - 1; i >= 0; i--) {
       double temp = res.last;
       for (Transaction t in transactionsList[i]) {
-        if (t.type == 'expense'){
+        if (t.type == TransactionType.expense){
           temp += t.mainAmount;
-        } else if (t.type == 'income') {
+        } else if (t.type == TransactionType.income) {
           temp -= t.mainAmount;
         }
       }

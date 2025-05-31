@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/utils/main_icon.dart';
 
 import '../../style/app_size.dart';
 
@@ -6,9 +7,8 @@ import '../../style/app_size.dart';
 class TopCard extends StatelessWidget {
 
   /// variable
-  final double width; // width of the card
-  final Widget title; // title of the card
-  final Widget content; // content of the card
+  final String title; // title of the card
+  final String header; // content of the card
   final Color backgroundColor; // background color of the card
   final Icon icon; // icon of the card
   final bool topRight; // whether to curve topRight corner
@@ -17,9 +17,8 @@ class TopCard extends StatelessWidget {
 
   const TopCard({
     super.key,
-    required this.width,
     required this.title,
-    required this.content,
+    required this.header,
     required this.backgroundColor,
     required this.onPressed,
     this.icon = const Icon(Icons.add),
@@ -30,50 +29,60 @@ class TopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Widget buttonContent = SizedBox(
-      width: 40,
-      height: 40,
-      child: icon
-    );
-
     return MaterialButton(
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-          topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+        borderRadius: BorderRadius.all(
+          Radius.circular(AppSize.borderRadius),
         ),
       ),
       // splashColor: AppColor.tertiary,
       // highlightColor: AppColor.tertiary,
       color: backgroundColor,
-      child: Stack(
-        children: [
-          Container(
-            width: width,
-            padding: EdgeInsets.all(AppSize.bigPadding),
-            decoration: BoxDecoration(
-                color : Colors.transparent,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        width: MediaQuery.of(context).size.width * 0.48,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 5,
+              right: 5,
+              child: MainIcon(icon: icon, color: backgroundColor, size: AppSize.smallIcon,)
+            ),
+            Container(
+              padding: EdgeInsets.all(AppSize.bigPadding),
+              decoration: BoxDecoration(
+                  color : Colors.transparent,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppSize.borderRadius),
+                    topRight: Radius.circular(AppSize.borderRadius),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      header,
+                    style: TextStyle(
+                      fontSize: AppSize.paragraph,
+                      fontWeight: FontWeight.bold,
+                    )
+                  ),
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: AppSize.heading1 * 1.1,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title,
-                content,
-              ],
-            ),
-          ),
-          Positioned(
-            top: 5,
-            right: 5,
-            child: buttonContent,
-          ),
-        ]
+          ],
+        ),
       ),
     );
   }

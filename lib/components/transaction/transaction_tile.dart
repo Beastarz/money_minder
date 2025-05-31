@@ -109,9 +109,9 @@ class TransactionTile extends StatelessWidget {
   double _getTransactionBalance() {
     double res = 0;
     for (Transaction t in transactions) {
-      if (t.type == 'expense') {
+      if (t.type == TransactionType.expense) {
         res -= t.mainAmount;
-      } else if (t.type == 'income') {
+      } else if (t.type == TransactionType.income) {
         res += t.mainAmount;
       }
     }

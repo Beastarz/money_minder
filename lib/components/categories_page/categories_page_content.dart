@@ -8,7 +8,7 @@ import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
 import '../../style/app_size.dart';
-import '../input_form_sheet/input_form.dart';
+import '../input_form_sheet/input_keyboard.dart';
 import '../input_form_sheet/input_form_helper.dart';
 import 'categories_page_helper.dart';
 import 'categories_sheet.dart';
@@ -55,7 +55,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
         double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
         return InputFormSheet(
           // Define the button layout as seen in the image
-          inputForm: InputForm(
+          inputForm: InputKeyboard(
             buttonProps: InputFormHelper.convertToCalButProps([
               '÷', '7', '8', '9', 'C',
               'x', '4', '5', '6', '<',
@@ -74,49 +74,20 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children:[
                 TopCard(
-                  width: MediaQuery.of(context).size.width * 0.5,
                   topLeft: true,
-                  title: Text(
-                    "From Account",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: contentSize,
-                    )
-                  ),
-                  content: Text(
-                    "Card",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ),
+                  header: "From Account",
+                  title: "Card",
                   backgroundColor: Colors.blue,
                   icon: Icon(Icons.credit_card),
                   onPressed: () {},
                 ),
                 TopCard(
-                  width: MediaQuery.of(context).size.width * 0.5,
                   topRight: true,
-                  title: Text(
-                    "To Categories",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: contentSize,
-                    )
-                  ),
-                  content: Text(
-                    prop.label,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ),
+                  header: "To Categories",
+                  title: prop.label,
                   backgroundColor: prop.color,
                   icon: prop.icon,
                   onPressed: () {},
