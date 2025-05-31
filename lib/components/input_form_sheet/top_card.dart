@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/utils/main_icon.dart';
 
+import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
 // use this to construct the topContent of the calculator sheet
 class TopCard extends StatelessWidget {
 
   /// variable
-  final String title; // title of the card
-  final String header; // content of the card
+  final double width; // width of the card
+  final Widget title; // title of the card
+  final Widget content; // content of the card
   final Color backgroundColor; // background color of the card
   final Icon icon; // icon of the card
   final bool topRight; // whether to curve topRight corner
   final bool topLeft; // whether to curve topLeft corner
+  final bool isTappable;
   final void Function()? onPressed; // callback function when the button is pressed
 
   const TopCard({
     super.key,
+    required this.width,
     required this.title,
-    required this.header,
+    required this.content,
     required this.backgroundColor,
     required this.onPressed,
+    this.isTappable = true,
     this.icon = const Icon(Icons.add),
     this.topRight = false,
     this.topLeft = false,
@@ -29,60 +33,52 @@ class TopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    Widget buttonContent = SizedBox(
+      width: 40,
+      height: 40,
+      child: icon
+    );
+
     return MaterialButton(
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(AppSize.borderRadius),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
+          topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
         ),
       ),
-      // splashColor: AppColor.tertiary,
-      // highlightColor: AppColor.tertiary,
       color: backgroundColor,
-      child: Container(
-        padding: EdgeInsets.all(8.0),
-        width: MediaQuery.of(context).size.width * 0.48,
-        child: Stack(
-          children: [
-            Positioned(
-              top: 5,
-              right: 5,
-              child: MainIcon(icon: icon, color: backgroundColor, size: AppSize.smallIcon,)
+      disabledColor: backgroundColor,
+      disabledTextColor: AppColor.lightText,
+      child: Stack(
+        children: [
+          Container(
+            width: width,
+            decoration: BoxDecoration(
+                color : Colors.transparent,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
+                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+              ),
             ),
-            Container(
-              padding: EdgeInsets.all(AppSize.bigPadding),
-              decoration: BoxDecoration(
-                  color : Colors.transparent,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppSize.borderRadius),
-                    topRight: Radius.circular(AppSize.borderRadius),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(AppSize.smallPadding),
+                  child: title,
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                      header,
-                    style: TextStyle(
-                      fontSize: AppSize.paragraph,
-                      fontWeight: FontWeight.bold,
-                    )
-                  ),
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: AppSize.heading1 * 1.1,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                content,
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: buttonContent,
+          ),
+        ]
       ),
     );
   }
