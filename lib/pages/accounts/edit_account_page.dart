@@ -169,6 +169,16 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 // Handle savings account selection
                               },
                             ),
+                            ListTile(
+                              title: Text('Debts'),
+                              subtitle: Text('For owned debts: Credit Cards, Loans, trip, etc'),
+                              onTap: () {
+                                setState(() {
+                                  account = account.copyWith(type: AccountType.debts);
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
                           ]
                       );
                     }

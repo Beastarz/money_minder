@@ -107,7 +107,7 @@ class DatabaseService {
       ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
       ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
       ('Savings Account', 0xe84f, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
-      ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'accounts', 'sgd', 3), -- credit_card, Red
+      ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'debts', 'sgd', 3), -- credit_card, Red
       ('Investment Fund', 0xe8e5, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd', 4); -- trending_up, Orange (Exclude from total)
     ''');
 
