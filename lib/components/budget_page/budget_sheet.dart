@@ -5,10 +5,10 @@ import '../../style/app_size.dart';
 import '../input_form_sheet/input_keyboard.dart';
 import '../input_form_sheet/input_form_helper.dart';
 import '../input_form_sheet/input_form_sheet.dart';
-import '../input_form_sheet/top_card.dart';
 import 'budget_button.dart';
 import 'budget_helper.dart';
 import 'budget_tile.dart';
+import 'budget_top_card.dart';
 import 'main_budget_tile.dart';
 
 class BudgetSheet extends StatefulWidget {
@@ -82,7 +82,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
               ),
               child: Row(
                   children: [
-                    TopCard(
+                    BudgetTopCard(
                       width: MediaQuery.of(context).size.width,
                       topRight: true,
                       topLeft: true,

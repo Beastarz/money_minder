@@ -6,6 +6,7 @@ import 'package:money_minder/components/categories_page/categories_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
+import '../../models/category.dart';
 import '../../models/currency.dart';
 import 'categories_sheet.dart';
 
@@ -64,7 +65,14 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       builder: (sheetContext) {
         return ExpenseSheet(
             mainCurrency: widget.mainCurrency,
-            prop: prop,
+            toCategory: Category(
+                id: prop.id,
+                label: prop.label,
+                position: prop.position,
+                icon: prop.icon,
+                color: prop.color,
+                isExpense: prop.isExpense
+            ),
             onAddTransactionReload: widget.onAddTransactionReload,
         );
       }

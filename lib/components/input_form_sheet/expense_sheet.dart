@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/categories_page/categories_button.dart';
-import 'package:money_minder/components/input_form_sheet/top_card.dart';
+import 'package:money_minder/components/input_form_sheet/account_top_card.dart';
+import 'package:money_minder/components/input_form_sheet/category_top_card.dart';
 import 'package:money_minder/components/transaction/transaction_helper.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
@@ -13,11 +13,12 @@ import 'input_form_sheet.dart';
 import 'input_keyboard.dart';
 
 class ExpenseSheet extends StatefulWidget {
-  const ExpenseSheet({super.key, required this.mainCurrency, required this.prop, required this.onAddTransactionReload });
+  const ExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload });
 
   final Currency mainCurrency;
-  final CategoryButtonProps prop;
+  final Category toCategory;
   final void Function() onAddTransactionReload;
+
   @override
   State<ExpenseSheet> createState() => _ExpenseSheetState();
 }
@@ -31,14 +32,7 @@ class _ExpenseSheetState extends State<ExpenseSheet> {
   void initState() {
     super.initState();
     _fetchMainAccount();
-    toCategory = Category(
-        id: widget.prop.id,
-        label: widget.prop.label,
-        position: widget.prop.position,
-        icon: widget.prop.icon,
-        color: widget.prop.color,
-        isExpense: widget.prop.isExpense
-    );
+    toCategory = widget.toCategory;
     currency = widget.mainCurrency;
   }
 
@@ -51,74 +45,30 @@ class _ExpenseSheetState extends State<ExpenseSheet> {
 
   @override
   Widget build(BuildContext context) {
-    bool isExpense = widget.prop.isExpense;
+    bool isExpense = widget.toCategory.isExpense;
 
     // left card on top of the input form
-    final TopCard card1 = TopCard(
+    CategoryTopCard categoryCard = CategoryTopCard(
       width: MediaQuery.of(context).size.width * 0.5,
-      topLeft: true,
-      title: Text(
-          "From ${isExpense ? "Account" : "Category"}",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: AppSize.heading3,
-          )
-      ),
-      content: Padding(
-        padding: EdgeInsets.only(
-          left: AppSize.smallPadding,
-          right: AppSize.smallPadding,
-          bottom: AppSize.smallPadding,
-        ),
-        child: Text(
-            isExpense
-                ? fromAccount == null ? '' : fromAccount!.name
-                : toCategory.label,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: AppSize.heading1 * 1.15,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            )
-        ),
-      ),
-      backgroundColor: isExpense ? Colors.blue : toCategory.color,
-      icon: isExpense ? Icon(Icons.credit_card) : toCategory.icon,
-      onPressed: () {},
+      topRight: isExpense,
+      initialCategory: toCategory,
+      onPressed: (Category category) {
+        setState(() {
+          toCategory = category;
+        });
+      },
     );
 
     // right card on top of the input form
-    final TopCard card2 = TopCard(
+    Widget accountCard = fromAccount == null ? Container() : AccountTopCard(
       width: MediaQuery.of(context).size.width * 0.5,
-      topRight: true,
-      title: Text(
-          "To ${isExpense ? "Category" : "Account"}",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: AppSize.heading3,
-          )
-      ),
-      content: Padding(
-        padding: EdgeInsets.only(
-          left: AppSize.smallPadding,
-          right: AppSize.smallPadding,
-          bottom: AppSize.smallPadding,
-        ),
-        child: Text(
-            isExpense
-                ? toCategory.label
-                : fromAccount == null ? '' : fromAccount!.name ,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: AppSize.heading1 * 1.15,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            )
-        ),
-      ),
-      backgroundColor: isExpense ? toCategory.color : Colors.blue,
-      icon: isExpense ? toCategory.icon : Icon(Icons.credit_card),
-      onPressed: () {},
+      topLeft: isExpense,
+      initialAccount: fromAccount!,
+      onPressed: (Account account) {
+        setState(() {
+          fromAccount = account;
+        });
+      },
     );
 
 
@@ -154,7 +104,7 @@ class _ExpenseSheetState extends State<ExpenseSheet> {
             ),
           ),
           child: Row(
-              children: [card1, card2]
+              children: isExpense ? [accountCard, categoryCard] : [categoryCard, accountCard]
           ),
         )
     );
