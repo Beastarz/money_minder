@@ -9,7 +9,6 @@ import 'budget_button.dart';
 import 'budget_helper.dart';
 import 'budget_tile.dart';
 import 'budget_top_card.dart';
-import 'main_budget_tile.dart';
 
 class BudgetSheet extends StatefulWidget {
 
@@ -93,7 +92,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      content: MainBudgetTile(
+                      content: BudgetTile(
                         prop: BudgetTileProp(
                           label: BudgetHelper.generateMonthYearText(widget.startDate),
                           color: prop.color,
@@ -103,8 +102,8 @@ class _BudgetSheetState extends State<BudgetSheet> {
                           isCircleBorder: prop.isCircleBorder,
                           mainCurrency: prop.mainCurrency,
                         ),
-                        isCurve: false,
                         textWidth: MediaQuery.of(context).size.width * 0.45,
+                        budgetOnPressed: null,
                       ),
                       backgroundColor: prop.color,
                       icon: Icon(
@@ -151,8 +150,11 @@ class _BudgetSheetState extends State<BudgetSheet> {
             children: [
 
               // main budget tile
-              MainBudgetTile(
+              BudgetTile(
                 prop: mainBudgetTileProp,
+                topCurve: true,
+                bottomCurve: true,
+                budgetOnPressed: null,
                 textWidth: MediaQuery.of(context).size.width * 0.4,
               ),
 
@@ -169,6 +171,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
                       topCurve: i == 0,
                       bottomCurve: i == widget.props[index][1].length - 1,
                       budgetOnPressed: budgetOnPressed,
+                      textWidth: MediaQuery.of(context).size.width * 0.4,
                   );
                 }
               ),
