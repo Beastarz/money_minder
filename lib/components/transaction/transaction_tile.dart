@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/transaction/transaction_detail_sheet.dart';
 import 'package:money_minder/style/app_size.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
@@ -8,9 +9,10 @@ import '../../models/transaction.dart';
 import '../../style/app_color.dart';
 
 class TransactionTile extends StatelessWidget {
-  const TransactionTile({super.key, required this.transactions});
+  const TransactionTile({super.key, required this.transactions, required this.onTransactionReload});
 
   final List<Transaction> transactions;
+  final Function() onTransactionReload;
 
 
   @override
@@ -101,7 +103,7 @@ class TransactionTile extends StatelessWidget {
                             : transaction.mainAmount,
                         currencyName: transaction.mainCurrency.toString(),
                         mainAxisAlignment: MainAxisAlignment.end,
-                        showColor: true,
+                        showColor: transaction.type != TransactionType.transfer,
                         size: 18,
                       ),
                       transaction.mainCurrency.toString() == transaction.currency.toString() ? SizedBox.shrink() :
@@ -113,7 +115,7 @@ class TransactionTile extends StatelessWidget {
                             : transaction.amount,
                         currencyName: transaction.currency.toString(),
                         mainAxisAlignment: MainAxisAlignment.end,
-                        showColor: true,
+                        showColor: transaction.type != TransactionType.transfer,
                         size: 16,
                       ),
                     ],
@@ -122,7 +124,7 @@ class TransactionTile extends StatelessWidget {
                     context: context,
                     isScrollControlled: true,
                     builder: (context) {
-                      return Container();
+                      return TransactionDetailSheet(transaction: transaction, onEditTransactionReload: onTransactionReload,);
                     }
                   ),
                 );

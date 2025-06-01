@@ -138,7 +138,10 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       AccountsPage(
           accounts: _accounts,
           mainCurrency: _mainCurrency,
-          onReload: _fetchAccounts,
+          onReload: () {
+            _fetchAccounts();
+            _fetchTransactions();
+          },
       ),
       CategoriesPage(
         filteredTransactions: filteredTransactions,
@@ -162,6 +165,10 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
+        onTransactionReload: () {
+          _fetchAccounts();
+          _fetchTransactions();
+        },
       ),
       BudgetPage(
         mainCurrency: _mainCurrency,

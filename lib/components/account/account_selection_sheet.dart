@@ -1,15 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
 
+import '../../repositories/accounts_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../app_bar/account_tile.dart';
 
-class AccountSelectionSheet extends StatelessWidget {
-  final List<Account> accounts;
+class AccountSelectionSheet extends StatefulWidget {
   final Function(Account) onSelect;
+  final Account? removeAccount;
 
-  const AccountSelectionSheet({super.key, required this.accounts, required this.onSelect});
+  const AccountSelectionSheet({super.key, required this.onSelect, this.removeAccount});
+
+  @override
+  State<AccountSelectionSheet> createState() => _AccountSelectionSheetState();
+}
+
+class _AccountSelectionSheetState extends State<AccountSelectionSheet> {
+  List<Account> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAccounts();
+  }
+
+  _fetchAccounts() async {
+    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    setState(() {
+      accounts = res;
+      if(widget.removeAccount != null) {
+        accounts.removeWhere((account) => account.id == widget.removeAccount!.id);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +104,8 @@ class AccountSelectionSheet extends StatelessWidget {
                       return AccountTile(
                         account: account,
                         onSelect: () {
-                          onSelect(account);
                           Navigator.pop(context);
+                          widget.onSelect(account);
                         },
                         showColor: false,
                       );

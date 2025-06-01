@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_selection_sheet.dart';
 import 'package:money_minder/repositories/categories_repositories.dart';
 
-import '../../models/category.dart';
-import '../../style/app_color.dart';
-import '../../style/app_size.dart';
+import '../models/category.dart';
+import '../style/app_color.dart';
+import '../style/app_size.dart';
 
 // use this to construct the topContent of the calculator sheet
-class CategoryTopCard extends StatefulWidget {
+class CategoryTopCard extends StatelessWidget {
 
   /// variable
   final double width; // width of the card
@@ -28,31 +28,8 @@ class CategoryTopCard extends StatefulWidget {
   });
 
   @override
-  State<CategoryTopCard> createState() => _CategoryTopCardState();
-}
-
-class _CategoryTopCardState extends State<CategoryTopCard> {
-  List<Category> expenses = [];
-  List<Category> incomes = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchCategories();
-  }
-
-  void _fetchCategories() async {
-    List<Category> res1 = await CategoriesRepositories.instance.getCategoriesByType(true);
-    List<Category> res2 = await CategoriesRepositories.instance.getCategoriesByType(false);
-    setState(() {
-      expenses = res1;
-      incomes = res2;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Category category = widget.initialCategory;
+    Category category = initialCategory;
 
     Widget buttonContent = SizedBox(
       width: 40,
@@ -64,30 +41,30 @@ class _CategoryTopCardState extends State<CategoryTopCard> {
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(widget.topLeft ? AppSize.borderRadius : 0),
-          topRight: Radius.circular(widget.topRight ? AppSize.borderRadius : 0),
+          topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
+          topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
         ),
       ),
       color: category.color,
       disabledColor: category.color,
       disabledTextColor: AppColor.lightText,
-      onPressed: () => showModalBottomSheet(
+      onPressed: !isTappable ? null : () => showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           backgroundColor: AppColor.secondary,
           builder: (context) {
-            return CategoriesSelectionSheet(expenses: expenses, incomes: incomes, onSelect: widget.onPressed);
+            return CategoriesSelectionSheet(isExpense: category.isExpense, onSelect: onPressed);
           }
       ),
       child: Stack(
         children: [
           Container(
-            width: widget.width,
+            width: width,
             decoration: BoxDecoration(
                 color : Colors.transparent,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(widget.topLeft ? AppSize.borderRadius : 0),
-                  topRight: Radius.circular(widget.topRight ? AppSize.borderRadius : 0),
+                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
+                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
               ),
             ),
             child: Column(
@@ -96,7 +73,7 @@ class _CategoryTopCardState extends State<CategoryTopCard> {
                 Padding(
                   padding: EdgeInsets.all(AppSize.smallPadding),
                   child: Text(
-                      '${widget.topLeft ? "From" : "To"} Category',
+                      '${topLeft ? "From" : "To"} Category',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: AppSize.heading3,

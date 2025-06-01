@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +30,7 @@ class InputKeyboard extends StatefulWidget {
   final List<InputFormButtonProps> buttonProps;
   final bool showNotes; // show notes input
   final double defaultValue; // default value of the input
+  final DateTime? defaultDate; // default date of the input
   final Currency mainCurrency; // default currency of the input
   final void Function(DateTime, double, String) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
@@ -43,6 +43,7 @@ class InputKeyboard extends StatefulWidget {
     required this.mainCurrency,
     required this.onSubmit,
     required this.onCurrencyUpdate,
+    this.defaultDate,
   });
 
   @override
@@ -69,6 +70,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       }
       _numbers.clear();
       _numbers.add(_currentAmount);
+      widget.defaultDate == null ? currDate = DateTime.now() : currDate = widget.defaultDate!;
     });
     _fetchCurrencies();
   }
@@ -175,12 +177,12 @@ class _InputKeyboardState extends State<InputKeyboard> {
           !widget.showNotes
             ? SizedBox.shrink()
             : Text(
-                '$datePrefix, ${formatDate(currDate, [dd, ' ', MM, ' ', yyyy])}',
+                '$datePrefix, ${formatDate(currDate, [dd, ' ', M, ' ', yyyy])}',
                 style: TextStyle(
                     color: AppColor.darkText,
                     fontSize: isSmallScreen
                         ? AppSize.heading3
-                        : AppSize.heading3 * 1.5),
+                        : AppSize.heading3 * 1.2),
               )
         ],
       ),
@@ -327,7 +329,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   PeriodTile(
                                     parentContext: context,
                                     label: 'Yesterday',
-                                    selected: formatDate(DateTime.now().subtract(Duration(days: 1)), [dd, ' ', MM, ' ', yyyy]),
+                                    selected: formatDate(DateTime.now().subtract(Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
                                     icon: Icons.mode_night_rounded,
                                     onPressed: () {
                                       setState(() {
@@ -342,7 +344,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   PeriodTile(
                                     parentContext: context,
                                     label: 'Today',
-                                    selected: formatDate(DateTime.now(), [dd, ' ', MM, ' ', yyyy]),
+                                    selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
                                     icon: Icons.sunny,
                                     onPressed: () {
                                       setState(() {

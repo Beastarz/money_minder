@@ -1,7 +1,7 @@
 import 'package:draggable_home/draggable_home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/input_form_sheet/expense_sheet.dart';
+import 'package:money_minder/components/transaction/add_expense_sheet.dart';
 import 'package:money_minder/components/categories_page/categories_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
@@ -63,7 +63,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
-        return ExpenseSheet(
+        return EditExpenseSheet(
             mainCurrency: widget.mainCurrency,
             toCategory: Category(
                 id: prop.id,

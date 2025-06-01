@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/input_form_sheet/account_top_card.dart';
-import 'package:money_minder/components/input_form_sheet/category_top_card.dart';
+import 'package:money_minder/utils/account_top_card.dart';
+import 'package:money_minder/utils/category_top_card.dart';
 import 'package:money_minder/components/transaction/transaction_helper.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
@@ -8,22 +8,22 @@ import 'package:money_minder/repositories/accounts_repositories.dart';
 
 import '../../models/category.dart';
 import '../../style/app_size.dart';
-import 'input_form_helper.dart';
-import 'input_form_sheet.dart';
-import 'input_keyboard.dart';
+import '../input_form_sheet/input_form_helper.dart';
+import '../input_form_sheet/input_form_sheet.dart';
+import '../input_form_sheet/input_keyboard.dart';
 
-class ExpenseSheet extends StatefulWidget {
-  const ExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload });
+class EditExpenseSheet extends StatefulWidget {
+  const EditExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload });
 
   final Currency mainCurrency;
   final Category toCategory;
   final void Function() onAddTransactionReload;
 
   @override
-  State<ExpenseSheet> createState() => _ExpenseSheetState();
+  State<EditExpenseSheet> createState() => _EditExpenseSheetState();
 }
 
-class _ExpenseSheetState extends State<ExpenseSheet> {
+class _EditExpenseSheetState extends State<EditExpenseSheet> {
   Account? fromAccount;
   late Category toCategory;
   late Currency currency;
@@ -110,8 +110,8 @@ class _ExpenseSheetState extends State<ExpenseSheet> {
     );
   }
 
-  void _handleSubmit(DateTime date, Account fromAccount, Category toCategory, double amount, Currency currency, String note) {
-    TransactionHelper.proceedExpense(date, fromAccount, toCategory, amount, currency, note);
+  void _handleSubmit(DateTime date, Account fromAccount, Category toCategory, double amount, Currency currency, String note) async {
+    await TransactionHelper.proceedExpense(date, fromAccount.id, toCategory, amount, currency, note);
     widget.onAddTransactionReload();
   }
 }

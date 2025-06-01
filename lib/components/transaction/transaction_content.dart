@@ -7,12 +7,13 @@ import 'package:money_minder/utils/balance_text.dart';
 import '../../models/transaction.dart';
 
 class TransactionsContent extends StatelessWidget {
-  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency,});
+  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload,});
 
   final List<Transaction> transactions;
   final double initialBalance;
   final double finalBalance;
   final Currency mainCurrency;
+  final Function() onTransactionReload;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class TransactionsContent extends StatelessWidget {
               )
             ],
           ),
-        ] + groupedTransactionsByDate.map((t) => TransactionTile(transactions: t)).toList(),
+        ] + groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),
       ),
     );
   }
