@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/budget_page/budget_tile.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/account.dart';
 import '../../models/budget.dart';
@@ -8,7 +9,6 @@ import '../../models/category.dart';
 import '../../models/transaction.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../../utils/show_money.dart';
 
 class BudgetHelper {
 
@@ -19,9 +19,9 @@ class BudgetHelper {
   };
 
   static final Map<String, String> textMap = {
-    "Expenses": "spent",
-    "Savings": "deposited",
-    "Income": "received",
+    "Expenses": "Exp.",
+    "Savings": "Dep.",
+    "Income": "Rec.",
   };
 
   static final List<String> months = [
@@ -83,15 +83,16 @@ class BudgetHelper {
                           : AppColor.darkText
                   ),
                 ),
-                ShowMoney(
-                  mainCurrency: mainCurrency,
-                  amount: totalAmount,
-                  text: '',
-                  color: currentType == type
+                BalanceText(
+                    balance: totalAmount,
+                    currencyName: mainCurrency.toString(),
+                    showColor: true,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    size: AppSize.heading3 * factor,
+                    fontColor: currentType == type
                       ? AppColor.lightText
-                      : AppColor.darkText,
-                  factor: factor,
-                  width: width,
+                      : colorMap[type],
+                    textWidth: width,
                 )
               ]
           )
@@ -163,7 +164,7 @@ class BudgetHelper {
               budget: budget,
               type: isExpense ? "Expenses" : "Income",
               isCircleBorder: true,
-              mainCurrency: mainCurrency
+              mainCurrency: mainCurrency,
           )
       );
     }

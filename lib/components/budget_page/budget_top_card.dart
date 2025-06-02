@@ -4,7 +4,7 @@ import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
 // use this to construct the topContent of the calculator sheet
-class TopCard extends StatelessWidget {
+class BudgetTopCard extends StatelessWidget {
 
   /// variable
   final double width; // width of the card
@@ -17,7 +17,7 @@ class TopCard extends StatelessWidget {
   final bool isTappable;
   final void Function()? onPressed; // callback function when the button is pressed
 
-  const TopCard({
+  const BudgetTopCard({
     super.key,
     required this.width,
     required this.title,
@@ -34,9 +34,9 @@ class TopCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Widget buttonContent = SizedBox(
-      width: 40,
-      height: 40,
-      child: icon
+        width: 40,
+        height: 40,
+        child: icon
     );
 
     return MaterialButton(
@@ -52,33 +52,33 @@ class TopCard extends StatelessWidget {
       disabledColor: backgroundColor,
       disabledTextColor: AppColor.lightText,
       child: Stack(
-        children: [
-          Container(
-            width: width,
-            decoration: BoxDecoration(
+          children: [
+            Container(
+              width: width,
+              decoration: BoxDecoration(
                 color : Colors.transparent,
-              borderRadius: BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
                   topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(AppSize.smallPadding),
+                    child: title,
+                  ),
+                  content,
+                ],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(AppSize.smallPadding),
-                  child: title,
-                ),
-                content,
-              ],
+            Positioned(
+              top: 5,
+              right: 5,
+              child: buttonContent,
             ),
-          ),
-          Positioned(
-            top: 5,
-            right: 5,
-            child: buttonContent,
-          ),
-        ]
+          ]
       ),
     );
   }

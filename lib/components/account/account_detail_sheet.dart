@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/account/account_detail_function_tile.dart';
+import 'package:money_minder/components/account/account_selection_sheet.dart';
+import 'package:money_minder/components/transaction/add_transfer_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/pages/accounts/edit_account_page.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
@@ -100,13 +102,63 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                   parentContext: context,
                   label: 'Receive',
                   icon: Icon(Icons.arrow_downward, color: Colors.green[400],),
-                  onPressed: () {}
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) {
+                          return AccountSelectionSheet(
+                              removeAccount: widget.account,
+                              onSelect: (Account fromAccount) {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) {
+                                      return AddTransferSheet(
+                                          mainCurrency: fromAccount.currency,
+                                          onAddTransactionReload: widget.onReload,
+                                          fromAccount: fromAccount,
+                                          toAccount: widget.account
+                                      );
+                                    }
+                                );
+                              }
+                          );
+                        }
+                    );
+                  }
                 ),
                 AccountDetailFunctionTile(
                     parentContext: context,
                     label: 'Transfer',
                     icon: Icon(Icons.arrow_upward, color: Colors.redAccent,),
-                    onPressed: () {}
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return AccountSelectionSheet(
+                              removeAccount: widget.account,
+                                onSelect: (Account toAccount) {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return AddTransferSheet(
+                                            mainCurrency: widget.account.currency,
+                                            onAddTransactionReload: widget.onReload,
+                                            fromAccount: widget.account,
+                                            toAccount: toAccount
+                                        );
+                                      }
+                                  );
+                                }
+                            );
+                          }
+                      );
+                    }
                 ),
                 AccountDetailFunctionTile(
                     parentContext: context,

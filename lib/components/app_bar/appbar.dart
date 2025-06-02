@@ -102,69 +102,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             backgroundColor: AppColor.secondary,
             context: context,
             builder: (BuildContext context) {
-              return Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.secondary,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.18,
-                        ),
-                        Center(
-                          child: Text(
-                            'Accounts Filter',
-                            style: TextStyle(
-                                color: AppColor.darkText,
-                                fontSize: AppSize.heading1,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            () async {
-                              await AccountsRepository.instance
-                                  .updateSelectedAccount(selectedAccountId);
-                              onReload();
-                            }();
-                            Navigator.pop(context);
-                          },
-                          color: AppColor.secondary,
-                          icon: Row(
-                              children: [
-                                Icon(
-                                  Icons.check,
-                                  color: AppColor.darkText,
-                                ),
-                                const SizedBox(width: 5,),
-                                Text(
-                                    'Apply',
-                                    style: TextStyle(
-                                      color: AppColor.darkText,
-                                    )
-                                ),
-                              ]
-                          )
-                        ),
-                      ]
-                    ),
-                  ),
-                  Expanded(
-                    child: DraggableScrollableSheet(
-                      expand: false,
-                      initialChildSize: 1,
-                      minChildSize: 0.2,
-                      builder: (BuildContext context, ScrollController scrollController) {
-                        return SafeArea(child: AccountsFilter(selectedAccounts: selectedAccountId,));
-                      }
-                    ),
-                  ),
-                ],
-              );
+              return AccountsFilter(selectedAccounts: selectedAccountId, onReload: onReload,);
             }
           );
         }

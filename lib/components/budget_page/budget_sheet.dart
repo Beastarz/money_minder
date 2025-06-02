@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_size.dart';
-import '../input_form_sheet/input_form.dart';
+import '../input_form_sheet/input_keyboard.dart';
 import '../input_form_sheet/input_form_helper.dart';
 import '../input_form_sheet/input_form_sheet.dart';
-import '../input_form_sheet/top_card.dart';
 import 'budget_button.dart';
 import 'budget_helper.dart';
 import 'budget_tile.dart';
-import 'main_budget_tile.dart';
+import 'budget_top_card.dart';
 
 class BudgetSheet extends StatefulWidget {
 
@@ -52,7 +51,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
         builder: (sheetContext) {
           return InputFormSheet(
             // Define the button layout as seen in the image
-            inputForm: InputForm(
+            inputForm: InputKeyboard(
               buttonProps: InputFormHelper.convertToCalButProps([
                 '÷', '7', '8', '9', 'C',
                 'x', '4', '5', '6', '<',
@@ -67,6 +66,12 @@ class _BudgetSheetState extends State<BudgetSheet> {
               showNotes: false,
               defaultValue: prop.budget,
               mainCurrency: prop.mainCurrency,
+              onSubmit: (DateTime date, double amount, String note) {
+                Navigator.pop(context);
+              },
+              onCurrencyUpdate: (Currency currency) {
+
+              },
             ),
             topContent: Container(
               decoration: BoxDecoration(
@@ -76,7 +81,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
               ),
               child: Row(
                   children: [
-                    TopCard(
+                    BudgetTopCard(
                       width: MediaQuery.of(context).size.width,
                       topRight: true,
                       topLeft: true,
@@ -87,7 +92,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      content: MainBudgetTile(
+                      content: BudgetTile(
                         prop: BudgetTileProp(
                           label: BudgetHelper.generateMonthYearText(widget.startDate),
                           color: prop.color,
@@ -97,8 +102,8 @@ class _BudgetSheetState extends State<BudgetSheet> {
                           isCircleBorder: prop.isCircleBorder,
                           mainCurrency: prop.mainCurrency,
                         ),
-                        isCurve: false,
                         textWidth: MediaQuery.of(context).size.width * 0.45,
+                        budgetOnPressed: null,
                       ),
                       backgroundColor: prop.color,
                       icon: Icon(
@@ -145,8 +150,11 @@ class _BudgetSheetState extends State<BudgetSheet> {
             children: [
 
               // main budget tile
-              MainBudgetTile(
+              BudgetTile(
                 prop: mainBudgetTileProp,
+                topCurve: true,
+                bottomCurve: true,
+                budgetOnPressed: null,
                 textWidth: MediaQuery.of(context).size.width * 0.4,
               ),
 
@@ -163,6 +171,7 @@ class _BudgetSheetState extends State<BudgetSheet> {
                       topCurve: i == 0,
                       bottomCurve: i == widget.props[index][1].length - 1,
                       budgetOnPressed: budgetOnPressed,
+                      textWidth: MediaQuery.of(context).size.width * 0.4,
                   );
                 }
               ),
