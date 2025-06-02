@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import 'input_form.dart';
+import 'input_keyboard.dart';
 
 class InputFormSheet extends StatelessWidget {
 
   final Widget topContent; // the widget to display at the top of the sheet
-  final InputForm inputForm; // the input form widget
+  final InputKeyboard inputForm; // the input form widget
   final bool showNotes; // show notes input
 
   const InputFormSheet({
@@ -24,9 +24,6 @@ class InputFormSheet extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        height: MediaQuery.of(context).size.height * (isSmallScreen
-            ? !showNotes ? 0.75 : 0.80
-            : !showNotes ? 0.60 : 0.65),
         decoration: BoxDecoration(
           color: AppColor.secondary,
           borderRadius: BorderRadius.vertical(
@@ -34,6 +31,7 @@ class InputFormSheet extends StatelessWidget {
           ),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             topContent,
             Container(

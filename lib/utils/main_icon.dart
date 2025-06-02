@@ -6,14 +6,12 @@ class MainIcon extends StatelessWidget {
   final Icon icon;
   final Color color;
   final bool isRound;
-  final bool isMain;
   final double size;
 
   const MainIcon({super.key,
     required this.icon,
     required this.color,
     this.isRound = true,
-    this.isMain = false,
     this.size = 40,
   });
 

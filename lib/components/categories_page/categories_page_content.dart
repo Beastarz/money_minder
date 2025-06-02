@@ -1,16 +1,13 @@
 import 'package:draggable_home/draggable_home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/input_form_sheet/input_form_sheet.dart';
-import 'package:money_minder/components/input_form_sheet/top_card.dart';
+import 'package:money_minder/components/transaction/add_expense_sheet.dart';
 import 'package:money_minder/components/categories_page/categories_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
+import '../../models/category.dart';
 import '../../models/currency.dart';
-import '../../style/app_size.dart';
-import '../input_form_sheet/input_form.dart';
-import '../input_form_sheet/input_form_helper.dart';
 import 'categories_sheet.dart';
 
 class CategoriesPageContent extends StatefulWidget {
@@ -19,12 +16,14 @@ class CategoriesPageContent extends StatefulWidget {
   final List<List<CategoryButtonProps>> categories;
   final List<double> totalAmounts;
   final Currency mainCurrency;
+  final void Function() onAddTransactionReload;
 
   const CategoriesPageContent({
     super.key,
     required this.categories,
     required this.totalAmounts,
     required this.mainCurrency,
+    required this.onAddTransactionReload,
   });
 
   @override
@@ -38,6 +37,11 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
   bool _isExpense = true;
   // track which category is chosen
   int _pieTouchedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   // the center button will toggle between showing expenses and income each
   // time it is clicked.
@@ -55,105 +59,21 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       _pieTouchedIndex = -1;
     });
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    final double titleSize = (isSmallScreen ? AppSize.heading2 : AppSize.heading1) * 1.5;
-    final double contentSize = isSmallScreen ? AppSize.paragraph : AppSize.heading3;
-    final bool isExpense = prop.isExpense;
-
-    // left card on top of the input form
-    final TopCard card1 = TopCard(
-      width: MediaQuery.of(context).size.width * 0.5,
-      topLeft: true,
-      title: Text(
-          "From ${isExpense ? "Account" : "Category"}",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: contentSize,
-          )
-      ),
-      content: Padding(
-        padding: EdgeInsets.only(
-          left: AppSize.smallPadding,
-          right: AppSize.smallPadding,
-          bottom: AppSize.smallPadding,
-        ),
-        child: Text(
-            isExpense ? "Card" : prop.label,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: titleSize,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            )
-        ),
-      ),
-      backgroundColor: isExpense ? Colors.blue : prop.color,
-      icon: isExpense ? Icon(Icons.credit_card) : prop.icon,
-      onPressed: () {},
-    );
-
-    // right card on top of the input form
-    final TopCard card2 = TopCard(
-      width: MediaQuery.of(context).size.width * 0.5,
-      topRight: true,
-      title: Text(
-          "To ${isExpense ? "Category" : "Account"}",
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: contentSize,
-          )
-      ),
-      content: Padding(
-        padding: EdgeInsets.only(
-          left: AppSize.smallPadding,
-          right: AppSize.smallPadding,
-          bottom: AppSize.smallPadding,
-        ),
-        child: Text(
-            isExpense ? prop.label : "Card",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: titleSize,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            )
-        ),
-      ),
-      backgroundColor: isExpense ? prop.color : Colors.blue,
-      icon: isExpense ? prop.icon : Icon(Icons.credit_card),
-      onPressed: () {},
-    );
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
-        return InputFormSheet(
-          // Define the button layout as seen in the image
-          inputForm: InputForm(
-            buttonProps: InputFormHelper.convertToCalButProps([
-              '÷', '7', '8', '9', 'C',
-              'x', '4', '5', '6', '<',
-              '-', '1', '2', '3', 'calendar',
-              '+', '\$', '0', '.',
-            ], {
-              '<': Icons.backspace_outlined,
-              'calendar': Icons.calendar_month,
-              '✓': Icons.check,
-              }
-            ),
+        return EditExpenseSheet(
             mainCurrency: widget.mainCurrency,
-          ),
-          topContent: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(AppSize.borderRadius)
-              ),
+            toCategory: Category(
+                id: prop.id,
+                label: prop.label,
+                position: prop.position,
+                icon: prop.icon,
+                color: prop.color,
+                isExpense: prop.isExpense
             ),
-            child: Row(
-              children: [card1, card2]
-            ),
-          )
+            onAddTransactionReload: widget.onAddTransactionReload,
         );
       }
     );

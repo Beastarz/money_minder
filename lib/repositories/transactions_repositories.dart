@@ -14,6 +14,16 @@ class TransactionsRepositories {
   static final TransactionsRepositories instance = TransactionsRepositories._privateConstructor();
   TransactionsRepositories._privateConstructor();
 
+  Future<void> createTransaction(Map<String, dynamic> transaction) async {
+    sqf.Database db = await dbService.database;
+    await db.insert('transactions', transaction);
+  }
+
+  Future<void> updateTransaction(Transaction transaction) async {
+    sqf.Database db = await dbService.database;
+    await db.update('transactions', transaction.toMap(), where: 'id = ?', whereArgs: [transaction.id]);
+  }
+
   Future<List<Transaction>> getTransactions() async {
     sqf.Database db = await dbService.database;
 
@@ -24,6 +34,9 @@ class TransactionsRepositories {
     List<Transaction> transactions = [];
 
     for (Map<String, dynamic> r in res) {
+      if (r['to_account_id'] == null && r['to_category_id'] == null) {
+        continue;
+      }
       Account fromAccount= accounts.firstWhere((account) => account.id == r['from_account_id']);
       Account? toAccount = r['to_account_id'] == null
           ? null
@@ -34,5 +47,10 @@ class TransactionsRepositories {
       transactions.add(Transaction.fromMap(r, fromAccount, toAccount, toCategory, mainCurrency));
     }
     return transactions;
+  }
+
+  Future<void> deleteTransaction(int id) async {
+    sqf.Database db = await dbService.database;
+    await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
 }

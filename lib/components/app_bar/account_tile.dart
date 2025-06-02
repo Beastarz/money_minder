@@ -7,8 +7,9 @@ import '../../style/app_size.dart';
 class AccountTile extends StatefulWidget {
   final Account account;
   final Function onSelect;
+  final bool showColor;
 
-  const AccountTile({super.key, required this.account, required this.onSelect});
+  const AccountTile({super.key, required this.account, required this.onSelect, this.showColor = true});
 
   @override
   State<AccountTile> createState() => _AccountTileState();
@@ -21,14 +22,16 @@ class _AccountTileState extends State<AccountTile> {
   @override
   void initState() {
     super.initState();
-    _isSelected = widget.account.isIncludesInTotal;
+    _isSelected = widget.showColor ? widget.account.isIncludesInTotal : false;
   }
 
   void _handleTap() {
-    setState(() {
+    widget.showColor
+    ? setState(() {
       _isSelected = !_isSelected;
       widget.onSelect(_isSelected);
-    });
+    })
+    : widget.onSelect();
   }
 
   @override

@@ -16,7 +16,7 @@ class TransactionsPage extends StatefulWidget {
     required this.filteredAccountBalance,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
-    required this.onPageChange,
+    required this.onPageChange, required this.onTransactionReload,
   });
 
   final double filteredAccountBalance;
@@ -26,6 +26,7 @@ class TransactionsPage extends StatefulWidget {
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+  final Function() onTransactionReload;
 
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();
@@ -75,6 +76,7 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
           initialBalance: accumulatedBalance[transactions.$1],
           finalBalance: accumulatedBalance[transactions.$1 + 1],
           mainCurrency: widget.mainCurrency,
+          onTransactionReload: widget.onTransactionReload,
         )).toList()
       ),
     );
@@ -97,9 +99,9 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     for (int i = transactionsList.length - 1; i >= 0; i--) {
       double temp = res.last;
       for (Transaction t in transactionsList[i]) {
-        if (t.type == 'expense'){
+        if (t.type == TransactionType.expense){
           temp += t.mainAmount;
-        } else if (t.type == 'income') {
+        } else if (t.type == TransactionType.income) {
           temp -= t.mainAmount;
         }
       }

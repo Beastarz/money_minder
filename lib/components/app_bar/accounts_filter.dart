@@ -8,8 +8,9 @@ import 'account_tile.dart';
 
 class AccountsFilter extends StatefulWidget {
   final List<int> selectedAccounts;
+  final void Function() onReload;
 
-  const AccountsFilter({super.key, required this.selectedAccounts});
+  const AccountsFilter({super.key, required this.selectedAccounts, required this.onReload});
 
   @override
   State<AccountsFilter> createState() => _AccountsFilterState();
@@ -50,12 +51,77 @@ class _AccountsFilterState extends State<AccountsFilter> {
   Widget build(BuildContext context) {
 
     List<AccountType> accountTypes = AccountType.values;
-    return ListView(
-      physics: ScrollPhysics(),
-      shrinkWrap: true,
-      children:  accountTypes.map((accountType) {
-        return accounts.where((acc) => acc.type == accountType).isNotEmpty
-            ? Column(
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColor.secondary,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        () async {
+                          await AccountsRepository.instance
+                              .updateSelectedAccount(widget.selectedAccounts);
+                          widget.onReload();
+                        }();
+                        Navigator.pop(context);
+                      },
+                      color: AppColor.secondary,
+                      icon: Row(
+                          children: [
+                            Icon(
+                              Icons.check,
+                              color: AppColor.darkText,
+                            ),
+                            const SizedBox(width: 5,),
+                            Text(
+                                'Apply',
+                                style: TextStyle(
+                                  color: AppColor.darkText,
+                                )
+                            ),
+                          ]
+                      )
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(AppSize.smallPadding),
+                    child: Text(
+                      'Accounts Filter',
+                      style: TextStyle(
+                          color: AppColor.darkText,
+                          fontSize: AppSize.heading1,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            children:  accountTypes.map((accountType) {
+              return accounts.where((acc) => acc.type == accountType).isNotEmpty
+                  ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
@@ -94,8 +160,11 @@ class _AccountsFilterState extends State<AccountsFilter> {
                   ),
                 ],
               )
-            : Container();
-      }).toList(),
+                  : Container();
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }
