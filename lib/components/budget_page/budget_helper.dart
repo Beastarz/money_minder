@@ -138,7 +138,8 @@ class BudgetHelper {
     for (int i = 0; i < categories.length; i++) {
       amounts.add(0);
     }
-    String targetType = isExpense ? 'expense' : 'income';
+    TransactionType targetType =
+      isExpense ? TransactionType.expense : TransactionType.income;
     for (Transaction t in transactions) {
       if (t.type == targetType) {
         int catIndex = t.toCategory!.position;
@@ -187,7 +188,7 @@ class BudgetHelper {
     for (int i = 0; i < accounts.length; i++) {
       amounts.add(0);
     }
-    String targetType = 'transfer';
+    TransactionType targetType = TransactionType.transfer;
     for (Transaction t in transactions) {
       if (t.type == targetType) {
         bool fromAccIsSavings =

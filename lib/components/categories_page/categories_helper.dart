@@ -52,7 +52,8 @@ class CategoriesHelper {
     for (int i = 0; i < categories.length; i++) {
       amounts.add(0);
     }
-    String targetType = isExpense ? 'expense' : 'income';
+    TransactionType targetType =
+      isExpense ? TransactionType.expense : TransactionType.income;
     for (Transaction t in transactions) {
       if (t.type == targetType) {
         int catIndex = t.toCategory!.position;
@@ -70,6 +71,8 @@ class CategoriesHelper {
     for (int i = 0; i < categories.length; i++) {
       Category category = categories[i];
       double budget = getBudget(budgets, category.id);
+      print('${category.label}: ${budget}');
+      print('${category.label}: ${amounts[category.position]}');
       result.add(
         CategoryButtonProps(
             id: category.id,
