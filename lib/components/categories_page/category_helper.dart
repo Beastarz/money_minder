@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/date_filter.dart';
 
 import '../../models/budget.dart';
 import '../../models/transaction.dart';
-import 'categories_button.dart';
+import 'category_button.dart';
 
-class CategoriesHelper {
+class CategoryHelper {
 
   static List<Budget> getBudgets(List<Budget> budgets) {
     return budgets.where((budget) => budget.type == 'category').toList();
@@ -20,25 +22,14 @@ class CategoriesHelper {
     return 0;
   }
 
-  static double getBudgetCoefficient(DateFilter dateFilter) {
-    switch(dateFilter.type) {
-      case DateFilterType.day:
-        return 1 / 30;
-      case DateFilterType.week:
-        return 1 / 4;
-      case DateFilterType.month:
-        return 1.00;
-      case DateFilterType.year:
-        return 12.00;
-      case DateFilterType.all:
-        return 0.00;
-      case DateFilterType.range:
-        return dateFilter.duration!.inDays / 30;
-    }
+  // Function to lighten a color by mixing it with white
+  static Color lightenColor(Color color, double factor) {
+    // factor: 0.0 means no white, 1.0 means pure white
+    return Color.lerp(color, Colors.white, factor)!;
   }
 
   // convert Category to CategoryButtonProps
-  static List<CategoryButtonProps> convertToCatButProps(
+  static List<CategoryProp> convertToCatButProps(
       List<Category> categories,
       List<Transaction> transactions,
       List<Budget> budgets,
@@ -66,15 +57,13 @@ class CategoriesHelper {
     categories.sort((a, b) => a.position.compareTo(b.position));
 
     // convert the categories to CategoryButtonProps
-    List<CategoryButtonProps> result = [];
+    List<CategoryProp> result = [];
     // final double coefficient = getBudgetCoefficient(dateFilter);
     for (int i = 0; i < categories.length; i++) {
       Category category = categories[i];
       double budget = getBudget(budgets, category.id);
-      print('${category.label}: ${budget}');
-      print('${category.label}: ${amounts[category.position]}');
       result.add(
-        CategoryButtonProps(
+        CategoryProp(
             id: category.id,
             position: category.position,
             label: category.label,

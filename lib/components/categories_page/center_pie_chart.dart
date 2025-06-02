@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import 'categories_button.dart';
+import 'category_button.dart';
 
 class CenterPieChart extends StatelessWidget {
 
@@ -13,7 +13,7 @@ class CenterPieChart extends StatelessWidget {
   final bool isExpense;
   final int pieTouchedIndex;
   final void Function(FlTouchEvent, PieTouchResponse?)? touchCallback;
-  final List<CategoryButtonProps> list;
+  final List<CategoryProp> list;
   final double totalAmount;
 
   const CenterPieChart({

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_page_content.dart';
-import 'package:money_minder/components/categories_page/categories_helper.dart';
+import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
-import '../../components/categories_page/categories_button.dart';
+import '../../components/categories_page/category_button.dart';
 import '../../models/budget.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
@@ -85,17 +85,17 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           int index = t.$1;
           List<Transaction> transactions = t.$2;
           List<double> totalAmounts = [0, 0];
-          List<Budget> budgets = CategoriesHelper.getBudgets(groupedBudgets[index]);
-          List<CategoryButtonProps> expenseCats =
-            CategoriesHelper.convertToCatButProps(
+          List<Budget> budgets = CategoryHelper.getBudgets(groupedBudgets[index]);
+          List<CategoryProp> expenseCats =
+            CategoryHelper.convertToCatButProps(
               widget.categories[0], transactions, budgets,
               totalAmounts, true, widget.dateFilter);
-          List<CategoryButtonProps> incomeCats =
-            CategoriesHelper.convertToCatButProps(
+          List<CategoryProp> incomeCats =
+            CategoryHelper.convertToCatButProps(
               widget.categories[1], transactions, budgets,
               totalAmounts, false, widget.dateFilter);
-          expenseCats.add(AddCategoriesButtonProps(expenseCats.length));
-          incomeCats.add(AddCategoriesButtonProps(incomeCats.length));
+          expenseCats.add(AddCategoryProp(expenseCats.length));
+          incomeCats.add(AddCategoryProp(incomeCats.length));
           return CategoriesPageContent(
             categories: [expenseCats, incomeCats],
             totalAmounts: totalAmounts,

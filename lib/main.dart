@@ -5,7 +5,6 @@ import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/date_filter.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
-import 'package:money_minder/pages/main_pages/budget_page.dart';
 import 'package:money_minder/pages/main_pages/categories_page.dart';
 import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
@@ -66,8 +65,6 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   Currency _mainCurrency = Currency.of('sgd');
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
   int _currentPageIndex = 50;
-  final DateFilter _budgetDateFilter = DateFilter.fromType(DateFilterType.month);
-  int _budgetCurrentPageIndex = 50;
   List<Budget> _budgets = [];
 
   @override
@@ -170,17 +167,6 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
           _fetchTransactions();
         },
       ),
-      BudgetPage(
-        mainCurrency: _mainCurrency,
-        filteredTransactions: filteredTransactions,
-        dateFilter: _budgetDateFilter,
-        onDateFilterUpdate: _onDateFilterChange,
-        currentPageIndex: _budgetCurrentPageIndex,
-        onPageChange: _onBudgetPageChange,
-        categories: _categories,
-        accounts: _accounts,
-        budgets: _budgets,
-      ),
       StatisticsPage(
         mainCurrency: _mainCurrency,
         filteredTransactions: filteredTransactions,
@@ -225,12 +211,6 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   void _onPageChange(int index) {
     setState(() {
       _currentPageIndex = index;
-    });
-  }
-
-  void _onBudgetPageChange(int index) {
-    setState(() {
-      _budgetCurrentPageIndex = index;
     });
   }
 }

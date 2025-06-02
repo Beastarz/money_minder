@@ -36,23 +36,19 @@ class BottomNavbar extends StatelessWidget {
           tabs: const [
             GButton(
                 icon: Icons.account_balance_wallet_outlined,
-                text: 'Accs'
+                text: 'Accounts'
             ),
             GButton(
                 icon: Icons.category_outlined,
-                text: 'Cats'
+                text: 'Categories'
             ),
             GButton(
                 icon: Icons.list_alt_outlined,
-                text: 'Txns'
-            ),
-            GButton(
-                icon: Icons.attach_money_outlined,
-                text: 'Bdgt'
+                text: 'Transactions'
             ),
             GButton(
                 icon: Icons.bar_chart_outlined,
-                text: 'Stats'
+                text: 'Statistics'
             ),
           ]
       )

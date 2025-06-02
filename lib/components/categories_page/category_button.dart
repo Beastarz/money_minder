@@ -6,7 +6,7 @@ import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
 
-class CategoryButtonProps {
+class CategoryProp {
 
   /// variable
   final int id;
@@ -20,7 +20,7 @@ class CategoryButtonProps {
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
 
-  CategoryButtonProps({
+  CategoryProp({
     required this.id,
     required this.position,
     required this.label,
@@ -34,8 +34,8 @@ class CategoryButtonProps {
   });
 }
 
-class AddCategoriesButtonProps extends CategoryButtonProps {
-  AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
+class AddCategoryProp extends CategoryProp {
+  AddCategoryProp(int index) // No need for parameters if they are all defaulted
       : super(
     id: index,
     position: index,
@@ -52,16 +52,16 @@ class AddCategoriesButtonProps extends CategoryButtonProps {
   );
 }
 
-class CategoriesButton extends StatefulWidget {
+class CategoryButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
-  final CategoryButtonProps prop;
+  final CategoryProp prop;
   // callback function when the categories button is pressed
-  final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  final void Function(CategoryProp) categoriesButtonOnPressed;
   final Currency mainCurrency;
 
-  const CategoriesButton({
+  const CategoryButton({
     super.key,
     required this.prop,
     required this.categoriesButtonOnPressed,
@@ -69,11 +69,11 @@ class CategoriesButton extends StatefulWidget {
   });
 
   @override
-  State<CategoriesButton> createState() =>
-      _CategoriesButtonState();
+  State<CategoryButton> createState() =>
+      _CategoryButtonState();
 }
 
-class _CategoriesButtonState extends State<CategoriesButton>
+class _CategoryButtonState extends State<CategoryButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -126,7 +126,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
 
   @override
   Widget build(BuildContext context) {
-    CategoryButtonProps props = widget.prop;
+    CategoryProp props = widget.prop;
     Color topColor = props.color.withAlpha((0.3 * 255).round());
     Color bottomColor = props.color;
     double fraction = props.budget == 0
