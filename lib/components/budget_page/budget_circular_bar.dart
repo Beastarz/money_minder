@@ -9,20 +9,23 @@ import '../../utils/balance_text.dart';
 class BudgetCircularBar extends StatelessWidget {
 
   final CategoryProp prop;
+  final bool disabledBudget;
   final Currency currency;
 
   const BudgetCircularBar({
     super.key,
     required this.prop,
+    required this.disabledBudget,
     required this.currency,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final double progress = prop.budget == 0
+    final double percentage = prop.budget == 0
         ? prop.actualAmount > 0 ? 100 : 0
         : prop.actualAmount / prop.budget * 100;
+    final double progress = percentage > 100 ? 100 : percentage;
     final isSmallScreen = MediaQuery.of(context).size.width <= 360;
     final ValueNotifier<double> valueNotifier = ValueNotifier(0);
     final double textWidth = MediaQuery.of(context).size.width * (
@@ -46,12 +49,12 @@ class BudgetCircularBar extends StatelessWidget {
       child: Center(
         child: ValueListenableBuilder(
             valueListenable: valueNotifier,
-            builder: (_, double value, __) => Column(
+            builder: (_, __, ___) => Column(
               spacing: 5,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '${value.toStringAsFixed(2)}%',
+                  '${percentage.toStringAsFixed(2)}%',
                   style: TextStyle(
                       color: AppColor.darkText,
                       fontWeight: FontWeight.w300,
@@ -100,7 +103,7 @@ class BudgetCircularBar extends StatelessWidget {
                   ],
                 ),
 
-                prop.budget == 0
+                prop.budget == 0 && !disabledBudget
                 ? Text(
                   'Add Budget!',
                   style: TextStyle(

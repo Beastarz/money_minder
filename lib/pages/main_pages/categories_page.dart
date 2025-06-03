@@ -22,6 +22,7 @@ class CategoriesPage extends StatefulWidget {
   final int currentPageIndex;
   final void Function(int) onPageChange;
   final void Function() onAddTransactionReload;
+  final void Function() onBudgetReload;
 
   const CategoriesPage({
     super.key,
@@ -34,6 +35,7 @@ class CategoriesPage extends StatefulWidget {
     required this.categories,
     required this.budgets,
     required this.onAddTransactionReload,
+    required this.onBudgetReload,
   });
 
 
@@ -85,7 +87,7 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           int index = t.$1;
           List<Transaction> transactions = t.$2;
           List<double> totalAmounts = [0, 0];
-          List<Budget> budgets = CategoryHelper.getBudgets(groupedBudgets[index]);
+          List<Budget> budgets = groupedBudgets[index];
           List<CategoryProp> expenseCats =
             CategoryHelper.convertToCatButProps(
               widget.categories[0], transactions, budgets,
@@ -100,7 +102,10 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
             categories: [expenseCats, incomeCats],
             totalAmounts: totalAmounts,
             mainCurrency: widget.mainCurrency,
+            disabledAddBudget: widget.dateFilter.type != DateFilterType.month,
+            startDate: widget.dateFilter.startDates[index],
             onAddTransactionReload: widget.onAddTransactionReload,
+            onBudgetReload: widget.onBudgetReload,
           );
           }
         ).toList()

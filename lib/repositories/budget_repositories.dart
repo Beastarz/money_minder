@@ -1,7 +1,5 @@
 import 'package:money_minder/db/database.dart';
-import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:sqflite/sqflite.dart' as sqf;
 
@@ -16,19 +14,29 @@ class BudgetRepositories {
   Future<List<Budget>> getBudgets() async {
     sqf.Database db = await dbService.database;
 
-    List<Account> accounts = await AccountsRepository.instance.getAllAccounts();
     List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('budgets');
     List<Budget> budgets = [];
     for (Map<String, dynamic> r in res) {
-      Account? account = r['account_id'] == null
-          ? null
-          : accounts.firstWhere((account) => account.id == r['account_id']);
-      Category? category = r['category_id'] == null
-          ? null
-          : categories.firstWhere((category) => category.id == r['category_id']);
-      budgets.add(Budget.fromMap(r, category, account));
+      Category category = categories.firstWhere((category) => category.id == r['category_id']);
+      budgets.add(Budget.fromMap(r, category));
     }
     return budgets;
+  }
+
+  Future<int> getBudgetId(int month, int year, int categoryId) async {
+    sqf.Database db = await dbService.database;
+    List<Map<String, dynamic>> res = await db.query('budgets', where: 'month = ? AND year = ? AND category_id = ?', whereArgs: [month, year, categoryId]);
+    return res.isNotEmpty ? res.first['id'] : 0;
+  }
+
+  Future<void> createBudget(Map<String, dynamic> budget) async {
+    sqf.Database db = await dbService.database;
+    await db.insert('budgets', budget);
+  }
+
+  Future<void> updateBudget(Map<String, dynamic> budget, int id) async {
+    sqf.Database db = await dbService.database;
+    await db.update('budgets', budget, where: 'id = ?', whereArgs: [id]);
   }
 }

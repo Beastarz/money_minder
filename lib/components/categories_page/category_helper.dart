@@ -9,17 +9,14 @@ import 'category_button.dart';
 
 class CategoryHelper {
 
-  static List<Budget> getBudgets(List<Budget> budgets) {
-    return budgets.where((budget) => budget.type == 'category').toList();
-  }
-
   static double getBudget(List<Budget> budgets, int catId) {
+    double amount = 0;
     for (Budget b in budgets) {
-      if (b.category!.id == catId) {
-        return b.amount;
+      if (b.category.id == catId) {
+        amount += b.amount;
       }
     }
-    return 0;
+    return amount;
   }
 
   // Function to lighten a color by mixing it with white

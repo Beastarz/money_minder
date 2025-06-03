@@ -11,6 +11,7 @@ class CategoryCard extends StatelessWidget {
 
   final CategoryProp prop;
   final Currency currency;
+  final bool disabledAddBudget;
   final void Function(CategoryProp) showTransactionInputForm;
   final void Function(CategoryProp) showBudgetInputForm;
 
@@ -18,6 +19,7 @@ class CategoryCard extends StatelessWidget {
     super.key,
     required this.prop,
     required this.currency,
+    required this.disabledAddBudget,
     required this.showTransactionInputForm,
     required this.showBudgetInputForm,
   });
@@ -41,11 +43,15 @@ class CategoryCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MaterialButton(
-              onPressed: () {
+              onPressed: disabledAddBudget
+                ? null
+                : () {
                 Navigator.pop(context);
                 showBudgetInputForm(prop);
               },
               splashColor: splashColor,
+              disabledTextColor: AppColor.darkText,
+              disabledColor: AppColor.secondary,
               child: Container(
                 padding: EdgeInsets.only(top: AppSize.smallPadding),
                 decoration: BoxDecoration(
@@ -53,6 +59,7 @@ class CategoryCard extends StatelessWidget {
                 ),
                 child: BudgetCircularBar(
                   prop: prop,
+                  disabledBudget: disabledAddBudget,
                   currency: currency,
                 ),
               )
@@ -68,11 +75,32 @@ class CategoryCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Add Transactions"),
+                  Text("Add Transaction"),
                   SizedBox(width: AppSize.smallPadding),
                   Icon(Icons.list_alt_outlined),
                 ]
               )
+            ),
+            MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+
+                  // TODO: show transactions
+                  // navigate to transactions page, show all transactions
+                  // related to this category
+
+                },
+                splashColor: splashColor,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("View Transactions"),
+                      SizedBox(width: AppSize.smallPadding),
+                      Icon(Icons.remove_red_eye_outlined),
+                    ]
+                )
             )
           ]
         ),
