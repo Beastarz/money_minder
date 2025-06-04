@@ -9,6 +9,18 @@ import 'category_button.dart';
 
 class CategoryHelper {
 
+  // get the total budget of all categories in expense or income
+  static double getTotalBudget(List<Budget> budgets, bool isExpense) {
+    double amount = 0;
+    for (Budget b in budgets) {
+      if (b.category.isExpense == isExpense) {
+        amount += b.amount;
+      }
+    }
+    return amount;
+  }
+
+  // get the budget of each category
   static double getBudget(List<Budget> budgets, int catId) {
     double amount = 0;
     for (Budget b in budgets) {

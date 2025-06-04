@@ -3,7 +3,10 @@ import 'package:money_minder/components/statistics_page/statistics_page_content.
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../components/categories_page/category_button.dart';
+import '../../components/categories_page/category_helper.dart';
 import '../../models/budget.dart';
+import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
 
@@ -14,6 +17,7 @@ class StatisticsPage extends StatefulWidget {
     required this.mainCurrency,
     required this.filteredTransactions,
     required this.budgets,
+    required this.categories,
     required this.dateFilter,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
@@ -23,6 +27,7 @@ class StatisticsPage extends StatefulWidget {
   final Currency mainCurrency;
   final List<Transaction> filteredTransactions;
   final List<Budget> budgets;
+  final List<List<Category>> categories;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
@@ -55,8 +60,8 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
         widget.filteredTransactions, widget.dateFilter.startDates);
 
     /// group budgets by period
-    // List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
-    //     widget.budgets, widget.dateFilter);
+    List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
+        widget.budgets, widget.dateFilter);
 
 
     return Scaffold(
@@ -73,8 +78,30 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          children: groupedTransactions.map((transactions) =>
-            StatisticsPageContent()
+          children: groupedTransactions.indexed.map((t) {
+            int index = t.$1;
+            List<Transaction> transactions = t.$2;
+            List<double> totalAmounts = [0, 0];
+            List<Budget> budgets = groupedBudgets[index];
+            List<CategoryProp> expenseCats =
+            CategoryHelper.convertToCatButProps(
+                widget.categories[0], transactions, budgets,
+                totalAmounts, true, widget.dateFilter);
+            List<CategoryProp> incomeCats =
+            CategoryHelper.convertToCatButProps(
+                widget.categories[1], transactions, budgets,
+                totalAmounts, false, widget.dateFilter);
+            List<double> totalBudgets = [
+              CategoryHelper.getTotalBudget(budgets, true),
+              CategoryHelper.getTotalBudget(budgets, false),
+            ];
+            return StatisticsPageContent(
+              categories: [expenseCats, incomeCats],
+              totalAmounts: totalAmounts,
+              totalBudgets: totalBudgets,
+              mainCurrency: widget.mainCurrency,
+            );
+          }
           ).toList()
       ),
     );

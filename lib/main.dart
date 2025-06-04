@@ -173,6 +173,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       StatisticsPage(
         mainCurrency: _mainCurrency,
         filteredTransactions: filteredTransactions,
+        categories: _categories,
         budgets: _budgets,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,

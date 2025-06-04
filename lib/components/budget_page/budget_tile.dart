@@ -10,12 +10,14 @@ class BudgetTile extends StatefulWidget {
   final CategoryProp prop;
   final Currency mainCurrency;
   final bool isCurve;
+  final void Function()? onPressed;
 
   const BudgetTile({
     super.key,
     required this.prop,
     required this.mainCurrency,
     this.isCurve = false,
+    this.onPressed,
   });
 
   @override
@@ -60,78 +62,82 @@ class _BudgetTileState extends State<BudgetTile> {
     Color rightColor = CategoryHelper.lightenColor(widget.prop.color, 0.9);
     // double textWidth = MediaQuery.of(context).size.width * 0.4;
 
-    return Container(
-      key: _myWidgetKey,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(widget.isCurve ? borderRadius : 0),
-          bottom: Radius.circular(widget.isCurve ? borderRadius : 0),
+    return MaterialButton(
+      onPressed: widget.onPressed,
+      padding: EdgeInsets.zero,
+      child: Container(
+        key: _myWidgetKey,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(widget.isCurve ? borderRadius : 0),
+            bottom: Radius.circular(widget.isCurve ? borderRadius : 0),
+          ),
+          color: rightColor,
         ),
-        color: rightColor,
-      ),
-      child: Stack(
-        children: [
+        child: Stack(
+          children: [
 
-          Container(
-            width: _widgetWidth == null ? 0 : _widgetWidth! * fraction,
-            height: _widgetHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(borderRadius),
-                bottom: Radius.circular(borderRadius),
-              ),
-              color: leftColor,
-            ),
-            child: Text(""),
-          ),
-
-          ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-                horizontal: 5),
-            leading: Container(
-              padding: const EdgeInsets.all(5),
+            Container(
+              width: _widgetWidth == null ? 0 : _widgetWidth! * fraction,
+              height: _widgetHeight,
               decoration: BoxDecoration(
-                shape:  BoxShape.circle,
-                color: widget.prop.color,
-              ),
-              child: widget.prop.icon,
-            ),
-            title: Text(
-              widget.prop.label,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-            subtitle: Text(
-              '${widget.prop.isExpense ? 'Exp.' : 'Rec.'} ${widget.mainCurrency} ${widget.prop.actualAmount.toStringAsFixed(2)}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: widget.prop.color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            trailing: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                BalanceText(
-                  balance: widget.prop.budget - widget.prop.actualAmount,
-                  currencyName: widget.mainCurrency.toString(),
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  showColor: true,
-                  size: 18,
-                  fontColor: widget.prop.isExpense ? Colors.redAccent : Colors.green
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius),
+                  bottom: Radius.circular(borderRadius),
                 ),
-                BalanceText(
-                  balance: widget.prop.budget,
-                  currencyName: "budgeted ${widget.mainCurrency}",
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  size: 16,
-                ),
-              ],
+                color: leftColor,
+              ),
+              child: Text(""),
             ),
-          ),
-        ],
+
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 5),
+              leading: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  shape:  BoxShape.circle,
+                  color: widget.prop.color,
+                ),
+                child: widget.prop.icon,
+              ),
+              title: Text(
+                widget.prop.label,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+              subtitle: Text(
+                '${widget.prop.isExpense ? 'Exp.' : 'Rec.'} ${widget.mainCurrency} ${widget.prop.actualAmount.toStringAsFixed(2)}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: widget.prop.color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              trailing: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  BalanceText(
+                    balance: widget.prop.budget - widget.prop.actualAmount,
+                    currencyName: widget.mainCurrency.toString(),
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    showColor: true,
+                    size: 18,
+                    fontColor: widget.prop.isExpense ? Colors.redAccent : Colors.green
+                  ),
+                  BalanceText(
+                    balance: widget.prop.budget,
+                    currencyName: "budgeted ${widget.mainCurrency}",
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

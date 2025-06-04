@@ -19,7 +19,7 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: GNav(
           onTabChange: onTabChange,
           selectedIndex: selectedIndex,

@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistic_sheet.dart';
 
+import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../budget_page/budget_tile.dart';
+import '../categories_page/category_button.dart';
 
 class StatisticsPageContent extends StatefulWidget {
-  const StatisticsPageContent({super.key});
+
+  final List<List<CategoryProp>> categories;
+  final List<double> totalAmounts;
+  final List<double> totalBudgets;
+  final Currency mainCurrency;
+
+  const StatisticsPageContent({
+    super.key,
+    required this.categories,
+    required this.totalAmounts,
+    required this.totalBudgets,
+    required this.mainCurrency,
+  });
 
   @override
   State<StatisticsPageContent> createState() => _StatisticsPageContentState();
@@ -22,119 +37,41 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
     });
   }
 
-  // Function to lighten a color by mixing it with white
-  Color _lightenColor(Color color, double factor) {
-    // factor: 0.0 means no white, 1.0 means pure white
-    return Color.lerp(color, Colors.white, factor)!;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        padding: EdgeInsets.all(AppSize.bigPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            // button to choose whether to display expenses or savings
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 5,
-              children: [
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          switchContent(true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(AppSize.smallPadding),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(AppSize.borderRadius),
-                              right: Radius.circular(
-                                  AppSize.borderRadius * 0.5),
-                            ),
-                          ),
-                          backgroundColor: _isExpense
-                              ? Colors.redAccent
-                              : _lightenColor(Colors.redAccent, 0.9),
-                        ),
-                        child: Column(
-                            spacing: 5,
-                            children: [
-                              Text(
-                                "Expenses",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading3,
-                                    color: _isExpense
-                                        ? AppColor.lightText
-                                        : AppColor.darkText
-                                ),
-                              ),
-                              Text(
-                                "\$100",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading2,
-                                    color: _isExpense
-                                        ? AppColor.lightText
-                                        : Colors.redAccent
-                                ),
-                              )
-                            ]
-                        )
-                    )
-                ),
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          switchContent(false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(AppSize.smallPadding),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(AppSize.borderRadius * 0.5),
-                              right: Radius.circular(AppSize.borderRadius),
-                            ),
-                          ),
-                          backgroundColor: _isExpense
-                              ? _lightenColor(Colors.greenAccent, 0.9)
-                              : Colors.greenAccent,
-                        ),
-                        child: Column(
-                            spacing: 5,
-                            children: [
-                              Text(
-                                "Income",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading3,
-                                    color: _isExpense
-                                        ? AppColor.darkText
-                                        : AppColor.lightText
-                                ),
-                              ),
-                              Text(
-                                "\$100",
-                                style: TextStyle(
-                                    fontSize: AppSize.heading2,
-                                    color: _isExpense
-                                        ? Colors.greenAccent
-                                        : AppColor.lightText
-                                ),
-                              )
-                            ]
-                        )
-                    )
-                ),
-              ],
-            ),
-
-            // budget sheet
-            StatisticsSheet(
+    return Padding(
+      padding: EdgeInsets.all(AppSize.smallPadding),
+      child: Column(
+        children: [
+          BudgetTile(
+            prop: CategoryProp(
+              id: -1,
+              position: -1,
+              label: _isExpense ? 'Expense' : 'Income',
+              icon: _isExpense ? Icon(Icons.money_off) : Icon(Icons.attach_money),
+              color: _isExpense ? Colors.redAccent : Colors.green,
+              budget: widget.totalBudgets[_isExpense ? 0 : 1],
+              actualAmount: widget.totalAmounts[_isExpense ? 0 : 1],
               isExpense: _isExpense,
             ),
-          ],
-        )
+            mainCurrency: widget.mainCurrency,
+            isCurve: true,
+            onPressed: () {
+              setState(() {
+                _isExpense = !_isExpense;
+              });
+            }
+          ),
+          SizedBox(height: AppSize.smallPadding),
+          Expanded(
+            child: StatisticsSheet(
+              isExpense: _isExpense,
+              categories: widget.categories,
+              mainCurrency: widget.mainCurrency,
+            )
+          ),
+        ]
+      ),
     );
   }
 }
