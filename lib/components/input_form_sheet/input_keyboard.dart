@@ -58,6 +58,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   String _lastButton = '✓';
   DateTime currDate = DateTime.now();
   String datePrefix = 'Today';
+  bool _showError = false; // show error when user submit negative amount
   TextEditingController noteController = TextEditingController(text: '');
   List<Currency> currencies = [];
 
@@ -66,7 +67,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
     super.initState();
     setState(() {
       if (widget.defaultValue != 0) {
-        _currentAmount = widget.defaultValue.toStringAsFixed(2);
+        _currentAmount = widget.defaultValue.toStringAsFixed(
+            widget.defaultValue.truncateToDouble() == widget.defaultValue ? 0 : 2
+        );
       }
       _numbers.clear();
       _numbers.add(_currentAmount);
@@ -92,7 +95,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
     return Container(
       height: MediaQuery.of(context).size.height * (isSmallScreen
           ? widget.showNotes ? 0.60 : 0.45
-          : widget.showNotes ? 0.45 : 0.40),
+          : widget.showNotes ? 0.45 : 0.40) + 15,
       decoration: BoxDecoration(
         color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
@@ -114,9 +117,22 @@ class _InputKeyboardState extends State<InputKeyboard> {
               ),
             ),
           ),
-          SizedBox(height: AppSize.smallPadding), // small padding
-          // Notes input
 
+          _showError
+          ? Text(
+            "Please enter positive amount",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.red,
+                fontSize: isSmallScreen
+                    ? AppSize.paragraph
+                    : AppSize.paragraph * 1.2),
+          )
+          : SizedBox.shrink(),
+
+          SizedBox(height: AppSize.smallPadding), // small padding
+
+          // Notes input
           !widget.showNotes
           ? SizedBox.shrink()
           : TextField(
@@ -259,7 +275,15 @@ class _InputKeyboardState extends State<InputKeyboard> {
         }
 
       } else if (buttonText == '✓') {
-
+        if(double.parse(_currentAmount) <= 0) {
+          setState(() {
+            _showError = true;
+            _currentAmount = '0';
+            _numbers.clear();
+            _numbers.add('0');
+          });
+          return;
+        }
         widget.onSubmit(currDate, double.parse(_currentAmount), noteController.text);
 
       } else if (buttonText == '\$') {
@@ -397,20 +421,24 @@ class _InputKeyboardState extends State<InputKeyboard> {
           if (buttonText == '÷') {
             // Handle division operator
             _currentAmount += '/';
+            _numbers.add("");
           }
           else if (buttonText == 'x') {
             // Handle multiplication operator
-            _currentAmount += '*'; // Use standard operator for calculation
+            _currentAmount += '*';
+            _numbers.add("");
           }
           else if (buttonText == '-' || buttonText == '+') {
             // Handle subtraction operator
             if (_currentAmount == '0') {
               _currentAmount = buttonText;
+              _numbers.clear();
+              _numbers.add(buttonText);
             } else {
               _currentAmount += buttonText;
+              _numbers.add("");
             }
           }
-          _numbers.add("");
         }
       }
       else if (buttonText == '.') {
@@ -443,7 +471,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
         }
       }
       _lastButton = _numbers.length == 1 ? '✓' : '=';
+      _showError = false;
     });
   }
-
 }
