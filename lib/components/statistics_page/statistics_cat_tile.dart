@@ -5,40 +5,48 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
+import '../../style/app_size.dart';
 import '../../utils/balance_text.dart';
 
 class StatisticsCatTile extends StatelessWidget {
 
   final CategoryProp prop;
   final Currency mainCurrency;
+  final void Function(CategoryProp) onPressed;
 
   const StatisticsCatTile({
     super.key,
     required this.prop,
     required this.mainCurrency,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    double fraction = prop.budget <= 0
-        ? 0.00
+    final double percentage = prop.budget == 0
+        ? prop.actualAmount > 0 ? 1 : 0
         : prop.actualAmount / prop.budget;
-    fraction = fraction.clamp(0.00, 1.00);
+    final double progress = percentage > 1 ? 1 : percentage;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       color: CategoryHelper.lightenColor(prop.color, 0.9),
-      child: Container(
+      child: MaterialButton(
+        onPressed: () {onPressed(prop);},
         padding: const EdgeInsets.all(8.0),
+        splashColor: CategoryHelper.lightenColor(prop.color, 0.75),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSize.borderRadius),
+        ),
         child: LinearPercentIndicator(
           animation: true,
           lineHeight: 20.0,
-          percent: fraction,
+          percent: progress,
           backgroundColor: AppColor.tertiary,
           progressColor: CategoryHelper.lightenColor(prop.color, 0.5),
           center: Text(
-            "${(fraction * 100).toStringAsFixed(2)}%",
+            "${(percentage * 100).toStringAsFixed(2)}%",
             style: TextStyle(fontSize: 12.0),
           ),
           leading: Column(

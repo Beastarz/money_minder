@@ -1,16 +1,13 @@
 import 'package:draggable_home/draggable_home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/budget_page/add_budget_sheet.dart';
-import 'package:money_minder/components/transaction/add_expense_sheet.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
-import '../../models/category.dart';
 import '../../models/currency.dart';
 import 'categories_sheet.dart';
-import 'category_card.dart';
+import 'category_helper.dart';
 
 class CategoriesPageContent extends StatefulWidget {
 
@@ -67,54 +64,14 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       _pieTouchedIndex = -1;
     });
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return CategoryCard(
-          prop: prop,
-          currency: widget.mainCurrency,
-          disabledAddBudget: widget.disabledAddBudget,
-          showTransactionInputForm: showTransactionInputForm,
-          showBudgetInputForm: showBudgetInputForm,
-        );
-      },
-    );
-  }
-
-  void showTransactionInputForm(CategoryProp prop) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (sheetContext) {
-        return EditExpenseSheet(
-            mainCurrency: widget.mainCurrency,
-            toCategory: Category(
-                id: prop.id,
-                label: prop.label,
-                position: prop.position,
-                icon: prop.icon,
-                color: prop.color,
-                isExpense: prop.isExpense
-            ),
-            onAddTransactionReload: widget.onAddTransactionReload,
-        );
-      }
-    );
-  }
-
-  void showBudgetInputForm(CategoryProp prop) {
-
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (sheetContext) {
-          return AddBudgetSheet(
-              prop: prop,
-              mainCurrency: widget.mainCurrency,
-              startDate: widget.startDate,
-              onBudgetReload: widget.onBudgetReload,
-          );
-        }
+    CategoryHelper.showCategoryCard(
+      context,
+      prop,
+      widget.mainCurrency,
+      widget.startDate,
+      widget.disabledAddBudget,
+      widget.onAddTransactionReload,
+      widget.onBudgetReload,
     );
   }
 

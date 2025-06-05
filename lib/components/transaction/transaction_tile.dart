@@ -1,7 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/transaction/transaction_detail_sheet.dart';
-import 'package:money_minder/style/app_size.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
 

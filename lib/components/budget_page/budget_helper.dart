@@ -5,11 +5,15 @@ class BudgetHelper {
 
   /// add or update budget, if budget doesn't exist, create it
   ///
+  /// Parameters:
+  ///
   /// DateTime date: date of budget
+  ///
   /// double amount: amount of budget
+  ///
   /// int categoryId: id of category
   ///
-  /// returns void
+  /// return: void
   static Future<void> addBudget(DateTime date, double amount, int categoryId) async {
     int month = date.month;
     int year = date.year;

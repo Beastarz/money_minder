@@ -20,8 +20,19 @@ class StatisticsHelper {
     SortOptions.percentage: Icon(Icons.percent),
   };
 
-  // Helper method to get and sort the category list
+  /// Helper method to get and sort the category list
+  ///
+  /// Parameters:
+  ///
+  /// List\<CategoryProp\> category: the list of categories
+  ///
+  /// bool ascending: whether the list is sorted in ascending order
+  ///
+  /// SortOptions option: the option to sort the list
+  ///
+  /// return: void
   static void sortCategories(
+
       List<CategoryProp> category, bool ascending, SortOptions option) {
     switch (option) {
       case SortOptions.alphabetical:
@@ -44,15 +55,27 @@ class StatisticsHelper {
       case SortOptions.percentage:
         category.sort((a, b) => ascending
             ? a.budget == 0
-              ? -1
+              ? a.actualAmount == 0
+                ? -1
+                : b.budget == 0
+                  ? a.actualAmount.compareTo(b.actualAmount)
+                  : 1.compareTo(b.actualAmount / b.budget)
               : b.budget == 0
-              ? 1
-              : (a.actualAmount / a.budget).compareTo(b.actualAmount / b.budget)
+                ? b.actualAmount == 0
+                  ? a.actualAmount == 0 ? -1 : 1
+                  : (a.actualAmount / a.budget).compareTo(1)
+                : (a.actualAmount / a.budget).compareTo(b.actualAmount / b.budget)
             : a.budget == 0
-              ? 1
+              ? a.actualAmount == 0
+                ? 1
+                : b.budget == 0
+                  ? b.actualAmount.compareTo(a.actualAmount)
+                  : -1.compareTo(b.actualAmount / b.budget)
               : b.budget == 0
-              ? -1
-              : (b.actualAmount / b.budget).compareTo(a.actualAmount / a.budget));
+                ? b.actualAmount == 0
+                  ? a.actualAmount == 0 ? 1 : -1
+                  : (1).compareTo(a.actualAmount / a.budget)
+                : (b.actualAmount / b.budget).compareTo(a.actualAmount / a.budget));
     }
   }
 }

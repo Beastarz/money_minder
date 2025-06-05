@@ -60,28 +60,46 @@ class MoneyMinderFrame extends StatefulWidget {
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
   List<Account> _accounts = [];
-  List<Transaction> _transactions = [];
+  List<Account> _filteredAccounts = [];
+  List<List<Transaction>> _groupedTransactions = [];
   List<List<Category>> _categories = [];
   Currency _mainCurrency = Currency.of('sgd');
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
   int _currentPageIndex = 50;
-  List<Budget> _budgets = [];
+  List<List<Budget>> _groupedBudgets = [];
+  bool _isLoadingData = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchAccounts();
-    _fetchMainCurrency();
-    _fetchTransactions();
-    _fetchDateFilter();
-    _fetchCategories();
-    _fetchBudgets();
+    _loadAllInitialData();
+  }
+
+  Future<void> _loadAllInitialData() async {
+    // Set loading to true
+    setState(() {
+      _isLoadingData = true;
+    });
+
+    // Await all fetch operations
+    await _fetchDateFilter(); // Date filter is often needed first for transactions/budgets
+    await _fetchAccounts();
+    await _fetchMainCurrency();
+    await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter
+    await _fetchCategories();
+    await _fetchBudgets(); // Depends on _dateFilter
+
+    // After all fetches complete, set loading to false
+    setState(() {
+      _isLoadingData = false;
+    });
   }
 
   Future<void> _fetchAccounts() async {
     List<Account> res = await AccountsRepository.instance.getAllAccounts();
     setState(() {
       _accounts = res;
+      _filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
     });
   }
 
@@ -95,7 +113,11 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   Future<void> _fetchTransactions() async {
     List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
     setState(() {
-      _transactions = res;
+      List<int> filteredAccountIds = _filteredAccounts.map((e) => e.id).toList();
+      List<Transaction> filteredTransactions = res.where((t) => filteredAccountIds.contains(t.fromAccount.id)
+          || filteredAccountIds.contains(t.toAccount?.id)).toList();
+      List<List<Transaction>> tmp  = Transaction.groupTransactionsByDate(filteredTransactions, _dateFilter.startDates);
+      _groupedTransactions = tmp;
     });
   }
 
@@ -120,83 +142,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   Future<void> _fetchBudgets() async {
     List<Budget> res = await BudgetRepositories.instance.getBudgets();
     setState(() {
-      _budgets = res;
+      _groupedBudgets = Budget.groupBudgetsByDate(res, _dateFilter);
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Account> filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
-    List<int> filteredAccountIds = filteredAccounts.map((e) => e.id).toList();
-    List<Transaction> filteredTransactions = _transactions.where((t) => filteredAccountIds.contains(t.fromAccount.id)
-        || filteredAccountIds.contains(t.toAccount?.id)).toList();
-
-    final List<Widget> pages = [
-      AccountsPage(
-          accounts: _accounts,
-          mainCurrency: _mainCurrency,
-          onReload: () {
-            _fetchAccounts();
-            _fetchTransactions();
-          },
-      ),
-      CategoriesPage(
-        filteredTransactions: filteredTransactions,
-        mainCurrency: _mainCurrency,
-        dateFilter: _dateFilter,
-        onDateFilterUpdate: _onDateFilterChange,
-        currentPageIndex: _currentPageIndex,
-        onPageChange: _onPageChange,
-        categories: _categories,
-        budgets: _budgets,
-        onAddTransactionReload: () {
-          _fetchAccounts();
-          _fetchTransactions();
-        },
-        onBudgetReload: () {
-          _fetchBudgets();
-        }
-      ),
-      TransactionsPage(
-        filteredAccountBalance: Account.getBalance(filteredAccounts, _mainCurrency),
-        mainCurrency: _mainCurrency,
-        filteredTransactions: filteredTransactions,
-        dateFilter: _dateFilter,
-        onDateFilterUpdate: _onDateFilterChange,
-        currentPageIndex: _currentPageIndex,
-        onPageChange: _onPageChange,
-        onTransactionReload: () {
-          _fetchAccounts();
-          _fetchTransactions();
-        },
-      ),
-      StatisticsPage(
-        mainCurrency: _mainCurrency,
-        filteredTransactions: filteredTransactions,
-        categories: _categories,
-        budgets: _budgets,
-        dateFilter: _dateFilter,
-        onDateFilterUpdate: _onDateFilterChange,
-        currentPageIndex: _currentPageIndex,
-        onPageChange: _onPageChange,
-      ),
-    ];
-
-
-    return Scaffold(
-      appBar: MMAppBar(
-        selectedIndex: _selectedIndex,
-        filteredAccounts: filteredAccounts,
-        onReload: _fetchAccounts,
-        mainCurrency: _mainCurrency,
-      ),
-      drawer: AppbarDrawer(),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavbar(
-        onTabChange: _onTabChange,
-        selectedIndex: _selectedIndex,
-      )
-    );
   }
 
   void _onTabChange (int index) {
@@ -209,6 +156,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     setState(() {
       _dateFilter = dateFilter;
       _currentPageIndex = dateFilter.initialPageIndex;
+      _fetchTransactions();
+      _fetchBudgets();
     });
   }
 
@@ -216,6 +165,93 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     setState(() {
       _currentPageIndex = index;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    // Show a loading indicator while data is being fetched
+    if (_isLoadingData) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final List<Widget> pages = [
+      AccountsPage(
+          accounts: _accounts,
+          mainCurrency: _mainCurrency,
+          onReload: () {
+            _fetchAccounts();
+            _fetchTransactions();
+          },
+      ),
+      CategoriesPage(
+        groupedTransactions: _groupedTransactions,
+        mainCurrency: _mainCurrency,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+        categories: _categories,
+        groupedBudgets: _groupedBudgets,
+        onAddTransactionReload: () {
+          _fetchAccounts();
+          _fetchTransactions();
+        },
+        onBudgetReload: () {
+          _fetchBudgets();
+        }
+      ),
+      TransactionsPage(
+        filteredAccountBalance: Account.getBalance(_filteredAccounts, _mainCurrency),
+        mainCurrency: _mainCurrency,
+        groupedTransactions: _groupedTransactions,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+        onTransactionReload: () {
+          _fetchAccounts();
+          _fetchTransactions();
+        },
+      ),
+      StatisticsPage(
+        mainCurrency: _mainCurrency,
+        groupedTransactions: _groupedTransactions,
+        categories: _categories,
+        groupedBudgets: _groupedBudgets,
+        dateFilter: _dateFilter,
+        onDateFilterUpdate: _onDateFilterChange,
+        currentPageIndex: _currentPageIndex,
+        onPageChange: _onPageChange,
+        onAddTransactionReload: () {
+          _fetchAccounts();
+          _fetchTransactions();
+        },
+        onBudgetReload: () {
+          _fetchBudgets();
+        }
+      ),
+    ];
+
+
+    return Scaffold(
+      appBar: MMAppBar(
+        selectedIndex: _selectedIndex,
+        filteredAccounts: _filteredAccounts,
+        onReload: _fetchAccounts,
+        mainCurrency: _mainCurrency,
+      ),
+      drawer: AppbarDrawer(),
+      body: pages[_selectedIndex],
+      bottomNavigationBar: BottomNavbar(
+        onTabChange: _onTabChange,
+        selectedIndex: _selectedIndex,
+      )
+    );
   }
 }
 

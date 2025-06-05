@@ -16,7 +16,15 @@ class Budget {
     required this.category,
   });
 
-  /// use this to convert map to transaction
+  /// use this to convert map to budget
+  ///
+  /// Parameters:
+  ///
+  /// Map\<String, dynamic\> map: map to be converted
+  ///
+  /// Category category: category of the budget
+  ///
+  /// Returns: Budget
   factory Budget.fromMap(Map<String, dynamic> map, Category category) {
     return Budget(
       id: map['id'],
@@ -27,6 +35,19 @@ class Budget {
     );
   }
 
+  /// use this to convert budget to map
+  ///
+  /// Parameters:
+  ///
+  /// double budget: budget to be converted
+  ///
+  /// int month: month of the budget
+  ///
+  /// int year: year of the budget
+  ///
+  /// int categoryId: category id of the budget
+  ///
+  /// Returns: map of budget
   static Map<String, dynamic> insertAsMap({
     required double amount,
     required int month,
@@ -41,13 +62,23 @@ class Budget {
     };
   }
 
-  /// use this to group transactions by date
-  // if date filter type is month, then group by month
-  // if date filter type is year, add all budgets in the same year
-  // if date filter type is all, don't have budget
-  // for all other cases, group by the period depending on the budget of the month
-  // which the startDate falls in.
+  /// Use this to group transactions by date.
+  ///
+  /// If date filter type is month, then group by month.
+  /// If date filter type is year, add all budgets in the same year.
+  /// If date filter type is all, don't have budget.
+  /// For all other cases, group by the period depending on the budget of the month
+  /// which the startDate falls in.
+  ///
+  /// Parameters:
+  ///
+  /// List\<Budget\> budgets: list of budgets to be grouped
+  ///
+  /// DateFilter dateFilter: date filter to be used for grouping
+  ///
+  /// Returns: list of lists of budgets grouped by date
   static List<List<Budget>> groupBudgetsByDate(List<Budget> budgets, DateFilter dateFilter) {
+
     List<DateTime> startDates = dateFilter.startDates;
     DateFilterType dateFilterType = dateFilter.type;
     List<List<Budget>> groupedBudgets = [];

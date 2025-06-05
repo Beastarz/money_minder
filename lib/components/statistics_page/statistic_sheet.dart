@@ -7,18 +7,27 @@ import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../categories_page/category_button.dart';
+import '../categories_page/category_helper.dart';
 
 class StatisticsSheet extends StatefulWidget {
 
   final bool isExpense;
   final List<List<CategoryProp>> categories;
   final Currency mainCurrency;
+  final DateTime startDate;
+  final bool disabledAddBudget;
+  final void Function() onAddTransactionReload;
+  final void Function() onBudgetReload;
 
   const StatisticsSheet({
     super.key,
     required this.isExpense,
     required this.categories,
     required this.mainCurrency,
+    required this.startDate,
+    required this.disabledAddBudget,
+    required this.onAddTransactionReload,
+    required this.onBudgetReload,
   });
 
   @override
@@ -29,7 +38,19 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
 
   bool _isAscending = false;
-  SortOptions _currentSortOption = SortOptions.position;
+  SortOptions _currentSortOption = SortOptions.percentage;
+
+  void catTileOnPressed(CategoryProp prop) {
+    CategoryHelper.showCategoryCard(
+      context,
+      prop,
+      widget.mainCurrency,
+      widget.startDate,
+      widget.disabledAddBudget,
+      widget.onAddTransactionReload,
+      widget.onBudgetReload,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +187,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   (BuildContext context, int index) {
                 return StatisticsCatTile(
                     prop: category[index],
-                    mainCurrency: widget.mainCurrency
+                    mainCurrency: widget.mainCurrency,
+                    onPressed: catTileOnPressed,
                 );
                 //     return StatisticsCatTile(prop: category[index]);
               },
