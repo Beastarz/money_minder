@@ -1,6 +1,7 @@
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/budget_page/budget_selection_page.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
@@ -12,6 +13,7 @@ import '../../style/app_size.dart';
 
 import 'package:math_expressions/math_expressions.dart';
 
+import '../budget_page/budget_helper.dart';
 import '../calendar_bar/calendar_selector_helper.dart';
 import '../calendar_bar/period_tile.dart';
 
@@ -32,6 +34,8 @@ class InputKeyboard extends StatefulWidget {
   final double defaultValue; // default value of the input
   final DateTime? defaultDate; // default date of the input
   final Currency mainCurrency; // default currency of the input
+  final int categoryId; // for budget input form usage
+  final double expenseAsBudget; // for budget input form usage
   final void Function(DateTime, double, String) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
   
@@ -40,6 +44,8 @@ class InputKeyboard extends StatefulWidget {
     required this.buttonProps,
     this.showNotes = true,
     this.defaultValue = 0,
+    this.categoryId = 0,
+    this.expenseAsBudget = 0,
     required this.mainCurrency,
     required this.onSubmit,
     required this.onCurrencyUpdate,
@@ -58,6 +64,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   String _lastButton = '✓';
   DateTime currDate = DateTime.now();
   String datePrefix = 'Today';
+
   bool _showError = false; // show error when user submit negative amount
   TextEditingController noteController = TextEditingController(text: '');
   List<Currency> currencies = [];
@@ -206,22 +213,24 @@ class _InputKeyboardState extends State<InputKeyboard> {
   }
 
   // This method would be called by the input form buttons
-  void _onButtonPressed(String buttonText) {
-    setState(() {
+  void _onButtonPressed(String buttonText) async { // Make the method async
+    // Removed setState(() async {...}) as it's an anti-pattern.
+    // Call setState where actual state changes happen.
 
-      String lastChar = _currentAmount.substring(_currentAmount.length - 1);
-      int inputLen = _currentAmount.length;
-      int numLen = _numbers.length;
+    String lastChar = _currentAmount.substring(_currentAmount.length - 1);
+    int inputLen = _currentAmount.length;
+    int numLen = _numbers.length;
 
-      if (buttonText == 'C') {
-
+    if (buttonText == 'C') {
+      setState(() {
         // clear the input
         _currentAmount = '0';
         _numbers.clear();
         _numbers.add('0');
+      });
 
-      } else if (buttonText == '<') {
-
+    } else if (buttonText == '<') {
+      setState(() {
         // Remove the last character
         if (inputLen > 1) {
           _currentAmount = _currentAmount.substring(0, inputLen - 1);
@@ -237,33 +246,25 @@ class _InputKeyboardState extends State<InputKeyboard> {
           _numbers.clear();
           _numbers.add('0');
         }
+      });
 
-      } else if (buttonText == '=') {
-
+    } else if (buttonText == '=') {
+      setState(() {
         try {
-
           Expression exp = ShuntingYardParser().parse(_currentAmount);
-          // Create a context model (for variables, if any)
           ContextModel cm = ContextModel();
-
-          // Evaluate the expression
           double evalResult = exp.evaluate(EvaluationType.REAL, cm);
 
-          // Format the result (e.g., remove trailing .0 if it's an integer)
           _currentAmount = evalResult.toStringAsFixed(
               evalResult.truncateToDouble() == evalResult
                   ? 0
-                  : 2); // Format to 0 or 2 decimal places
+                  : 2);
 
-          // handle unexpected output (happen when input is invalid)
-          // e.g. 0 / 2, 0 / 0
           if (_currentAmount == 'Infinity' || _currentAmount == 'NaN') {
-            // Reset to 0 if the string is empty
             _currentAmount = '0';
             _numbers.clear();
             _numbers.add('0');
           } else {
-            // Update the numbers list
             _numbers.clear();
             _numbers.add(_currentAmount);
           }
@@ -273,25 +274,26 @@ class _InputKeyboardState extends State<InputKeyboard> {
           _numbers.clear();
           _numbers.add('0');
         }
+      });
 
-      } else if (buttonText == '✓') {
-        if(double.parse(_currentAmount) <= 0) {
-          setState(() {
-            _showError = true;
-            _currentAmount = '0';
-            _numbers.clear();
-            _numbers.add('0');
-          });
-          return;
-        }
-        widget.onSubmit(currDate, double.parse(_currentAmount), noteController.text);
+    } else if (buttonText == '✓') {
+      if(double.parse(_currentAmount) <= 0) {
+        setState(() {
+          _showError = true;
+          _currentAmount = '0';
+          _numbers.clear();
+          _numbers.add('0');
+        });
+        return;
+      }
+      widget.onSubmit(currDate, double.parse(_currentAmount), noteController.text);
 
-      } else if (buttonText == '\$') {
-        showDialog(
+    } else if (buttonText == '\$') {
+      showDialog(
           context: context,
           builder: (BuildContext context) {
             return SimpleDialog(
-              title: Text('Choose a currency'),
+              title: const Text('Choose a currency'),
               children: currencies.map((currency) =>
                   ListTile(
                       title: Text(currency.fullName),
@@ -302,112 +304,132 @@ class _InputKeyboardState extends State<InputKeyboard> {
                   )).toList(),
             );
           }
-        );
-      } else if (buttonText == 'budget') {
+      );
+    } else if (buttonText == 'budget') {
 
-        // TODO : set budget for that month
-        showModalBottomSheet(
-            context: context,
-            builder: (sheetContext) {
-              return Container();
-            }
-        );
+      int month = widget.defaultDate!.month; // Use currDate from state
+      int year = widget.defaultDate!.year;   // Use currDate from state
+      month = month == 1 ? 12 : month - 1;
+      year = month == 12 ? year - 1 : year;
 
-      }else if (buttonText == 'calendar') {
+      double? lastBudget = await BudgetHelper.getBudget(month, year, widget.categoryId);
 
-        final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-        showModalBottomSheet(
-            context: context,
-            backgroundColor: AppColor.secondary,
-            builder: (periodSheetContext) {
-              return SafeArea(
-                child: DraggableScrollableSheet(
-                    initialChildSize: isSmallScreen ? 1 : 0.85,
-                    expand: false,
-                    builder: (context, ScrollController scrollController) =>
-                        SingleChildScrollView(
-                          controller: isSmallScreen ? scrollController : null,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: PeriodBottomSheet(
-                                title: 'Date',
-                                children: [
-                                  /// select any date
-                                  PeriodTile(
-                                    parentContext: context,
-                                    label: 'Select day',
-                                    icon: Icons.date_range,
-                                    onPressed: () {
-                                      CalendarSelectorHelper.selectDate(context, (date) {
-                                        setState(() {
-                                          currDate = date;
-                                          datePrefix = formatDate(currDate, [DD]);
-                                        });
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    width: MediaQuery.of(context).size.width * 0.84 + 12,
-                                  ),
+      if (!mounted) return;
 
-                                  /// select yesterday
-                                  PeriodTile(
-                                    parentContext: context,
-                                    label: 'Yesterday',
-                                    selected: formatDate(DateTime.now().subtract(Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
-                                    icon: Icons.mode_night_rounded,
-                                    onPressed: () {
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true, // Allows sheet to take more height if needed
+          builder: (sheetContext) {
+            return BudgetSelectionPage(
+              expenseAsBudget: widget.expenseAsBudget,
+              lastBudget: lastBudget,
+              month: month,
+              year: year,
+              mainCurrency: widget.mainCurrency,
+            );
+          }
+      );
+
+    }else if (buttonText == 'calendar') {
+
+      final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+      showModalBottomSheet(
+          context: context,
+          backgroundColor: AppColor.secondary,
+          builder: (periodSheetContext) {
+            return SafeArea(
+              child: DraggableScrollableSheet(
+                  initialChildSize: isSmallScreen ? 1 : 0.85,
+                  expand: false,
+                  builder: (context, ScrollController scrollController) =>
+                      SingleChildScrollView(
+                        controller: isSmallScreen ? scrollController : null,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: PeriodBottomSheet(
+                              title: 'Date',
+                              children: [
+                                /// select any date
+                                PeriodTile(
+                                  parentContext: context,
+                                  label: 'Select day',
+                                  icon: Icons.date_range,
+                                  onPressed: () {
+                                    CalendarSelectorHelper.selectDate(context, (date) {
                                       setState(() {
-                                        currDate = DateTime.now().subtract(Duration(days: 1));
-                                        datePrefix = 'Yesterday';
+                                        currDate = date;
+                                        datePrefix = formatDate(currDate, [dd, ' ', M, ' ', yyyy]); // Update datePrefix
                                       });
                                       Navigator.pop(context);
-                                    },
-                                  ),
+                                    });
+                                  },
+                                  width: MediaQuery.of(context).size.width * 0.84 + 12,
+                                ),
 
-                                  /// select today
-                                  PeriodTile(
-                                    parentContext: context,
-                                    label: 'Today',
-                                    selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
-                                    icon: Icons.sunny,
-                                    onPressed: () {
-                                      setState(() {
-                                        currDate = DateTime.now();
-                                        datePrefix = 'Today';
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                  ),
+                                /// select yesterday
+                                PeriodTile(
+                                  parentContext: context,
+                                  label: 'Yesterday',
+                                  selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
+                                  icon: Icons.mode_night_rounded,
+                                  onPressed: () {
+                                    setState(() {
+                                      currDate = DateTime.now().subtract(const Duration(days: 1));
+                                      datePrefix = 'Yesterday';
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
 
-                                  /// select recurrence
-                                  PeriodTile(
-                                    parentContext: context,
-                                    label: 'Recurrence',
-                                    selected: 'None',
-                                    icon: Icons.repeat,
-                                    onPressed: () {},
-                                  ),
+                                /// select today
+                                PeriodTile(
+                                  parentContext: context,
+                                  label: 'Today',
+                                  selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
+                                  icon: Icons.sunny,
+                                  onPressed: () {
+                                    setState(() {
+                                      currDate = DateTime.now();
+                                      datePrefix = 'Today';
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
 
-                                  /// select reminder
-                                  PeriodTile(
-                                    parentContext: context,
-                                    label: 'Reminder',
-                                    selected: 'None',
-                                    icon: Icons.access_alarm_sharp,
-                                    onPressed: () {},
-                                  ),
-                                ]),
-                          ),
-                        )),
-              );
-            }
-        );
+                                /// select recurrence
+                                PeriodTile(
+                                  parentContext: context,
+                                  label: 'Recurrence',
+                                  selected: 'None',
+                                  icon: Icons.repeat,
+                                  onPressed: () {
+                                    // You can show a specific recurrence picker here if needed
+                                    Navigator.pop(context); // Close the current sheet
+                                  },
+                                ),
 
-      } else if (_operators.contains(buttonText)) {
+                                /// select reminder
+                                PeriodTile(
+                                  parentContext: context,
+                                  label: 'Reminder',
+                                  selected: 'None',
+                                  icon: Icons.access_alarm_sharp,
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close the current sheet
+                                  },
+                                ),
+                              ]),
+                        ),
+                      )),
+            );
+          }
+      );
 
-        // Check if the previous string is an operator
+    } else if (_operators.contains(buttonText)) {
+      // Logic for operators
+      // ... (your existing operator handling logic)
+      setState(() { // Wrap this block in setState
         if (_operators.contains(lastChar)) {
-          // Replace the operator if it's already there
           if (buttonText == 'x') {
             buttonText = inputLen == 1 ? '0*' : '*';
           } else if (buttonText == '÷') {
@@ -417,19 +439,15 @@ class _InputKeyboardState extends State<InputKeyboard> {
               _currentAmount.substring(0, _currentAmount.length - 1)
                   + buttonText;
         } else {
-          // Handle operators
           if (buttonText == '÷') {
-            // Handle division operator
             _currentAmount += '/';
             _numbers.add("");
           }
           else if (buttonText == 'x') {
-            // Handle multiplication operator
             _currentAmount += '*';
             _numbers.add("");
           }
           else if (buttonText == '-' || buttonText == '+') {
-            // Handle subtraction operator
             if (_currentAmount == '0') {
               _currentAmount = buttonText;
               _numbers.clear();
@@ -440,17 +458,19 @@ class _InputKeyboardState extends State<InputKeyboard> {
             }
           }
         }
-      }
-      else if (buttonText == '.') {
+      }); // End of setState for operator logic
 
+    } else if (buttonText == '.') {
+      setState(() { // Wrap this block in setState
         // Allow only one decimal point
         if (!_numbers[numLen - 1].contains('.')) {
           _currentAmount += ".";
           _numbers[numLen - 1] += ".";
         }
+      }); // End of setState for decimal logic
 
-      } else {
-
+    } else {
+      setState(() { // Wrap this block in setState
         // Handle number input
         // ensure only have two decimal places
         if (_numbers[numLen - 1] == '0') {
@@ -469,9 +489,15 @@ class _InputKeyboardState extends State<InputKeyboard> {
           _currentAmount += buttonText;
           _numbers[numLen - 1] += buttonText;
         }
-      }
-      _lastButton = _numbers.length == 1 ? '✓' : '=';
-      _showError = false;
-    });
+      }); // End of setState for number logic
+    }
+    // Update _lastButton and _showError outside conditional setState blocks
+    // to ensure they are always updated regardless of the button pressed
+    if (mounted) { // Ensure widget is mounted before updating state
+      setState(() {
+        _lastButton = _numbers.length == 1 ? '✓' : '=';
+        _showError = false;
+      });
+    }
   }
 }

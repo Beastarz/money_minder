@@ -58,6 +58,9 @@ class AddBudgetSheet extends StatelessWidget {
           Navigator.pop(context);
           _handleSubmit(amount);
         },
+        categoryId: prop.id,
+        expenseAsBudget: prop.actualAmount,
+        defaultDate: DateTime(startDate.year, startDate.month),
         onCurrencyUpdate: (Currency currency) {
 
         },

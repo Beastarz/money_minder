@@ -39,4 +39,10 @@ class BudgetHelper {
       await BudgetRepositories.instance.createBudget(budget);
     }
   }
+
+  static Future<double> getBudget(int month, int year, int categoryId) async {
+    return await BudgetRepositories.instance.getBudget(
+        month, year, categoryId
+    );
+  }
 }

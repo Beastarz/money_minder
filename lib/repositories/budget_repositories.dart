@@ -24,6 +24,14 @@ class BudgetRepositories {
     return budgets;
   }
 
+  Future<double> getBudget(int month, int year, int categoryId) async {
+    sqf.Database db = await dbService.database;
+    List<Map<String, dynamic>> res = await db.query(
+        'budgets', where: 'month = ? AND year = ? AND category_id = ?',
+        whereArgs: [month, year, categoryId]);
+    return res.isNotEmpty ? res.first['amount'] : 0;
+  }
+
   Future<int> getBudgetId(int month, int year, int categoryId) async {
     sqf.Database db = await dbService.database;
     List<Map<String, dynamic>> res = await db.query('budgets', where: 'month = ? AND year = ? AND category_id = ?', whereArgs: [month, year, categoryId]);
