@@ -140,7 +140,7 @@ class Transaction {
   /// temp
   @override
   String toString() {
-    return 'from: ' + fromAccount.name + ' ' + amount.toStringAsFixed(2) + ' ' + (toAccount == null ? 'null' : toAccount!.name);
+    return 'from: ${fromAccount.name} ${amount.toStringAsFixed(2)} ${toAccount == null ? 'null' : toAccount!.name}';
   }
 
 }

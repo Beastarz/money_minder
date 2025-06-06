@@ -6,7 +6,7 @@ import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
 
-class CategoryButtonProps {
+class CategoryProp {
 
   /// variable
   final int id;
@@ -20,7 +20,7 @@ class CategoryButtonProps {
   int pieTouchedIndex = -1; // the index of the clicked pie data
   final bool isAddButton; // indicated if it is the addButton
 
-  CategoryButtonProps({
+  CategoryProp({
     required this.id,
     required this.position,
     required this.label,
@@ -34,8 +34,8 @@ class CategoryButtonProps {
   });
 }
 
-class AddCategoriesButtonProps extends CategoryButtonProps {
-  AddCategoriesButtonProps(int index) // No need for parameters if they are all defaulted
+class AddCategoryProp extends CategoryProp {
+  AddCategoryProp(int index) // No need for parameters if they are all defaulted
       : super(
     id: index,
     position: index,
@@ -52,16 +52,16 @@ class AddCategoriesButtonProps extends CategoryButtonProps {
   );
 }
 
-class CategoriesButton extends StatefulWidget {
+class CategoryButton extends StatefulWidget {
 
   /// variable
   // props contains all the data required to build a category button
-  final CategoryButtonProps prop;
+  final CategoryProp prop;
   // callback function when the categories button is pressed
-  final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  final void Function(CategoryProp) categoriesButtonOnPressed;
   final Currency mainCurrency;
 
-  const CategoriesButton({
+  const CategoryButton({
     super.key,
     required this.prop,
     required this.categoriesButtonOnPressed,
@@ -69,11 +69,11 @@ class CategoriesButton extends StatefulWidget {
   });
 
   @override
-  State<CategoriesButton> createState() =>
-      _CategoriesButtonState();
+  State<CategoryButton> createState() =>
+      _CategoryButtonState();
 }
 
-class _CategoriesButtonState extends State<CategoriesButton>
+class _CategoryButtonState extends State<CategoryButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -126,20 +126,20 @@ class _CategoriesButtonState extends State<CategoriesButton>
 
   @override
   Widget build(BuildContext context) {
-    CategoryButtonProps props = widget.prop;
-    Color topColor = props.color.withAlpha((0.3 * 255).round());
-    Color bottomColor = props.color;
-    double fraction = props.budget == 0
+    CategoryProp prop = widget.prop;
+    Color topColor = prop.color.withAlpha((0.3 * 255).round());
+    Color bottomColor = prop.color;
+    double fraction = prop.budget == 0
         ? 0.00
-        : 1 - (props.actualAmount / props.budget);
+        : 1 - (prop.actualAmount / prop.budget);
     fraction = fraction < 0 ? 0 : fraction;
 
     setState(() {
-      isLooping = props.pieTouchedIndex == props.position;
+      isLooping = prop.pieTouchedIndex == prop.position;
     });
     // if the pieData corresponding to this categories is clicked
     // trigger the animation
-    if (props.pieTouchedIndex == props.position) {
+    if (prop.pieTouchedIndex == prop.position) {
       _triggerPop();
     }
 
@@ -156,13 +156,13 @@ class _CategoriesButtonState extends State<CategoriesButton>
             end: Alignment.bottomCenter,
           ),
           shape: BoxShape.circle,
-          border: props.isAddButton // addButton does not have solid border
+          border: prop.isAddButton // addButton does not have solid border
               ? Border.all(
             color: Colors.transparent,
             width: 0,
           )
               : Border.all(
-            color: props.color,
+            color: prop.color,
             width: 2.0,
           )
       ),
@@ -172,15 +172,15 @@ class _CategoriesButtonState extends State<CategoriesButton>
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            if (props.isAddButton) {
+            if (prop.isAddButton) {
               return;
             }
-            widget.categoriesButtonOnPressed(props);
+            widget.categoriesButtonOnPressed(prop);
           },
           customBorder: const CircleBorder(),
           splashColor: AppColor.quaternary.withAlpha((0.2 * 255).round()),
           highlightColor: AppColor.quaternary.withAlpha((0.1 * 255).round()),
-          child: Center(child: props.icon),
+          child: Center(child: prop.icon),
         ),
       ),
     );
@@ -194,7 +194,7 @@ class _CategoriesButtonState extends State<CategoriesButton>
             child: child,
           );
         },
-        child: props.isAddButton
+        child: prop.isAddButton
             ? DottedBorder(
             options: CircularDottedBorderOptions(
               dashPattern: [6, 3],
@@ -214,21 +214,21 @@ class _CategoriesButtonState extends State<CategoriesButton>
         button,
         const SizedBox(height: 4),
         Text(
-          props.label,
+          prop.label,
           style: TextStyle(fontSize: 12),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
         ),
-        !props.isAddButton ?
+        !prop.isAddButton ?
         Column(
           children: [
             const SizedBox(height: 2),
             Text(
-              props.budget != 0
-                  ? '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)} / '
-                  '${props.budget.toStringAsFixed(2)}'
-                  : '${widget.mainCurrency.toString()} ${props.actualAmount.toStringAsFixed(2)}',
+              prop.budget != 0
+                  ? '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)} / '
+                  '${prop.budget.toStringAsFixed(2)}'
+                  : '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,

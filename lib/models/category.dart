@@ -19,6 +19,13 @@ class Category{
     required this.isExpense,
   });
 
+  /// use this to convert map to category
+  ///
+  /// Parameters:
+  ///
+  /// Map\<String, dynamic\> map: map to be converted
+  ///
+  /// Returns: Category
   factory Category.fromMap(Map<String, dynamic> map) {
     return Category(
       id: map['id'],
@@ -36,6 +43,23 @@ class Category{
     );
   }
 
+  /// use this to convert category to map
+  ///
+  /// Parameters:
+  ///
+  /// String label: label of the category
+  ///
+  /// int position: position of the category
+  ///
+  /// IconData icon: icon of the category
+  ///
+  /// Color color: color of the category
+  ///
+  /// bool isExpense: is expense or income
+  ///
+  /// double expectedAmount: expected amount of the category
+  ///
+  /// Returns: map of category
   static Map<String, dynamic> insertAsMap({
     required String label,
     required int position,

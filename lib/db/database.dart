@@ -90,13 +90,10 @@ class DatabaseService {
           CREATE TABLE budgets(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             amount REAL NOT NULL, -- budget of the item (can be savings account or categories)
-            type TEXT NOT NULL, -- 'savings', 'categories'
             month INTEGER, -- month of the budget (1 -> JAN, 2 -> FEB, ...)
             year INTEGER, -- year of the budget
             category_id INTEGER, -- foreign key to Categories table
-            account_id INTEGER, -- foreign key to Accounts table
-            FOREIGN KEY (category_id) REFERENCES categories(id),
-            FOREIGN KEY (account_id) REFERENCES accounts(id)
+            FOREIGN KEY (category_id) REFERENCES categories(id)
           )
         ''');
 
@@ -171,13 +168,11 @@ class DatabaseService {
     ''');
 
     await db.execute('''
-      INSERT INTO budgets (amount, type, month, year, category_id, account_id) VALUES
-      (400.00, 'category', 4, 2025, 1, NULL), -- Food budget for April
-      (500.00, 'category', 5, 2025, 1, NULL), -- Food budget for May 
-      (300.00, 'category', 5, 2025, 2, NULL), -- Transport budget for May
-      (3500.00, 'category', 5, 2025, 3, NULL), -- Income budget for May
-      (1000.00, 'account', 5, 2025, NULL, 3), -- Savings account budget for May
-      (1000.00, 'account', 5, 2025, NULL, 5); -- Investment account budget for May
+      INSERT INTO budgets (amount, month, year, category_id) VALUES
+      (400.00, 4, 2025, 1), -- Food budget for April
+      (500.00, 5, 2025, 1), -- Food budget for May 
+      (300.00, 5, 2025, 2), -- Transport budget for May
+      (3500.00, 5, 2025, 3); -- Income budget for May
     ''');
 
     await db.execute('''

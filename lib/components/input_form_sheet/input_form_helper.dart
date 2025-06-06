@@ -5,10 +5,16 @@ import 'input_keyboard_button.dart';
 
 class InputFormHelper {
 
-  // convert the button texts to InputFormButtonProps, every button take 1
-  // space by default
-  // buttonTexts: the list of button texts
-  // return: the list of InputFormButtonProps
+  /// convert the button texts to InputFormButtonProps, every button take 1
+  /// space by default
+  ///
+  /// Parameters:
+  ///
+  /// List\<String\> buttonTexts: the list of button texts
+  ///
+  /// Map\<String, IconData\>? iconMap: the map of button texts to icons
+  ///
+  /// return: List\<InputFormButtonProps\>
   static List<InputFormButtonProps> convertToCalButProps(
       List<String> buttonTexts, Map<String, IconData>? iconMap) {
     iconMap ??= {};
