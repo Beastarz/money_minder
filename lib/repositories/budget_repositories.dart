@@ -47,4 +47,9 @@ class BudgetRepositories {
     sqf.Database db = await dbService.database;
     await db.update('budgets', budget, where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteBudget(int month, int year, int categoryId) async {
+    sqf.Database db = await dbService.database;
+    await db.delete('budgets', where: 'year = ? AND month = ? AND category_id = ?', whereArgs: [year, month, categoryId]);
+  }
 }

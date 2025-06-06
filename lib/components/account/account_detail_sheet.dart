@@ -5,6 +5,7 @@ import 'package:money_minder/components/transaction/add_transfer_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/pages/accounts/edit_account_page.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/utils/confirmation_dialog.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -189,32 +190,16 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     icon: Icon(Icons.delete_outline, color: Colors.red,),
                     onPressed: () {
                       showDialog(context: context, builder: (BuildContext context) {
-                        return SimpleDialog(
-                          title: Text('Delete Account?'),
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    () async {
-                                      await AccountsRepository.instance.deleteAccount(widget.account.id);
-                                      widget.onReload();
-                                    }();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Delete', style: TextStyle(color: Colors.red),)
-                                )
-                              ],
-                            )
-                          ],
+                        return ConfirmationDialog(
+                            message: 'Delete Account?',
+                            onConfirm: () {
+                              () async {
+                                await AccountsRepository.instance.deleteAccount(widget.account.id);
+                                widget.onReload();
+                              }();
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
                         );
                       });
                     }

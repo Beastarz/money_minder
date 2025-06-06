@@ -79,7 +79,7 @@ class _EditTransferSheetState extends State<EditTransferSheet> {
             mainCurrency: currency,
             defaultValue: widget.oldTransaction.amount,
             defaultDate: widget.oldTransaction.date,
-            onSubmit: (DateTime date, double amount, String note) {
+            onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
               _handleSubmit(date, fromAccount, toAccount, amount, currency, note);
               Navigator.pop(context);
             },

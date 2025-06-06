@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/budget_page/budget_helper.dart';
 
 import '../../models/currency.dart';
+import '../../repositories/budget_repositories.dart';
 import '../../style/app_size.dart';
 import '../categories_page/category_button.dart';
 import '../input_form_sheet/input_form_helper.dart';
@@ -25,11 +26,24 @@ class AddBudgetSheet extends StatelessWidget {
     required this.onBudgetReload,
   });
 
-  void _handleSubmit(double amount) {
-    BudgetHelper.addBudget(startDate, amount, prop.id);
+  void _handleSubmit(double amount, int recurringMonths) {
+    int month = startDate.month;
+    int year = startDate.year;
+    for (int i = 0; i < recurringMonths; i++) {
+      BudgetHelper.addBudget(DateTime(year, month), amount, prop.id);
+      month += 1;
+      if (month > 12) {
+        month = 1;
+        year += 1;
+      }
+    }
     onBudgetReload();
   }
 
+  void onDelete() {
+    BudgetRepositories.instance.deleteBudget(startDate.month, startDate.year, prop.id);
+    onBudgetReload();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +68,9 @@ class AddBudgetSheet extends StatelessWidget {
         showNotes: false,
         defaultValue: prop.budget,
         mainCurrency: mainCurrency,
-        onSubmit: (DateTime date, double amount, String note) {
+        onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
           Navigator.pop(context);
-          _handleSubmit(amount);
+          _handleSubmit(amount, recurringMonths);
         },
         categoryId: prop.id,
         expenseAsBudget: prop.actualAmount,
@@ -64,6 +78,7 @@ class AddBudgetSheet extends StatelessWidget {
         onCurrencyUpdate: (Currency currency) {
 
         },
+        onDelete: onDelete,
       ),
       topContent: Container(
         decoration: BoxDecoration(

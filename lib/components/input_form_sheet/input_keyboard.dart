@@ -1,7 +1,7 @@
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/budget_page/budget_selection_page.dart';
+import 'package:money_minder/components/budget_page/budget_settings_page.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
@@ -36,8 +36,9 @@ class InputKeyboard extends StatefulWidget {
   final Currency mainCurrency; // default currency of the input
   final int categoryId; // for budget input form usage
   final double expenseAsBudget; // for budget input form usage
-  final void Function(DateTime, double, String) onSubmit;
+  final void Function(DateTime, double, String, int) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
+  final void Function()? onDelete;
   
   const InputKeyboard({
     super.key,
@@ -50,6 +51,7 @@ class InputKeyboard extends StatefulWidget {
     required this.onSubmit,
     required this.onCurrencyUpdate,
     this.defaultDate,
+    this.onDelete,
   });
 
   @override
@@ -62,8 +64,10 @@ class _InputKeyboardState extends State<InputKeyboard> {
   final List<String> _operators = ['+', '-', 'x', '÷', '*', '/']; // operator symbol
   final List<String> _numbers = ['0']; // numbers in input (remove all operator)
   String _lastButton = '✓';
-  DateTime currDate = DateTime.now();
-  String datePrefix = 'Today';
+  int _recurringMonths = 1;
+  String _message = '';
+  DateTime _currDate = DateTime.now();
+  String _datePrefix = 'Today';
 
   bool _showError = false; // show error when user submit negative amount
   TextEditingController noteController = TextEditingController(text: '');
@@ -80,7 +84,14 @@ class _InputKeyboardState extends State<InputKeyboard> {
       }
       _numbers.clear();
       _numbers.add(_currentAmount);
-      widget.defaultDate == null ? currDate = DateTime.now() : currDate = widget.defaultDate!;
+      widget.defaultDate == null ? _currDate = DateTime.now() : _currDate = widget.defaultDate!;
+
+      // if showNotes == true, it is a budget input form, else transaction input form
+      if (!widget.showNotes) {
+        _message = _recurringMonths == 1 ? '' : 'Recurrence: $_recurringMonths months';
+      } else  {
+        _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+      }
     });
     _fetchCurrencies();
   }
@@ -193,14 +204,14 @@ class _InputKeyboardState extends State<InputKeyboard> {
             },
           ),
           // show setting at the bottom
-          !widget.showNotes
+          _message.isEmpty
               ? SizedBox.shrink()
               : SizedBox(height: 4), // small padding
 
-          !widget.showNotes
+          _message.isEmpty
             ? SizedBox.shrink()
             : Text(
-                '$datePrefix, ${formatDate(currDate, [dd, ' ', M, ' ', yyyy])}',
+                _message,
                 style: TextStyle(
                     color: AppColor.darkText,
                     fontSize: isSmallScreen
@@ -210,6 +221,33 @@ class _InputKeyboardState extends State<InputKeyboard> {
         ],
       ),
     );
+  }
+
+  /// change the budget setting
+  ///
+  /// Parameters:
+  ///
+  /// int recurringMonth: the number of months to set the budget (recurring)
+  ///
+  /// double amount: the amount to set the budget
+  ///
+  /// Returns: void
+  void _handleBudgetSettingsSubmit(int recurringMonth, double amount) {
+    if (recurringMonth > 0) {
+      setState(() {
+        _recurringMonths = recurringMonth;
+        _message = 'Recurrence: $_recurringMonths months';
+      });
+    }
+    if (amount >= 0) {
+      setState(() {
+        _currentAmount = amount.toStringAsFixed(
+            amount.truncateToDouble() == amount ? 0 : 2);
+        _numbers.clear();
+        _numbers.add(_currentAmount);
+        _lastButton = '✓';
+      });
+    }
   }
 
   // This method would be called by the input form buttons
@@ -286,7 +324,12 @@ class _InputKeyboardState extends State<InputKeyboard> {
         });
         return;
       }
-      widget.onSubmit(currDate, double.parse(_currentAmount), noteController.text);
+      widget.onSubmit(
+          _currDate,
+          double.parse(_currentAmount),
+          noteController.text,
+          _recurringMonths,
+      );
 
     } else if (buttonText == '\$') {
       showDialog(
@@ -320,12 +363,14 @@ class _InputKeyboardState extends State<InputKeyboard> {
           context: context,
           isScrollControlled: true, // Allows sheet to take more height if needed
           builder: (sheetContext) {
-            return BudgetSelectionPage(
+            return BudgetSettingsPage(
               expenseAsBudget: widget.expenseAsBudget,
               lastBudget: lastBudget,
               month: month,
               year: year,
               mainCurrency: widget.mainCurrency,
+              submitSettings: _handleBudgetSettingsSubmit,
+              deleteBudget: widget.onDelete!,
             );
           }
       );
@@ -357,8 +402,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   onPressed: () {
                                     CalendarSelectorHelper.selectDate(context, (date) {
                                       setState(() {
-                                        currDate = date;
-                                        datePrefix = formatDate(currDate, [dd, ' ', M, ' ', yyyy]); // Update datePrefix
+                                        _currDate = date;
+                                        _datePrefix = formatDate(_currDate, [dd, ' ', M, ' ', yyyy]);// Update datePrefix
+                                        _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
                                       });
                                       Navigator.pop(context);
                                     });
@@ -374,8 +420,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   icon: Icons.mode_night_rounded,
                                   onPressed: () {
                                     setState(() {
-                                      currDate = DateTime.now().subtract(const Duration(days: 1));
-                                      datePrefix = 'Yesterday';
+                                      _currDate = DateTime.now().subtract(const Duration(days: 1));
+                                      _datePrefix = 'Yesterday';
+                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
                                     });
                                     Navigator.pop(context);
                                   },
@@ -389,8 +436,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   icon: Icons.sunny,
                                   onPressed: () {
                                     setState(() {
-                                      currDate = DateTime.now();
-                                      datePrefix = 'Today';
+                                      _currDate = DateTime.now();
+                                      _datePrefix = 'Today';
+                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
                                     });
                                     Navigator.pop(context);
                                   },

@@ -1,36 +1,43 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/utils/balance_text.dart';
+import 'package:money_minder/utils/confirmation_dialog.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 
-class BudgetSelectionPage extends StatefulWidget {
+class BudgetSettingsPage extends StatefulWidget {
 
   final double expenseAsBudget;
   final Currency mainCurrency;
   final double lastBudget;
   final int month;
   final int year;
+  final void Function(int, double) submitSettings;
+  final void Function() deleteBudget;
 
-  const BudgetSelectionPage({
+  const BudgetSettingsPage({
     super.key,
     required this.expenseAsBudget,
     required this.mainCurrency,
     required this.lastBudget,
     required this.month,
     required this.year,
+    required this.submitSettings,
+    required this.deleteBudget,
   });
 
   @override
-  State<BudgetSelectionPage> createState() => _BudgetSelectionPageState();
+  State<BudgetSettingsPage> createState() => _BudgetSettingsPageState();
 }
 
-class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
+class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
 
-  int? _numOfMonths = 3;
-  bool? _clicked = false;
+  int _numOfMonths = 3;
+  bool _setRecurring = false;
+  bool _sameAsAmount = false;
+  bool _sameAsPrevious = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +58,14 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
               IconButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    widget.submitSettings(
+                      _setRecurring ? _numOfMonths : 0,
+                      _sameAsAmount
+                      ? widget.expenseAsBudget
+                      : _sameAsPrevious
+                        ? widget.lastBudget
+                        : -1 // does not change the budget
+                    );
                   },
                   icon: Icon(Icons.arrow_circle_left_outlined)
               ),
@@ -64,11 +79,14 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
                   size: 16,
                   fontColor: AppColor.darkText,
                 ),
-                value: _clicked,
+                value: _sameAsAmount,
                 onChanged: (bool? value) {
                   setState(() {
                     value = value ?? false;
-                    _clicked = value;
+                    if (!_sameAsAmount) {
+                      _sameAsPrevious = false;
+                    }
+                    _sameAsAmount = value!;
                 });
               }),
 
@@ -84,11 +102,14 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
                     size: 16,
                     fontColor: AppColor.darkText,
                   ),
-                  value: _clicked,
+                  value: _sameAsPrevious,
                   onChanged: (bool? value) {
                     setState(() {
                       value = value ?? false;
-                      _clicked = value;
+                      if (!_sameAsPrevious) {
+                        _sameAsAmount = false;
+                      }
+                      _sameAsPrevious = value!;
                     });
                   }),
 
@@ -106,10 +127,12 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
                         child: DropdownButton<int>(
                           value: _numOfMonths,
                           onChanged: (int? newValue) {
+                            newValue = newValue ?? 3;
                             setState(() {
-                              _numOfMonths = newValue;
+                              _numOfMonths = newValue!;
                             });
                           },
+                          borderRadius: BorderRadius.circular(AppSize.borderRadius),
                           menuMaxHeight: 200.0, // Adjust as needed
                           items: List.generate(12, (index) {
                             int number = index + 1;
@@ -129,11 +152,11 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
                       ),
                     ],
                   ),
-                  value: _clicked,
+                  value: _setRecurring,
                   onChanged: (bool? value) {
                     setState(() {
                       value = value ?? false;
-                      _clicked = value;
+                      _setRecurring = value!;
                     });
                   }),
 
@@ -141,7 +164,20 @@ class _BudgetSelectionPageState extends State<BudgetSelectionPage> {
 
               MaterialButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ConfirmationDialog(
+                          message: 'Delete Budget?',
+                          onConfirm: () {
+                            Navigator.pop(context); // pop ConfirmationDialog
+                            Navigator.pop(context); // pop BudgetSettingsPage
+                            Navigator.pop(context); // pop AddBudgetSheet
+                            widget.deleteBudget();
+                          }
+                      ) ;
+                    }
+                  );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
