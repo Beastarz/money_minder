@@ -87,7 +87,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
           }
           ),
           mainCurrency: currency,
-          onSubmit: (DateTime date, double amount, String note) {
+          onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
             _handleSubmit(date, fromAccount!, toCategory, amount, currency, note);
             Navigator.pop(context);
           },

@@ -3,7 +3,10 @@ import 'package:money_minder/components/statistics_page/statistics_page_content.
 import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
+import '../../components/categories_page/category_button.dart';
+import '../../components/categories_page/category_helper.dart';
 import '../../models/budget.dart';
+import '../../models/category.dart';
 import '../../models/date_filter.dart';
 import '../../models/transaction.dart';
 
@@ -12,21 +15,27 @@ class StatisticsPage extends StatefulWidget {
   const StatisticsPage({
     super.key,
     required this.mainCurrency,
-    required this.filteredTransactions,
-    required this.budgets,
+    required this.groupedTransactions,
+    required this.groupedBudgets,
+    required this.categories,
     required this.dateFilter,
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
+    required this.onAddTransactionReload,
+    required this.onBudgetReload,
   });
 
   final Currency mainCurrency;
-  final List<Transaction> filteredTransactions;
-  final List<Budget> budgets;
+  final List<List<Transaction>> groupedTransactions;
+  final List<List<Budget>> groupedBudgets;
+  final List<List<Category>> categories;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+  final void Function() onAddTransactionReload;
+  final void Function() onBudgetReload;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -35,50 +44,7 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageViewController = PageController(initialPage: widget.currentPageIndex);
-    _tabController = TabController(
-        length: 100,
-        initialIndex: widget.currentPageIndex,
-        vsync: this
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    /// group transactions by period
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
-        widget.filteredTransactions, widget.dateFilter.startDates);
-
-    /// group budgets by period
-    // List<List<Budget>> groupedBudgets = Budget.groupBudgetsByDate(
-    //     widget.budgets, widget.dateFilter);
-
-
-    return Scaffold(
-      appBar: CalendarAppBar(
-        tabController: _tabController,
-        currentPageIndex: widget.currentPageIndex,
-        onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
-        maxIndex: widget.dateFilter.startDates.length - 2,
-        dateFilterType: widget.dateFilter.type,
-        onUpdateDateFilter: _onDateFilterChange,
-      ),
-      body: PageView(
-          controller: _pageViewController,
-          onPageChanged: _handlePageViewChanged,
-          physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          children: groupedTransactions.map((transactions) =>
-            StatisticsPageContent()
-          ).toList()
-      ),
-    );
-  }
+  late List<Widget> _pages;
 
   void _handlePageViewChanged(int currentPageIndex) {
     _tabController.index = currentPageIndex;
@@ -97,5 +63,83 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
       _pageViewController.jumpToPage(dateFilter.initialPageIndex);
       _tabController.index = dateFilter.initialPageIndex;
     });
+  }
+
+  void getPages() {
+    final bool disabledAddBudget = widget.dateFilter.type != DateFilterType.month;
+    setState(() {
+      _pages = widget.groupedTransactions.indexed.map((t) {
+        int index = t.$1;
+        List<Transaction> transactions = t.$2;
+        List<double> totalAmounts = [0, 0];
+        List<Budget> budgets = widget.groupedBudgets[index];
+        List<CategoryProp> expenseCats =
+        CategoryHelper.convertToCatButProps(
+            widget.categories[0], transactions, budgets,
+            totalAmounts, true, widget.dateFilter);
+        List<CategoryProp> incomeCats =
+        CategoryHelper.convertToCatButProps(
+            widget.categories[1], transactions, budgets,
+            totalAmounts, false, widget.dateFilter);
+        List<double> totalBudgets = [
+          CategoryHelper.getTotalBudget(budgets, true),
+          CategoryHelper.getTotalBudget(budgets, false),
+        ];
+        return StatisticsPageContent(
+          categories: [expenseCats, incomeCats],
+          totalAmounts: totalAmounts,
+          totalBudgets: totalBudgets,
+          mainCurrency: widget.mainCurrency,
+          disabledAddBudget: disabledAddBudget,
+          startDate: widget.dateFilter.startDates[index],
+          onAddTransactionReload: widget.onAddTransactionReload,
+          onBudgetReload: widget.onBudgetReload,
+        );
+      }
+      ).toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageViewController = PageController(initialPage: widget.currentPageIndex);
+    _tabController = TabController(
+        length: 100,
+        initialIndex: widget.currentPageIndex,
+        vsync: this
+    );
+    getPages();
+  }
+
+  @override
+  void didUpdateWidget(covariant StatisticsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.groupedTransactions != oldWidget.groupedTransactions ||
+    widget.groupedBudgets != oldWidget.groupedBudgets) {
+      getPages();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: CalendarAppBar(
+        tabController: _tabController,
+        currentPageIndex: widget.currentPageIndex,
+        onUpdateCurrentPageIndex: _updateCurrentPageIndex,
+        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
+        maxIndex: widget.dateFilter.startDates.length - 2,
+        dateFilterType: widget.dateFilter.type,
+        onUpdateDateFilter: _onDateFilterChange,
+      ),
+      body: PageView(
+          controller: _pageViewController,
+          onPageChanged: _handlePageViewChanged,
+          physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
+          children: _pages
+      ),
+    );
   }
 }

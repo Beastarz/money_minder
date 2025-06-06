@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_size.dart';
-import 'categories_button.dart';
+import 'category_button.dart';
 
 class CategoriesSheet extends StatelessWidget {
 
@@ -12,9 +12,9 @@ class CategoriesSheet extends StatelessWidget {
   // the index of the pie data that is currently selected
   final int pieTouchedIndex;
   // callback function when the categories button is pressed
-  final void Function(CategoryButtonProps) categoriesButtonOnPressed;
+  final void Function(CategoryProp) categoriesButtonOnPressed;
   // the list of categories to be shown
-  final List<CategoryButtonProps> categories;
+  final List<CategoryProp> categories;
   final Currency mainCurrency;
 
   const CategoriesSheet({
@@ -45,7 +45,7 @@ class CategoriesSheet extends StatelessWidget {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         categories[index].pieTouchedIndex = pieTouchedIndex;
-        return CategoriesButton(
+        return CategoryButton(
           prop: categories[index],
           categoriesButtonOnPressed: categoriesButtonOnPressed,
           mainCurrency: mainCurrency,

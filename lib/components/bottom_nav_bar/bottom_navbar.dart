@@ -19,7 +19,7 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: GNav(
           onTabChange: onTabChange,
           selectedIndex: selectedIndex,
@@ -36,23 +36,19 @@ class BottomNavbar extends StatelessWidget {
           tabs: const [
             GButton(
                 icon: Icons.account_balance_wallet_outlined,
-                text: 'Accs'
+                text: 'Accounts'
             ),
             GButton(
                 icon: Icons.category_outlined,
-                text: 'Cats'
+                text: 'Categories'
             ),
             GButton(
                 icon: Icons.list_alt_outlined,
-                text: 'Txns'
-            ),
-            GButton(
-                icon: Icons.attach_money_outlined,
-                text: 'Bdgt'
+                text: 'Transactions'
             ),
             GButton(
                 icon: Icons.bar_chart_outlined,
-                text: 'Stats'
+                text: 'Statistics'
             ),
           ]
       )

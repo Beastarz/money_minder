@@ -1,73 +1,94 @@
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/date_filter.dart';
 
-import 'account.dart';
 class Budget {
   final int id;
   final double amount;
-  final String type;
   final int month;
   final int year;
-  final Category? category;
-  final Account? account;
+  final Category category;
 
   const Budget({
     required this.id,
     required this.amount,
-    required this.type,
     required this.month,
     required this.year,
     required this.category,
-    required this.account,
   });
 
-  /// use this to convert map to transaction
-  factory Budget.fromMap(Map<String, dynamic> map, Category? category, Account? account) {
+  /// use this to convert map to budget
+  ///
+  /// Parameters:
+  ///
+  /// Map\<String, dynamic\> map: map to be converted
+  ///
+  /// Category category: category of the budget
+  ///
+  /// Returns: Budget
+  factory Budget.fromMap(Map<String, dynamic> map, Category category) {
     return Budget(
       id: map['id'],
       amount: map['amount'],
-      type: map['type'],
       month: map['month'],
       year: map['year'],
       category: category,
-      account: account,
     );
   }
 
+  /// use this to convert budget to map
+  ///
+  /// Parameters:
+  ///
+  /// double budget: budget to be converted
+  ///
+  /// int month: month of the budget
+  ///
+  /// int year: year of the budget
+  ///
+  /// int categoryId: category id of the budget
+  ///
+  /// Returns: map of budget
   static Map<String, dynamic> insertAsMap({
     required double amount,
-    required String type,
     required int month,
     required int year,
     required int categoryId,
-    required int accountId,
   }) {
     return {
       'amount': amount,
-      'type': type,
       'month': month,
       'year': year,
       'category_id': categoryId,
-      'account_id': accountId,
     };
   }
 
-  /// use this to group transactions by date
-  // if dateFiltertype is month, then group by month
-  // if dateFiltertype is year, add all budgets in the same year
-  // if dateFiltertype is all, don't have budget
-  // for all other cases, group by the period depending on the budget of the month
-  // which the startDate falls in.
+  /// Use this to group transactions by date.
+  ///
+  /// If date filter type is month, then group by month.
+  /// If date filter type is year, add all budgets in the same year.
+  /// If date filter type is all, don't have budget.
+  /// For all other cases, group by the period depending on the budget of the month
+  /// which the startDate falls in.
+  ///
+  /// Parameters:
+  ///
+  /// List\<Budget\> budgets: list of budgets to be grouped
+  ///
+  /// DateFilter dateFilter: date filter to be used for grouping
+  ///
+  /// Returns: list of lists of budgets grouped by date
   static List<List<Budget>> groupBudgetsByDate(List<Budget> budgets, DateFilter dateFilter) {
+
     List<DateTime> startDates = dateFilter.startDates;
     DateFilterType dateFilterType = dateFilter.type;
     List<List<Budget>> groupedBudgets = [];
     if (dateFilterType == DateFilterType.all) {
 
       // add empty list for each date filter
-      for (int i = 0; i < startDates.length - 1 ; i++) {
+      for (int i = 0; i < startDates.length - 2 ; i++) {
         groupedBudgets.add([]);
       }
+      groupedBudgets.insert(50, budgets);
     } else if (dateFilterType == DateFilterType.year) {
 
       // add all budgets in the same year
@@ -97,10 +118,8 @@ class Budget {
           .map((budget) => Budget(
             id: budget.id,
             amount: budget.amount * (periodInDays / 30),
-            type: budget.type,
             month: budget.month,
             year: budget.year,
-            account: budget.account,
             category: budget.category,
             )
           )

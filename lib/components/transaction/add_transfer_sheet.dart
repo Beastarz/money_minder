@@ -78,7 +78,7 @@ class _AddTransferSheetState extends State<AddTransferSheet> {
             }
             ),
             mainCurrency: currency,
-            onSubmit: (DateTime date, double amount, String note) {
+            onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
               _handleSubmit(date, fromAccount, toAccount, amount, currency, note);
               Navigator.pop(context);
             },

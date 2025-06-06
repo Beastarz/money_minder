@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/pages/accounts/add_accounts_page.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
 import '../../style/app_color.dart';
-import '../../style/app_size.dart';
 import 'accounts_filter.dart';
 
 class MMAppBar extends StatelessWidget implements PreferredSizeWidget{

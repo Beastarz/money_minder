@@ -8,7 +8,6 @@ import 'package:money_minder/components/transaction/transaction_detail_tile.dart
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
-import '../../models/account.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../../utils/category_top_card.dart';

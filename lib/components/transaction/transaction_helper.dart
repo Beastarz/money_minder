@@ -55,7 +55,6 @@ class TransactionHelper {
 
   static Future<void> editExpense(Transaction oldTransaction, DateTime date, int fromAccountId, Category toCategory, double amount, Currency currency, String note) async {
     await undoTransaction(oldTransaction);
-    print(oldTransaction.fromAccount.balance);
     await TransactionsRepositories.instance.deleteTransaction(oldTransaction.id);
     await proceedExpense(date, fromAccountId, toCategory, amount, currency, note);
   }

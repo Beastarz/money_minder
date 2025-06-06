@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/categories_selection_sheet.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
 
 import '../models/category.dart';
 import '../style/app_color.dart';

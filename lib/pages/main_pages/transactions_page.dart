@@ -11,7 +11,7 @@ class TransactionsPage extends StatefulWidget {
   const TransactionsPage({
     super.key,
     required this.mainCurrency,
-    required this.filteredTransactions,
+    required this.groupedTransactions,
     required this.dateFilter,
     required this.filteredAccountBalance,
     required this.onDateFilterUpdate,
@@ -21,7 +21,7 @@ class TransactionsPage extends StatefulWidget {
 
   final double filteredAccountBalance;
   final Currency mainCurrency;
-  final List<Transaction> filteredTransactions;
+  final List<List<Transaction>> groupedTransactions;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
@@ -35,56 +35,11 @@ class TransactionsPage extends StatefulWidget {
 class _TransactionsPageState extends State<TransactionsPage> with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageViewController = PageController(initialPage: widget.currentPageIndex);
-    _tabController = TabController(
-        length: 100,
-        initialIndex: widget.currentPageIndex,
-        vsync: this
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    /// map this to categories and transactions page
-    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(
-        widget.filteredTransactions, widget.dateFilter.startDates);
-
-    List<double> accumulatedBalance = getAccumulatedBalance(groupedTransactions, widget.filteredAccountBalance);
-
-
-    return Scaffold(
-      appBar: CalendarAppBar(
-        tabController: _tabController,
-        currentPageIndex: widget.currentPageIndex,
-        onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
-        maxIndex: widget.dateFilter.startDates.length - 2,
-        dateFilterType: widget.dateFilter.type,
-        onUpdateDateFilter: _onDateFilterChange,
-      ),
-      body: PageView(
-        controller: _pageViewController,
-        onPageChanged: _handlePageViewChanged,
-        physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-        children: groupedTransactions.indexed.map((transactions) => TransactionsContent(
-          transactions: transactions.$2,
-          initialBalance: accumulatedBalance[transactions.$1],
-          finalBalance: accumulatedBalance[transactions.$1 + 1],
-          mainCurrency: widget.mainCurrency,
-          onTransactionReload: widget.onTransactionReload,
-        )).toList()
-      ),
-    );
-  }
+  late List<Widget> _pages;
 
   void _handlePageViewChanged(int currentPageIndex) {
     _tabController.index = currentPageIndex;
-    widget.onPageChange(currentPageIndex);
+      widget.onPageChange(currentPageIndex);
   }
 
   void _updateCurrentPageIndex(int index) {
@@ -116,5 +71,61 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       _pageViewController.jumpToPage(dateFilter.initialPageIndex);
       _tabController.index = dateFilter.initialPageIndex;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageViewController = PageController(initialPage: widget.currentPageIndex);
+    _tabController = TabController(
+        length: 100,
+        initialIndex: widget.currentPageIndex,
+        vsync: this
+    );
+    getPages();
+  }
+
+  void getPages() {
+    List<double> accumulatedBalance = getAccumulatedBalance(widget.groupedTransactions, widget.filteredAccountBalance);
+    setState(() {
+      _pages = widget.groupedTransactions.indexed.map((transactions) =>
+          TransactionsContent(
+            transactions: transactions.$2,
+            initialBalance: accumulatedBalance[transactions.$1],
+            finalBalance: accumulatedBalance[transactions.$1 + 1],
+            mainCurrency: widget.mainCurrency,
+            onTransactionReload: widget.onTransactionReload,
+          )).toList();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.groupedTransactions != oldWidget.groupedTransactions) {
+      getPages();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: CalendarAppBar(
+        tabController: _tabController,
+        currentPageIndex: widget.currentPageIndex,
+        onUpdateCurrentPageIndex: _updateCurrentPageIndex,
+        dateString: widget.dateFilter.convertString(widget.currentPageIndex),
+        maxIndex: widget.dateFilter.startDates.length - 2,
+        dateFilterType: widget.dateFilter.type,
+        onUpdateDateFilter: _onDateFilterChange,
+      ),
+      body: PageView(
+        controller: _pageViewController,
+        onPageChanged: _handlePageViewChanged,
+        physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
+        children: _pages
+      ),
+    );
   }
 }
