@@ -7,23 +7,25 @@ import 'package:money_minder/utils/balance_text.dart';
 import '../../models/transaction.dart';
 
 class TransactionsContent extends StatelessWidget {
-  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload,});
+  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload, required this.isInFiltered,});
 
   final List<Transaction> transactions;
   final double initialBalance;
   final double finalBalance;
   final Currency mainCurrency;
+  final bool isInFiltered;
   final Function() onTransactionReload;
 
   @override
   Widget build(BuildContext context) {
+
     List<List<Transaction>> groupedTransactionsByDate = groupTransactionsByDate(transactions.reversed.toList());
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16),
       child: Column(
         spacing: 16,
         children: <Widget> [
-          Row(
+          isInFiltered ? Container() : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: MediaQuery.of(context).size.width*0.05,
             children: [
@@ -67,7 +69,7 @@ class TransactionsContent extends StatelessWidget {
               )
             ],
           ),
-        ] + groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),
+        ] + List<Widget>.from(transactions.isEmpty ? [Center(child: Text('No Transactions Here'),)] : groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),)
       ),
     );
   }
