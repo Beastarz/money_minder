@@ -79,6 +79,7 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
               disabledAddBudget: widget.disabledAddBudget,
               onAddTransactionReload: widget.onAddTransactionReload,
               onBudgetReload: widget.onBudgetReload,
+              totalAmounts: widget.totalAmounts,
             )
           ),
         ]

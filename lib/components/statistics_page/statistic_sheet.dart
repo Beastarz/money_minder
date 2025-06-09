@@ -18,6 +18,7 @@ class StatisticsSheet extends StatefulWidget {
   final bool disabledAddBudget;
   final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
+  final List<double> totalAmounts;
 
   const StatisticsSheet({
     super.key,
@@ -28,6 +29,7 @@ class StatisticsSheet extends StatefulWidget {
     required this.disabledAddBudget,
     required this.onAddTransactionReload,
     required this.onBudgetReload,
+    required this.totalAmounts,
   });
 
   @override
@@ -59,7 +61,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double expandedHeight = isSmallScreen ? 145 : 200;
     List<CategoryProp> category = widget.categories[widget.isExpense ? 0 : 1];
-    StatisticsHelper.sortCategories(category, _isAscending, _currentSortOption);
+    StatisticsHelper.sortCategories(
+        category, _isAscending, _currentSortOption, widget.totalAmounts[widget.isExpense ? 0 : 1]);
 
     return Scaffold(
       body: CustomScrollView(
@@ -137,7 +140,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                         setState(() {
                           _currentSortOption = newValue;
                           // Re-sort the categories when the sort option changes
-                          StatisticsHelper.sortCategories(category, _isAscending, newValue);
+                          StatisticsHelper.sortCategories(
+                              category, _isAscending, newValue, widget.totalAmounts[widget.isExpense ? 0 : 1]);
                         });
                       }
                     },
@@ -172,7 +176,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                       setState(() {
                         _isAscending = !_isAscending;
                         // Re-sort the categories when the sort order changes
-                        StatisticsHelper.sortCategories(category, _isAscending, _currentSortOption);
+                        StatisticsHelper.sortCategories(
+                            category, _isAscending, _currentSortOption, widget.totalAmounts[widget.isExpense ? 0 : 1]);
                       });
                     },
                   ),
@@ -189,6 +194,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                     prop: category[index],
                     mainCurrency: widget.mainCurrency,
                     onPressed: catTileOnPressed,
+                    totalAmount: widget.totalAmounts[widget.isExpense ? 0 : 1],
                 );
                 //     return StatisticsCatTile(prop: category[index]);
               },

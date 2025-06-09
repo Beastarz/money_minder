@@ -13,21 +13,46 @@ class StatisticsCatTile extends StatelessWidget {
   final CategoryProp prop;
   final Currency mainCurrency;
   final void Function(CategoryProp) onPressed;
+  final double totalAmount;
 
   const StatisticsCatTile({
     super.key,
     required this.prop,
     required this.mainCurrency,
     required this.onPressed,
+    required this.totalAmount,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final double percentage = prop.budget == 0
-        ? prop.actualAmount > 0 ? 1 : 0
-        : prop.actualAmount / prop.budget;
-    final double progress = percentage > 1 ? 1 : percentage;
+    final double percentage = totalAmount == 0
+        ? 0
+        : prop.actualAmount / totalAmount;
+    final double fraction = prop.budget == 0
+      ? 1
+      : prop.actualAmount / prop.budget;
+    Color topColor = prop.color.withAlpha((0.3 * 255).round());
+    Color bottomColor = prop.color;
+
+    Widget categoryIcon = Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [bottomColor, bottomColor, topColor, topColor],
+            stops: [0.0, fraction, fraction, 1],
+          ),
+          border: Border.all(
+            color: prop.color,
+            width: 2.0,
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: prop.icon
+    );
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -42,7 +67,7 @@ class StatisticsCatTile extends StatelessWidget {
         child: LinearPercentIndicator(
           animation: true,
           lineHeight: 20.0,
-          percent: progress,
+          percent: percentage,
           backgroundColor: AppColor.tertiary,
           progressColor: CategoryHelper.lightenColor(prop.color, 0.5),
           center: Text(
@@ -51,15 +76,7 @@ class StatisticsCatTile extends StatelessWidget {
           ),
           leading: Column(
             children: [
-              Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: prop.color,
-                    shape: BoxShape.circle,
-                  ),
-                  child: prop.icon
-              ),
+              categoryIcon,
               SizedBox(
                 width: 50,
                 child: Text(
