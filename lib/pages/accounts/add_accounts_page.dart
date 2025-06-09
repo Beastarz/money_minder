@@ -142,7 +142,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
-                    .primaryColor, // Matches the section header color
+                    .primaryColorDark, // Matches the section header color
               ),
             ),
             SizedBox(height: 8),
@@ -237,7 +237,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
-                    .primaryColor, // Matches the section header color
+                    .primaryColorDark, // Matches the section header color
               ),
             ),
             SizedBox(height: 8),

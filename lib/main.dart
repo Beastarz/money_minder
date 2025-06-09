@@ -3,6 +3,7 @@ import 'package:money_minder/components/app_bar/appbar.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/date_filter.dart';
+import 'package:money_minder/models/transaction_filter.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
 import 'package:money_minder/pages/main_pages/categories_page.dart';
@@ -59,14 +60,24 @@ class MoneyMinderFrame extends StatefulWidget {
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   int _selectedIndex = 2;
+
   List<Account> _accounts = [];
   List<Account> _filteredAccounts = [];
+
   List<List<Transaction>> _groupedTransactions = [];
   List<List<Category>> _categories = [];
+
   Currency _mainCurrency = Currency.of('sgd');
+
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
-  int _currentPageIndex = 50;
+
+
   List<List<Budget>> _groupedBudgets = [];
+
+  TransactionFilter transactionFilter = TransactionFilter.empty();
+
+  int _currentPageIndex = 50;
+
   bool _isLoadingData = true;
 
   @override
@@ -161,6 +172,25 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
+  void _onTransactionFilterChange(
+      List<int> selectedAccountIds,
+      List<int> selectedCategoryIds,
+      List<TransactionType> selectedTransactionTypes,
+      String notePrefix) {
+    setState(() {
+      if (selectedAccountIds.isEmpty && selectedCategoryIds.isEmpty && selectedTransactionTypes.isEmpty && notePrefix.isEmpty) {
+        transactionFilter = TransactionFilter.empty();
+        return;
+      }
+      transactionFilter = TransactionFilter(
+        accountIds: selectedAccountIds,
+        categoryIds: selectedCategoryIds,
+        transactionTypes: selectedTransactionTypes,
+        notePrefix: notePrefix,
+      );
+    });
+  }
+
   void _onPageChange(int index) {
     setState(() {
       _currentPageIndex = index;
@@ -169,6 +199,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
   @override
   Widget build(BuildContext context) {
+
 
     // Show a loading indicator while data is being fetched
     if (_isLoadingData) {
@@ -208,7 +239,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       TransactionsPage(
         filteredAccountBalance: Account.getBalance(_filteredAccounts, _mainCurrency),
         mainCurrency: _mainCurrency,
-        groupedTransactions: _groupedTransactions,
+        groupedTransactions: _groupedTransactions.map((t) => transactionFilter.filterTransactions(t)).toList(),
+        isInFiltered: !transactionFilter.isOff,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
@@ -244,6 +276,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         filteredAccounts: _filteredAccounts,
         onReload: _fetchAccounts,
         mainCurrency: _mainCurrency,
+        transactionFilter: transactionFilter,
+        onTransactionFilterChange: _onTransactionFilterChange,
       ),
       drawer: AppbarDrawer(),
       body: pages[_selectedIndex],

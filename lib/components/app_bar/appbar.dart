@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/transaction/transaction_filter_page.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/pages/accounts/add_accounts_page.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
+import '../../models/transaction_filter.dart';
 import '../../style/app_color.dart';
 import 'accounts_filter.dart';
 
 class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
-  const MMAppBar( {super.key,
+  const MMAppBar( {
+    super.key,
     required this.selectedIndex,
     required this.filteredAccounts,
     required this.mainCurrency,
     required this.onReload,
+    required this.transactionFilter,
+    required this.onTransactionFilterChange,
   });
 
   final int selectedIndex;
   final List<Account> filteredAccounts;
   final void Function() onReload;
   final Currency mainCurrency;
+  final TransactionFilter transactionFilter;
+  final void Function(List<int>, List<int>, List<TransactionType>, String) onTransactionFilterChange;
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +53,21 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         onPressed: () {},
       ),
       IconButton(
-        icon: Icon(
-          Icons.search,
-          color: Colors.grey[800],
+        icon: Badge(
+          isLabelVisible: !transactionFilter.isOff,
+          label: Text(transactionFilter.count().toString()),
+          child: Icon(
+            Icons.filter_alt_outlined,
+            color: Colors.grey[800],
+          ),
         ),
-        onPressed: () {},
-      ),
-      IconButton(
-        icon: Icon(
-          Icons.edit,
-          color: Colors.grey[800],
-        ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TransactionFilterPage(
+                onTransactionFilterChange: onTransactionFilterChange, filter: transactionFilter)),
+          );
+        },
       ),
       IconButton(
         icon: Icon(
