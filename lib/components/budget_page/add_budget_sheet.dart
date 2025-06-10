@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/budget_page/budget_helper.dart';
+import 'package:money_minder/models/recurrence.dart';
 
 import '../../models/currency.dart';
 import '../../repositories/budget_repositories.dart';
@@ -68,7 +69,7 @@ class AddBudgetSheet extends StatelessWidget {
         showNotes: false,
         defaultValue: prop.budget,
         mainCurrency: mainCurrency,
-        onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
+        onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
           Navigator.pop(context);
           _handleSubmit(amount, recurringMonths);
         },

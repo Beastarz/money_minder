@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/utils/account_top_card.dart';
 import 'package:money_minder/components/transaction/transaction_helper.dart';
@@ -79,7 +80,7 @@ class _EditTransferSheetState extends State<EditTransferSheet> {
             mainCurrency: currency,
             defaultValue: widget.oldTransaction.amount,
             defaultDate: widget.oldTransaction.date,
-            onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
+            onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
               _handleSubmit(date, fromAccount, toAccount, amount, currency, note);
               Navigator.pop(context);
             },

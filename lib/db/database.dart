@@ -33,8 +33,8 @@ class DatabaseService {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             balance REAL DEFAULT 0.0, -- Initial balance is 0.0
-            icon INTEGER, -- Storing icon codePoint as INTEGER
-            color INTEGER, -- Storing color value (e.g., hex string)
+            icon INTEGER, -- Storing icon codePoint
+            color INTEGER, -- Storing color value
             description TEXT,
             is_main INTEGER DEFAULT 0, -- Using INTEGER for boolean (0 for false, 1 for true)
             includes_in_total INTEGER DEFAULT 1, -- Using INTEGER for boolean (0 for false, 1 for true)
@@ -50,8 +50,8 @@ class DatabaseService {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             label TEXT NOT NULL,
             position INTEGER, -- the sequence of the category
-            icon INTEGER, -- Storing icon's codePoint as TEXT
-            color INTEGER, -- Storing color value (e.g., hex string)
+            icon INTEGER, -- Storing icon's codePoint
+            color INTEGER, -- Storing color value
             is_expense INTEGER NOT NULL DEFAULT 0 -- Using INTEGER for boolean (0 for false, 1 for true)
           )
         ''');
@@ -60,7 +60,7 @@ class DatabaseService {
     await db.execute('''
           CREATE TABLE transactions(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT, -- Storing date as TEXT (ISO8601 format is recommended)
+            date TEXT, -- Storing date as TEXT (ISO8601 format)
             type TEXT, -- e.g., 'expense', 'income', 'transfer'
             from_account_id INTEGER, -- Assuming foreign key to Account table
             to_account_id INTEGER, -- Assuming foreign key to Account table (for transfers)
@@ -68,6 +68,25 @@ class DatabaseService {
             amount REAL NOT NULL, -- Using REAL for decimal amounts
             currency TEXT NOT NULL,
             note TEXT,
+            FOREIGN KEY (from_account_id) REFERENCES accounts(id),
+            FOREIGN KEY (to_account_id) REFERENCES accounts(id),
+            FOREIGN KEY (to_category_id) REFERENCES categories(id)
+          )
+        ''');
+
+    // create empty recurrence table
+    await db.execute('''
+          CREATE TABLE recurrence(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT, -- Storing date as TEXT (ISO8601 format)
+            type TEXT, -- e.g., 'expense', 'income', 'transfer'
+            from_account_id INTEGER, -- Assuming foreign key to Account table
+            to_account_id INTEGER, -- Assuming foreign key to Account table (for transfers)
+            to_category_id INTEGER, -- Assuming foreign key to Categories table (for expenses/income)
+            amount REAL NOT NULL, -- Using REAL for decimal amounts
+            currency TEXT NOT NULL,
+            note TEXT,
+            recurrence_type TEXT NOT NULL,
             FOREIGN KEY (from_account_id) REFERENCES accounts(id),
             FOREIGN KEY (to_account_id) REFERENCES accounts(id),
             FOREIGN KEY (to_category_id) REFERENCES categories(id)

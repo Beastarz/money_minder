@@ -3,6 +3,7 @@ import 'package:money_minder/components/app_bar/appbar.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/date_filter.dart';
+import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/models/transaction_filter.dart';
 
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
@@ -15,6 +16,7 @@ import 'package:money_minder/repositories/budget_repositories.dart';
 import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/date_filter_repositories.dart';
+import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
@@ -64,13 +66,13 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   List<Account> _accounts = [];
   List<Account> _filteredAccounts = [];
 
+  List<List<Recurrence>> _groupedRecurrence = [];
   List<List<Transaction>> _groupedTransactions = [];
   List<List<Category>> _categories = [];
 
   Currency _mainCurrency = Currency.of('sgd');
 
   DateFilter _dateFilter = DateFilter.fromType(DateFilterType.month);
-
 
   List<List<Budget>> _groupedBudgets = [];
 
@@ -96,6 +98,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     await _fetchDateFilter(); // Date filter is often needed first for transactions/budgets
     await _fetchAccounts();
     await _fetchMainCurrency();
+    await _fetchRecurrence();
     await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter
     await _fetchCategories();
     await _fetchBudgets(); // Depends on _dateFilter
@@ -118,6 +121,16 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     Currency res = await CurrencyRepositories.instance.getMainCurrency();
     setState(() {
       _mainCurrency = res;
+    });
+  }
+
+  Future<void> _fetchRecurrence() async {
+    List<Recurrence> res = await RecurrenceRepositories.instance.getAndCheckRecurrences();
+    setState(() {
+      List<int> filteredAccountIds = _filteredAccounts.map((e) => e.id).toList();
+      List<Recurrence> filteredRecurrences = res.where((r) => filteredAccountIds.contains(r.fromAccount.id)).toList();
+      List<List<Transaction>> tmp  = Transaction.groupTransactionsByDate(filteredRecurrences, _dateFilter.startDates);
+      _groupedRecurrence = tmp.map((ts) => List.castFrom<Transaction, Recurrence>(ts)).toList();
     });
   }
 
@@ -228,7 +241,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onPageChange: _onPageChange,
         categories: _categories,
         groupedBudgets: _groupedBudgets,
-        onAddTransactionReload: () {
+        onAddTransactionReload: () async {
+          await _fetchRecurrence();
           _fetchAccounts();
           _fetchTransactions();
         },

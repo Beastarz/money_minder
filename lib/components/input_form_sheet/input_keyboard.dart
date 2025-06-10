@@ -5,6 +5,7 @@ import 'package:money_minder/components/budget_page/budget_settings_page.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
+import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
@@ -36,7 +37,7 @@ class InputKeyboard extends StatefulWidget {
   final Currency mainCurrency; // default currency of the input
   final int categoryId; // for budget input form usage
   final double expenseAsBudget; // for budget input form usage
-  final void Function(DateTime, double, String, int) onSubmit;
+  final void Function(DateTime, double, String, int, RecurrenceType) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
   final void Function()? onDelete;
   
@@ -68,10 +69,11 @@ class _InputKeyboardState extends State<InputKeyboard> {
   String _message = '';
   DateTime _currDate = DateTime.now();
   String _datePrefix = 'Today';
+  RecurrenceType _recurrenceType = RecurrenceType.none;
 
   bool _showError = false; // show error when user submit negative amount
-  TextEditingController noteController = TextEditingController(text: '');
-  List<Currency> currencies = [];
+  final TextEditingController _noteController = TextEditingController(text: '');
+  List<Currency> _currencies = [];
 
   @override
   void initState() {
@@ -99,7 +101,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   _fetchCurrencies() async {
     List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
     setState(() {
-      currencies = res;
+      _currencies = res;
     });
   }
 
@@ -154,7 +156,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
           !widget.showNotes
           ? SizedBox.shrink()
           : TextField(
-            controller: noteController,
+            controller: _noteController,
             decoration: InputDecoration(
               hintText: 'Notes...',
               border: OutlineInputBorder(
@@ -211,7 +213,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
           _message.isEmpty
             ? SizedBox.shrink()
             : Text(
-                _message,
+                _recurrenceType == RecurrenceType.none ? _message : '$_message, ${_recurrenceType.name[0].toUpperCase()}${_recurrenceType.name.substring(1)}',
                 style: TextStyle(
                     color: AppColor.darkText,
                     fontSize: isSmallScreen
@@ -327,8 +329,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
       widget.onSubmit(
           _currDate,
           double.parse(_currentAmount),
-          noteController.text,
+          _noteController.text,
           _recurringMonths,
+          _recurrenceType,
       );
 
     } else if (buttonText == '\$') {
@@ -337,7 +340,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
           builder: (BuildContext context) {
             return SimpleDialog(
               title: const Text('Choose a currency'),
-              children: currencies.map((currency) =>
+              children: _currencies.map((currency) =>
                   ListTile(
                       title: Text(currency.fullName),
                       onTap: () {
@@ -403,7 +406,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                     CalendarSelectorHelper.selectDate(context, (date) {
                                       setState(() {
                                         _currDate = date;
-                                        _datePrefix = formatDate(_currDate, [dd, ' ', M, ' ', yyyy]);// Update datePrefix
+                                        _datePrefix = formatDate(_currDate, [DD]);// Update datePrefix
                                         _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
                                       });
                                       Navigator.pop(context);
@@ -416,6 +419,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                 PeriodTile(
                                   parentContext: context,
                                   label: 'Yesterday',
+                                  isSelected: _datePrefix == 'Yesterday',
                                   selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
                                   icon: Icons.mode_night_rounded,
                                   onPressed: () {
@@ -433,6 +437,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                   parentContext: context,
                                   label: 'Today',
                                   selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
+                                  isSelected: _datePrefix == 'Today',
                                   icon: Icons.sunny,
                                   onPressed: () {
                                     setState(() {
@@ -448,11 +453,90 @@ class _InputKeyboardState extends State<InputKeyboard> {
                                 PeriodTile(
                                   parentContext: context,
                                   label: 'Recurrence',
-                                  selected: 'None',
+                                  selected: _recurrenceType.name.toUpperCase(),
+                                  isSelected: _recurrenceType != RecurrenceType.none,
                                   icon: Icons.repeat,
                                   onPressed: () {
-                                    // You can show a specific recurrence picker here if needed
-                                    Navigator.pop(context); // Close the current sheet
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SimpleDialog(
+                                            title: Text('Select Recurrence'),
+                                            children: [
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.none;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('None'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.daily;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Daily'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.weekday;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Weekday'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.weekend;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Weekend'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.weekly;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Weekly'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.monthly;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Monthly'),
+                                              ),
+                                              SimpleDialogOption(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _recurrenceType = RecurrenceType.yearly;
+                                                  });
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Yearly'),
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                    );
                                   },
                                 ),
 
