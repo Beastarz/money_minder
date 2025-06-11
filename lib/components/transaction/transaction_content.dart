@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/transaction/transaction_tile.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/transaction.dart';
+import '../recurrence/recurrence_tile.dart';
 
 class TransactionsContent extends StatelessWidget {
-  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload, required this.isInFiltered,});
+  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload, required this.isInFiltered, required this.recurrences,});
 
   final List<Transaction> transactions;
+  final List<Recurrence> recurrences;
   final double initialBalance;
   final double finalBalance;
   final Currency mainCurrency;
@@ -18,8 +21,9 @@ class TransactionsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     List<List<Transaction>> groupedTransactionsByDate = groupTransactionsByDate(transactions.reversed.toList());
+    List<List<Transaction>> groupedRecurrencesByDate = groupTransactionsByDate(recurrences.reversed.toList());
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16),
       child: Column(
@@ -69,6 +73,13 @@ class TransactionsContent extends StatelessWidget {
               )
             ],
           ),
+          /// Recurrence
+          recurrences.isEmpty ? Container() : ExpansionTile(
+            title: Text("Upcoming Transactions (${recurrences.length})", style: TextStyle(fontSize: 16),),
+            minTileHeight: 20,
+            children: groupedRecurrencesByDate.map((r) => RecurrenceTile(recurrences: List.castFrom<Transaction, Recurrence>(r), onTransactionReload: onTransactionReload,)).toList(),
+          )
+          /// Transactions
         ] + List<Widget>.from(transactions.isEmpty ? [Center(child: Text('No Transactions Here'),)] : groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),)
       ),
     );

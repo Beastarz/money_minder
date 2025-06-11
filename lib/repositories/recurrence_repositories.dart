@@ -1,6 +1,5 @@
 import 'package:money_minder/components/transaction/transaction_helper.dart';
 import 'package:money_minder/models/recurrence.dart';
-import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../db/database.dart';
@@ -76,6 +75,13 @@ class RecurrenceRepositories {
   Future<void> updateRecurrence(Recurrence recurrence) async {
     Database db = await dbService.database;
     await db.update('recurrence', recurrence.toMap(), where: 'id = ?', whereArgs: [recurrence.id]);
+  }
+
+
+  Future<void> deleteRecurrenceByAccountId(int id) async {
+    Database db = await dbService.database;
+    await db.delete('recurrence', where: 'from_account_id = ?', whereArgs: [id]);
+    await db.delete('recurrence', where: 'to_account_id = ?', whereArgs: [id]);
   }
 
   Future<void> deleteRecurrence(int id) async {

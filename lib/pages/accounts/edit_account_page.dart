@@ -278,31 +278,30 @@ class _EditAccountPageState extends State<EditAccountPage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return SimpleDialog(
+                      return AlertDialog(
                         title: Text('Delete account?'),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  () async {
-                                    await AccountsRepository.instance.deleteAccount(account.id);
-                                    widget.onReload();
-                                  }();
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Delete'),
-                              )
-                            ],
+                          content: Text('Related Transactions will also be deleted but other account balance will remain unchanged. This action cannot be undone.'),
+                          actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              () async {
+                                await AccountsRepository.instance.deleteAccount(account.id);
+                                widget.onReload();
+                              }();
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           )
                         ]
                       );

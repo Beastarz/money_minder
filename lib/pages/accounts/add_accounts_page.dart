@@ -54,25 +54,21 @@ class _AddAccountPageState extends State<AddAccountPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
       return;
     }
-    try {
-      Map<String, dynamic> accountData = Account.insertAsMap(
-        name: _nameController.text,
-        balance: double.parse(_accountBalanceController.text) * (accountType == AccountType.debts ? -1 : 1),
-        icon: icon,
-        color: color,
-        description: _descriptionController.text,
-        isIncludesInTotal: _includeInTotalBalance,
-        type: accountType,
-        currency: mainCurrency,
-      );
-      () async {
-        await AccountsRepository.instance.createAccount(accountData);
-        widget.onAddAccount();
-      }();
-      Navigator.pop(context);
-    } catch(e) {
-      print(e);
-    }
+    Map<String, dynamic> accountData = Account.insertAsMap(
+      name: _nameController.text,
+      balance: double.parse(_accountBalanceController.text) * (accountType == AccountType.debts ? -1 : 1),
+      icon: icon,
+      color: color,
+      description: _descriptionController.text,
+      isIncludesInTotal: _includeInTotalBalance,
+      type: accountType,
+      currency: mainCurrency,
+    );
+    () async {
+      await AccountsRepository.instance.createAccount(accountData);
+      widget.onAddAccount();
+    }();
+    Navigator.pop(context);
   }
 
   @override

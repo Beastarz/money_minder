@@ -176,13 +176,15 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
     });
   }
 
-  void _onDateFilterChange(DateFilter dateFilter) {
+  void _onDateFilterChange(DateFilter dateFilter) async {
     setState(() {
       _dateFilter = dateFilter;
       _currentPageIndex = dateFilter.initialPageIndex;
-      _fetchTransactions();
-      _fetchBudgets();
     });
+    await _fetchRecurrence();
+    _fetchTransactions();
+    _fetchBudgets();
+
   }
 
   void _onTransactionFilterChange(
@@ -227,7 +229,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       AccountsPage(
           accounts: _accounts,
           mainCurrency: _mainCurrency,
-          onReload: () {
+          onReload: () async {
+            await _fetchRecurrence();
             _fetchAccounts();
             _fetchTransactions();
           },
@@ -254,12 +257,14 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         filteredAccountBalance: Account.getBalance(_filteredAccounts, _mainCurrency),
         mainCurrency: _mainCurrency,
         groupedTransactions: _groupedTransactions.map((t) => transactionFilter.filterTransactions(t)).toList(),
+        groupedRecurrence:  _groupedRecurrence.map((t) => List.castFrom<Transaction, Recurrence>(transactionFilter.filterTransactions(t))).toList(),
         isInFiltered: !transactionFilter.isOff,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
-        onTransactionReload: () {
+        onTransactionReload: () async {
+          await _fetchRecurrence();
           _fetchAccounts();
           _fetchTransactions();
         },

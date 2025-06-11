@@ -53,7 +53,7 @@ class Recurrence extends Transaction {
   });
 
   factory Recurrence.fromMap(Map<String, dynamic> map, Account fromAccount, Account? toAccount, Category? category, Currency mainCurrency) {
-    return Recurrence(
+    Recurrence temp = Recurrence(
         id: map['id'],
         date: DateTime.parse(map['date']),
         type: map['type'] == 'expense'
@@ -70,6 +70,16 @@ class Recurrence extends Transaction {
         note: map['note'],
         recurrenceType: stringToRecurrenceType(map['recurrence_type'])
     );
+    if (temp.recurrenceType == RecurrenceType.weekday) {
+      if (temp.date.weekday == DateTime.saturday || temp.date.weekday == DateTime.sunday) {
+        temp = temp.increment();
+      }
+    } else if (temp.recurrenceType == RecurrenceType.weekend) {
+      if (temp.date.weekday != DateTime.saturday && temp.date.weekday != DateTime.sunday) {
+        temp = temp.increment();
+      }
+    }
+    return temp;
   }
 
   @override
@@ -122,7 +132,7 @@ class Recurrence extends Transaction {
         }
       case RecurrenceType.weekend:
         newDate = date.add(const Duration(days: 1));
-        while (newDate.weekday != DateTime.saturday || newDate.weekday != DateTime.sunday) {
+        while (newDate.weekday != DateTime.saturday && newDate.weekday != DateTime.sunday) {
           newDate = newDate.add(const Duration(days: 1));
         }
       case RecurrenceType.monthly:

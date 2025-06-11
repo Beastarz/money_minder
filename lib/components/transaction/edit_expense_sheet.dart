@@ -8,6 +8,7 @@ import 'package:money_minder/models/currency.dart';
 
 import '../../models/category.dart';
 import '../../models/transaction.dart';
+import '../../repositories/recurrence_repositories.dart';
 import '../../style/app_size.dart';
 import '../input_form_sheet/input_form_helper.dart';
 import '../input_form_sheet/input_form_sheet.dart';
@@ -84,7 +85,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
               ),
               mainCurrency: currency,
               onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
-                _handleSubmit(date, fromAccount, toCategory, amount, currency, note);
+                _handleSubmit(date, fromAccount, toCategory, amount, currency, note, recurrenceType);
                 Navigator.pop(context);
               },
               defaultValue: widget.oldTransaction.amount,
@@ -109,8 +110,29 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
     );
   }
 
-  void _handleSubmit(DateTime date, Account fromAccount, Category toCategory, double amount, Currency currency, String note) async {
-    await TransactionHelper.editExpense(widget.oldTransaction, date, fromAccount.id, toCategory, amount, currency, note);
+  void _handleSubmit(DateTime date, Account fromAccount, Category toCategory, double amount, Currency currency, String note, RecurrenceType recurrenceType) async {
+    if (recurrenceType == RecurrenceType.none && (date.isBefore(DateTime.now()) || date.isAtSameMomentAs(DateTime.now()))) {
+      await TransactionHelper.editExpense(
+          widget.oldTransaction,
+          date,
+          fromAccount.id,
+          toCategory,
+          amount,
+          currency,
+          note);
+    } else {
+      TransactionHelper.deleteExpense(widget.oldTransaction);
+      await RecurrenceRepositories.instance.createRecurrence(Recurrence.insertAsMap(
+          date: date,
+          type: toCategory.isExpense ? TransactionType.expense : TransactionType.income,
+          fromAccountId: fromAccount.id,
+          toCategoryId: toCategory.id,
+          amount: amount,
+          currency: currency,
+          note: note,
+          recurrenceType: recurrenceType
+      ));
+    }
     widget.onEditTransactionReload();
   }
 }
