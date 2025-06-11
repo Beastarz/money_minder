@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../style/app_size.dart';
+
 // For displaying text with currency and balance
 class BalanceText extends StatelessWidget {
   final double balance;
@@ -10,6 +12,7 @@ class BalanceText extends StatelessWidget {
   final double size;
   final Color? fontColor;
   final double? textWidth;
+  final Color fillColor;
 
   const BalanceText({
     super.key,
@@ -21,6 +24,7 @@ class BalanceText extends StatelessWidget {
     this.size = 21,
     this.fontColor,
     this.textWidth,
+    this.fillColor = Colors.transparent,
   });
 
   @override
@@ -38,33 +42,40 @@ class BalanceText extends StatelessWidget {
     if (fontColor != null) {
       color = fontColor!;
     }
-    return Row(
-      mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-        currencyName,
-          style: TextStyle(
-            color: color,
-            fontSize: size - 4,
-          )
-        ),
-        const SizedBox(width: 4,),
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: textWidth ?? double.infinity,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppSize.borderRadius),
+        color: fillColor,
+      ),
+      child: Row(
+        mainAxisAlignment: mainAxisAlignment,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+          currencyName,
+            style: TextStyle(
+              color: color,
+              fontSize: size - 4,
+            )
           ),
-          child: Text(
-              balance.toStringAsFixed(2),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w500,
-                fontSize: size,
-              )
+          const SizedBox(width: 4,),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: textWidth ?? double.infinity,
+            ),
+            child: Text(
+                balance.toStringAsFixed(2),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w500,
+                  fontSize: size,
+                )
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

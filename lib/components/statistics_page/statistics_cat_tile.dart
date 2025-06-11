@@ -14,6 +14,7 @@ class StatisticsCatTile extends StatelessWidget {
   final Currency mainCurrency;
   final void Function(CategoryProp) onPressed;
   final double totalAmount;
+  final double percentage;
 
   const StatisticsCatTile({
     super.key,
@@ -21,19 +22,24 @@ class StatisticsCatTile extends StatelessWidget {
     required this.mainCurrency,
     required this.onPressed,
     required this.totalAmount,
+    required this.percentage,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final double percentage = totalAmount == 0
-        ? 0
-        : prop.actualAmount / totalAmount;
+    final double shownPercentage = totalAmount == 0
+      ? 0
+      : prop.actualAmount / totalAmount;
+    // Calculate the color gradient
     final double fraction = prop.budget == 0
       ? 1
       : prop.actualAmount / prop.budget;
     Color topColor = prop.color.withAlpha((0.3 * 255).round());
     Color bottomColor = prop.color;
+    final bool exceed = (prop.isExpense
+        ? prop.budget < prop.actualAmount
+        : prop.actualAmount < prop.budget) && prop.budget != 0;
 
     Widget categoryIcon = Container(
         height: 40,
@@ -71,7 +77,7 @@ class StatisticsCatTile extends StatelessWidget {
           backgroundColor: AppColor.tertiary,
           progressColor: CategoryHelper.lightenColor(prop.color, 0.5),
           center: Text(
-            "${(percentage * 100).toStringAsFixed(2)}%",
+            "${(shownPercentage * 100).toStringAsFixed(2)}%",
             style: TextStyle(fontSize: 12.0),
           ),
           leading: Column(
@@ -98,9 +104,12 @@ class StatisticsCatTile extends StatelessWidget {
                 BalanceText(
                   balance: prop.actualAmount,
                   currencyName: mainCurrency.toString(),
-                  fontColor: prop.color,
+                  fontColor: exceed ? AppColor.darkText : prop.color,
                   size: 16,
                   textWidth: 70,
+                  fillColor: exceed
+                      ? CategoryHelper.lightenColor(prop.color, 0.3)
+                      : Colors.transparent,
                 ),
                 BalanceText(
                   balance: prop.budget,

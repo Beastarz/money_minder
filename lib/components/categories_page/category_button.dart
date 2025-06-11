@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
+import '../../style/app_size.dart';
+import 'category_helper.dart';
 
 class CategoryProp {
 
@@ -133,6 +135,9 @@ class _CategoryButtonState extends State<CategoryButton>
         ? 0.00
         : 1 - (prop.actualAmount / prop.budget);
     fraction = fraction < 0 ? 0 : fraction;
+    final bool exceed = (prop.isExpense
+        ? prop.budget < prop.actualAmount
+        : prop.actualAmount < prop.budget) && prop.budget != 0;
 
     setState(() {
       isLooping = prop.pieTouchedIndex == prop.position;
@@ -224,15 +229,24 @@ class _CategoryButtonState extends State<CategoryButton>
         Column(
           children: [
             const SizedBox(height: 2),
-            Text(
-              prop.budget != 0
-                  ? '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)} / '
-                  '${prop.budget.toStringAsFixed(2)}'
-                  : '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(fontSize: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: exceed
+                    ? CategoryHelper.lightenColor(prop.color, 0.3)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(AppSize.borderRadius),
+              ),
+              child: Text(
+                prop.budget != 0
+                    ? '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)} / '
+                    '${prop.budget.toStringAsFixed(2)}'
+                    : '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: TextStyle(fontSize: 10),
+              ),
             ),
           ],
         )

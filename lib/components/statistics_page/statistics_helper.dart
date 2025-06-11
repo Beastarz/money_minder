@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../categories_page/category_button.dart';
@@ -54,11 +56,36 @@ class StatisticsHelper {
       case SortOptions.percentage:
         category.sort((a, b) => ascending
             ? totalAmount == 0
-              ? -1
+              ? a.position.compareTo(b.position)
               : (a.actualAmount / totalAmount).compareTo(b.actualAmount / totalAmount)
             : totalAmount == 0
-              ? 1
+              ? b.position.compareTo(a.position)
               : (b.actualAmount / totalAmount).compareTo(a.actualAmount / totalAmount));
     }
+  }
+
+  /// Helper method to normalize the percentage of actual amount of each category over total amount
+  ///
+  /// Parameters:
+  ///
+  /// List\<CategoryProp\> category: the list of categories
+  ///
+  /// double totalAmount: the total amount of the categories
+  ///
+  /// return: List\<double\>
+  static List<double> calculatePercentages(List<CategoryProp> category, double totalAmount) {
+    double highestPercentage = 0;
+    List<double> percentages = [];
+    for (CategoryProp cat in category) {
+      percentages.add(totalAmount == 0 ? 0 : cat.actualAmount / totalAmount);
+      highestPercentage = max(highestPercentage, percentages.last);
+    }
+    if (highestPercentage == 0) {
+      return percentages;
+    }
+    for (int i = 0; i < percentages.length; i++) {
+      percentages[i] = percentages[i] / highestPercentage;
+    }
+    return percentages;
   }
 }

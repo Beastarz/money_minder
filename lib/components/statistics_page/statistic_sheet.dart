@@ -8,6 +8,7 @@ import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../categories_page/category_button.dart';
 import '../categories_page/category_helper.dart';
+import 'chart_pages.dart';
 
 class StatisticsSheet extends StatefulWidget {
 
@@ -41,6 +42,10 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
   bool _isAscending = false;
   SortOptions _currentSortOption = SortOptions.percentage;
+  List<CategoryProp> _category = [];
+  List<double> _percentages = [];
+  int _currentPage = 0;
+  bool isExpanded = false;
 
   void catTileOnPressed(CategoryProp prop) {
     CategoryHelper.showCategoryCard(
@@ -54,15 +59,50 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
     );
   }
 
+  void onLoad() {
+    setState(() {
+      _category = widget.categories[widget.isExpense
+          ? 0
+          : 1];
+      _percentages = StatisticsHelper.calculatePercentages(
+          _category, widget.totalAmounts[widget.isExpense ? 0 : 1]
+      );
+      StatisticsHelper.sortCategories(
+          _category, _isAscending, _currentSortOption,
+          widget.totalAmounts[widget.isExpense ? 0 : 1]);
+    });
+  }
+
+  void shrinkChart() {
+    setState(() {
+      isExpanded = false;
+    });
+  }
+
+  void updateCurrentPage(int index) {
+    setState(() {
+      _currentPage = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    onLoad();
+  }
+
+  @override
+  void didUpdateWidget(covariant StatisticsSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    onLoad();
+  }
+
   @override
   Widget build(BuildContext context) {
 
 
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double expandedHeight = isSmallScreen ? 145 : 200;
-    List<CategoryProp> category = widget.categories[widget.isExpense ? 0 : 1];
-    StatisticsHelper.sortCategories(
-        category, _isAscending, _currentSortOption, widget.totalAmounts[widget.isExpense ? 0 : 1]);
 
     return Scaffold(
       body: CustomScrollView(
@@ -93,31 +133,44 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   title: Opacity(
                     opacity: opacity,
                     child: widget.isExpense
-                        ? Text('Statistics Expense Page')
-                        : Text('Statistics Income Page'),
+                        ? Text('Expenses')
+                        : Text('Income'),
                   ),
                   centerTitle: true, // Center the title in the flexible space.
-                  background: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppSize.borderRadius),
-                    ),
-                    child: Center(child: Text("Statistics..."))
-                  ),
+                  background: isExpanded ? null : ChartPages(
+                      isExpanded: false,
+                      currentPage: _currentPage,
+                      updateCurrentPage: updateCurrentPage,
+                  )
                 );
               },
             ),
 
-            // Actions on the right side of the app bar.
-            actions: <Widget>[
+            actions: [
               IconButton(
-                icon: const Icon(Icons.fullscreen),
-                onPressed: () {
-
-                  // Handle settings action
-                  /// TODO: expand the chart
-
-                },
-              ),
+              icon: const Icon(Icons.fullscreen),
+              onPressed: () {
+                setState(() {
+                  isExpanded = true;
+                });
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                        child: RotatedBox(
+                            quarterTurns: 1,
+                            child: ChartPages(
+                                isExpanded: true,
+                                shrinkChart: shrinkChart,
+                                currentPage: _currentPage,
+                                updateCurrentPage: updateCurrentPage,
+                            )
+                        )
+                    );
+                  }
+                );
+              })
             ],
           ),
 
@@ -141,7 +194,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                           _currentSortOption = newValue;
                           // Re-sort the categories when the sort option changes
                           StatisticsHelper.sortCategories(
-                              category, _isAscending, newValue, widget.totalAmounts[widget.isExpense ? 0 : 1]);
+                              _category, _isAscending, newValue, widget.totalAmounts[widget.isExpense ? 0 : 1]);
                         });
                       }
                     },
@@ -177,7 +230,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                         _isAscending = !_isAscending;
                         // Re-sort the categories when the sort order changes
                         StatisticsHelper.sortCategories(
-                            category, _isAscending, _currentSortOption, widget.totalAmounts[widget.isExpense ? 0 : 1]);
+                            _category, _isAscending, _currentSortOption, widget.totalAmounts[widget.isExpense ? 0 : 1]);
                       });
                     },
                   ),
@@ -191,14 +244,15 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                 return StatisticsCatTile(
-                    prop: category[index],
+                    prop: _category[index % _category.length],
                     mainCurrency: widget.mainCurrency,
                     onPressed: catTileOnPressed,
                     totalAmount: widget.totalAmounts[widget.isExpense ? 0 : 1],
+                    percentage: _percentages[_category[index % _category.length].position],
                 );
                 //     return StatisticsCatTile(prop: category[index]);
               },
-              childCount: category.length, // Number of items in the list
+              childCount: _category.length * 10, // Number of items in the list
             ),
           ),
         ],
