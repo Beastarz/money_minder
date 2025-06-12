@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/models/transaction.dart';
+import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/utils/account_top_card.dart';
 import 'package:money_minder/components/transaction/transaction_helper.dart';
 import 'package:money_minder/models/account.dart';
@@ -79,8 +81,8 @@ class _EditTransferSheetState extends State<EditTransferSheet> {
             mainCurrency: currency,
             defaultValue: widget.oldTransaction.amount,
             defaultDate: widget.oldTransaction.date,
-            onSubmit: (DateTime date, double amount, String note, int recurringMonths) {
-              _handleSubmit(date, fromAccount, toAccount, amount, currency, note);
+            onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
+              _handleSubmit(date, fromAccount, toAccount, amount, currency, note, recurrenceType);
               Navigator.pop(context);
             },
             onCurrencyUpdate: (Currency currency) {
@@ -102,8 +104,29 @@ class _EditTransferSheetState extends State<EditTransferSheet> {
     );
   }
 
-  void _handleSubmit(DateTime date, Account fromAccount, Account toAccount, double amount, Currency currency, String note) async {
-    await TransactionHelper.updateTransfer(widget.oldTransaction,date, fromAccount.id, toAccount.id, amount, currency, note);
+  void _handleSubmit(DateTime date, Account fromAccount, Account toAccount, double amount, Currency currency, String note, RecurrenceType recurrenceType) async {
+    if (recurrenceType == RecurrenceType.none && (date.isBefore(DateTime.now()) || date.isAtSameMomentAs(DateTime.now()))) {
+      await TransactionHelper.updateTransfer(
+          widget.oldTransaction,
+          date,
+          fromAccount.id,
+          toAccount.id,
+          amount,
+          currency,
+          note);
+    } else {
+      TransactionHelper.deleteTransfer(widget.oldTransaction);
+      await RecurrenceRepositories.instance.createRecurrence(Recurrence.insertAsMap(
+          date: date,
+          type: TransactionType.transfer,
+          fromAccountId: fromAccount.id,
+          toAccountId: toAccount.id,
+          amount: amount,
+          currency: currency,
+          note: note,
+          recurrenceType: recurrenceType
+      ));
+    }
     widget.onAddTransactionReload();
   }
 }
