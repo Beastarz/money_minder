@@ -4,6 +4,7 @@ import 'package:money_minder/models/currency.dart';
 
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../models/date_filter.dart';
+import '../../models/recurrence.dart';
 import '../../models/transaction.dart';
 
 /// page that shows the transactions
@@ -19,11 +20,13 @@ class TransactionsPage extends StatefulWidget {
     required this.onPageChange,
     required this.onTransactionReload,
     required this.isInFiltered,
+    required this.groupedRecurrence,
   });
 
   final double filteredAccountBalance;
   final Currency mainCurrency;
   final List<List<Transaction>> groupedTransactions;
+  final List<List<Recurrence>> groupedRecurrence;
   final DateFilter dateFilter;
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
@@ -94,6 +97,7 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       _pages = widget.groupedTransactions.indexed.map((transactions) =>
           TransactionsContent(
             transactions: transactions.$2,
+            recurrences: widget.groupedRecurrence[transactions.$1],
             initialBalance: accumulatedBalance[transactions.$1],
             finalBalance: accumulatedBalance[transactions.$1 + 1],
             mainCurrency: widget.mainCurrency,

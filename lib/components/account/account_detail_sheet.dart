@@ -190,16 +190,31 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     icon: Icon(Icons.delete_outline, color: Colors.red,),
                     onPressed: () {
                       showDialog(context: context, builder: (BuildContext context) {
-                        return ConfirmationDialog(
-                            message: 'Delete Account?',
-                            onConfirm: () {
-                              () async {
-                                await AccountsRepository.instance.deleteAccount(widget.account.id);
-                                widget.onReload();
-                              }();
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
+                        return AlertDialog(
+                            title: Text('Delete account?'),
+                            content: Text('Related Transactions will also be deleted but other account balance will remain unchanged. This action cannot be undone.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  () async {
+                                    await AccountsRepository.instance.deleteAccount(widget.account.id);
+                                    widget.onReload();
+                                  }();
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              )
+                            ]
                         );
                       });
                     }
