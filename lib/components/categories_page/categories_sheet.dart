@@ -46,7 +46,7 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
   int _toPosition = 0;
 
   void updateDataBase() async {
-    await CategoryHelper.swapPosition(
+    await CategoryHelper.movePosition(
         _fromPosition,
         _toPosition,
         widget.categories);

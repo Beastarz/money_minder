@@ -244,6 +244,17 @@ class CategoryHelper {
     );
   }
 
+  /// get the ids of the categories from the positions
+  ///
+  /// Parameters:
+  ///
+  /// int fromPosition: the position of the first category
+  ///
+  /// int toPosition: the position of the last category
+  ///
+  /// List\<CategoryProp\> categories: the list of categories
+  ///
+  /// return: List\<int\>
   static List<int> getIdsFromPositions(
       int fromPosition, int toPosition, List<CategoryProp> categories) {
     List<int> ids = [];
@@ -253,7 +264,18 @@ class CategoryHelper {
     return ids;
   }
 
-  static Future<void> swapPosition(int fromPosition, int toPosition, List<CategoryProp> categories) async {
+  /// move all the categories in between fromPosition and toPosition
+  ///
+  /// Parameters:
+  ///
+  /// int fromPosition: the position of the first category
+  ///
+  /// int toPosition: the position of the last category
+  ///
+  /// List\<CategoryProp\> categories: the list of categories
+  ///
+  /// return: void
+  static Future<void> movePosition(int fromPosition, int toPosition, List<CategoryProp> categories) async {
     if (fromPosition > toPosition) {
       // bring the item at the back to the front
 
