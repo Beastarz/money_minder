@@ -14,31 +14,26 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Center(child: Text(title)),
+    return Stack(
+      children: <Widget>[
+        Center(child: Text(title)),
 
-          isExpanded
-          ? Positioned(
-            bottom: 5,
-            right: 5,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                shrinkChart!();
-              },
-              icon: const Icon(Icons.fullscreen_exit_outlined,
-                size: 30
-              ),
+        isExpanded
+        ? Positioned(
+          bottom: 5,
+          right: 5,
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+              shrinkChart!();
+            },
+            icon: const Icon(Icons.fullscreen_exit_outlined,
+              size: 30
             ),
-          )
-          : SizedBox.shrink(),
-        ],
-      ),
+          ),
+        )
+        : SizedBox.shrink(),
+      ],
     );
   }
 }

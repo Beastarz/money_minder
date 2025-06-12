@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_size.dart';
@@ -31,26 +32,37 @@ class CategoriesSheet extends StatelessWidget {
 
     // check if screen is small
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+    // final List<Widget> categoryButtons = List.generate(
+    //   _fruits.length,
+    //       (index) => Container(
+    //     key: Key(_fruits.elementAt(index)),
+    //     color: Colors.lightBlue,
+    //     child: Text(
+    //       _fruits.elementAt(index),
+    //     ),
+    //   ),
+    // );
+    // // final ScrollController _scrollController = ScrollController();
 
 
     return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      padding: EdgeInsets.all(AppSize.smallPadding),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        childAspectRatio: 0.8,
-        crossAxisCount: isSmallScreen ? 3 : 4,
-        crossAxisSpacing: 4.0,
-      ),
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        categories[index].pieTouchedIndex = pieTouchedIndex;
-        return CategoryButton(
-          prop: categories[index],
-          categoriesButtonOnPressed: categoriesButtonOnPressed,
-          mainCurrency: mainCurrency,
-        );
-      },
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: EdgeInsets.all(AppSize.smallPadding),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          childAspectRatio: 0.8,
+          crossAxisCount: isSmallScreen ? 3 : 4,
+          crossAxisSpacing: 4.0,
+        ),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          categories[index].pieTouchedIndex = pieTouchedIndex;
+          return CategoryButton(
+            prop: categories[index],
+            categoriesButtonOnPressed: categoriesButtonOnPressed,
+            mainCurrency: mainCurrency,
+          );
+        },
     );
   }
 }
