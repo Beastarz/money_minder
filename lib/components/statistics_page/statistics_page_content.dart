@@ -14,6 +14,7 @@ class StatisticsPageContent extends StatefulWidget {
   final Currency mainCurrency;
   final bool disabledAddBudget;
   final DateTime startDate;
+  final DateTime defaultDateForTransaction;
   final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
 
@@ -27,6 +28,7 @@ class StatisticsPageContent extends StatefulWidget {
     required this.startDate,
     required this.onAddTransactionReload,
     required this.onBudgetReload,
+    required this.defaultDateForTransaction,
   });
 
   @override
@@ -76,6 +78,7 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
               categories: widget.categories,
               mainCurrency: widget.mainCurrency,
               startDate: widget.startDate,
+              defaultDateForTransaction: widget.defaultDateForTransaction,
               disabledAddBudget: widget.disabledAddBudget,
               onAddTransactionReload: widget.onAddTransactionReload,
               onBudgetReload: widget.onBudgetReload,

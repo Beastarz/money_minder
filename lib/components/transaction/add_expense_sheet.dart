@@ -15,18 +15,19 @@ import '../input_form_sheet/input_form_helper.dart';
 import '../input_form_sheet/input_form_sheet.dart';
 import '../input_form_sheet/input_keyboard.dart';
 
-class EditExpenseSheet extends StatefulWidget {
-  const EditExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload });
+class AddExpenseSheet extends StatefulWidget {
+  const AddExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload, required this.defaultDate });
 
   final Currency mainCurrency;
   final Category toCategory;
+  final DateTime defaultDate;
   final void Function() onAddTransactionReload;
 
   @override
-  State<EditExpenseSheet> createState() => _EditExpenseSheetState();
+  State<AddExpenseSheet> createState() => _AddExpenseSheetState();
 }
 
-class _EditExpenseSheetState extends State<EditExpenseSheet> {
+class _AddExpenseSheetState extends State<AddExpenseSheet> {
   Account? fromAccount;
   late Category toCategory;
   late Currency currency;
@@ -90,6 +91,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
           }
           ),
           mainCurrency: currency,
+          defaultDate: widget.defaultDate,
           onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
             _handleSubmit(date, fromAccount!, toCategory, amount, currency, note, recurrenceType);
             Navigator.pop(context);

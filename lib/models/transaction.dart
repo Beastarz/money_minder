@@ -10,7 +10,7 @@ enum TransactionType {
 
 class Transaction {
   final int id;
-  final DateTime date;
+  late final DateTime date;
   final TransactionType type;
   final Account fromAccount;
   final Account? toAccount;
@@ -22,7 +22,7 @@ class Transaction {
 
   Transaction({
     required this.id,
-    required this.date,
+    required DateTime date,
     required this.type,
     required this.fromAccount,
     required this.toAccount,
@@ -31,7 +31,9 @@ class Transaction {
     required this.currency,
     required this.mainCurrency,
     required this.note,
-  });
+  }) {
+    this.date = DateTime(date.year, date.month, date.day);
+  }
 
   get mainAmount => Currency.convert(currency, mainCurrency, amount);
 
