@@ -27,6 +27,16 @@ class CategoriesRepositories {
     return result.map((row) => Category.fromMap(row)).toList();
   }
 
+  Future<void> updatePosition(int id, int newPosition) async {
+    final db = await dbService.database;
+    await db.update(
+        'categories',
+        {'position': newPosition},
+        where: 'id = ?',
+        whereArgs: [id]
+    );
+  }
+
   Future<void> close() async {
     final db = await dbService.database;
     await db.close();

@@ -1,4 +1,3 @@
-import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:sqflite/sqflite.dart';

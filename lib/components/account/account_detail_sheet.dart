@@ -5,7 +5,6 @@ import 'package:money_minder/components/transaction/add_transfer_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/pages/accounts/edit_account_page.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/utils/confirmation_dialog.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';

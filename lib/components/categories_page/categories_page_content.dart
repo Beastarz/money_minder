@@ -19,6 +19,7 @@ class CategoriesPageContent extends StatefulWidget {
   final DateTime startDate;
   final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
+  final void Function() onCategoryReload;
 
   const CategoriesPageContent({
     super.key,
@@ -29,6 +30,7 @@ class CategoriesPageContent extends StatefulWidget {
     required this.startDate,
     required this.onAddTransactionReload,
     required this.onBudgetReload,
+    required this.onCategoryReload,
   });
 
   @override
@@ -125,8 +127,14 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
           isExpense: _isExpense,
           pieTouchedIndex: _pieTouchedIndex,
           categoriesButtonOnPressed: categoriesButtonOnPressed,
-          categories: categories,
+          categories: List.from(categories),
           mainCurrency: widget.mainCurrency,
+          onCategoryReload: widget.onCategoryReload,
+          resetPieIndex: () {
+            setState(() {
+              _pieTouchedIndex = -1;
+            });
+          }
       )]
     );
   }

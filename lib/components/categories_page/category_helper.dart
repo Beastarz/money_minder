@@ -6,6 +6,7 @@ import 'package:money_minder/models/date_filter.dart';
 import '../../models/budget.dart';
 import '../../models/currency.dart';
 import '../../models/transaction.dart';
+import '../../repositories/categories_repositories.dart';
 import '../budget_page/add_budget_sheet.dart';
 import '../transaction/add_expense_sheet.dart';
 import 'category_button.dart';
@@ -92,6 +93,10 @@ class CategoryHelper {
       DateFilter dateFilter
       ) {
 
+    // for (Category c in categories) {
+    //   print("${c.label} ${c.position}");
+    // }
+
     // calculate the total amount of each category
     List<double> amounts = [];
     for (int i = 0; i < categories.length; i++) {
@@ -99,20 +104,16 @@ class CategoryHelper {
     }
     TransactionType targetType =
       isExpense ? TransactionType.expense : TransactionType.income;
-    for (Transaction t in transactions) {
+    for (int i = 0; i < transactions.length; i++) {
+      Transaction t = transactions[i];
       if (t.type == targetType) {
-        int catIndex = t.toCategory!.position;
-        amounts[catIndex] += t.mainAmount;
+        amounts[t.toCategory!.position] += t.mainAmount;
         totalAmounts[isExpense ? 0 : 1] += t.mainAmount;
       }
     }
 
-    // sort the categories according to their position
-    categories.sort((a, b) => a.position.compareTo(b.position));
-
     // convert the categories to CategoryButtonProps
     List<CategoryProp> result = [];
-    // final double coefficient = getBudgetCoefficient(dateFilter);
     for (int i = 0; i < categories.length; i++) {
       Category category = categories[i];
       double budget = getBudget(budgets, category.id);
@@ -123,10 +124,16 @@ class CategoryHelper {
             label: category.label,
             icon: category.icon,
             color: category.color,
-            actualAmount: amounts[category.position],
+            actualAmount: amounts[i],
             budget: budget,
             isExpense: category.isExpense)
       );
+    }
+
+    for (CategoryProp c in result) {
+      if (c.actualAmount == 0) {
+        continue;
+      }
     }
     return result;
   }
@@ -235,5 +242,47 @@ class CategoryHelper {
         );
       },
     );
+  }
+
+  static List<int> getIdsFromPositions(
+      int fromPosition, int toPosition, List<CategoryProp> categories) {
+    List<int> ids = [];
+    for (int i = fromPosition; i <= toPosition; i++) {
+      ids.add(categories[i].id);
+    }
+    return ids;
+  }
+
+  static Future<void> swapPosition(int fromPosition, int toPosition, List<CategoryProp> categories) async {
+    if (fromPosition > toPosition) {
+      // bring the item at the back to the front
+
+      List<int> ids = getIdsFromPositions(toPosition, fromPosition, categories);
+
+      // set the position of the last category to the first
+      await CategoriesRepositories.instance.updatePosition(
+          ids.last, toPosition);
+
+      // add the position of the remaining categories by 1
+      for (int i = toPosition + 1; i <= fromPosition; i++) {
+        await CategoriesRepositories.instance.updatePosition(
+            ids[i - toPosition - 1], i);
+      }
+    } else {
+
+      // bring the item at the front to the back
+
+      List<int> ids = getIdsFromPositions(fromPosition, toPosition, categories);
+
+      // set the position of the last category to the first
+      await CategoriesRepositories.instance.updatePosition(
+          ids.first, toPosition);
+
+      // add the position of the remaining categories by 1
+      for (int i = fromPosition + 1; i <= toPosition; i++) {
+        await CategoriesRepositories.instance.updatePosition(
+            ids[i - fromPosition], i - 1);
+      }
+    }
   }
 }
