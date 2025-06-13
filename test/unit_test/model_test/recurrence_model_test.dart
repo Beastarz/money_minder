@@ -7,7 +7,6 @@ import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/models/transaction.dart';
 
 void main() {
-  // Define some common test data
   final sgdCurrency = Currency.of('sgd');
   final myrCurrency = Currency.of('myr');
   final mainCurrency = sgdCurrency;

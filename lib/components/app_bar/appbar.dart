@@ -97,7 +97,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
               )
             ),
             BalanceText(
-              balance: Account.getBalance(filteredAccounts, mainCurrency),
+              balance: Account.calculateBalance(filteredAccounts, mainCurrency),
               currencyName: mainCurrency.toString(),
               mainAxisAlignment: MainAxisAlignment.center,
             ),
