@@ -15,6 +15,7 @@ class StatisticsSheet extends StatefulWidget {
   final List<List<CategoryProp>> categories;
   final Currency mainCurrency;
   final DateTime startDate;
+  final DateTime defaultDateForTransaction;
   final bool disabledAddBudget;
   final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
@@ -28,6 +29,7 @@ class StatisticsSheet extends StatefulWidget {
     required this.disabledAddBudget,
     required this.onAddTransactionReload,
     required this.onBudgetReload,
+    required this.defaultDateForTransaction,
   });
 
   @override
@@ -46,6 +48,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
       prop,
       widget.mainCurrency,
       widget.startDate,
+      widget.defaultDateForTransaction,
       widget.disabledAddBudget,
       widget.onAddTransactionReload,
       widget.onBudgetReload,

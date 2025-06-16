@@ -136,7 +136,9 @@ class Recurrence extends Transaction {
           newDate = newDate.add(const Duration(days: 1));
         }
       case RecurrenceType.monthly:
-        newDate = DateTime(date.year, date.month + 1, date.day);
+        DateTime nextNextMonth = DateTime(date.year, date.month + 2, 0);
+        int lastDayOfMonth = DateTime(date.year, date.month + 1, 0).day;
+        newDate = DateTime(date.year, date.month + 1, date.day == lastDayOfMonth ? nextNextMonth.day : date.day);
       case RecurrenceType.yearly:
         newDate = DateTime(date.year + 1, date.month, date.day);
       default:

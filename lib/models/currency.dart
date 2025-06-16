@@ -31,6 +31,17 @@ abstract class Currency {
   String toString() {
     return currency().name.toUpperCase();
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Currency) {
+      return currency() == other.currency();
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => currency().index;
 }
 
 class _SGD extends Currency {
