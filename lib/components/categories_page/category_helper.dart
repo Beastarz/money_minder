@@ -150,13 +150,13 @@ class CategoryHelper {
   ///
   /// return: void
   static void Function(CategoryProp) showTransactionInputForm(
-      BuildContext context, Currency mainCurrency, void Function() reload) {
+      BuildContext context, Currency mainCurrency, DateTime defaultDate, void Function() reload) {
     return (CategoryProp prop) {
       showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           builder: (sheetContext) {
-            return EditExpenseSheet(
+            return AddExpenseSheet(
               mainCurrency: mainCurrency,
               toCategory: Category(
                   id: prop.id,
@@ -166,6 +166,7 @@ class CategoryHelper {
                   color: prop.color,
                   isExpense: prop.isExpense
               ),
+              defaultDate: defaultDate,
               onAddTransactionReload: reload,
             );
           }
@@ -226,7 +227,7 @@ class CategoryHelper {
   ///
   /// return: void
   static void showCategoryCard(
-      BuildContext context, CategoryProp prop, Currency mainCurrency, DateTime startDate,
+      BuildContext context, CategoryProp prop, Currency mainCurrency, DateTime startDate, DateTime defaultDateForTransaction,
       bool disabledAddBudget, void Function() reloadTransaction, void Function() reloadBudget) {
     showDialog(
       context: context,
@@ -236,7 +237,7 @@ class CategoryHelper {
           currency: mainCurrency,
           disabledAddBudget: disabledAddBudget,
           showTransactionInputForm: showTransactionInputForm(
-              context, mainCurrency, reloadTransaction),
+              context, mainCurrency, defaultDateForTransaction, reloadTransaction),
           showBudgetInputForm: showBudgetInputForm(
               context, mainCurrency, startDate, reloadBudget),
         );

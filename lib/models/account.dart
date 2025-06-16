@@ -63,7 +63,7 @@ class Account {
       'name': name,
       'balance': balance,
       'icon': icon.icon?.codePoint,
-      'color': color.toARGB32().toString(),
+      'color': color.toARGB32(),
       'description': description,
       'is_main': isMain ? 1 : 0,
       'includes_in_total': isIncludesInTotal ? 1 : 0,
@@ -87,7 +87,7 @@ class Account {
       'name': name,
       'balance': balance,
       'icon': icon.icon?.codePoint,
-      'color': color.toARGB32().toString(),
+      'color': color.toARGB32(),
       'description': description,
       'is_main': 0,
       'includes_in_total': isIncludesInTotal ? 1 : 0,
@@ -98,7 +98,7 @@ class Account {
     };
   }
 
-  static double getBalance(List<Account> accounts, Currency mainCurrency) {
+  static double calculateBalance(List<Account> accounts, Currency mainCurrency) {
     double total = 0;
     for (var account in accounts) {
       total +=

@@ -258,7 +258,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         }
       ),
       TransactionsPage(
-        filteredAccountBalance: Account.getBalance(_filteredAccounts, _mainCurrency),
+        filteredAccountBalance: Account.calculateBalance(_filteredAccounts, _mainCurrency),
         mainCurrency: _mainCurrency,
         groupedTransactions: _groupedTransactions.map((t) => transactionFilter.filterTransactions(t)).toList(),
         groupedRecurrence:  _groupedRecurrence.map((t) => List.castFrom<Transaction, Recurrence>(transactionFilter.filterTransactions(t))).toList(),

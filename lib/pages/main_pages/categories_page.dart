@@ -98,6 +98,11 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           onAddTransactionReload: widget.onAddTransactionReload,
           onBudgetReload: widget.onBudgetReload,
           onCategoryReload: widget.onCategoryReload,
+          defaultDateForTransaction: index == 50
+              ? DateTime.now()
+              : index > 50
+              ? widget.dateFilter.startDates[index]
+              : widget.dateFilter.startDates[index + 1].subtract(Duration(days: 1)),
         );
       }
       ).toList();

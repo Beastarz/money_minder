@@ -13,22 +13,30 @@ enum DateFilterType {
 }
 
 class DateFilter {
-  late DateFilterType type;
+  late final DateFilterType type;
   Duration? duration;
   DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   /// a list of start dates, use this to filter transactions
-  List<DateTime> startDates = [];
+  final List<DateTime> _startDates = [];
 
-  /// the index to locate initial page to show
-  int initialPageIndex = 0;
+  List<DateTime> get startDates => _startDates;
+
+
+  /// the index to locate initial page to show, will be 50
+  final int initialPageIndex = 50;
 
   /// for all time, year, and month
   DateFilter.fromType(this.type) {
+    if (type == DateFilterType.week) {
+      duration = Duration(days: 7);
+    } else if (type == DateFilterType.day || type == DateFilterType.range) {
+      duration = Duration(days: 1);
+    }
     _initDates();
   }
 
-  /// for week, day, range
+  /// for week, day,
   DateFilter.fromDuration(this.type, this.duration) {
     _initDates();
   }
@@ -50,44 +58,42 @@ class DateFilter {
   _initDates() {
     switch(type) {
       case DateFilterType.all:
-        startDates.add(DateTime(1975));
+        _startDates.add(DateTime(1975));
         for (int i = 0; i < 50; i++) {
-          startDates.add(DateTime(2100));
-          startDates.insert(0, DateTime(1975));
+          _startDates.add(DateTime(2100));
+          _startDates.insert(0, DateTime(1975));
         }
       case DateFilterType.year:
         startDate = DateTime(startDate.year);
-        startDates.add(startDate);
+        _startDates.add(startDate);
         DateTime fw = startDate.copyWith(year: startDate.year + 1);
         DateTime bw = startDate.copyWith(year: startDate.year - 1);
         for (int i = 0; i < 50; i++) {
-          startDates.add(fw);
-          startDates.insert(0, bw);
+          _startDates.add(fw);
+          _startDates.insert(0, bw);
           fw = fw.copyWith(year: fw.year + 1);
           bw = bw.copyWith(year: bw.year - 1);
         }
       case DateFilterType.month:
         startDate = DateTime(startDate.year, startDate.month);
-        startDates.add(startDate);
+        _startDates.add(startDate);
         DateTime fw = startDate.copyWith(month: startDate.month + 1);
         DateTime bw = startDate.copyWith(month: startDate.month - 1);
         for (int i = 0; i < 50; i++) {
-          startDates.add(fw);
-          startDates.insert(0, bw);
+          _startDates.add(fw);
+          _startDates.insert(0, bw);
           fw = fw.copyWith(month: fw.month + 1);
           bw = bw.copyWith(month: bw.month - 1);
         }
       case DateFilterType.week:
-        if (duration == null) {
-          return;
-        }
+        duration ??= Duration(days: 7);
         startDate= startDate.subtract(Duration(days: startDate.weekday));
-        startDates.add(startDate);
+        _startDates.add(startDate);
         DateTime fw = startDate.add(duration!);
         DateTime bw = startDate.subtract(duration!);
         for (int i = 0; i < 50; i++) {
-          startDates.add(fw);
-          startDates.insert(0, bw);
+          _startDates.add(fw);
+          _startDates.insert(0, bw);
           fw = fw.add(duration!);
           bw = bw.subtract(duration!);
         }
@@ -95,18 +101,17 @@ class DateFilter {
         if (duration == null) {
           return;
         }
-        startDates.add(startDate);
+        _startDates.add(startDate);
         DateTime fw = startDate.add(duration!);
         DateTime bw = startDate.subtract(duration!);
         for (int i = 0; i < 50; i++) {
-          startDates.add(fw);
-          startDates.insert(0, bw);
+          _startDates.add(fw);
+          _startDates.insert(0, bw);
           fw = fw.add(duration!);
           bw = bw.subtract(duration!);
         }
     }
-    initialPageIndex = (startDates.length / 2).floor();
-    startDates.add(DateTime(2100));
+    _startDates.add(DateTime(2100));
   }
 
   /// convert map from database to DateFilter
@@ -150,22 +155,22 @@ class DateFilter {
     if (type == DateFilterType.all) {
       return 'ALL TIME';
     }
-    if (index < 0 || index > startDates.length - 1) {
+    if (index < 0 || index > _startDates.length - 1) {
       return '';
     }
     switch(type) {
       case DateFilterType.year:
-        return 'YEAR ${startDates[index].year.toString()}';
+        return 'YEAR ${_startDates[index].year.toString()}';
       case DateFilterType.month:
-        return formatDate(startDates[index], [M.toUpperCase(), ' ', yyyy]);
+        return formatDate(_startDates[index], [M.toUpperCase(), ' ', yyyy]);
       case DateFilterType.day:
-        return formatDate(startDates[index], [d, ' ', M.toUpperCase(), ' ', yyyy]);
+        return formatDate(_startDates[index], [d, ' ', M.toUpperCase(), ' ', yyyy]);
       default:
-        if (startDates[index].month == startDates[index + 1].month) {
-          return '${startDates[index].day} - ${formatDate(startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
+        if (_startDates[index].month == _startDates[index + 1].month) {
+          return '${_startDates[index].day} - ${formatDate(_startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
         }
-        return '${formatDate(startDates[index], [d, ' ', M.toUpperCase()])} '
-            '- ${formatDate(startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
+        return '${formatDate(_startDates[index], [d, ' ', M.toUpperCase()])} '
+            '- ${formatDate(_startDates[index+1].subtract(Duration(days: 1)), [d, ' ', M.toUpperCase(), ' ', yyyy])}';
     }
   }
 }
