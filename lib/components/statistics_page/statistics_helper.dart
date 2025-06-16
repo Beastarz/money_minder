@@ -88,4 +88,72 @@ class StatisticsHelper {
     }
     return percentages;
   }
+
+  /// Helper method to clean the data of the category list, compressed some
+  /// data that exceed the maximum length into 'other' category
+  ///
+  /// Parameters:
+  ///
+  /// List\<CategoryProp\> props: the list of categories
+  ///
+  /// int limitedLength: the maximum length of the list allowed
+  ///
+  /// return: List\<CategoryProp\>
+  static List<CategoryProp> cleanData(List<CategoryProp> props, int limitedLength) {
+
+    // testing
+    // props = List.from(props);
+    //
+    // for (int i = 0; i < 20; i++) {
+    //   props.add(CategoryProp(
+    //       id: 0,
+    //       position: 10,
+    //       label: "testing",
+    //       icon: Icon(Icons.access_time_sharp),
+    //       color: Colors.blueGrey,
+    //       actualAmount: 10,
+    //       budget: 0,
+    //       isExpense: true));
+    // }
+
+    int length = props.length;
+
+    if (length <= limitedLength) {
+      return List.from(props);
+    }
+    List<CategoryProp> newList = props.sublist(0, limitedLength - 1);
+    double totalAmount = 0;
+    for (int i = limitedLength; i < length; i++) {
+      totalAmount += props[i].actualAmount;
+    }
+    newList.add(CategoryProp(
+        id: -1, // does not matter
+        position: limitedLength,
+        label: "Others",
+        icon: Icon(
+          Icons.more_horiz,
+          color: Colors.grey,
+        ),
+        color: Colors.grey,
+        actualAmount: totalAmount,
+        budget: 0, // does not matter
+        isExpense: true // does not matter
+    ));
+    return newList;
+  }
+
+  /// Helper method to get the maximum y value of the bar chart
+  ///
+  /// Parameters:
+  ///
+  /// List\<CategoryProp\> dataList: the list of categories
+  ///
+  /// return: double
+  static double getMaxY(List<CategoryProp> dataList) {
+    double maxY = 0;
+    for (CategoryProp data in dataList) {
+      maxY = max(maxY, data.actualAmount);
+    }
+    return maxY;
+  }
 }

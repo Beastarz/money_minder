@@ -100,7 +100,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   @override
   Widget build(BuildContext context) {
 
-
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double expandedHeight = isSmallScreen ? 145 : 200;
 
@@ -139,6 +138,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   centerTitle: true, // Center the title in the flexible space.
                   background: isExpanded ? null : ChartPages(
                       isExpanded: false,
+                      categories: _category,
+                      totalPages: 3,
                       currentPage: _currentPage,
                       updateCurrentPage: updateCurrentPage,
                   )
@@ -163,6 +164,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                             child: ChartPages(
                                 isExpanded: true,
                                 shrinkChart: shrinkChart,
+                                categories: _category,
+                                totalPages: 3,
                                 currentPage: _currentPage,
                                 updateCurrentPage: updateCurrentPage,
                             )
