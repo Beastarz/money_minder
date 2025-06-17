@@ -18,7 +18,7 @@ class CategoriesPageContent extends StatefulWidget {
   final bool disabledAddBudget;
   final DateTime startDate;
   final DateTime defaultDateForTransaction;
-  final void Function() onAddTransactionReload;
+  final void Function() onTransactionReload;
   final void Function() onBudgetReload;
   final void Function() onCategoryReload;
 
@@ -29,7 +29,7 @@ class CategoriesPageContent extends StatefulWidget {
     required this.mainCurrency,
     required this.disabledAddBudget,
     required this.startDate,
-    required this.onAddTransactionReload,
+    required this.onTransactionReload,
     required this.onBudgetReload,
     required this.onCategoryReload,
     required this.defaultDateForTransaction,
@@ -75,7 +75,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       widget.startDate,
       widget.defaultDateForTransaction,
       widget.disabledAddBudget,
-      widget.onAddTransactionReload,
+      widget.onTransactionReload,
       widget.onBudgetReload,
     );
   }

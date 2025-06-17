@@ -1,22 +1,25 @@
-import 'dart:math' as math;
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
 
-import '../../style/app_color.dart';
-import '../categories_page/category_button.dart';
+import '../../../models/currency.dart';
+import '../../../style/app_color.dart';
+import '../../categories_page/category_button.dart';
 
 class CategoryBarChart extends StatefulWidget {
 
   final double aspectRatio;
   final bool isExpanded;
-  final List<CategoryProp> categories;
+  final bool isExpense;
+  final Currency currency;
+  final List<CategoryProp> catList;
 
   const CategoryBarChart({
     required this.aspectRatio,
     required this.isExpanded,
-    required this.categories,
+    required this.isExpense,
+    required this.currency,
+    required this.catList,
     super.key
   });
 
@@ -27,7 +30,7 @@ class CategoryBarChart extends StatefulWidget {
 class _CategoryBarChartState extends State<CategoryBarChart> {
 
   int touchedGroupIndex = -1;
-  late List<CategoryProp> dataList;
+  // late List<CategoryProp> dataList;
   late double maxY;
 
   BarChartGroupData generateBarGroup(int x, Color color, double value) {
@@ -46,9 +49,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
 
   void onLoad() {
     setState(() {
-      dataList = StatisticsHelper.cleanData(
-          widget.categories, widget.isExpanded ? 18 : 6);
-      maxY = StatisticsHelper.getMaxY(dataList);
+      maxY = StatisticsHelper.getBarChartMaxY(widget.catList);
     });
   }
 
@@ -73,7 +74,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
         Align(
           alignment: Alignment.center,
           child: Text(
-            'Category Total Amount',
+            'Category Total ${widget.isExpense ? "Expenses" : "Income"}',
             style: TextStyle(
               color: AppColor.darkText,
               fontSize: 16,
@@ -101,7 +102,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                   drawBelowEverything: true,
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40,
+                    reservedSize: 30,
                     getTitlesWidget: (value, meta) {
                       return SideTitleWidget(
                         meta: meta,
@@ -125,8 +126,8 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                       return SideTitleWidget(
                         meta: meta,
                         child: _IconWidget(
-                          color: dataList[index].color,
-                          icon: dataList[index].icon,
+                          color: widget.catList[index].color,
+                          icon: widget.catList[index].icon,
                           isSelected: touchedGroupIndex == index,
                         ),
                       );
@@ -144,7 +145,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                   strokeWidth: 1,
                 ),
               ),
-              barGroups: dataList.asMap().entries.map((e) {
+              barGroups: widget.catList.asMap().entries.map((e) {
                 final index = e.key;
                 final data = e.value;
                 return generateBarGroup(
@@ -167,11 +168,11 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                       int rodIndex,
                       ) {
                     return BarTooltipItem(
-                      rod.toY.toString(),
+                      "${widget.currency.toString()} ${rod.toY.toString()}",
                       TextStyle(
                         fontWeight: FontWeight.bold,
                         color: rod.color,
-                        fontSize: 18,
+                        fontSize: 12,
                         shadows: const [
                           Shadow(
                             color: Colors.black26,

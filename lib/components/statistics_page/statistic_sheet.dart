@@ -4,6 +4,8 @@ import 'package:money_minder/components/statistics_page/statistics_cat_tile.dart
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
 
 import '../../models/currency.dart';
+import '../../models/date_filter.dart';
+import '../../models/transaction.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../categories_page/category_button.dart';
@@ -14,11 +16,14 @@ class StatisticsSheet extends StatefulWidget {
 
   final bool isExpense;
   final List<List<CategoryProp>> categories;
+  final List<Transaction> transactions;
   final Currency mainCurrency;
+  final DateFilterType dateFilterType;
   final DateTime startDate;
+  final DateTime endDate;
   final DateTime defaultDateForTransaction;
   final bool disabledAddBudget;
-  final void Function() onAddTransactionReload;
+  final void Function() onTransactionReload;
   final void Function() onBudgetReload;
   final List<double> totalAmounts;
 
@@ -26,10 +31,13 @@ class StatisticsSheet extends StatefulWidget {
     super.key,
     required this.isExpense,
     required this.categories,
+    required this.transactions,
     required this.mainCurrency,
+    required this.dateFilterType,
     required this.startDate,
+    required this.endDate,
     required this.disabledAddBudget,
-    required this.onAddTransactionReload,
+    required this.onTransactionReload,
     required this.onBudgetReload,
     required this.totalAmounts,
     required this.defaultDateForTransaction,
@@ -57,18 +65,16 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
       widget.startDate,
       widget.defaultDateForTransaction,
       widget.disabledAddBudget,
-      widget.onAddTransactionReload,
+      widget.onTransactionReload,
       widget.onBudgetReload,
     );
   }
 
   void onLoad() {
     setState(() {
-      _category = widget.categories[widget.isExpense
-          ? 0
-          : 1];
+      _category = List.from(widget.categories[widget.isExpense? 0: 1]);
       _percentages = StatisticsHelper.calculatePercentages(
-          _category, widget.totalAmounts[widget.isExpense ? 0 : 1]
+          widget.categories[widget.isExpense? 0: 1], widget.totalAmounts[widget.isExpense ? 0 : 1]
       );
       StatisticsHelper.sortCategories(
           _category, _isAscending, _currentSortOption,
@@ -141,8 +147,13 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   centerTitle: true, // Center the title in the flexible space.
                   background: isExpanded ? null : ChartPages(
                       isExpanded: false,
+                      isExpense: widget.isExpense,
                       categories: _category,
-                      totalPages: 3,
+                      currency: widget.mainCurrency,
+                      transactions: widget.transactions,
+                      dateFilterType: widget.dateFilterType,
+                      startDate: widget.startDate,
+                      endDate: widget.endDate,
                       currentPage: _currentPage,
                       updateCurrentPage: updateCurrentPage,
                   )
@@ -166,9 +177,14 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                             quarterTurns: 1,
                             child: ChartPages(
                                 isExpanded: true,
+                                isExpense: widget.isExpense,
                                 shrinkChart: shrinkChart,
                                 categories: _category,
-                                totalPages: 3,
+                                currency: widget.mainCurrency,
+                                transactions: widget.transactions,
+                                dateFilterType: widget.dateFilterType,
+                                startDate: widget.startDate,
+                                endDate: widget.endDate,
                                 currentPage: _currentPage,
                                 updateCurrentPage: updateCurrentPage,
                             )

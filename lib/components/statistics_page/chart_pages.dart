@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
-import 'package:money_minder/components/statistics_page/bar_chart.dart';
 
+import '../../models/currency.dart';
+import '../../models/date_filter.dart';
+import '../../models/transaction.dart';
 import '../../style/app_size.dart';
 import 'chart.dart';
 
@@ -9,17 +11,27 @@ class ChartPages extends StatefulWidget {
   const ChartPages({
     super.key,
     required this.isExpanded,
+    required this.isExpense,
     this.shrinkChart,
     required this.categories,
-    required this.totalPages,
+    required this.currency,
+    required this.transactions,
+    required this.dateFilterType,
+    required this.startDate,
+    required this.endDate,
     required this.currentPage,
     required this.updateCurrentPage,
   });
 
   final bool isExpanded;
+  final bool isExpense;
   final void Function()? shrinkChart;
   final List<CategoryProp> categories;
-  final int totalPages;
+  final List<Transaction> transactions;
+  final Currency currency;
+  final DateFilterType dateFilterType;
+  final DateTime startDate;
+  final DateTime endDate;
   final int currentPage;
   final void Function(int) updateCurrentPage;
 
@@ -31,9 +43,10 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
 
   late PageController _pageViewController;
   late TabController _tabController;
+  late int totalPages;
 
   void _handlePageViewChanged(int index) {
-    _tabController.index = index % widget.totalPages;
+    _tabController.index = index % totalPages;
     _pageViewController.animateToPage(
       index,
       duration: const Duration(milliseconds: 400),
@@ -42,14 +55,19 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
     widget.updateCurrentPage(index);
   }
 
+  void load() {
+    totalPages = widget.endDate.difference(widget.startDate).inDays == 0 ? 1 : 3;
+    _pageViewController = PageController(initialPage: widget.currentPage == 0
+        ? totalPages * 1000
+        : widget.currentPage);
+    _tabController = TabController(length: totalPages, vsync: this);
+    _tabController.index = widget.currentPage % totalPages;
+  }
+
   @override
   void initState() {
     super.initState();
-    _pageViewController = PageController(initialPage: widget.currentPage == 0
-        ? widget.totalPages * 1000
-        : widget.currentPage);
-    _tabController = TabController(length: widget.totalPages, vsync: this);
-    _tabController.index = widget.currentPage % widget.totalPages;
+    load();
   }
 
   @override
@@ -59,37 +77,49 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant ChartPages oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    load();
+  }
+
   // @override
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    final double height = widget.isExpanded
-        ? MediaQuery.of(context).size.width * 0.8
-        : isSmallScreen ? 145 : 200 - AppSize.smallPadding;
-    final double width = widget.isExpanded
-        ? MediaQuery.of(context).size.height * 0.8
-        : MediaQuery.of(context).size.width * 0.9;
-    final aspectRatio = width / (height - 50);
     final pages = [
       Chart(
+        isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
         shrinkChart: widget.shrinkChart,
-        child: CategoryBarChart(
-          aspectRatio: aspectRatio,
-          isExpanded: widget.isExpanded,
-          categories: widget.categories,
-        ),
+        currency: widget.currency,
+        dateFilterType: widget.dateFilterType,
+        chartType: ChartType.categoryBarChart,
+        categories: widget.categories,
       ),
       Chart(
+        isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
         shrinkChart: widget.shrinkChart,
-        child: Center(child: Text("Second Page")),
+        currency: widget.currency,
+        dateFilterType: widget.dateFilterType,
+        startDate: widget.startDate,
+        endDate: widget.endDate,
+        chartType: ChartType.categoryLineChart,
+        categories: widget.categories,
+        transactions: widget.transactions,
       ),
       Chart(
+        isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
         shrinkChart: widget.shrinkChart,
-        child: Center(child: Text("Third Page")),
+        currency: widget.currency,
+        dateFilterType: widget.dateFilterType,
+        startDate: widget.startDate,
+        endDate: widget.endDate,
+        chartType: ChartType.categoryStackBarChart,
+        categories: widget.categories,
+        transactions: widget.transactions,
       ),
     ];
 
@@ -108,7 +138,7 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
               itemCount: null,
               itemBuilder: (context, index) {
                 // Use modulo operator to map the infinite index back to your actual pages.
-                return pages[index % pages.length];
+                return pages[index % totalPages];
               },
             ),
             PageIndicator(
