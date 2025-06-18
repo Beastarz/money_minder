@@ -56,6 +56,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   List<double> _percentages = [];
   int _currentPage = 0;
   bool isExpanded = false;
+  bool _showIndividual = false;
 
   void catTileOnPressed(CategoryProp prop) {
     CategoryHelper.showCategoryCard(
@@ -155,6 +156,12 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                       startDate: widget.startDate,
                       endDate: widget.endDate,
                       currentPage: _currentPage,
+                      showIndividual: _showIndividual,
+                      lineChartChangeType: () {
+                        setState(() {
+                          _showIndividual = !_showIndividual;
+                        });
+                      },
                       updateCurrentPage: updateCurrentPage,
                   )
                 );
@@ -186,6 +193,12 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                                 startDate: widget.startDate,
                                 endDate: widget.endDate,
                                 currentPage: _currentPage,
+                                showIndividual: _showIndividual,
+                                lineChartChangeType: () {
+                                  setState(() {
+                                    _showIndividual = !_showIndividual;
+                                  });
+                                },
                                 updateCurrentPage: updateCurrentPage,
                             )
                         )

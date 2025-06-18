@@ -31,6 +31,8 @@ class Chart extends StatefulWidget {
     this.transactions,
     this.startDate,
     this.endDate,
+    this.showIndividual = false,
+    this.onChangeType,
   });
 
   final bool isExpense;
@@ -40,6 +42,8 @@ class Chart extends StatefulWidget {
   final DateFilterType dateFilterType;
   final DateTime? startDate;
   final DateTime? endDate;
+  final bool showIndividual;
+  final void Function()? onChangeType;
   final List<CategoryProp> categories;
   final List<Transaction>? transactions;
   final void Function()? shrinkChart;
@@ -50,7 +54,6 @@ class Chart extends StatefulWidget {
 
 class _ChartState extends State<Chart> {
 
-  bool _showSummary = true;
   late List<Transaction> incomeTransactions;
   late List<Transaction> expenseTransactions;
 
@@ -112,11 +115,8 @@ class _ChartState extends State<Chart> {
             startDate: widget.startDate!,
             endDate: widget.endDate!,
             type: widget.dateFilterType,
-            onChangeType: () {
-              setState(() {
-                _showSummary = !_showSummary;
-              });
-            },
+            showIndividual: widget.showIndividual,
+            onChangeType: widget.onChangeType!,
             catList: smallCatList,
             transactions: widget.isExpense ? expenseTransactions : incomeTransactions,
           );
@@ -159,7 +159,7 @@ class _ChartState extends State<Chart> {
                     ),
                     borderRadius: BorderRadius.circular(AppSize.borderRadius),
                   ),
-                  child: _showSummary && widget.chartType == ChartType.categoryLineChart
+                  child: !widget.showIndividual && widget.chartType == ChartType.categoryLineChart
                       ? SummaryTable(
                     startDate: widget.startDate!,
                     endDate: widget.endDate!,

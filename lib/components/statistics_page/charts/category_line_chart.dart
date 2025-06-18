@@ -17,6 +17,7 @@ class CategoryLineChart extends StatefulWidget {
   final DateTime endDate;
   final DateFilterType type;
   final Currency currency;
+  final bool showIndividual;
   final void Function() onChangeType;
   final List<CategoryProp> catList;
   final List<Transaction> transactions;
@@ -30,6 +31,7 @@ class CategoryLineChart extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     required this.type,
+    required this.showIndividual,
     required this.onChangeType,
     required this.catList,
     required this.transactions,
@@ -45,7 +47,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     Colors.purple[400]!,
   ];
 
-  bool showEachCategory = false;
+  bool _showIndividual = false;
   late List<DateTime> dates;
   late List<FlSpot> sumChartSpots;
   late List<List<FlSpot>> individualChartSpots;
@@ -91,6 +93,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
 
   void onLoad() {
     setState(() {
+      _showIndividual = widget.showIndividual;
       dates = StatisticsHelper.slicePeriod(widget.startDate, widget.endDate,
           widget.isExpanded, widget.type);
       int ranges = widget.endDate.difference(widget.startDate).inDays;
@@ -149,7 +152,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    showEachCategory = !showEachCategory;
+                    _showIndividual = !_showIndividual;
                   });
                   widget.onChangeType();
                 },
@@ -171,7 +174,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
             ),
             const Spacer(),
             Text(
-              showEachCategory
+              _showIndividual
               ? 'Category ${widget.isExpense ? "Expenses" : "Income"} x Period'
               : 'Total ${widget.isExpense ? "Expenses" : "Income"} x Period',
               style: TextStyle(
@@ -186,7 +189,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
         AspectRatio(
           aspectRatio: widget.aspectRatio,
           child: LineChart(
-            showEachCategory ? individualData() : sumData(),
+            _showIndividual ? individualData() : sumData(),
           )
         )
       ]
@@ -225,7 +228,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       fontSize: 12,
     );
 
-    List<double> tmp = showEachCategory
+    List<double> tmp = _showIndividual
         ? individualChartDisplayYValues
         : sumChartDisplayYValues;
 
@@ -249,7 +252,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     verticalInterval: 1,
     getDrawingHorizontalLine: (value) {
 
-      List<double> tmp = showEachCategory
+      List<double> tmp = _showIndividual
           ? individualChartDisplayYValues
           : sumChartDisplayYValues;
 

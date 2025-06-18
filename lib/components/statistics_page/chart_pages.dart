@@ -20,6 +20,8 @@ class ChartPages extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     required this.currentPage,
+    required this.showIndividual,
+    required this.lineChartChangeType,
     required this.updateCurrentPage,
   });
 
@@ -33,6 +35,8 @@ class ChartPages extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final int currentPage;
+  final bool showIndividual;
+  final void Function() lineChartChangeType;
   final void Function(int) updateCurrentPage;
 
   @override
@@ -106,6 +110,8 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
         startDate: widget.startDate,
         endDate: widget.endDate,
         chartType: ChartType.categoryLineChart,
+        showIndividual: widget.showIndividual,
+        onChangeType: widget.lineChartChangeType,
         categories: widget.categories,
         transactions: widget.transactions,
       ),
