@@ -90,12 +90,8 @@ class TransactionDetailSheet extends StatelessWidget {
                       )
                     ),
                   ),
-                  GridView.count(
-                    padding: EdgeInsets.all(AppSize.smallPadding),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 2,
-                    shrinkWrap: true,
+                  Wrap(
+                    spacing: 16,
                     children: [
                       TransactionDetailTile(
                           label: 'Edit',

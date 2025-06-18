@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
 import 'package:money_minder/models/account.dart';
@@ -21,12 +22,17 @@ import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'firebase_options.dart';
 import 'models/budget.dart';
 import 'models/category.dart';
 import 'models/transaction.dart';
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MoneyMinder());
 }
 
