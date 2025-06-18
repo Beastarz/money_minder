@@ -23,7 +23,7 @@ class CategoriesPage extends StatefulWidget {
   final void Function(int) onPageChange;
   final void Function() onTransactionReload;
   final void Function() onBudgetReload;
-  final void Function() onCategoryReload;
+  final Future<void> Function() onCategoryReload;
 
   const CategoriesPage({
     super.key,

@@ -120,19 +120,19 @@ class StatisticsHelper {
   static List<CategoryProp> compressData(List<CategoryProp> props, int limitedLength) {
 
     // testing
-    props = List.from(props);
-
-    for (int i = 0; i < 20; i++) {
-      props.add(CategoryProp(
-          id: 0,
-          position: 10,
-          label: "testing",
-          icon: Icon(Icons.access_time_sharp),
-          color: Colors.blueGrey,
-          actualAmount: 10,
-          budget: 0,
-          isExpense: true));
-    }
+    // props = List.from(props);
+    //
+    // for (int i = 0; i < 20; i++) {
+    //   props.add(CategoryProp(
+    //       id: 0,
+    //       position: 10,
+    //       label: "testing",
+    //       icon: Icon(Icons.access_time_sharp),
+    //       color: Colors.blueGrey,
+    //       actualAmount: 10,
+    //       budget: 0,
+    //       isExpense: true));
+    // }
 
     int length = props.length;
 
@@ -298,7 +298,7 @@ class StatisticsHelper {
   /// int days: the number of days to group the transactions
   ///
   /// return: List\<FlSpot\>
-  static List<FlSpot> getTotalAmountLineChartData(List<Transaction> transactions, List<DateTime> dates, int days) {
+  static List<FlSpot> getLineChartData(List<Transaction> transactions, List<DateTime> dates, int days) {
     List<FlSpot> spots = [];
     int index = 0;
     List<DateTime> dateList = [];
@@ -311,7 +311,6 @@ class StatisticsHelper {
     dateList.add(endDate);
     dateList.add(endDate.add(Duration(days: 1))); // to make sure last spot is collected
     List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateList);
-    index = 0;
     startDate = dates.first;
     for (List<Transaction> group in groupedTransactions) {
       if (group.isEmpty) {
@@ -348,5 +347,61 @@ class StatisticsHelper {
       }
     }
     return t;
+  }
+
+  /// Helper method to get the data for the stack bar chart
+  ///
+  /// Parameters:
+  ///
+  /// List\<Transaction\> transactions: the list of transactions
+  ///
+  /// List\<DateTime\> dates: the list of dates
+  ///
+  /// int days: the number of days to group the transactions
+  ///
+  /// List\<CategoryProp\> catList: the list of categories
+  ///
+  /// return: List\<BarChartRodData\>
+  static List<BarChartRodData> getStackBarChartDate(
+      List<Transaction> transactions, List<DateTime> dates,
+      int days, List<CategoryProp> catList, List<int> showDateIndex) {
+    List<BarChartRodData> data = [];
+
+    // slice the period
+    List<DateTime> dateList = [];
+    DateTime startDate = dates.first;
+    DateTime endDate = dates.last;
+    while (startDate.isBefore(endDate)) {
+      dateList.add(startDate);
+      startDate = startDate.add(Duration(days: days));
+    }
+    dateList.add(endDate);
+    dateList.add(endDate.add(Duration(days: 1))); // to make sure last spot is collected
+    List<List<Transaction>> groupedTransactions = Transaction.groupTransactionsByDate(transactions, dateList);
+    startDate = dates.first;
+    showDateIndex.clear();
+    for (int i = 0; i < dates.length; i++) {
+      showDateIndex.add(((groupedTransactions.length - 1) / (dates.length - 1) * i).round());
+    }
+    for (int i = 0; i < groupedTransactions.length; i++) {
+      List<Transaction> group = groupedTransactions[i];
+      List<List<Transaction>> categorizedTransactions = categorizeTransactions(group, catList);
+      double fromY = 0;
+      double toY = 0;
+      List<BarChartRodStackItem> rods = [];
+      for (int i = 0; i < categorizedTransactions.length; i++) {
+        toY += getTotalAmount(categorizedTransactions[i]);
+        rods.add(BarChartRodStackItem(fromY, toY, catList[i].color));
+        fromY = toY;
+      }
+      data.add(
+        BarChartRodData(
+          toY: toY,
+          rodStackItems: rods,
+          borderRadius: BorderRadius.zero,
+        ),
+      );
+    }
+    return data;
   }
 }

@@ -252,9 +252,9 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onBudgetReload: () {
           _fetchBudgets();
         },
-        onCategoryReload: () {
-          _fetchCategories();
-          _fetchTransactions();
+        onCategoryReload: () async {
+          await _fetchCategories();
+          await _fetchTransactions();
         }
       ),
       TransactionsPage(

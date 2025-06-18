@@ -55,12 +55,20 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
   late List<double> individualChartDisplayYValues;
 
   void getDisplayYValues(List<FlSpot> spots, List<double> displayYValues, double maxY) {
-    spots.sort((a, b) => a.y.compareTo(b.y));
-    if (spots.isNotEmpty) {
+
+    // remove any duplicate y values
+    Set<double> yValues = {};
+    for (FlSpot spot in spots) {
+      yValues.add(spot.y);
+    }
+    List<double> distinctY = yValues.toList();
+
+    distinctY.sort((a, b) => a.compareTo(b));
+    if (distinctY.isNotEmpty) {
       if (!widget.isExpanded) {
         displayYValues.add(0.0); // Always show 0
-        if (spots.length > 1) {
-          displayYValues.add(spots[(spots.length * 0.5).toInt()].y); // Median
+        if (distinctY.length > 1) {
+          displayYValues.add(distinctY[(distinctY.length * 0.5).toInt()]); // Median
         }
         displayYValues.add(maxY); // Max Y
         // Remove duplicates and sort
@@ -68,10 +76,10 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
         displayYValues.sort();
       } else {
         displayYValues.add(0.0); // Always show 0
-        if (spots.isNotEmpty) {
-          displayYValues.add(spots[(spots.length * 0.25).toInt()].y); // Lower Quartile
-          displayYValues.add(spots[(spots.length * 0.5).toInt()].y); // Median
-          displayYValues.add(spots[(spots.length * 0.75).toInt()].y); // Upper Quartile
+        if (distinctY.isNotEmpty) {
+          displayYValues.add(distinctY[(distinctY.length * 0.25).toInt()]); // Lower Quartile
+          displayYValues.add(distinctY[(distinctY.length * 0.5).toInt()]); // Median
+          displayYValues.add(distinctY[(distinctY.length * 0.75).toInt()]); // Upper Quartile
         }
         displayYValues.add(maxY); // Max Y
         // Remove duplicates and sort
@@ -98,7 +106,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       }
 
       // get the data for sum line chart
-      sumChartSpots = StatisticsHelper.getTotalAmountLineChartData(widget.transactions, dates, days);
+      sumChartSpots = StatisticsHelper.getLineChartData(widget.transactions, dates, days);
       sumChartMaxY = StatisticsHelper.getLineChartMaxY(sumChartSpots);
       sumChartDisplayYValues = [];
       getDisplayYValues(List.from(sumChartSpots), sumChartDisplayYValues, sumChartMaxY);
@@ -108,7 +116,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       individualChartSpots = [];
       List<FlSpot> tmp = [];
       for (List<Transaction> group in groupedTransactions) {
-        individualChartSpots.add(StatisticsHelper.getTotalAmountLineChartData(group, dates, days));
+        individualChartSpots.add(StatisticsHelper.getLineChartData(group, dates, days));
         tmp.addAll(individualChartSpots.last);
       }
       individualChartMaxY = StatisticsHelper.getLineChartMaxY(tmp);
@@ -227,7 +235,6 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
         child: Text(
           value.toStringAsFixed(0),
           style: style,
-          textAlign: TextAlign.center,
         ),
       );
     }
@@ -297,6 +304,27 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     border: Border.all(color: AppColor.quaternary),
   );
 
+  LineTouchData get lineTouchData => LineTouchData(
+    enabled: true,
+    touchTooltipData: LineTouchTooltipData(
+      fitInsideHorizontally: true,
+      fitInsideVertically: true,
+      getTooltipColor: (group) => Colors.white,
+      tooltipMargin: 0,
+      getTooltipItems: (List<LineBarSpot> touchedSpots) {
+        return touchedSpots.map((LineBarSpot touchedSpot) {
+          return LineTooltipItem(
+            '${widget.currency.toString()} ${touchedSpot.y.toStringAsFixed(2)}',
+            TextStyle(
+              color: touchedSpot.bar.color,
+              fontWeight: FontWeight.bold,
+            ),
+          );
+        }).toList();
+      },
+    ),
+  );
+
 
   LineChartData sumData() {
     return LineChartData(
@@ -307,6 +335,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       maxX: dates.length - 1,
       minY: 0,
       maxY: sumChartMaxY,
+      lineTouchData: lineTouchData,
       lineBarsData: [
         LineChartBarData(
           spots: sumChartSpots,
@@ -364,6 +393,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       titlesData: titlesData,
       borderData: borderData,
       lineBarsData: individualLineData(),
+      lineTouchData: lineTouchData,
       minX: 0,
       maxX: dates.length - 1,
       minY: 0,

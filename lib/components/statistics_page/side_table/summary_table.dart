@@ -16,8 +16,12 @@ class SummaryTable extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final int days = endDate.difference(startDate).inDays + 1;
+    int weeks = 0;
     int months = 0;
     int years = 0;
+    if (days >= 7) {
+      weeks = (days / 7).round();
+    }
     if (days >= 28) {
       months = (days / 31).round();
     }
@@ -30,7 +34,7 @@ class SummaryTable extends StatelessWidget {
         DataColumn(
           label: Expanded(
             child: Text(
-              'Average',
+              'Period',
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
@@ -38,7 +42,7 @@ class SummaryTable extends StatelessWidget {
         DataColumn(
           label: Expanded(
             child: Text(
-              'Value',
+              'Average',
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
@@ -49,6 +53,12 @@ class SummaryTable extends StatelessWidget {
           cells: <DataCell>[
             const DataCell(Text('Day')),
             DataCell(Text((totalAmount / days).toStringAsFixed(2))), // Formatted to 2 decimal places
+          ],
+        ),
+        DataRow(
+          cells: <DataCell>[
+            const DataCell(Text('Week')),
+            DataCell(Text(weeks != 0 ? (totalAmount / weeks).toStringAsFixed(2) : "N/A")), // Formatted to 2 decimal places
           ],
         ),
         DataRow(

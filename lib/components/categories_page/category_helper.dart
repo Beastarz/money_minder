@@ -93,9 +93,8 @@ class CategoryHelper {
       DateFilter dateFilter
       ) {
 
-    // for (Category c in categories) {
-    //   print("${c.label} ${c.position}");
-    // }
+    // sort the categories by position
+    // categories.sort((a, b) => a.position.compareTo(b.position));
 
     // calculate the total amount of each category
     List<double> amounts = [];
@@ -291,6 +290,7 @@ class CategoryHelper {
         await CategoriesRepositories.instance.updatePosition(
             ids[i - toPosition - 1], i);
       }
+
     } else {
 
       // bring the item at the front to the back

@@ -51,17 +51,44 @@ class Chart extends StatefulWidget {
 class _ChartState extends State<Chart> {
 
   bool _showSummary = true;
+  late List<Transaction> incomeTransactions;
+  late List<Transaction> expenseTransactions;
+
+  void load() {
+    setState(() {
+      incomeTransactions = widget.transactions!
+          .where((transaction) => transaction.type == TransactionType.income).toList();
+      expenseTransactions = widget.transactions!
+          .where((transaction) => transaction.type == TransactionType.expense).toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.transactions != null) load();
+  }
+
+  @override
+  void didUpdateWidget(Chart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.transactions != null
+        && widget.transactions != null
+        && oldWidget.transactions != widget.transactions) {
+      load();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
 
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double height = widget.isExpanded
-      ? MediaQuery.of(context).size.width * 0.8
-      : isSmallScreen ? 145 : 200 - AppSize.smallPadding;
+        ? MediaQuery.of(context).size.width * 0.8
+        : isSmallScreen ? 145 : 200 - AppSize.smallPadding;
     double width = widget.isExpanded
-      ? MediaQuery.of(context).size.height * 0.6
-      : MediaQuery.of(context).size.width * 0.9;
+        ? MediaQuery.of(context).size.height * 0.6
+        : MediaQuery.of(context).size.width * 0.9;
     final aspectRatio = width / (height - 50);
     List<CategoryProp> bigCatList = StatisticsHelper.compressData(widget.categories, widget.isExpanded ? 12 : 6);
     List<CategoryProp> smallCatList = StatisticsHelper.compressData(widget.categories, widget.isExpanded ? 6 : 3);
@@ -91,15 +118,19 @@ class _ChartState extends State<Chart> {
               });
             },
             catList: smallCatList,
-            transactions: widget.transactions!
-                .where((transaction) => transaction.type ==
-                (widget.isExpense ? TransactionType.expense : TransactionType.income)).toList(),
+            transactions: widget.isExpense ? expenseTransactions : incomeTransactions,
           );
         case ChartType.categoryStackBarChart:
           return CategoryStackBarChart(
             aspectRatio: aspectRatio,
             isExpanded: widget.isExpanded,
             isExpense: widget.isExpense,
+            currency: widget.currency,
+            startDate: widget.startDate!,
+            endDate: widget.endDate!,
+            type: widget.dateFilterType,
+            catList: smallCatList,
+            transactions: widget.isExpense ? expenseTransactions : incomeTransactions,
           );
       }
     }
@@ -111,20 +142,14 @@ class _ChartState extends State<Chart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                  padding: EdgeInsets.all(AppSize.smallPadding),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 2,
-                    ),
-                  ),
-                  height: height,
-                  width: width,
-                  child: child(),
+                padding: EdgeInsets.all(AppSize.smallPadding),
+                height: height,
+                width: width,
+                child: child(),
               ),
               !widget.isExpanded
-              ? SizedBox.shrink()
-              : Expanded(
+                  ? SizedBox.shrink()
+                  : Expanded(
                 child: Container(
                   margin: EdgeInsets.all(AppSize.smallPadding),
                   decoration: BoxDecoration(
@@ -135,14 +160,14 @@ class _ChartState extends State<Chart> {
                     borderRadius: BorderRadius.circular(AppSize.borderRadius),
                   ),
                   child: _showSummary && widget.chartType == ChartType.categoryLineChart
-                    ? SummaryTable(
-                        startDate: widget.startDate!,
-                        endDate: widget.endDate!,
-                        totalAmount: StatisticsHelper.getTotalAmount(widget.transactions!
-                            .where((transaction) => transaction.type ==
-                            (widget.isExpense ? TransactionType.expense : TransactionType.income)).toList()),
-                      )
-                    : CategoryTable(catList: widget.chartType == ChartType.categoryBarChart ? bigCatList : smallCatList),
+                      ? SummaryTable(
+                    startDate: widget.startDate!,
+                    endDate: widget.endDate!,
+                    totalAmount: StatisticsHelper.getTotalAmount(widget.transactions!
+                        .where((transaction) => transaction.type ==
+                        (widget.isExpense ? TransactionType.expense : TransactionType.income)).toList()),
+                  )
+                      : CategoryTable(catList: widget.chartType == ChartType.categoryBarChart ? bigCatList : smallCatList),
                 ),
               ),
             ],
@@ -150,7 +175,7 @@ class _ChartState extends State<Chart> {
         ),
 
         widget.isExpanded
-        ? Positioned(
+            ? Positioned(
           top: 5,
           right: 5,
           child: IconButton(
@@ -159,11 +184,11 @@ class _ChartState extends State<Chart> {
               widget.shrinkChart!();
             },
             icon: const Icon(Icons.fullscreen_exit_outlined,
-              size: 30
+                size: 30
             ),
           ),
         )
-        : SizedBox.shrink(),
+            : SizedBox.shrink(),
       ],
     );
   }

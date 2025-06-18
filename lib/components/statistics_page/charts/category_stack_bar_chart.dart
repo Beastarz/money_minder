@@ -1,63 +1,110 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/categories_page/category_button.dart';
 
+import '../../../models/currency.dart';
+import '../../../models/date_filter.dart';
+import '../../../models/transaction.dart';
 import '../../../style/app_color.dart';
+import '../statistics_helper.dart';
 
 class CategoryStackBarChart extends StatefulWidget {
 
   final double aspectRatio;
   final bool isExpanded;
   final bool isExpense;
+  final Currency currency;
+  final List<CategoryProp> catList;
+  final List<Transaction> transactions;
+  final DateTime startDate;
+  final DateTime endDate;
+  final DateFilterType type;
 
-  CategoryStackBarChart({
+  const CategoryStackBarChart({
     super.key,
     required this.aspectRatio,
     required this.isExpanded,
     required this.isExpense,
+    required this.currency,
+    required this.catList,
+    required this.transactions,
+    required this.startDate,
+    required this.endDate,
+    required this.type,
   });
-
-  final Color dark = Colors.cyan[800]!;
-  final Color normal = Colors.cyan[600]!;
-  final Color light = Colors.cyan[300]!;
 
   @override
   State<StatefulWidget> createState() => CategoryStackBarChartState();
 }
 
 class CategoryStackBarChartState extends State<CategoryStackBarChart> {
+
+  late List<DateTime> dates;
+  late List<BarChartRodData> data;
+  int touchedGroupIndex = -1;
+  List<int> showDateIndex = [];
+
+  void onLoad() {
+    setState(() {
+      dates = StatisticsHelper.slicePeriod(widget.startDate, widget.endDate,
+          widget.isExpanded, widget.type);
+      int ranges = widget.endDate.difference(widget.startDate).inDays;
+      int days = 1;
+      if (ranges > 365 * 3) {
+        days = 365;
+      } else if (ranges > 180) {
+        days = 30;
+      } else if (ranges > 90) {
+        days = 10;
+      } else if (ranges > 31) {
+        days = 3;
+      }
+      data = StatisticsHelper.getStackBarChartDate(
+          widget.transactions, dates, days, widget.catList, showDateIndex);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    onLoad();
+  }
+
+  @override
+  void didUpdateWidget(CategoryStackBarChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    onLoad();
+  }
+
   Widget bottomTitles(double value, TitleMeta meta) {
-    const style = TextStyle(fontSize: 12);
-    String text;
-    switch (value.toInt()) {
-      case 0:
-        text = 'Apr';
-        break;
-      case 1:
-        text = 'May';
-        break;
-      case 2:
-        text = 'Jun';
-        break;
-      case 3:
-        text = 'Jul';
-        break;
-      case 4:
-        text = 'Aug';
-        break;
-      default:
-        text = '';
-        break;
+    const style = TextStyle(
+      fontSize: 12,
+    );
+    Widget text;
+    int i = showDateIndex.indexOf(value.toInt());
+    if (i != -1) {
+      int day = dates[i].day;
+      int month = dates[i].month;
+      int year = dates[i].year;
+      int range = widget.endDate.difference(widget.startDate).inDays + 1;
+      text = Text(
+        range >= 365
+            ? '${StatisticsHelper.months[month - 1]} ${year % 100}'
+            : '$day/$month',
+        style: style,
+        textAlign: TextAlign.center,
+      );
+    } else {
+      text = Text("");
     }
+
     return SideTitleWidget(
       meta: meta,
-      child: Text(text, style: style),
+      child: text,
     );
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    if (value == meta.max) {
-      return Container();
-    }
     const style = TextStyle(
       fontSize: 12,
     );
@@ -73,6 +120,7 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         Align(
@@ -90,13 +138,56 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
           aspectRatio: widget.aspectRatio,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final barsSpace = 4.0 * constraints.maxWidth / 400;
-              final barsWidth = 8.0 * constraints.maxWidth / 400;
+
               return BarChart(
                 BarChartData(
-                  alignment: BarChartAlignment.center,
-                  barTouchData: const BarTouchData(
-                    enabled: false,
+                  alignment: BarChartAlignment.spaceAround,
+                  barTouchData: BarTouchData(
+                    enabled: true,
+                    handleBuiltInTouches: false,
+                    touchTooltipData: BarTouchTooltipData(
+                      fitInsideHorizontally: true,
+                      fitInsideVertically: true,
+                      getTooltipColor: (group) => Colors.white,
+                      tooltipMargin: 0,
+                      getTooltipItem: (
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                          ) {
+                        String text = "";
+                        double total = 0;
+                        for (int i = 0; i < rod.rodStackItems.length; i++) {
+                          double amount = rod.rodStackItems[i].toY - rod.rodStackItems[i].fromY;
+                          text += "${widget.currency.toString()} ${amount.toStringAsFixed(2)}\n";
+                          total += amount;
+                        }
+                        text += "= ${widget.currency.toString()} ${total.toStringAsFixed(2)}";
+                        return BarTooltipItem(
+                          text,
+                          textAlign: TextAlign.right,
+                          TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: rod.color,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                    touchCallback: (event, response) {
+                      if (event.isInterestedForInteractions &&
+                          response != null &&
+                          response.spot != null) {
+                        setState(() {
+                          touchedGroupIndex = response.spot!.touchedBarGroupIndex;
+                        });
+                      } else {
+                        setState(() {
+                          touchedGroupIndex = -1;
+                        });
+                      }
+                    },
                   ),
                   titlesData: FlTitlesData(
                     show: true,
@@ -123,7 +214,6 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
                   ),
                   gridData: FlGridData(
                     show: true,
-                    checkToShowHorizontalLine: (value) => value % 10 == 0,
                     getDrawingHorizontalLine: (value) => FlLine(
                       color: Colors.grey,
                       strokeWidth: 1,
@@ -132,14 +222,15 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
                   ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.symmetric(
-                      horizontal: BorderSide(
-                        color: Colors.black.withValues(alpha: 0.2),
-                      ),
-                    ),
+                    border: Border.all(color: AppColor.quaternary),
                   ),
-                  groupsSpace: barsSpace,
-                  barGroups: getData(barsWidth, barsSpace),
+                  barGroups: data.indexed.map((d) {
+                    return BarChartGroupData(
+                      x: d.$1,
+                      barRods: [d.$2],
+                      showingTooltipIndicators: touchedGroupIndex == d.$1 ? [0] : [],
+                    );
+                  }).toList(),
                 ),
               );
             },
@@ -147,234 +238,5 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
         ),
       ],
     );
-  }
-
-  List<BarChartGroupData> getData(double barsWidth, double barsSpace) {
-    return [
-      BarChartGroupData(
-        x: 0,
-        barsSpace: barsSpace,
-        barRods: [
-          BarChartRodData(
-            toY: 17000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 2000000000, widget.dark),
-              BarChartRodStackItem(2000000000, 12000000000, widget.normal),
-              BarChartRodStackItem(12000000000, 17000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 24000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 13000000000, widget.dark),
-              BarChartRodStackItem(13000000000, 14000000000, widget.normal),
-              BarChartRodStackItem(14000000000, 24000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 23000000000.5,
-            rodStackItems: [
-              BarChartRodStackItem(0, 6000000000.5, widget.dark),
-              BarChartRodStackItem(6000000000.5, 18000000000, widget.normal),
-              BarChartRodStackItem(18000000000, 23000000000.5, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 29000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 9000000000, widget.dark),
-              BarChartRodStackItem(9000000000, 15000000000, widget.normal),
-              BarChartRodStackItem(15000000000, 29000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 32000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 2000000000.5, widget.dark),
-              BarChartRodStackItem(2000000000.5, 17000000000.5, widget.normal),
-              BarChartRodStackItem(17000000000.5, 32000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-        ],
-      ),
-      BarChartGroupData(
-        x: 1,
-        barsSpace: barsSpace,
-        barRods: [
-          BarChartRodData(
-            toY: 31000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 11000000000, widget.dark),
-              BarChartRodStackItem(11000000000, 18000000000, widget.normal),
-              BarChartRodStackItem(18000000000, 31000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 35000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 14000000000, widget.dark),
-              BarChartRodStackItem(14000000000, 27000000000, widget.normal),
-              BarChartRodStackItem(27000000000, 35000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 31000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 8000000000, widget.dark),
-              BarChartRodStackItem(8000000000, 24000000000, widget.normal),
-              BarChartRodStackItem(24000000000, 31000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 15000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 6000000000.5, widget.dark),
-              BarChartRodStackItem(6000000000.5, 12000000000.5, widget.normal),
-              BarChartRodStackItem(12000000000.5, 15000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 17000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 9000000000, widget.dark),
-              BarChartRodStackItem(9000000000, 15000000000, widget.normal),
-              BarChartRodStackItem(15000000000, 17000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-        ],
-      ),
-      BarChartGroupData(
-        x: 2,
-        barsSpace: barsSpace,
-        barRods: [
-          BarChartRodData(
-            toY: 34000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 6000000000, widget.dark),
-              BarChartRodStackItem(6000000000, 23000000000, widget.normal),
-              BarChartRodStackItem(23000000000, 34000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 32000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 7000000000, widget.dark),
-              BarChartRodStackItem(7000000000, 24000000000, widget.normal),
-              BarChartRodStackItem(24000000000, 32000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 14000000000.5,
-            rodStackItems: [
-              BarChartRodStackItem(0, 1000000000.5, widget.dark),
-              BarChartRodStackItem(1000000000.5, 12000000000, widget.normal),
-              BarChartRodStackItem(12000000000, 14000000000.5, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 20000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 4000000000, widget.dark),
-              BarChartRodStackItem(4000000000, 15000000000, widget.normal),
-              BarChartRodStackItem(15000000000, 20000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 24000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 4000000000, widget.dark),
-              BarChartRodStackItem(4000000000, 15000000000, widget.normal),
-              BarChartRodStackItem(15000000000, 24000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-        ],
-      ),
-      BarChartGroupData(
-        x: 3,
-        barsSpace: barsSpace,
-        barRods: [
-          BarChartRodData(
-            toY: 14000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 1000000000.5, widget.dark),
-              BarChartRodStackItem(1000000000.5, 12000000000, widget.normal),
-              BarChartRodStackItem(12000000000, 14000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 27000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 7000000000, widget.dark),
-              BarChartRodStackItem(7000000000, 25000000000, widget.normal),
-              BarChartRodStackItem(25000000000, 27000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 29000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 6000000000, widget.dark),
-              BarChartRodStackItem(6000000000, 23000000000, widget.normal),
-              BarChartRodStackItem(23000000000, 29000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 16000000000.5,
-            rodStackItems: [
-              BarChartRodStackItem(0, 9000000000, widget.dark),
-              BarChartRodStackItem(9000000000, 15000000000, widget.normal),
-              BarChartRodStackItem(15000000000, 16000000000.5, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-          BarChartRodData(
-            toY: 15000000000,
-            rodStackItems: [
-              BarChartRodStackItem(0, 7000000000, widget.dark),
-              BarChartRodStackItem(7000000000, 12000000000.5, widget.normal),
-              BarChartRodStackItem(12000000000.5, 15000000000, widget.light),
-            ],
-            borderRadius: BorderRadius.zero,
-            width: barsWidth,
-          ),
-        ],
-      ),
-    ];
   }
 }

@@ -63,7 +63,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
   @override
   void didUpdateWidget(covariant CategoryBarChart oldWidget) {
     super.didUpdateWidget(oldWidget);
-    onLoad();
+    if (oldWidget.catList != widget.catList) onLoad();
   }
 
   @override
@@ -86,15 +86,11 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
           aspectRatio: widget.aspectRatio,
           child: BarChart(
             BarChartData(
-              alignment: BarChartAlignment.spaceBetween,
+              alignment: BarChartAlignment.spaceAround,
               rotationQuarterTurns: 4,
               borderData: FlBorderData(
                 show: true,
-                border: Border.symmetric(
-                  horizontal: BorderSide(
-                    color: Colors.black.withValues(alpha: 0.2),
-                  ),
-                ),
+                border: Border.all(color: AppColor.quaternary),
               ),
               titlesData: FlTitlesData(
                 show: true,
@@ -148,7 +144,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
               barGroups: widget.catList.asMap().entries.map((e) {
                 final index = e.key;
                 final data = e.value;
-                return generateBarGroup(
+                return  generateBarGroup(
                   index,
                   data.color,
                   data.actualAmount
@@ -159,7 +155,9 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                 enabled: true,
                 handleBuiltInTouches: false,
                 touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (group) => Colors.transparent,
+                  fitInsideHorizontally: true,
+                  fitInsideVertically: true,
+                  getTooltipColor: (group) => Colors.white,
                   tooltipMargin: 0,
                   getTooltipItem: (
                       BarChartGroupData group,
@@ -168,17 +166,11 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                       int rodIndex,
                       ) {
                     return BarTooltipItem(
-                      "${widget.currency.toString()} ${rod.toY.toString()}",
+                      "${widget.currency.toString()} ${rod.toY.toStringAsFixed(2)}",
                       TextStyle(
                         fontWeight: FontWeight.bold,
                         color: rod.color,
                         fontSize: 12,
-                        shadows: const [
-                          Shadow(
-                            color: Colors.black26,
-                            blurRadius: 12,
-                          )
-                        ],
                       ),
                     );
                   },

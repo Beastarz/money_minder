@@ -18,7 +18,7 @@ class CategoriesSheet extends StatefulWidget { // Changed back to StatefulWidget
   // the list of categories to be shown
   final List<CategoryProp> categories;
   final Currency mainCurrency;
-  final void Function() onCategoryReload;
+  final Future<void> Function() onCategoryReload;
   final void Function() resetPieIndex;
 
   const CategoriesSheet({
@@ -42,15 +42,22 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
   late final GlobalKey _gridViewKey;
   late final ScrollController _scrollController;
   late List<CategoryProp> _categories;
+  bool isUpdating = false;
   int _fromPosition = 0;
   int _toPosition = 0;
 
   void updateDataBase() async {
+    setState(() {
+      isUpdating = true;
+    });
     await CategoryHelper.movePosition(
         _fromPosition,
         _toPosition,
         widget.categories);
-    widget.onCategoryReload();
+    await widget.onCategoryReload();
+    setState(() {
+      isUpdating = false;
+    });
   }
 
   @override
@@ -58,15 +65,15 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
     super.initState();
     _gridViewKey = GlobalKey();
     _scrollController = ScrollController();
-    _categories = widget.categories;
+    _categories = List.from(widget.categories);
   }
 
   @override
   void didUpdateWidget(covariant CategoriesSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.categories != widget.categories) {
+    if (oldWidget.categories != widget.categories && !isUpdating) {
       setState(() {
-        _categories = widget.categories;
+        _categories = List.from(widget.categories);
       });
     }
   }
@@ -94,12 +101,12 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
         setState(() {
           _categories = reorderedListFunction(_categories);
         });
-        updateDataBase();
       },
       onDragEnd: (toPosition) {
         setState(() {
           _toPosition = toPosition;
         });
+        updateDataBase();
       },
       dragChildBoxDecoration: BoxDecoration(
         color: Colors.transparent,
