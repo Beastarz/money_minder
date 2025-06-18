@@ -71,6 +71,7 @@ class CategoryCard extends StatelessWidget {
                 Navigator.pop(context);
                 showTransactionInputForm(prop);
               },
+              color: prop.color,
               splashColor: splashColor,
               child: Row(
                 mainAxisSize: MainAxisSize.max,

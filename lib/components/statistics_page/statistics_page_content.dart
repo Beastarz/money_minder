@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistic_sheet.dart';
 
 import '../../models/currency.dart';
+import '../../models/date_filter.dart';
+import '../../models/transaction.dart';
 import '../../style/app_size.dart';
 import '../budget_page/budget_tile.dart';
 import '../categories_page/category_button.dart';
@@ -9,25 +11,31 @@ import '../categories_page/category_button.dart';
 class StatisticsPageContent extends StatefulWidget {
 
   final List<List<CategoryProp>> categories;
+  final List<Transaction> transactions;
   final List<double> totalAmounts;
   final List<double> totalBudgets;
   final Currency mainCurrency;
   final bool disabledAddBudget;
+  final DateFilterType dateFilterType;
   final DateTime startDate;
+  final DateTime endDate;
   final DateTime defaultDateForTransaction;
+  final void Function() onTransactionReload;
   final Function(int) showCategoryTransactions;
-  final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
 
   const StatisticsPageContent({
     super.key,
     required this.categories,
+    required this.transactions,
     required this.totalAmounts,
     required this.totalBudgets,
     required this.mainCurrency,
     required this.disabledAddBudget,
+    required this.dateFilterType,
     required this.startDate,
-    required this.onAddTransactionReload,
+    required this.endDate,
+    required this.onTransactionReload,
     required this.onBudgetReload,
     required this.defaultDateForTransaction,
     required this.showCategoryTransactions,
@@ -78,13 +86,17 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
             child: StatisticsSheet(
               isExpense: _isExpense,
               categories: widget.categories,
+              transactions: widget.transactions,
+              dateFilterType: widget.dateFilterType,
               mainCurrency: widget.mainCurrency,
               startDate: widget.startDate,
+              endDate: widget.endDate,
               defaultDateForTransaction: widget.defaultDateForTransaction,
               showCategoryTransactions: widget.showCategoryTransactions,
               disabledAddBudget: widget.disabledAddBudget,
-              onAddTransactionReload: widget.onAddTransactionReload,
+              onTransactionReload: widget.onTransactionReload,
               onBudgetReload: widget.onBudgetReload,
+              totalAmounts: widget.totalAmounts,
             )
           ),
         ]

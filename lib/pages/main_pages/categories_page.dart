@@ -22,8 +22,9 @@ class CategoriesPage extends StatefulWidget {
   final int currentPageIndex;
   final void Function(int) onPageChange;
   final Function(int) showCategoryTransactions;
-  final void Function() onAddTransactionReload;
+  final void Function() onTransactionReload;
   final void Function() onBudgetReload;
+  final Future<void> Function() onCategoryReload;
 
   const CategoriesPage({
     super.key,
@@ -35,9 +36,10 @@ class CategoriesPage extends StatefulWidget {
     required this.onPageChange,
     required this.categories,
     required this.groupedBudgets,
-    required this.onAddTransactionReload,
+    required this.onTransactionReload,
     required this.onBudgetReload,
     required this.showCategoryTransactions,
+    required this.onCategoryReload,
   });
 
 
@@ -96,8 +98,9 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           disabledAddBudget: disabledAddBudget,
           startDate: widget.dateFilter.startDates[index],
           showCategoryTransactions: widget.showCategoryTransactions,
-          onAddTransactionReload: widget.onAddTransactionReload,
+          onTransactionReload: widget.onTransactionReload,
           onBudgetReload: widget.onBudgetReload,
+          onCategoryReload: widget.onCategoryReload,
           defaultDateForTransaction: index == 50
               ? DateTime.now()
               : index > 50
@@ -113,7 +116,8 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
   void didUpdateWidget(covariant CategoriesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.groupedTransactions != oldWidget.groupedTransactions ||
-        widget.groupedBudgets != oldWidget.groupedBudgets) {
+        widget.groupedBudgets != oldWidget.groupedBudgets ||
+        widget.categories != oldWidget.categories) {
       getPages();
     }
   }
