@@ -24,6 +24,7 @@ class StatisticsPage extends StatefulWidget {
     required this.onPageChange,
     required this.onAddTransactionReload,
     required this.onBudgetReload,
+    required this.showCategoryTransactions,
   });
 
   final Currency mainCurrency;
@@ -34,6 +35,7 @@ class StatisticsPage extends StatefulWidget {
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+  final void Function(int) showCategoryTransactions;
   final void Function() onAddTransactionReload;
   final void Function() onBudgetReload;
 
@@ -92,6 +94,7 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
           mainCurrency: widget.mainCurrency,
           disabledAddBudget: disabledAddBudget,
           startDate: widget.dateFilter.startDates[index],
+          showCategoryTransactions: widget.showCategoryTransactions,
           onAddTransactionReload: widget.onAddTransactionReload,
           onBudgetReload: widget.onBudgetReload,
           defaultDateForTransaction: index == 50

@@ -34,12 +34,12 @@ class TransactionFilter {
       res.addAll(transactions.where((t) => t.type == type));
     }
     if (notePrefix.isNotEmpty) {
-      res.addAll(transactions.where((t) => t.note.startsWith(notePrefix)));
+      res.addAll(transactions.where((t) => t.note.toLowerCase().contains(notePrefix.toLowerCase())));
     }
     return res.toSet().toList();
   }
 
   int count() {
-    return accountIds.length + categoryIds.length + transactionTypes.length;
+    return accountIds.length + categoryIds.length + transactionTypes.length + (notePrefix.isNotEmpty ? 1 : 0);
   }
 }

@@ -21,6 +21,7 @@ class TransactionsPage extends StatefulWidget {
     required this.onTransactionReload,
     required this.isInFiltered,
     required this.groupedRecurrence,
+    required this.clearTransactionFilter,
   });
 
   final double filteredAccountBalance;
@@ -28,10 +29,11 @@ class TransactionsPage extends StatefulWidget {
   final List<List<Transaction>> groupedTransactions;
   final List<List<Recurrence>> groupedRecurrence;
   final DateFilter dateFilter;
-  final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final bool isInFiltered;
+  final Function(DateFilter) onDateFilterUpdate;
   final void Function(int) onPageChange;
+  final void Function() clearTransactionFilter;
   final Function() onTransactionReload;
 
   @override
@@ -102,6 +104,7 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
             finalBalance: accumulatedBalance[transactions.$1 + 1],
             mainCurrency: widget.mainCurrency,
             isInFiltered: widget.isInFiltered,
+            clearTransactionFilters: widget.clearTransactionFilter,
             onTransactionReload: widget.onTransactionReload,
           )).toList();
     });

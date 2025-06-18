@@ -221,7 +221,7 @@ class CategoryHelper {
   /// return: void
   static void showCategoryCard(
       BuildContext context, CategoryProp prop, Currency mainCurrency, DateTime startDate, DateTime defaultDateForTransaction,
-      bool disabledAddBudget, void Function() reloadTransaction, void Function() reloadBudget) {
+      bool disabledAddBudget, void Function() reloadTransaction, void Function() reloadBudget, void Function(int) showCategoryTransactions) {
     showDialog(
       context: context,
       builder: (context) {
@@ -229,6 +229,7 @@ class CategoryHelper {
           prop: prop,
           currency: mainCurrency,
           disabledAddBudget: disabledAddBudget,
+          showCategoryTransactions: showCategoryTransactions,
           showTransactionInputForm: showTransactionInputForm(
               context, mainCurrency, defaultDateForTransaction, reloadTransaction),
           showBudgetInputForm: showBudgetInputForm(
