@@ -279,15 +279,15 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                 return StatisticsCatTile(
-                    prop: _category[index % _category.length],
+                    prop: _category[index],
                     mainCurrency: widget.mainCurrency,
                     onPressed: catTileOnPressed,
                     totalAmount: widget.totalAmounts[widget.isExpense ? 0 : 1],
-                    percentage: _percentages[_category[index % _category.length].position],
+                    percentage: _percentages[_category[index].position],
                 );
                 //     return StatisticsCatTile(prop: category[index]);
               },
-              childCount: _category.length * 10, // Number of items in the list
+              childCount: _category.length, // Number of items in the list
             ),
           ),
         ],
