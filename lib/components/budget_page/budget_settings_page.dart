@@ -41,6 +41,10 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+    final double fontSize = isSmallScreen ? 12 : 16;
+
     return SafeArea(
       child: Container(
           padding: EdgeInsets.all(AppSize.bigPadding),
@@ -72,11 +76,14 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
 
               CheckboxListTile(
                 contentPadding: const EdgeInsets.all(0),
-                title: Text("Same as Amount (spent / received)"),
+                title: Text(
+                    "Same as Amount (spent / received)",
+                    style: TextStyle(fontSize: fontSize)
+                ),
                 subtitle: BalanceText(
                   balance: widget.expenseAsBudget,
                   currencyName: widget.mainCurrency.toString(),
-                  size: 16,
+                  size: fontSize,
                   fontColor: AppColor.darkText,
                 ),
                 value: _sameAsAmount,
@@ -95,11 +102,14 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
               ? SizedBox.shrink()
               : CheckboxListTile(
                   contentPadding: const EdgeInsets.all(0),
-                  title: Text("Same as ${formatDate(DateTime(widget.year, widget.month, 1), [M, ' ', yyyy])}"),
+                  title: Text(
+                      "Same as ${formatDate(DateTime(widget.year, widget.month, 1), [M, ' ', yyyy])}",
+                      style: TextStyle(fontSize: fontSize)
+                  ),
                   subtitle: BalanceText(
                     balance: widget.lastBudget,
                     currencyName: widget.mainCurrency.toString(),
-                    size: 16,
+                    size: fontSize,
                     fontColor: AppColor.darkText,
                   ),
                   value: _sameAsPrevious,
@@ -119,9 +129,9 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "Set Recurring Budget for",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: fontSize),
                       ),
                       DropdownButtonHideUnderline(
                         child: DropdownButton<int>(
@@ -140,15 +150,15 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                               value: number,
                               child: Text(
                                 '$number',
-                                style: const TextStyle(fontSize: 16), // Match text style
+                                style: TextStyle(fontSize: fontSize), // Match text style
                               ),
                             );
                           }).toList(),
                         ),
                       ),
-                      const Text(
+                      Text(
                         "Month(s).",
-                        style: TextStyle(fontSize: 16), // Adjust font size as needed
+                        style: TextStyle(fontSize: fontSize), // Adjust font size as needed
                       ),
                     ],
                   ),
@@ -163,6 +173,7 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
               Divider(),
 
               MaterialButton(
+                padding: const EdgeInsets.all(0),
                 onPressed: () {
                   showDialog(
                     context: context,

@@ -13,21 +13,52 @@ class StatisticsCatTile extends StatelessWidget {
   final CategoryProp prop;
   final Currency mainCurrency;
   final void Function(CategoryProp) onPressed;
+  final double totalAmount;
+  final double percentage;
 
   const StatisticsCatTile({
     super.key,
     required this.prop,
     required this.mainCurrency,
     required this.onPressed,
+    required this.totalAmount,
+    required this.percentage,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final double percentage = prop.budget == 0
-        ? prop.actualAmount > 0 ? 1 : 0
-        : prop.actualAmount / prop.budget;
-    final double progress = percentage > 1 ? 1 : percentage;
+    final double shownPercentage = totalAmount == 0
+      ? 0
+      : prop.actualAmount / totalAmount;
+    // Calculate the color gradient
+    final double fraction = prop.budget == 0
+      ? 1
+      : prop.actualAmount / prop.budget;
+    Color topColor = prop.color.withAlpha((0.3 * 255).round());
+    Color bottomColor = prop.color;
+    final bool exceed = (prop.isExpense
+        ? prop.budget < prop.actualAmount
+        : prop.actualAmount < prop.budget) && prop.budget != 0;
+
+    Widget categoryIcon = Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [bottomColor, bottomColor, topColor, topColor],
+            stops: [0.0, fraction, fraction, 1],
+          ),
+          border: Border.all(
+            color: prop.color,
+            width: 2.0,
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: prop.icon
+    );
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -42,24 +73,16 @@ class StatisticsCatTile extends StatelessWidget {
         child: LinearPercentIndicator(
           animation: true,
           lineHeight: 20.0,
-          percent: progress,
+          percent: percentage,
           backgroundColor: AppColor.tertiary,
           progressColor: CategoryHelper.lightenColor(prop.color, 0.5),
           center: Text(
-            "${(percentage * 100).toStringAsFixed(2)}%",
+            "${(shownPercentage * 100).toStringAsFixed(2)}%",
             style: TextStyle(fontSize: 12.0),
           ),
           leading: Column(
             children: [
-              Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: prop.color,
-                    shape: BoxShape.circle,
-                  ),
-                  child: prop.icon
-              ),
+              categoryIcon,
               SizedBox(
                 width: 50,
                 child: Text(
@@ -81,9 +104,12 @@ class StatisticsCatTile extends StatelessWidget {
                 BalanceText(
                   balance: prop.actualAmount,
                   currencyName: mainCurrency.toString(),
-                  fontColor: prop.color,
+                  fontColor: exceed ? AppColor.darkText : prop.color,
                   size: 16,
                   textWidth: 70,
+                  fillColor: exceed
+                      ? CategoryHelper.lightenColor(prop.color, 0.3)
+                      : Colors.transparent,
                 ),
                 BalanceText(
                   balance: prop.budget,

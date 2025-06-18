@@ -244,13 +244,17 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onPageChange: _onPageChange,
         categories: _categories,
         groupedBudgets: _groupedBudgets,
-        onAddTransactionReload: () async {
+        onTransactionReload: () async {
           await _fetchRecurrence();
           _fetchAccounts();
           _fetchTransactions();
         },
         onBudgetReload: () {
           _fetchBudgets();
+        },
+        onCategoryReload: () async {
+          await _fetchCategories();
+          await _fetchTransactions();
         }
       ),
       TransactionsPage(
@@ -278,7 +282,8 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
-        onAddTransactionReload: () {
+        onTransactionReload: () async {
+          await _fetchRecurrence();
           _fetchAccounts();
           _fetchTransactions();
         },

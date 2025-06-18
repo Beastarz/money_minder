@@ -57,8 +57,6 @@ class Category{
   ///
   /// bool isExpense: is expense or income
   ///
-  /// double expectedAmount: expected amount of the category
-  ///
   /// Returns: map of category
   static Map<String, dynamic> insertAsMap({
     required String label,
@@ -66,7 +64,6 @@ class Category{
     required Icon icon,
     required Color color,
     required bool isExpense,
-    required double expectedAmount,
   }) {
     return {
       'label': label,

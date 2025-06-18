@@ -22,7 +22,7 @@ class StatisticsPage extends StatefulWidget {
     required this.onDateFilterUpdate,
     required this.currentPageIndex,
     required this.onPageChange,
-    required this.onAddTransactionReload,
+    required this.onTransactionReload,
     required this.onBudgetReload,
   });
 
@@ -34,7 +34,7 @@ class StatisticsPage extends StatefulWidget {
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
-  final void Function() onAddTransactionReload;
+  final void Function() onTransactionReload;
   final void Function() onBudgetReload;
 
   @override
@@ -65,6 +65,35 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
     });
   }
 
+  DateTime _getEndDate(int index) {
+    DateTime startDate = widget.dateFilter.startDates[index];
+    int year = startDate.year;
+    int month = startDate.month;
+    int day = startDate.day;
+
+    if (widget.dateFilter.type case DateFilterType.all) {
+      return DateTime.now();
+    } else if (widget.dateFilter.type case DateFilterType.year) {
+      return DateTime(year + 1, month, day).subtract(Duration(days: 1));
+    } else if (widget.dateFilter.type case DateFilterType.month) {
+      if (month == 12) {
+        month = 1;
+        year += 1;
+      }  else {
+        month += 1;
+      }
+      return DateTime(year, month, day).subtract(Duration(days: 1));
+    } else if (widget.dateFilter.type case DateFilterType.week) {
+      return DateTime(year, month, day).add(Duration(days: 6));
+    } else if (widget.dateFilter.type case DateFilterType.day) {
+      return startDate;
+    } else if (widget.dateFilter.type case DateFilterType.range) {
+      int range = widget.dateFilter.startDates[1].difference(widget.dateFilter.startDates[0]).inDays;
+      return DateTime(year, month, day).add(Duration(days: range - 1));
+    }
+    return DateTime.now();
+  }
+
   void getPages() {
     final bool disabledAddBudget = widget.dateFilter.type != DateFilterType.month;
     setState(() {
@@ -85,14 +114,20 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
           CategoryHelper.getTotalBudget(budgets, true),
           CategoryHelper.getTotalBudget(budgets, false),
         ];
+        DateTime startDate = widget.dateFilter.type == DateFilterType.all
+          ? DateTime(2025, 1, 1) // TODO: make it be the first day user using the app
+          : widget.dateFilter.startDates[index];
         return StatisticsPageContent(
           categories: [expenseCats, incomeCats],
           totalAmounts: totalAmounts,
           totalBudgets: totalBudgets,
           mainCurrency: widget.mainCurrency,
           disabledAddBudget: disabledAddBudget,
-          startDate: widget.dateFilter.startDates[index],
-          onAddTransactionReload: widget.onAddTransactionReload,
+          dateFilterType: widget.dateFilter.type,
+          transactions: transactions,
+          startDate: startDate,
+          endDate: _getEndDate(index),
+          onTransactionReload: widget.onTransactionReload,
           onBudgetReload: widget.onBudgetReload,
           defaultDateForTransaction: index == 50
               ? DateTime.now()

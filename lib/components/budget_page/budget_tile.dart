@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../models/currency.dart';
+import '../../style/app_color.dart';
 import '../../utils/balance_text.dart';
 import '../categories_page/category_helper.dart';
 
@@ -60,7 +61,10 @@ class _BudgetTileState extends State<BudgetTile> {
     fraction = fraction.clamp(0.03, 1.00);
     Color leftColor = CategoryHelper.lightenColor(widget.prop.color, 0.75);
     Color rightColor = CategoryHelper.lightenColor(widget.prop.color, 0.9);
-    // double textWidth = MediaQuery.of(context).size.width * 0.4;
+    final double balance = widget.prop.isExpense
+        ? widget.prop.budget - widget.prop.actualAmount
+        : widget.prop.actualAmount - widget.prop.budget;
+    final bool exceed = balance < 0 && widget.prop.budget != 0;
 
     return MaterialButton(
       onPressed: widget.onPressed,
@@ -120,12 +124,17 @@ class _BudgetTileState extends State<BudgetTile> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   BalanceText(
-                    balance: widget.prop.budget - widget.prop.actualAmount,
+                    balance: balance,
                     currencyName: widget.mainCurrency.toString(),
                     mainAxisAlignment: MainAxisAlignment.end,
                     showColor: true,
                     size: 18,
-                    fontColor: widget.prop.isExpense ? Colors.redAccent : Colors.green
+                    fontColor: exceed
+                      ? AppColor.darkText
+                      : widget.prop.color,
+                    fillColor: exceed
+                        ? CategoryHelper.lightenColor(widget.prop.color, 0.3)
+                        : Colors.transparent,
                   ),
                   BalanceText(
                     balance: widget.prop.budget,
