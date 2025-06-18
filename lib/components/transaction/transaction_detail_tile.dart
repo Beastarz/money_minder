@@ -22,6 +22,7 @@ class TransactionDetailTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: onPressed,
+      height: MediaQuery.of(context).size.width * 0.15,
       minWidth: MediaQuery.of(context).size.width * 0.40,
       padding: EdgeInsets.all(AppSize.smallPadding),
       color: AppColor.primary,

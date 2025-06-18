@@ -13,9 +13,10 @@ import '../../utils/main_icon.dart';
 
 class AccountDetailSheet extends StatefulWidget {
   final Account account;
+  final Function(int) onShowAccountTransactions;
   final void Function() onReload;
 
-  const AccountDetailSheet({super.key, required this.account, required this.onReload});
+  const AccountDetailSheet({super.key, required this.account, required this.onReload, required this.onShowAccountTransactions});
 
   @override
   State<AccountDetailSheet> createState() => _AccountDetailSheetState();
@@ -164,7 +165,10 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     parentContext: context,
                     label: 'Transactions',
                     icon: Icon(Icons.list_alt, color: Colors.blueAccent,),
-                    onPressed: () {}
+                    onPressed: () {
+                        Navigator.pop(context);
+                        widget.onShowAccountTransactions(widget.account.id);
+                      },
                 ),
                 AccountDetailFunctionTile(
                     parentContext: context,

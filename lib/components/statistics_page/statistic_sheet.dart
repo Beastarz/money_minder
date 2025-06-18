@@ -24,6 +24,7 @@ class StatisticsSheet extends StatefulWidget {
   final DateTime defaultDateForTransaction;
   final bool disabledAddBudget;
   final void Function() onTransactionReload;
+  final Function(int) showCategoryTransactions;
   final void Function() onBudgetReload;
   final List<double> totalAmounts;
 
@@ -41,6 +42,7 @@ class StatisticsSheet extends StatefulWidget {
     required this.onBudgetReload,
     required this.totalAmounts,
     required this.defaultDateForTransaction,
+    required this.showCategoryTransactions,
   });
 
   @override
@@ -68,6 +70,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
       widget.disabledAddBudget,
       widget.onTransactionReload,
       widget.onBudgetReload,
+      widget.showCategoryTransactions,
     );
   }
 

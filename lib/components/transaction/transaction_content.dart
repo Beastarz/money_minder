@@ -9,7 +9,7 @@ import '../../models/transaction.dart';
 import '../recurrence/recurrence_tile.dart';
 
 class TransactionsContent extends StatelessWidget {
-  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload, required this.isInFiltered, required this.recurrences,});
+  const TransactionsContent({super.key, required this.transactions, required this.initialBalance, required this.finalBalance, required this.mainCurrency, required this.onTransactionReload, required this.isInFiltered, required this.recurrences, required this.clearTransactionFilters,});
 
   final List<Transaction> transactions;
   final List<Recurrence> recurrences;
@@ -17,6 +17,7 @@ class TransactionsContent extends StatelessWidget {
   final double finalBalance;
   final Currency mainCurrency;
   final bool isInFiltered;
+  final Function clearTransactionFilters;
   final Function() onTransactionReload;
 
   @override
@@ -27,9 +28,11 @@ class TransactionsContent extends StatelessWidget {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16),
       child: Column(
-        spacing: 16,
+        spacing: 8,
         children: <Widget> [
-          isInFiltered ? Container() : Row(
+          isInFiltered
+              ? TextButton(onPressed: () => clearTransactionFilters() , child: Text('Clear Filters', style: TextStyle(color: Colors.red),))
+              : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: MediaQuery.of(context).size.width*0.05,
             children: [

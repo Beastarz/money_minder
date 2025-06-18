@@ -21,6 +21,7 @@ class CategoriesPage extends StatefulWidget {
   final Function(DateFilter) onDateFilterUpdate;
   final int currentPageIndex;
   final void Function(int) onPageChange;
+  final Function(int) showCategoryTransactions;
   final void Function() onTransactionReload;
   final void Function() onBudgetReload;
   final Future<void> Function() onCategoryReload;
@@ -37,6 +38,7 @@ class CategoriesPage extends StatefulWidget {
     required this.groupedBudgets,
     required this.onTransactionReload,
     required this.onBudgetReload,
+    required this.showCategoryTransactions,
     required this.onCategoryReload,
   });
 
@@ -95,6 +97,7 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           mainCurrency: widget.mainCurrency,
           disabledAddBudget: disabledAddBudget,
           startDate: widget.dateFilter.startDates[index],
+          showCategoryTransactions: widget.showCategoryTransactions,
           onTransactionReload: widget.onTransactionReload,
           onBudgetReload: widget.onBudgetReload,
           onCategoryReload: widget.onCategoryReload,

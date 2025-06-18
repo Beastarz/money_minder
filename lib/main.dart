@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
 import 'package:money_minder/models/account.dart';
@@ -21,12 +22,17 @@ import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'components/app_bar/appbar_drawer.dart';
+import 'firebase_options.dart';
 import 'models/budget.dart';
 import 'models/category.dart';
 import 'models/transaction.dart';
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MoneyMinder());
 }
 
@@ -61,7 +67,7 @@ class MoneyMinderFrame extends StatefulWidget {
 }
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
-  int _selectedIndex = 2;
+  int _tabIndex = 2;
 
   List<Account> _accounts = [];
   List<Account> _filteredAccounts = [];
@@ -76,7 +82,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
   List<List<Budget>> _groupedBudgets = [];
 
-  TransactionFilter transactionFilter = TransactionFilter.empty();
+  TransactionFilter _transactionFilter = TransactionFilter.empty();
 
   int _currentPageIndex = 50;
 
@@ -172,7 +178,27 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
   void _onTabChange (int index) {
     setState(() {
-      _selectedIndex = index;
+      _tabIndex = index;
+    });
+  }
+
+  void _showAccountTransactions(int id) {
+    setState(() {
+      _transactionFilter = TransactionFilter(accountIds: [id], categoryIds: [], transactionTypes: [], notePrefix: '');
+      _tabIndex = 2;
+    });
+  }
+
+  void _showCategoryTransactions(int id) {
+    setState(() {
+      _transactionFilter = TransactionFilter(accountIds: [], categoryIds: [id], transactionTypes: [], notePrefix: '');
+      _tabIndex = 2;
+    });
+  }
+
+  void _clearTransactionFilter() {
+    setState(() {
+      _transactionFilter = TransactionFilter.empty();
     });
   }
 
@@ -194,10 +220,10 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       String notePrefix) {
     setState(() {
       if (selectedAccountIds.isEmpty && selectedCategoryIds.isEmpty && selectedTransactionTypes.isEmpty && notePrefix.isEmpty) {
-        transactionFilter = TransactionFilter.empty();
+        _transactionFilter = TransactionFilter.empty();
         return;
       }
-      transactionFilter = TransactionFilter(
+      _transactionFilter = TransactionFilter(
         accountIds: selectedAccountIds,
         categoryIds: selectedCategoryIds,
         transactionTypes: selectedTransactionTypes,
@@ -229,6 +255,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       AccountsPage(
           accounts: _accounts,
           mainCurrency: _mainCurrency,
+          onShowAccountTransactions: _showAccountTransactions,
           onReload: () async {
             await _fetchRecurrence();
             _fetchAccounts();
@@ -242,6 +269,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
+        showCategoryTransactions: _showCategoryTransactions,
         categories: _categories,
         groupedBudgets: _groupedBudgets,
         onTransactionReload: () async {
@@ -260,13 +288,14 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
       TransactionsPage(
         filteredAccountBalance: Account.calculateBalance(_filteredAccounts, _mainCurrency),
         mainCurrency: _mainCurrency,
-        groupedTransactions: _groupedTransactions.map((t) => transactionFilter.filterTransactions(t)).toList(),
-        groupedRecurrence:  _groupedRecurrence.map((t) => List.castFrom<Transaction, Recurrence>(transactionFilter.filterTransactions(t))).toList(),
-        isInFiltered: !transactionFilter.isOff,
+        groupedTransactions: _groupedTransactions.map((t) => _transactionFilter.filterTransactions(t)).toList(),
+        groupedRecurrence:  _groupedRecurrence.map((t) => List.castFrom<Transaction, Recurrence>(_transactionFilter.filterTransactions(t))).toList(),
+        isInFiltered: !_transactionFilter.isOff,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
+        clearTransactionFilter: _clearTransactionFilter,
         onTransactionReload: () async {
           await _fetchRecurrence();
           _fetchAccounts();
@@ -280,6 +309,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         groupedBudgets: _groupedBudgets,
         dateFilter: _dateFilter,
         onDateFilterUpdate: _onDateFilterChange,
+        showCategoryTransactions: _showCategoryTransactions,
         currentPageIndex: _currentPageIndex,
         onPageChange: _onPageChange,
         onTransactionReload: () async {
@@ -296,18 +326,18 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
 
     return Scaffold(
       appBar: MMAppBar(
-        selectedIndex: _selectedIndex,
+        selectedIndex: _tabIndex,
         filteredAccounts: _filteredAccounts,
         onReload: _fetchAccounts,
         mainCurrency: _mainCurrency,
-        transactionFilter: transactionFilter,
+        transactionFilter: _transactionFilter,
         onTransactionFilterChange: _onTransactionFilterChange,
       ),
       drawer: AppbarDrawer(),
-      body: pages[_selectedIndex],
+      body: pages[_tabIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,
-        selectedIndex: _selectedIndex,
+        selectedIndex: _tabIndex,
       )
     );
   }

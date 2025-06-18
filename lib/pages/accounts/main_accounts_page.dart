@@ -10,10 +10,16 @@ import '../../models/currency.dart';
 import '../../style/app_size.dart';
 
 class AccountsPage extends StatefulWidget {
-  const AccountsPage({super.key, required this.accounts, required this.mainCurrency, required this.onReload});
+  const AccountsPage({super.key,
+    required this.accounts,
+    required this.mainCurrency,
+    required this.onReload,
+    required this.onShowAccountTransactions
+  });
 
   final List<Account> accounts;
   final Currency mainCurrency;
+  final Function(int) onShowAccountTransactions;
   final void Function() onReload;
 
   @override
@@ -138,7 +144,7 @@ class _AccountsPageState extends State<AccountsPage> {
                                       left: false,
                                       right: false,
                                       child: SingleChildScrollView(
-                                          child: AccountDetailSheet(account: account, onReload: widget.onReload),
+                                          child: AccountDetailSheet(account: account, onShowAccountTransactions: widget.onShowAccountTransactions, onReload: widget.onReload),
                                       ),
                                     );
                                   },

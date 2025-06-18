@@ -12,6 +12,7 @@ class CategoryCard extends StatelessWidget {
   final CategoryProp prop;
   final Currency currency;
   final bool disabledAddBudget;
+  final Function(int) showCategoryTransactions;
   final void Function(CategoryProp) showTransactionInputForm;
   final void Function(CategoryProp) showBudgetInputForm;
 
@@ -22,6 +23,7 @@ class CategoryCard extends StatelessWidget {
     required this.disabledAddBudget,
     required this.showTransactionInputForm,
     required this.showBudgetInputForm,
+    required this.showCategoryTransactions,
   });
 
   @override
@@ -84,12 +86,8 @@ class CategoryCard extends StatelessWidget {
             ),
             MaterialButton(
                 onPressed: () {
+                  showCategoryTransactions(prop.id);
                   Navigator.pop(context);
-
-                  // TODO: show transactions
-                  // navigate to transactions page, show all transactions
-                  // related to this category
-
                 },
                 splashColor: splashColor,
                 child: Row(

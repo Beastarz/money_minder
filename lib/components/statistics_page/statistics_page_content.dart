@@ -21,6 +21,7 @@ class StatisticsPageContent extends StatefulWidget {
   final DateTime endDate;
   final DateTime defaultDateForTransaction;
   final void Function() onTransactionReload;
+  final Function(int) showCategoryTransactions;
   final void Function() onBudgetReload;
 
   const StatisticsPageContent({
@@ -37,6 +38,7 @@ class StatisticsPageContent extends StatefulWidget {
     required this.onTransactionReload,
     required this.onBudgetReload,
     required this.defaultDateForTransaction,
+    required this.showCategoryTransactions,
   });
 
   @override
@@ -90,6 +92,7 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
               startDate: widget.startDate,
               endDate: widget.endDate,
               defaultDateForTransaction: widget.defaultDateForTransaction,
+              showCategoryTransactions: widget.showCategoryTransactions,
               disabledAddBudget: widget.disabledAddBudget,
               onTransactionReload: widget.onTransactionReload,
               onBudgetReload: widget.onBudgetReload,
