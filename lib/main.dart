@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/app_bar/appbar.dart';
@@ -67,6 +68,9 @@ class MoneyMinderFrame extends StatefulWidget {
 }
 
 class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
+  late final User? _user;
+  late final String? _username;
+
   int _tabIndex = 2;
 
   List<Account> _accounts = [];
@@ -91,6 +95,17 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
   @override
   void initState() {
     super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      setState(() {
+        _user = user;
+      });
+      print(_user);
+      if (user != null) {
+
+      }
+    });
+
+
     _loadAllInitialData();
   }
 
@@ -333,7 +348,7 @@ class _MoneyMinderFrameState extends State<MoneyMinderFrame> {
         transactionFilter: _transactionFilter,
         onTransactionFilterChange: _onTransactionFilterChange,
       ),
-      drawer: AppbarDrawer(),
+      drawer: AppbarDrawer(user: _user,),
       body: pages[_tabIndex],
       bottomNavigationBar: BottomNavbar(
         onTabChange: _onTabChange,

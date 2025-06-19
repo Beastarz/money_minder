@@ -1,11 +1,59 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/auth/auth_service.dart';
+import 'package:money_minder/style/app_color.dart';
 
 // TODO: Add drawer functionality
-class AppbarDrawer extends StatelessWidget {
-  const AppbarDrawer({super.key});
+class AppbarDrawer extends StatefulWidget {
+  const AppbarDrawer({super.key, required this.user});
+
+  final User? user;
+
+  @override
+  State<AppbarDrawer> createState() => _AppbarDrawerState();
+}
+
+class _AppbarDrawerState extends State<AppbarDrawer> {
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    Widget signInTile = ListTile(
+      title: Text(
+          'Not Signed In',
+          style: TextStyle(fontSize: 18),
+      ),
+      trailing: isLoading ? CircularProgressIndicator() : TextButton(
+        onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
+          await AuthService().signInWithGoogle();
+          setState(() {
+            isLoading = false;
+          });
+        },
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
+          foregroundColor: WidgetStateProperty.all(Colors.white),
+        ),
+        child: Text(
+            "Sign In",
+          style: TextStyle(
+            fontSize: 18
+          ),
+        ),
+      ),
+    );
+
+    Widget signOutTile = ListTile(
+      title: Text('username'),
+      trailing: TextButton(
+        onPressed: () {},
+        child: Text("Sign Out"),
+      ),
+    );
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -14,7 +62,7 @@ class AppbarDrawer extends StatelessWidget {
             height: 125,
             child: DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.amberAccent,
+                color: AppColor.secondary,
               ),
               child: const Text(
                 'MoneyMinder',
@@ -24,6 +72,8 @@ class AppbarDrawer extends StatelessWidget {
               ),
             ),
           ),
+          widget.user != null ? signOutTile : signInTile,
+          Divider(),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
@@ -42,17 +92,6 @@ class AppbarDrawer extends StatelessWidget {
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(builder: (context) => AboutPage()),
-              // );
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => LogOutPage()),
               // );
               Navigator.pop(context);
             },
