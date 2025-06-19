@@ -30,6 +30,8 @@ class SummaryTable extends StatelessWidget {
     }
 
     return DataTable(
+      horizontalMargin: 5,
+      columnSpacing: 10,
       columns: const <DataColumn>[
         DataColumn(
           label: Expanded(

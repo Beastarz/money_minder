@@ -238,7 +238,7 @@ class _CategoryButtonState extends State<CategoryButton>
                 borderRadius: BorderRadius.circular(AppSize.borderRadius),
               ),
               child: Text(
-                '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)} / ${prop.budget}',
+                '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,

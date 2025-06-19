@@ -83,9 +83,6 @@ class BudgetCircularBar extends StatelessWidget {
                       balance: prop.actualAmount,
                       currencyName: currency.toString(),
                       size: 14,
-                      textWidth: prop.budget == 0 ? (
-                        isSmallScreen ? textWidth * 1.75 : null
-                      ) : textWidth,
                     ),
                     prop.budget == 0
                     ? SizedBox.shrink()
@@ -96,7 +93,6 @@ class BudgetCircularBar extends StatelessWidget {
                           balance: prop.budget,
                           currencyName: currency.toString(),
                           size: 14,
-                          textWidth: textWidth * 0.75,
                         ),
                       ],
                     )

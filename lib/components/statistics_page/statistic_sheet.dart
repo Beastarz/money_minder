@@ -182,29 +182,32 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return Dialog(
-                        child: RotatedBox(
-                            quarterTurns: 1,
-                            child: ChartPages(
-                                isExpanded: true,
-                                isExpense: widget.isExpense,
-                                shrinkChart: shrinkChart,
-                                categories: _category,
-                                currency: widget.mainCurrency,
-                                transactions: widget.transactions,
-                                dateFilterType: widget.dateFilterType,
-                                startDate: widget.startDate,
-                                endDate: widget.endDate,
-                                currentPage: _currentPage,
-                                showIndividual: _showIndividual,
-                                lineChartChangeType: () {
-                                  setState(() {
-                                    _showIndividual = !_showIndividual;
-                                  });
-                                },
-                                updateCurrentPage: updateCurrentPage,
-                            )
-                        )
+                    return StatefulBuilder(
+                      builder: (BuildContext statefulBuilderContext, StateSetter dialogSetState) => Dialog(
+                          child: RotatedBox(
+                              quarterTurns: 1,
+                              child: ChartPages(
+                                  isExpanded: true,
+                                  isExpense: widget.isExpense,
+                                  shrinkChart: shrinkChart,
+                                  categories: _category,
+                                  currency: widget.mainCurrency,
+                                  transactions: widget.transactions,
+                                  dateFilterType: widget.dateFilterType,
+                                  startDate: widget.startDate,
+                                  endDate: widget.endDate,
+                                  currentPage: _currentPage,
+                                  showIndividual: _showIndividual,
+                                  lineChartChangeType: () {
+                                    setState(() {
+                                      _showIndividual = !_showIndividual;
+                                    });
+                                    dialogSetState(() {});
+                                  },
+                                  updateCurrentPage: updateCurrentPage,
+                              )
+                          )
+                      ),
                     );
                   }
                 );

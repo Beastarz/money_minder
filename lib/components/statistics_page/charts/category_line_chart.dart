@@ -236,7 +236,9 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       return SideTitleWidget(
         meta: meta,
         child: Text(
-          value.toStringAsFixed(0),
+          meta.formattedValue,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style: style,
         ),
       );

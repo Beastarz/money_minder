@@ -1,7 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/utils/balance_text.dart';
-import 'package:money_minder/utils/confirmation_dialog.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
@@ -178,15 +177,26 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return ConfirmationDialog(
-                          message: 'Delete Budget?',
-                          onConfirm: () {
-                            Navigator.pop(context); // pop ConfirmationDialog
-                            Navigator.pop(context); // pop BudgetSettingsPage
-                            Navigator.pop(context); // pop AddBudgetSheet
-                            widget.deleteBudget();
-                          }
-                      ) ;
+                      return AlertDialog(
+                        title: Text("Delete Budget"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context); // pop ConfirmationDialog
+                              Navigator.pop(context); // pop BudgetSettingsPage
+                              Navigator.pop(context); // pop AddBudgetSheet
+                              widget.deleteBudget();
+                            },
+                            child: Text("Delete"),
+                          )
+                        ]
+                      );
                     }
                   );
                 },

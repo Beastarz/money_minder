@@ -113,6 +113,7 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
       child: Text(
         meta.formattedValue,
         textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
         style: style,
       ),
     );
@@ -156,22 +157,35 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
                           BarChartRodData rod,
                           int rodIndex,
                           ) {
-                        String text = "";
+                        List<TextSpan> texts = [];
                         double total = 0;
                         for (int i = 0; i < rod.rodStackItems.length; i++) {
                           double amount = rod.rodStackItems[i].toY - rod.rodStackItems[i].fromY;
-                          text += "${widget.currency.toString()} ${amount.toStringAsFixed(2)}\n";
+                          texts.add(
+                              TextSpan(
+                                  text: "${widget.currency.toString()} ${amount.toStringAsFixed(2)}\n",
+                                  style: TextStyle(
+                                    color: widget.catList[i].color,
+                                    fontWeight: FontWeight.bold,
+                                  )
+                              )
+                          );
                           total += amount;
                         }
-                        text += "= ${widget.currency.toString()} ${total.toStringAsFixed(2)}";
+                        texts.add(
+                            TextSpan(
+                                text: "= ${widget.currency.toString()} ${total.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  color: AppColor.darkText,
+                                  fontWeight: FontWeight.bold,
+                                )
+                            )
+                        );
                         return BarTooltipItem(
-                          text,
+                          '',
                           textAlign: TextAlign.right,
-                          TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: rod.color,
-                            fontSize: 12,
-                          ),
+                          TextStyle(),
+                          children: texts
                         );
                       },
                     ),

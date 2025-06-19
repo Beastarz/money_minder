@@ -77,7 +77,8 @@ class _ChartState extends State<Chart> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.transactions != null
         && widget.transactions != null
-        && oldWidget.transactions != widget.transactions) {
+        && (oldWidget.transactions != widget.transactions
+        || oldWidget.showIndividual != widget.showIndividual)) {
       load();
     }
   }
