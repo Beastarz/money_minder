@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -9,6 +10,7 @@ class AuthService {
     try {
       // Google sign in
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      print(123);
       if (googleUser == null) {
         return null;
       }

@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '278986214853',
     projectId: 'money-minder-3e544',
     storageBucket: 'money-minder-3e544.firebasestorage.app',
+    iosClientId: '278986214853-ffutp2fnovpeoark8ik87m4h8hobies7.apps.googleusercontent.com',
     iosBundleId: 'com.example.moneyMinder',
   );
 

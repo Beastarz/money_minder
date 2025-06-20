@@ -5,9 +5,10 @@ import 'package:money_minder/style/app_color.dart';
 
 // TODO: Add drawer functionality
 class AppbarDrawer extends StatefulWidget {
-  const AppbarDrawer({super.key, required this.user});
+  const AppbarDrawer({super.key, required this.user, required this.username});
 
   final User? user;
+  final String? username;
 
   @override
   State<AppbarDrawer> createState() => _AppbarDrawerState();
@@ -28,7 +29,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
           setState(() {
             isLoading = true;
           });
-          await AuthService().signInWithGoogle();
+          User? user = await AuthService().signInWithGoogle();
           setState(() {
             isLoading = false;
           });
@@ -47,9 +48,40 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
     );
 
     Widget signOutTile = ListTile(
-      title: Text('username'),
+      title: Text(widget.username ?? '_empty'),
       trailing: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            isLoading = true;
+          });
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Sign Out"),
+                  content: Text("Are you sure you want to sign out?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        AuthService().signOut();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Sign Out"),
+                    ),
+                  ],
+                );
+              }
+          );
+          setState(() {
+            isLoading = false;
+          });
+        },
         child: Text("Sign Out"),
       ),
     );

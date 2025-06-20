@@ -12,7 +12,12 @@
           "package_name": "com.example.money_minder"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "278986214853-60olikbmbb9eb8qi70end2ctbgj9me7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDdIlwX2Zo8qe-PhlMWaGyCm8Wqcaflang"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278986214853-60olikbmbb9eb8qi70end2ctbgj9me7k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "278986214853-ffutp2fnovpeoark8ik87m4h8hobies7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moneyMinder"
+              }
+            }
+          ]
         }
       }
     }
