@@ -39,9 +39,9 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
           foregroundColor: WidgetStateProperty.all(Colors.white),
         ),
         child: Text(
-            "Sign In",
+            "Google Sign In",
           style: TextStyle(
-            fontSize: 18
+            fontSize: 16
           ),
         ),
       ),
