@@ -49,11 +49,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       setState(() {
         showEmptyError = true;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name is Empty!')));
       return;
     }
 
     // error unhandled
     if (showLengthError) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name Exceed Limited Length!')));
       return;
     }
 
@@ -70,11 +72,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       setState(() {
         showEmptyError = true;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name is Empty!')));
       return;
     }
 
     // error unhandled
     if (showLengthError) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name Exceed Limited Length!')));
       return;
     }
 
@@ -86,8 +90,6 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   }
 
   Future<void> deleteCategory() async {
-    print(prop.label);
-    print(prop.id);
 
     Navigator.pop(context); // pop alert dialog
     Navigator.pop(context); // pop add category page
@@ -140,10 +142,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 8.0),
       child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * (isSmallScreen ? 0.8 : 0.6),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -231,6 +236,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                                 selectedCodePoint = newCodePoint;
                               });
                             },
+                            codePoint: selectedCodePoint,
                           ),
                           ColorSelector(
                             changeColor: (int newColorValue) {

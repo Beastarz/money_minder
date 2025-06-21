@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 
+import '../../components/account/account_customization_sheet.dart';
 import '../../models/account.dart';
 import '../../models/currency.dart';
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
 import '../../utils/main_icon.dart';
 
 class EditAccountPage extends StatefulWidget {
@@ -19,6 +22,8 @@ class EditAccountPage extends StatefulWidget {
 class _EditAccountPageState extends State<EditAccountPage> {
 
   late Account account;
+  late int codePoint;
+  late int colorValue;
   List<Currency> currencies = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -28,6 +33,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
   @override
   void initState() {
     account = widget.account;
+    codePoint = account.icon.icon!.codePoint;
+    colorValue = account.color.toARGB32();
     _nameController.text = account.name;
     _descriptionController.text = account.description;
     _accountBalanceController.text = account.balance.toString();
@@ -56,6 +63,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
     }
     Account updatedAccount = account.copyWith(
       name: _nameController.text,
+      icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
+      color: Color(colorValue),
       description: _descriptionController.text,
       balance: double.parse(_accountBalanceController.text),
     );
@@ -119,8 +128,47 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 ),
                 Spacer(),
                 IconButton(
-                    onPressed: () {},
-                    icon: MainIcon(icon: account.icon, color: account.color, isRound: false,)
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(
+                              builder: (context, innerSetState) => SafeArea(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.secondary,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(AppSize.borderRadius),
+                                        topRight: Radius.circular(AppSize.borderRadius),
+                                      ),
+                                    ),
+                                    child: AccountCustomizationSheet(
+                                      codePoint: codePoint,
+                                      colorValue: colorValue,
+                                      changeCodePoint: (int newCodePoint) {
+                                        setState(() {
+                                          codePoint = newCodePoint;
+                                        });
+                                        innerSetState(() {});
+                                      },
+                                      changeColorValue: (int newColorValue) {
+                                        setState(() {
+                                          colorValue = newColorValue;
+                                        });
+                                        innerSetState(() {});
+                                      },
+                                    )
+                                ),
+                              ),
+                            );
+                          }
+                      );
+                    },
+                    icon: MainIcon(
+                      icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
+                      color: Color(colorValue),
+                      isRound: false,)
                 ),
               ],
             ),

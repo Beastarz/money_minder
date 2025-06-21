@@ -211,7 +211,6 @@ class CategoryHelper {
       showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          // useSafeArea: true,
           builder: (context) =>
               SafeArea(
                 child: Container(

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/account/account_customization_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
 import '../../repositories/currency_repositories.dart';
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
 
 class AddAccountPage extends StatefulWidget {
   const AddAccountPage({super.key, required this.onAddAccount});
@@ -18,8 +21,8 @@ class AddAccountPage extends StatefulWidget {
 class _AddAccountPageState extends State<AddAccountPage> {
 
   bool _includeInTotalBalance = true;
-  Icon icon = Icon(Icons.abc_rounded);
-  Color color = Colors.blueGrey;
+  int codePoint = 0xeb94;
+  int colorValue = 0xFF578FCA;
   AccountType accountType = AccountType.accounts;
   Currency mainCurrency = Currency.of('sgd');
   List<Currency> currencies = [];
@@ -57,8 +60,8 @@ class _AddAccountPageState extends State<AddAccountPage> {
     Map<String, dynamic> accountData = Account.insertAsMap(
       name: _nameController.text,
       balance: double.parse(_accountBalanceController.text) * (accountType == AccountType.debts ? -1 : 1),
-      icon: icon,
-      color: color,
+      icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
+      color: Color(colorValue),
       description: _descriptionController.text,
       isIncludesInTotal: _includeInTotalBalance,
       type: accountType,
@@ -115,7 +118,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
             Row(
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width*0.7,
+                  width: MediaQuery.of(context).size.width * 0.7,
                   child: TextField(
                     controller: _nameController,
                     decoration: InputDecoration(
@@ -125,8 +128,47 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 ),
                 Spacer(),
                 IconButton(
-                  onPressed: () {},
-                  icon: MainIcon(icon: icon, color: color, isRound: false,)
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return StatefulBuilder(
+                            builder: (context, innerSetState) => SafeArea(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppColor.secondary,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(AppSize.borderRadius),
+                                    topRight: Radius.circular(AppSize.borderRadius),
+                                  ),
+                                ),
+                                child: AccountCustomizationSheet(
+                                    codePoint: codePoint,
+                                    colorValue: colorValue,
+                                    changeCodePoint: (int newCodePoint) {
+                                      setState(() {
+                                        codePoint = newCodePoint;
+                                      });
+                                      innerSetState(() {});
+                                    },
+                                    changeColorValue: (int newColorValue) {
+                                      setState(() {
+                                        colorValue = newColorValue;
+                                      });
+                                      innerSetState(() {});
+                                    },
+                                )
+                              ),
+                            ),
+                          );
+                        }
+                    );
+                  },
+                  icon: MainIcon(
+                    icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
+                    color: Color(colorValue),
+                    isRound: false,),
                 ),
               ],
             ),

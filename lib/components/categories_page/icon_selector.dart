@@ -7,8 +7,10 @@ class IconSelector extends StatefulWidget {
   const IconSelector({
     super.key,
     required this.changeIcon,
+    required this.codePoint,
   });
 
+  final int codePoint;
   final void Function(int) changeIcon;
 
   @override
@@ -17,7 +19,7 @@ class IconSelector extends StatefulWidget {
 
 class _IconSelectorState extends State<IconSelector> {
   List<String> _iconNames = [];
-  String _selectedIconName = "add";
+  late int _selectedCodePoint = widget.codePoint;
   final SymbolStyle _symbolStyle = SymbolStyle.outlined; // 'outlined', 'rounded', 'sharp'
   final TextEditingController _searchController = TextEditingController();
 
@@ -87,8 +89,10 @@ class _IconSelectorState extends State<IconSelector> {
                 final iconName = _iconNames[index];
                 final iconData = SymbolsGet.get(iconName, _symbolStyle);
 
+                int codePoint = SymbolsGet.get(iconName, SymbolStyle.outlined).codePoint;
+
                 return Card(
-                  color: _selectedIconName == iconName
+                  color: _selectedCodePoint == codePoint
                       ? AppColor.tertiary
                       : AppColor.primary,
                   elevation: 2.0,
@@ -96,7 +100,7 @@ class _IconSelectorState extends State<IconSelector> {
                     onTap: () {
                       widget.changeIcon(iconData.codePoint);
                       setState(() {
-                        _selectedIconName = iconName;
+                        _selectedCodePoint = codePoint;
                       });
                     },
                     child: Icon(iconData, size: 30.0),
