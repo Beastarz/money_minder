@@ -66,10 +66,12 @@ class TransactionsContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Ending Balance'),
-                      BalanceText(
-                        balance: finalBalance,
-                        currencyName: mainCurrency.toString(),
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Flexible(
+                        child: BalanceText(
+                          balance: finalBalance,
+                          currencyName: mainCurrency.toString(),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                        ),
                       ),
                     ]
                 ),
