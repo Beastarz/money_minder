@@ -53,43 +53,6 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
   late List<List<FlSpot>> individualChartSpots;
   late double sumChartMaxY;
   late double individualChartMaxY;
-  late List<double> sumChartDisplayYValues;
-  late List<double> individualChartDisplayYValues;
-
-  void getDisplayYValues(List<FlSpot> spots, List<double> displayYValues, double maxY) {
-
-    // remove any duplicate y values
-    Set<double> yValues = {};
-    for (FlSpot spot in spots) {
-      yValues.add(spot.y);
-    }
-    List<double> distinctY = yValues.toList();
-
-    distinctY.sort((a, b) => a.compareTo(b));
-    if (distinctY.isNotEmpty) {
-      if (!widget.isExpanded) {
-        displayYValues.add(0.0); // Always show 0
-        if (distinctY.length > 1) {
-          displayYValues.add(distinctY[(distinctY.length * 0.5).toInt()]); // Median
-        }
-        displayYValues.add(maxY); // Max Y
-        // Remove duplicates and sort
-        displayYValues = displayYValues.toSet().toList();
-        displayYValues.sort();
-      } else {
-        displayYValues.add(0.0); // Always show 0
-        if (distinctY.isNotEmpty) {
-          displayYValues.add(distinctY[(distinctY.length * 0.25).toInt()]); // Lower Quartile
-          displayYValues.add(distinctY[(distinctY.length * 0.5).toInt()]); // Median
-          displayYValues.add(distinctY[(distinctY.length * 0.75).toInt()]); // Upper Quartile
-        }
-        displayYValues.add(maxY); // Max Y
-        // Remove duplicates and sort
-        displayYValues = displayYValues.toSet().toList();
-        displayYValues.sort();
-      }
-    }
-  }
 
   void onLoad() {
     setState(() {
@@ -111,8 +74,6 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       // get the data for sum line chart
       sumChartSpots = StatisticsHelper.getLineChartData(widget.transactions, dates, days);
       sumChartMaxY = StatisticsHelper.getLineChartMaxY(sumChartSpots);
-      sumChartDisplayYValues = [];
-      getDisplayYValues(List.from(sumChartSpots), sumChartDisplayYValues, sumChartMaxY);
 
       // get the data for individual line chart
       List<List<Transaction>> groupedTransactions = StatisticsHelper.categorizeTransactions(widget.transactions, widget.catList);
@@ -123,8 +84,6 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
         tmp.addAll(individualChartSpots.last);
       }
       individualChartMaxY = StatisticsHelper.getLineChartMaxY(tmp);
-      individualChartDisplayYValues = [];
-      getDisplayYValues(tmp, individualChartDisplayYValues, individualChartMaxY);
     });
   }
 
@@ -228,11 +187,14 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       fontSize: 12,
     );
 
-    List<double> tmp = _showIndividual
-        ? individualChartDisplayYValues
-        : sumChartDisplayYValues;
+    double maxY = _showIndividual ? individualChartMaxY : sumChartMaxY;
+    double interval = getYIntervals(maxY);
+    int numOfLine = maxY ~/ interval;
+    List<double> tmp = !widget.isExpanded
+        ? [0, interval * (numOfLine ~/ 2), maxY]
+        : [0, interval * (numOfLine ~/ 4), interval * (numOfLine ~/ 2), interval * (3 * numOfLine ~/ 4), maxY];
 
-    if (tmp.contains(value)) {
+    if (tmp.any((yVal) => (yVal - value).abs() < 0.01)) {
       return SideTitleWidget(
         meta: meta,
         child: Text(
@@ -247,44 +209,46 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     return Container();
   }
 
-  FlGridData get gridData => FlGridData(
-    show: true,
-    drawVerticalLine: true,
-    horizontalInterval: getYIntervals(_showIndividual ? individualChartMaxY : sumChartMaxY),
-    verticalInterval: 1,
-    getDrawingHorizontalLine: (value) {
+  FlGridData gridData(double maxY) {
+    double interval = getYIntervals(maxY);
+    int numOfLine = maxY ~/ interval;
+    List<double> tmp = !widget.isExpanded
+      ? [0, interval * (numOfLine ~/ 2), maxY]
+      : [0, interval * (numOfLine ~/ 4), interval * (numOfLine ~/ 2), interval * (3 * numOfLine ~/ 4), maxY];
+    return FlGridData(
+      show: true,
+      drawVerticalLine: true,
+      horizontalInterval: getYIntervals(_showIndividual ? individualChartMaxY : sumChartMaxY),
+      verticalInterval: 1,
+      getDrawingHorizontalLine: (value) {
 
-      List<double> tmp = _showIndividual
-          ? individualChartDisplayYValues
-          : sumChartDisplayYValues;
-
-      if (tmp.any((yVal) => (yVal - value).abs() < 0.01)) {
+        if (tmp.any((yVal) => (yVal - value).abs() < 0.01)) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 1,
+          );
+        } else {
+          return const FlLine(
+            color: Colors.transparent, // Or use show: false for older versions
+            strokeWidth: 0,
+          );
+        }
+      },
+      getDrawingVerticalLine: (value) {
         return FlLine(
           color: Colors.grey,
           strokeWidth: 1,
         );
-      } else {
-        return const FlLine(
-          color: Colors.transparent, // Or use show: false for older versions
-          strokeWidth: 0,
-        );
-      }
-    },
-    getDrawingVerticalLine: (value) {
-      return FlLine(
-        color: Colors.grey,
-        strokeWidth: 1,
-      );
-    },
-  );
+      },
+    );
+  }
 
   double getYIntervals(double maxY) {
-    double intervals = 1;
-    while (maxY > 10000) {
-      maxY /= 10;
-      intervals *= 10;
+    if (maxY <= 1000) {
+      return 1;
+    } else {
+      return maxY / 1000;
     }
-    return intervals;
   }
 
   FlTitlesData get titlesData => FlTitlesData(
@@ -342,7 +306,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
 
   LineChartData sumData() {
     return LineChartData(
-      gridData: gridData,
+      gridData: gridData(_showIndividual ? individualChartMaxY : sumChartMaxY),
       titlesData: titlesData,
       borderData: borderData,
       minX: 0,
@@ -403,7 +367,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
 
   LineChartData individualData() {
     return LineChartData(
-      gridData: gridData,
+      gridData: gridData(_showIndividual ? individualChartMaxY : sumChartMaxY),
       titlesData: titlesData,
       borderData: borderData,
       lineBarsData: individualLineData(),
