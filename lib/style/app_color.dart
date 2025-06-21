@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// A central class to manage color for the app.
 class AppColor {
 
+  AppColor._();
   /// color for the widget background
   static final Color primary = Color(0xFFF8F9FA);
   static final Color secondary = Color(0xFFDEE2E6);
