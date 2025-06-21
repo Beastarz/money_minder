@@ -147,7 +147,9 @@ class DatabaseService {
       ('Food', 2, 0xe56c, 0xFFFF5722, 1), -- restaurant, Deep Orange
       ('Transport', 0, 0xe530, 0xFF673AB7, 1), -- directions_bus, Deep Purple
       ('Salary', 0, 0xe227, 0xFF8BC34A, 0), -- attach_money, Light Green (Income category)
-      ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1); -- gamepad, Cyan
+      ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1), -- gamepad, Cyan
+      ('Grocery', 3, 0xe8cc, 0xFF4CAF50, 1), -- shopping_cart, Green
+      ('Sport', 4, 0xe566, 0xFF2196F3, 1); -- directions_run, Blue
     ''');
 
 

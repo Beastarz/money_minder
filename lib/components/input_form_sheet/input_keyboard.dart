@@ -6,6 +6,7 @@ import 'package:money_minder/components/input_form_sheet/input_keyboard_button.d
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/models/recurrence.dart';
+import 'package:money_minder/repositories/budget_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
@@ -14,7 +15,6 @@ import '../../style/app_size.dart';
 
 import 'package:math_expressions/math_expressions.dart';
 
-import '../budget_page/budget_helper.dart';
 import '../calendar_bar/calendar_selector_helper.dart';
 import '../calendar_bar/period_tile.dart';
 
@@ -38,6 +38,7 @@ class InputKeyboard extends StatefulWidget {
   final Currency mainCurrency; // default currency of the input
   final int categoryId; // for budget input form usage
   final double expenseAsBudget; // for budget input form usage
+  final bool disabledBudgetDelete; // for budget input form usage
   final void Function(DateTime, double, String, int, RecurrenceType) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
   final void Function()? onDelete;
@@ -49,6 +50,7 @@ class InputKeyboard extends StatefulWidget {
     this.defaultValue = 0,
     this.categoryId = 0,
     this.expenseAsBudget = 0,
+    this.disabledBudgetDelete = false,
     required this.mainCurrency,
     required this.onSubmit,
     required this.onCurrencyUpdate,
@@ -399,7 +401,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       month = month == 1 ? 12 : month - 1;
       year = month == 12 ? year - 1 : year;
 
-      double? lastBudget = await BudgetHelper.getBudget(month, year, widget.categoryId);
+      double? lastBudget = await BudgetRepositories.instance.getBudget(month, year, widget.categoryId);
 
       if (!mounted) return;
 
@@ -415,6 +417,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
               mainCurrency: widget.mainCurrency,
               submitSettings: _handleBudgetSettingsSubmit,
               deleteBudget: widget.onDelete!,
+              disabledDelete: widget.disabledBudgetDelete,
             );
           }
       );

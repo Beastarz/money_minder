@@ -20,9 +20,9 @@ class StatisticsPageContent extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final DateTime defaultDateForTransaction;
-  final void Function() onTransactionReload;
+  final Future<void> Function() onTransactionReload;
   final Function(int) showCategoryTransactions;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onBudgetReload;
 
   const StatisticsPageContent({
     super.key,

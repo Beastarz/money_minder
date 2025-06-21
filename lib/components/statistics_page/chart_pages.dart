@@ -178,7 +178,7 @@ class PageIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TabPageSelector(
-            indicatorSize: isSmallScreen ? 6 : 12,
+            indicatorSize: isSmallScreen ? 6 : 8,
             controller: tabController,
             color: colorScheme.surface,
             selectedColor: colorScheme.primary,

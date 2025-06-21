@@ -42,7 +42,7 @@ class BalanceText extends StatelessWidget {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double width = constraints.maxWidth * 0.6;
+        final double width = constraints.maxWidth * 0.65;
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(

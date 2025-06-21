@@ -13,6 +13,7 @@ class BudgetSettingsPage extends StatefulWidget {
   final double lastBudget;
   final int month;
   final int year;
+  final bool disabledDelete;
   final void Function(int, double) submitSettings;
   final void Function() deleteBudget;
 
@@ -23,6 +24,7 @@ class BudgetSettingsPage extends StatefulWidget {
     required this.lastBudget,
     required this.month,
     required this.year,
+    required this.disabledDelete,
     required this.submitSettings,
     required this.deleteBudget,
   });
@@ -73,7 +75,10 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                   icon: Icon(Icons.arrow_circle_left_outlined)
               ),
 
-              CheckboxListTile(
+              // set the same budget as expense
+              widget.expenseAsBudget == 0
+              ? SizedBox.shrink()
+              : CheckboxListTile(
                 contentPadding: const EdgeInsets.all(0),
                 title: Text(
                     "Same as Amount (spent / received)",
@@ -169,9 +174,9 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                     });
                   }),
 
-              Divider(),
+              widget.disabledDelete ? SizedBox.shrink() : Divider(),
 
-              MaterialButton(
+              widget.disabledDelete ? SizedBox.shrink() : MaterialButton(
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   showDialog(

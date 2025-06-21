@@ -17,6 +17,7 @@ class AddBudgetSheet extends StatelessWidget {
   final CategoryProp prop;
   final Currency mainCurrency;
   final DateTime startDate;
+  final bool disabledDelete;
   final void Function() onBudgetReload;
 
   const AddBudgetSheet({
@@ -24,6 +25,7 @@ class AddBudgetSheet extends StatelessWidget {
     required this.prop,
     required this.mainCurrency,
     required this.startDate,
+    required this.disabledDelete,
     required this.onBudgetReload,
   });
 
@@ -80,6 +82,7 @@ class AddBudgetSheet extends StatelessWidget {
 
         },
         onDelete: onDelete,
+        disabledBudgetDelete: disabledDelete,
       ),
       topContent: Container(
         decoration: BoxDecoration(

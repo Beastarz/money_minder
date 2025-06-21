@@ -59,4 +59,9 @@ class TransactionsRepositories {
     sqf.Database db = await dbService.database;
     await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteTransactionByCategoryId(int id) async {
+    sqf.Database db = await dbService.database;
+    await db.delete('transactions', where: 'to_category_id = ?', whereArgs: [id]);
+  }
 }

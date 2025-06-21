@@ -19,8 +19,8 @@ class CategoriesPageContent extends StatefulWidget {
   final DateTime startDate;
   final DateTime defaultDateForTransaction;
   final Function(int) showCategoryTransactions;
-  final void Function() onTransactionReload;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onTransactionReload;
+  final Future<void> Function() onBudgetReload;
   final Future<void> Function() onCategoryReload;
 
   const CategoriesPageContent({
@@ -79,7 +79,10 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
       widget.disabledAddBudget,
       widget.onTransactionReload,
       widget.onBudgetReload,
-      widget.showCategoryTransactions
+      widget.showCategoryTransactions,
+      props: widget.categories[_isExpense ? 0 : 1],
+      reloadCategory: widget.onCategoryReload,
+      disabledEditCategory: false,
     );
   }
 
@@ -136,6 +139,8 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
           categories: categories,
           mainCurrency: widget.mainCurrency,
           onCategoryReload: widget.onCategoryReload,
+          onTransactionReload: widget.onTransactionReload,
+          onBudgetReload: widget.onBudgetReload,
           resetPieIndex: () {
             setState(() {
               _pieTouchedIndex = -1;

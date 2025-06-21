@@ -250,7 +250,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
   FlGridData get gridData => FlGridData(
     show: true,
     drawVerticalLine: true,
-    horizontalInterval: 1,
+    horizontalInterval: getYIntervals(_showIndividual ? individualChartMaxY : sumChartMaxY),
     verticalInterval: 1,
     getDrawingHorizontalLine: (value) {
 
@@ -278,6 +278,15 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     },
   );
 
+  double getYIntervals(double maxY) {
+    double intervals = 1;
+    while (maxY > 10000) {
+      maxY /= 10;
+      intervals *= 10;
+    }
+    return intervals;
+  }
+
   FlTitlesData get titlesData => FlTitlesData(
     show: true,
     rightTitles: const AxisTitles(
@@ -297,7 +306,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
     leftTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
-        interval: 1,
+        interval: getYIntervals(_showIndividual ? individualChartMaxY : sumChartMaxY),
         getTitlesWidget: leftTitleWidgets,
         reservedSize: 42,
       ),

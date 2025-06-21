@@ -15,6 +15,7 @@ class CategoryCard extends StatelessWidget {
   final Function(int) showCategoryTransactions;
   final void Function(CategoryProp) showTransactionInputForm;
   final void Function(CategoryProp) showBudgetInputForm;
+  final void Function(CategoryProp)? showAddCategoryPage;
 
   const CategoryCard({
     super.key,
@@ -24,6 +25,7 @@ class CategoryCard extends StatelessWidget {
     required this.showTransactionInputForm,
     required this.showBudgetInputForm,
     required this.showCategoryTransactions,
+    this.showAddCategoryPage,
   });
 
   @override
@@ -100,7 +102,26 @@ class CategoryCard extends StatelessWidget {
                       Icon(Icons.remove_red_eye_outlined),
                     ]
                 )
-            )
+            ),
+            showAddCategoryPage == null
+            ? SizedBox.shrink()
+            : MaterialButton(
+                onPressed: () {
+                  showAddCategoryPage!(prop);
+                },
+                color: Colors.orangeAccent,
+                splashColor: splashColor,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Edit Category"),
+                      SizedBox(width: AppSize.smallPadding),
+                      Icon(Icons.edit),
+                    ]
+                )
+            ),
           ]
         ),
       ),

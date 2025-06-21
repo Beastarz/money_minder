@@ -37,7 +37,7 @@ class CategoryProp {
 }
 
 class AddCategoryProp extends CategoryProp {
-  AddCategoryProp(int index) // No need for parameters if they are all defaulted
+  AddCategoryProp(int index, bool isExpense) // No need for parameters if they are all defaulted
       : super(
     id: index,
     position: index,
@@ -48,7 +48,7 @@ class AddCategoryProp extends CategoryProp {
     color: AppColor.secondary,
     actualAmount: 0,
     budget: 0,
-    isExpense: false,
+    isExpense: isExpense,
     pieTouchedIndex: -1,
     isAddButton: true, // Override parent's default for showDetail
   );
@@ -62,12 +62,18 @@ class CategoryButton extends StatefulWidget {
   // callback function when the categories button is pressed
   final void Function(CategoryProp) categoriesButtonOnPressed;
   final Currency mainCurrency;
+  final Future<void> Function() onCategoryReload;
+  final Future<void> Function() onTransactionReload;
+  final Future<void> Function() onBudgetReload;
 
   const CategoryButton({
     super.key,
     required this.prop,
     required this.categoriesButtonOnPressed,
     required this.mainCurrency,
+    required this.onCategoryReload,
+    required this.onTransactionReload,
+    required this.onBudgetReload,
   });
 
   @override
@@ -178,6 +184,13 @@ class _CategoryButtonState extends State<CategoryButton>
         child: InkWell(
           onTap: () {
             if (prop.isAddButton) {
+              CategoryHelper.showAddCategoryPage(
+                  context,
+                  [], // does not matter
+                  widget.onCategoryReload,
+                  widget.onTransactionReload,
+                  widget.onBudgetReload
+              )(prop);
               return;
             }
             widget.categoriesButtonOnPressed(prop);

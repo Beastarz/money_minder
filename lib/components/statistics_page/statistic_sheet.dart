@@ -23,9 +23,9 @@ class StatisticsSheet extends StatefulWidget {
   final DateTime endDate;
   final DateTime defaultDateForTransaction;
   final bool disabledAddBudget;
-  final void Function() onTransactionReload;
+  final Future<void> Function() onTransactionReload;
   final Function(int) showCategoryTransactions;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onBudgetReload;
   final List<double> totalAmounts;
 
   const StatisticsSheet({
