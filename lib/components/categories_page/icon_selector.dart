@@ -18,7 +18,7 @@ class IconSelector extends StatefulWidget {
 }
 
 class _IconSelectorState extends State<IconSelector> {
-  List<String> _iconNames = [];
+  List<int> _codePoints = [];
   late int _selectedCodePoint = widget.codePoint;
   final SymbolStyle _symbolStyle = SymbolStyle.outlined; // 'outlined', 'rounded', 'sharp'
   final TextEditingController _searchController = TextEditingController();
@@ -36,24 +36,36 @@ class _IconSelectorState extends State<IconSelector> {
     super.dispose();
   }
 
+  List<int> _getCodePoints(List<String> iconNames) {
+    Set<int> codePoints = {};
+    for (String iconName in iconNames) {
+      codePoints.add(SymbolsGet.get(iconName, _symbolStyle).codePoint);
+    }
+    return codePoints.toList();
+  }
+
   void _loadIcons() {
+    List<String> iconNames = SymbolsGet.values.toSet().toList();
+    iconNames.sort();
     setState(() {
-      _iconNames = SymbolsGet.values.toList(); // Get all icon names
-      _iconNames.sort(); // Sort them alphabetically
+      _codePoints = _getCodePoints(iconNames);
     });
   }
 
   void _filterIcons() {
     final query = _searchController.text.toLowerCase();
+    List<String> iconNames;
+    if (query.isEmpty) {
+      iconNames = SymbolsGet.values.toList();
+    } else {
+      iconNames = SymbolsGet.values
+          .where((name) => name.toLowerCase().contains(query))
+          .toSet()
+          .toList();
+    }
+    iconNames.sort();
     setState(() {
-      if (query.isEmpty) {
-        _iconNames = SymbolsGet.values.toList();
-      } else {
-        _iconNames = SymbolsGet.values
-            .where((name) => name.toLowerCase().contains(query))
-            .toList();
-      }
-      _iconNames.sort();
+      _codePoints = _getCodePoints(iconNames);
     });
   }
 
@@ -74,7 +86,7 @@ class _IconSelectorState extends State<IconSelector> {
             ),
           ),
           Expanded(
-            child: _iconNames.isEmpty
+            child: _codePoints.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : GridView.builder(
               padding: const EdgeInsets.all(10.0),
@@ -84,12 +96,10 @@ class _IconSelectorState extends State<IconSelector> {
                 mainAxisSpacing: 10.0,
                 childAspectRatio: 1.0,
               ),
-              itemCount: _iconNames.length,
+              itemCount: _codePoints.length,
               itemBuilder: (context, index) {
-                final iconName = _iconNames[index];
-                final iconData = SymbolsGet.get(iconName, _symbolStyle);
-
-                int codePoint = SymbolsGet.get(iconName, SymbolStyle.outlined).codePoint;
+                final codePoint = _codePoints[index];
+                final iconData = IconData(codePoint, fontFamily: 'MaterialSymbolsOutlined');
 
                 return Card(
                   color: _selectedCodePoint == codePoint
