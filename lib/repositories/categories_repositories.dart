@@ -58,8 +58,48 @@ class CategoriesRepositories {
     );
   }
 
-  Future<void> close() async {
+  /// update the categories name, icon and color
+  ///
+  /// Parameters:
+  ///
+  /// Map\<String, dynamic\> category: new data for the category
+  ///
+  /// int id: id of the category
+  Future<void> updateCategory(Map<String, dynamic> category, int id) async {
     final db = await dbService.database;
-    await db.close();
+    await db.update(
+        'categories',
+        category,
+        where: 'id = ?',
+        whereArgs: [id]);
+  }
+
+  /// delete the category by Id
+  ///
+  /// Parameters:
+  ///
+  /// int id: id of the category
+  ///
+  /// Returns: void
+  Future<void> deleteCategory(int id) async {
+    final db = await dbService.database;
+    await db.delete(
+        'categories',
+        where: 'id = ?',
+        whereArgs: [id]);
+  }
+
+  /// create a new category
+  ///
+  /// Parameters:
+  ///
+  /// Map\<String, dynamic\> category: data for the new category
+  ///
+  /// Returns: void
+  Future<void> createCategory(Map<String, dynamic> category) async {
+    final db = await dbService.database;
+    await db.insert(
+        'categories',
+        category);
   }
 }

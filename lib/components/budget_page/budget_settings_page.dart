@@ -1,7 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/utils/balance_text.dart';
-import 'package:money_minder/utils/confirmation_dialog.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
@@ -14,6 +13,7 @@ class BudgetSettingsPage extends StatefulWidget {
   final double lastBudget;
   final int month;
   final int year;
+  final bool disabledDelete;
   final void Function(int, double) submitSettings;
   final void Function() deleteBudget;
 
@@ -24,6 +24,7 @@ class BudgetSettingsPage extends StatefulWidget {
     required this.lastBudget,
     required this.month,
     required this.year,
+    required this.disabledDelete,
     required this.submitSettings,
     required this.deleteBudget,
   });
@@ -74,7 +75,10 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                   icon: Icon(Icons.arrow_circle_left_outlined)
               ),
 
-              CheckboxListTile(
+              // set the same budget as expense
+              widget.expenseAsBudget == 0
+              ? SizedBox.shrink()
+              : CheckboxListTile(
                 contentPadding: const EdgeInsets.all(0),
                 title: Text(
                     "Same as Amount (spent / received)",
@@ -170,23 +174,34 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                     });
                   }),
 
-              Divider(),
+              widget.disabledDelete ? SizedBox.shrink() : Divider(),
 
-              MaterialButton(
+              widget.disabledDelete ? SizedBox.shrink() : MaterialButton(
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return ConfirmationDialog(
-                          message: 'Delete Budget?',
-                          onConfirm: () {
-                            Navigator.pop(context); // pop ConfirmationDialog
-                            Navigator.pop(context); // pop BudgetSettingsPage
-                            Navigator.pop(context); // pop AddBudgetSheet
-                            widget.deleteBudget();
-                          }
-                      ) ;
+                      return AlertDialog(
+                        title: Text("Delete Budget"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context); // pop ConfirmationDialog
+                              Navigator.pop(context); // pop BudgetSettingsPage
+                              Navigator.pop(context); // pop AddBudgetSheet
+                              widget.deleteBudget();
+                            },
+                            child: Text("Delete"),
+                          )
+                        ]
+                      );
                     }
                   );
                 },

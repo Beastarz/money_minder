@@ -37,7 +37,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   }
 
   @override
-  Widget build(BuildContext context) {;
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(

@@ -36,8 +36,8 @@ class StatisticsPage extends StatefulWidget {
   final int currentPageIndex;
   final void Function(int) onPageChange;
   final void Function(int) showCategoryTransactions;
-  final void Function() onTransactionReload;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onTransactionReload;
+  final Future<void> Function() onBudgetReload;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();

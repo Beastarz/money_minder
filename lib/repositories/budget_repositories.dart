@@ -106,4 +106,16 @@ class BudgetRepositories {
     sqf.Database db = await dbService.database;
     await db.delete('budgets', where: 'year = ? AND month = ? AND category_id = ?', whereArgs: [year, month, categoryId]);
   }
+
+  /// delete all budget with the same category id
+  ///
+  /// Parameters:
+  ///
+  /// int categoryId: category id of the budget
+  ///
+  /// Returns: void
+  Future<void> deleteBudgetById(int categoryId) async {
+    sqf.Database db = await dbService.database;
+    await db.delete('budgets', where: 'category_id = ?', whereArgs: [categoryId]);
+  }
 }

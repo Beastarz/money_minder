@@ -14,6 +14,8 @@ class CategoryTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -30,7 +32,7 @@ class CategoryTable extends StatelessWidget {
             Icon(
               catList[index].icon.icon,
               color: catList[index].color,
-              size: 20,
+              size: isSmallScreen ? 16 : 20,
             ),
             SizedBox(width: 5),
             Flexible(
@@ -39,7 +41,7 @@ class CategoryTable extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: catList[index].color,
-                  fontSize: 16,
+                  fontSize: isSmallScreen ? 12 : 16,
                 ),
               ),
             ),

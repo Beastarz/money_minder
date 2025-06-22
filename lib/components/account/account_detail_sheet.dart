@@ -85,7 +85,6 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                             balance: widget.account.balance,
                             currencyName: widget.account.currency.toString(),
                             size: 26,
-                            textWidth: MediaQuery.of(context).size.width * 0.4,
                             isLight: true,
                           ),
                         ],
@@ -196,7 +195,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                       showDialog(context: context, builder: (BuildContext context) {
                         return AlertDialog(
                             title: Text('Delete account?'),
-                            content: Text('Related Transactions will also be deleted but other account balance will remain unchanged. This action cannot be undone.'),
+                            content: Text('Related Transactions will also be deleted but other account balance will remain unchanged. This action is irreversible.'),
                             actions: [
                               TextButton(
                                 onPressed: () {

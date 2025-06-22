@@ -51,9 +51,9 @@ class Category{
   ///
   /// int position: position of the category
   ///
-  /// IconData icon: icon of the category
+  /// int codePoint: icon's code point of the category
   ///
-  /// Color color: color of the category
+  /// int colorValue: color's value of the category
   ///
   /// bool isExpense: is expense or income
   ///
@@ -61,16 +61,16 @@ class Category{
   static Map<String, dynamic> insertAsMap({
     required String label,
     required int position,
-    required Icon icon,
-    required Color color,
+    required int codePoint,
+    required int colorValue,
     required bool isExpense,
   }) {
     return {
       'label': label,
       'position': position,
-      'icon': icon.icon?.codePoint,
-      'color': color.toARGB32().toString(),
-      'is_expense': isExpense ? 0 : 1,
+      'icon': codePoint,
+      'color': colorValue,
+      'is_expense': isExpense ? 1 : 0,
     };
   }
 }

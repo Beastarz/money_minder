@@ -98,16 +98,18 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                   drawBelowEverything: true,
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 30,
+                    reservedSize: 42,
                     getTitlesWidget: (value, meta) {
                       return SideTitleWidget(
                         meta: meta,
                         child: Text(
-                          value.toStringAsFixed(0),
+                          meta.formattedValue,
                           style: TextStyle(
                             color: AppColor.darkText,
                             fontSize: 12,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
                       );
                     },
@@ -116,7 +118,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 36,
+                    reservedSize: 30,
                     getTitlesWidget: (value, meta) {
                       final index = value.toInt();
                       return SideTitleWidget(

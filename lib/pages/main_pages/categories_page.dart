@@ -22,8 +22,8 @@ class CategoriesPage extends StatefulWidget {
   final int currentPageIndex;
   final void Function(int) onPageChange;
   final Function(int) showCategoryTransactions;
-  final void Function() onTransactionReload;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onTransactionReload;
+  final Future<void> Function() onBudgetReload;
   final Future<void> Function() onCategoryReload;
 
   const CategoriesPage({
@@ -89,8 +89,8 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
         CategoryHelper.convertToCatButProps(
             widget.categories[1], transactions, budgets,
             totalAmounts, false, widget.dateFilter);
-        expenseCats.add(AddCategoryProp(expenseCats.length));
-        incomeCats.add(AddCategoryProp(incomeCats.length));
+        expenseCats.add(AddCategoryProp(expenseCats.length, true));
+        incomeCats.add(AddCategoryProp(incomeCats.length, false));
         return CategoriesPageContent(
           categories: [expenseCats, incomeCats],
           totalAmounts: totalAmounts,

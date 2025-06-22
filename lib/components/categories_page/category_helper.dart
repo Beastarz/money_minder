@@ -7,8 +7,11 @@ import '../../models/budget.dart';
 import '../../models/currency.dart';
 import '../../models/transaction.dart';
 import '../../repositories/categories_repositories.dart';
+import '../../style/app_color.dart';
+import '../../style/app_size.dart';
 import '../budget_page/add_budget_sheet.dart';
 import '../transaction/add_expense_sheet.dart';
+import 'add_category_page.dart';
 import 'category_button.dart';
 import 'category_card.dart';
 
@@ -93,9 +96,6 @@ class CategoryHelper {
       DateFilter dateFilter
       ) {
 
-    // sort the categories by position
-    // categories.sort((a, b) => a.position.compareTo(b.position));
-
     // calculate the total amount of each category
     List<double> amounts = [];
     for (int i = 0; i < categories.length; i++) {
@@ -127,12 +127,6 @@ class CategoryHelper {
             budget: budget,
             isExpense: category.isExpense)
       );
-    }
-
-    for (CategoryProp c in result) {
-      if (c.actualAmount == 0) {
-        continue;
-      }
     }
     return result;
   }
@@ -187,7 +181,7 @@ class CategoryHelper {
   ///
   /// return: void
   static void Function(CategoryProp) showBudgetInputForm(BuildContext context,
-      Currency mainCurrency, DateTime startDate, void Function() reload
+      Currency mainCurrency, DateTime startDate, void Function() reload, bool disabledDelete
       ) {
 
     return (CategoryProp prop) {
@@ -200,8 +194,39 @@ class CategoryHelper {
               mainCurrency: mainCurrency,
               startDate: startDate,
               onBudgetReload: reload,
+              disabledDelete: disabledDelete
             );
           }
+      );
+    };
+  }
+
+  static void Function(CategoryProp) showAddCategoryPage(
+      BuildContext context,
+      List<CategoryProp> props,
+      Future<void> Function() onCategoryReload,
+      Future<void> Function() onTransactionReload,
+      Future<void> Function() onBudgetReload) {
+    return (CategoryProp prop) {
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) =>
+              SafeArea(
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(AppSize.borderRadius)),
+                      color: AppColor.secondary,
+                    ),
+                    child: AddCategoryPage(
+                      prop: prop,
+                      categories: props,
+                      onCategoryReload: onCategoryReload,
+                      onTransactionReload: onTransactionReload,
+                      onBudgetReload: onBudgetReload,
+                    )
+                ),
+              )
       );
     };
   }
@@ -226,8 +251,11 @@ class CategoryHelper {
   ///
   /// return: void
   static void showCategoryCard(
-      BuildContext context, CategoryProp prop, Currency mainCurrency, DateTime startDate, DateTime defaultDateForTransaction,
-      bool disabledAddBudget, void Function() reloadTransaction, void Function() reloadBudget, void Function(int) showCategoryTransactions) {
+      BuildContext context, CategoryProp prop, Currency mainCurrency, DateTime startDate,
+      DateTime defaultDateForTransaction, bool disabledAddBudget,
+      Future<void> Function() reloadTransaction, Future<void> Function() reloadBudget,
+      void Function(int) showCategoryTransactions, {List<CategoryProp> props = const [],
+      bool disabledEditCategory = true, Future<void> Function()? reloadCategory}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -239,7 +267,10 @@ class CategoryHelper {
           showTransactionInputForm: showTransactionInputForm(
               context, mainCurrency, defaultDateForTransaction, reloadTransaction),
           showBudgetInputForm: showBudgetInputForm(
-              context, mainCurrency, startDate, reloadBudget),
+              context, mainCurrency, startDate, reloadBudget, prop.budget == 0),
+          showAddCategoryPage: disabledEditCategory
+              ? null
+              : showAddCategoryPage(context, props, reloadCategory!, reloadTransaction, reloadBudget),
         );
       },
     );
@@ -308,5 +339,52 @@ class CategoryHelper {
             ids[i - fromPosition], i - 1);
       }
     }
+  }
+
+  /// add new Category
+  ///
+  /// Parameters:
+  ///
+  /// int position: the position of the new category
+  ///
+  /// String label: the label of the new category
+  ///
+  /// int codePoint: the icon's code point of the new category
+  ///
+  /// int colorValue: the color's value of the new category
+  ///
+  /// bool isExpense: whether the new category is for expense or income
+  ///
+  /// return: void
+  static Future<void> addCategory(int position, String label, int codePoint,
+    int colorValue, bool isExpense) async {
+    await CategoriesRepositories.instance.createCategory(
+      Category.insertAsMap(
+        label: label,
+        position: position,
+        codePoint: codePoint,
+        colorValue: colorValue,
+        isExpense: isExpense,
+      )
+    );
+  }
+
+  /// update existing category
+  static Future<void> updateCategory(int id, String label, int codePoint, int colorValue, bool isExpense) async {
+    await CategoriesRepositories.instance.updateCategory(
+        {
+          'label': label,
+          'icon': codePoint,
+          'color': colorValue,
+          'is_expense': isExpense ? 1 : 0,
+        },
+      id
+    );
+  }
+
+  /// delete existing category by id
+  static Future<void> deleteCategory(int id, int position, List<CategoryProp> categories) async {
+    await movePosition(position, categories.length - 2, categories); // swap with second last in the list (include add button)
+    await CategoriesRepositories.instance.deleteCategory(id); // currently at the last of the array
   }
 }

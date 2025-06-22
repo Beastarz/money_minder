@@ -110,38 +110,38 @@ class _BudgetTileState extends State<BudgetTile> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
-              subtitle: Text(
-                '${widget.prop.isExpense ? 'Exp.' : 'Rec.'} ${widget.mainCurrency} ${widget.prop.actualAmount.toStringAsFixed(2)}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: widget.prop.color,
-                  fontWeight: FontWeight.bold,
-                ),
+              subtitle: BalanceText(
+                balance: balance,
+                currencyName: widget.mainCurrency.toString(),
+                mainAxisAlignment: MainAxisAlignment.start,
+                showColor: true,
+                size: 14,
+                fontColor: widget.prop.color,
               ),
               trailing: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   BalanceText(
-                    balance: balance,
-                    currencyName: widget.mainCurrency.toString(),
+                    balance: widget.prop.actualAmount,
+                    currencyName: "${widget.prop.isExpense ? 'Exp.' : 'Rec.'} ${widget.mainCurrency}",
                     mainAxisAlignment: MainAxisAlignment.end,
-                    showColor: true,
                     size: 18,
                     fontColor: exceed
-                      ? AppColor.darkText
-                      : widget.prop.color,
+                        ? AppColor.darkText
+                        : widget.prop.color,
                     fillColor: exceed
-                        ? CategoryHelper.lightenColor(widget.prop.color, 0.3)
+                        ? widget.prop.color
                         : Colors.transparent,
                   ),
-                  BalanceText(
+                  widget.prop.budget > 0
+                  ? BalanceText(
                     balance: widget.prop.budget,
                     currencyName: "budgeted ${widget.mainCurrency}",
                     mainAxisAlignment: MainAxisAlignment.end,
                     size: 16,
-                  ),
+                  )
+                  : SizedBox.shrink(),
                 ],
               ),
             ),

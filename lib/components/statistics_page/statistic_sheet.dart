@@ -23,9 +23,9 @@ class StatisticsSheet extends StatefulWidget {
   final DateTime endDate;
   final DateTime defaultDateForTransaction;
   final bool disabledAddBudget;
-  final void Function() onTransactionReload;
+  final Future<void> Function() onTransactionReload;
   final Function(int) showCategoryTransactions;
-  final void Function() onBudgetReload;
+  final Future<void> Function() onBudgetReload;
   final List<double> totalAmounts;
 
   const StatisticsSheet({
@@ -182,29 +182,32 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return Dialog(
-                        child: RotatedBox(
-                            quarterTurns: 1,
-                            child: ChartPages(
-                                isExpanded: true,
-                                isExpense: widget.isExpense,
-                                shrinkChart: shrinkChart,
-                                categories: _category,
-                                currency: widget.mainCurrency,
-                                transactions: widget.transactions,
-                                dateFilterType: widget.dateFilterType,
-                                startDate: widget.startDate,
-                                endDate: widget.endDate,
-                                currentPage: _currentPage,
-                                showIndividual: _showIndividual,
-                                lineChartChangeType: () {
-                                  setState(() {
-                                    _showIndividual = !_showIndividual;
-                                  });
-                                },
-                                updateCurrentPage: updateCurrentPage,
-                            )
-                        )
+                    return StatefulBuilder(
+                      builder: (BuildContext statefulBuilderContext, StateSetter dialogSetState) => Dialog(
+                          child: RotatedBox(
+                              quarterTurns: 1,
+                              child: ChartPages(
+                                  isExpanded: true,
+                                  isExpense: widget.isExpense,
+                                  shrinkChart: shrinkChart,
+                                  categories: _category,
+                                  currency: widget.mainCurrency,
+                                  transactions: widget.transactions,
+                                  dateFilterType: widget.dateFilterType,
+                                  startDate: widget.startDate,
+                                  endDate: widget.endDate,
+                                  currentPage: _currentPage,
+                                  showIndividual: _showIndividual,
+                                  lineChartChangeType: () {
+                                    setState(() {
+                                      _showIndividual = !_showIndividual;
+                                    });
+                                    dialogSetState(() {});
+                                  },
+                                  updateCurrentPage: updateCurrentPage,
+                              )
+                          )
+                      ),
                     );
                   }
                 );

@@ -121,36 +121,28 @@ class TransactionDetailSheet extends StatelessWidget {
                             showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return SimpleDialog(
+                                  return AlertDialog(
                                     title: Text('Delete Transaction'),
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text('Are you sure you want to delete this transaction?'),
+                                    content: Text('This action is irreversible'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Cancel'),
                                       ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                              onPressed: () {
-                                                () async {
-                                                  await (transaction.type == TransactionType.transfer
-                                                      ? TransactionHelper.deleteTransfer(transaction)
-                                                      : TransactionHelper.deleteExpense(transaction));
-                                                  onEditTransactionReload();
-                                                }();
-                                                Navigator.pop(context);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text('Delete', style: TextStyle(color: Colors.red),)
-                                          )
-                                        ],
+                                      TextButton(
+                                        onPressed: () {
+                                          () async {
+                                            await (transaction.type == TransactionType.transfer
+                                                ? TransactionHelper.deleteTransfer(transaction)
+                                                : TransactionHelper.deleteExpense(transaction));
+                                            onEditTransactionReload();
+                                          }();
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Delete', style: TextStyle(color: Colors.red),)
                                       )
                                     ]
                                   );

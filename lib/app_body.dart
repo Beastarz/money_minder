@@ -241,15 +241,14 @@ class _AppBodyState extends State<AppBody> {
           groupedBudgets: _groupedBudgets,
           onTransactionReload: () async {
             await _fetchRecurrence();
-            _fetchAccounts();
-            _fetchTransactions();
+            await _fetchAccounts();
+            await _fetchTransactions();
           },
-          onBudgetReload: () {
-            _fetchBudgets();
+          onBudgetReload: () async {
+            await _fetchBudgets();
           },
           onCategoryReload: () async {
             await _fetchCategories();
-            await _fetchTransactions();
           }
       ),
       TransactionsPage(
@@ -284,8 +283,8 @@ class _AppBodyState extends State<AppBody> {
             _fetchAccounts();
             _fetchTransactions();
           },
-          onBudgetReload: () {
-            _fetchBudgets();
+          onBudgetReload: () async {
+            await _fetchBudgets();
           }
       ),
     ];

@@ -106,18 +106,18 @@ class StatisticsCatTile extends StatelessWidget {
                   currencyName: mainCurrency.toString(),
                   fontColor: exceed ? AppColor.darkText : prop.color,
                   size: 16,
-                  textWidth: 70,
                   fillColor: exceed
                       ? CategoryHelper.lightenColor(prop.color, 0.3)
                       : Colors.transparent,
                 ),
-                BalanceText(
+                prop.budget > 0
+                ? BalanceText(
                   balance: prop.budget,
                   currencyName: mainCurrency.toString(),
                   fontColor: prop.color,
-                  size: 12,
-                  textWidth: 70,
-                ),
+                  size: 14,
+                )
+                : SizedBox.shrink(),
               ],
             ),
           ),

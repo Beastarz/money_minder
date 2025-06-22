@@ -70,6 +70,7 @@ class CenterButton extends StatelessWidget {
                       ? Colors.redAccent
                       : CupertinoColors.activeGreen,
                 ),
+                textAlign: TextAlign.center,
               ),
               Text(
                 '${mainCurrency.toString()} ${isExpense
@@ -81,6 +82,7 @@ class CenterButton extends StatelessWidget {
                       ? CupertinoColors.activeGreen
                       : Colors.redAccent,
                 ),
+                textAlign: TextAlign.center,
               )
             ],
           ),

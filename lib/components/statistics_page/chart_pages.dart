@@ -170,6 +170,7 @@ class PageIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -177,6 +178,7 @@ class PageIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TabPageSelector(
+            indicatorSize: isSmallScreen ? 6 : 8,
             controller: tabController,
             color: colorScheme.surface,
             selectedColor: colorScheme.primary,
