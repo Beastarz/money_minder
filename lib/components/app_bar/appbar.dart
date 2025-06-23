@@ -32,7 +32,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
     List<int> selectedAccountId = filteredAccounts.map((account) => account.id).toList();
 
-    final functionButtons = <IconButton>[
+    final functionButtons = <Widget>[
       IconButton(
         icon: Icon(
           Icons.add,
@@ -45,13 +45,14 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
           );
         },
       ),
-      IconButton(
-        icon: Icon(
-          Icons.edit,
-          color: Colors.grey[800],
-        ),
-        onPressed: () {},
-      ),
+      Container(),
+      // IconButton(
+      //   icon: Icon(
+      //     Icons.edit,
+      //     color: Colors.grey[800],
+      //   ),
+      //   onPressed: () {},
+      // ),
       IconButton(
         icon: Badge(
           isLabelVisible: !transactionFilter.isOff,
@@ -69,13 +70,14 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
           );
         },
       ),
-      IconButton(
-        icon: Icon(
-          Icons.location_on_outlined,
-          color: Colors.grey[800],
-        ),
-        onPressed: () {},
-      ),
+      Container(),
+      // IconButton(
+      //   icon: Icon(
+      //     Icons.location_on_outlined,
+      //     color: Colors.grey[800],
+      //   ),
+      //   onPressed: () {},
+      // ),
     ];
 
     return AppBar(
