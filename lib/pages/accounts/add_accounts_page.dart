@@ -54,7 +54,19 @@ class _AddAccountPageState extends State<AddAccountPage> {
 
   void _handleSubmit() {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in a name')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Please fill in a name')
+      ));
+      return;
+    }
+    if (double.parse(_accountBalanceController.text) > 99999999999.99) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Amount is too large!')
+          ));
       return;
     }
     Map<String, dynamic> accountData = Account.insertAsMap(

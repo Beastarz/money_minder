@@ -30,6 +30,15 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
             isLoading = true;
           });
           User? user = await AuthService().signInWithGoogle();
+          if (user == null && context.mounted) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Sign in failed'),
+              ),
+            );
+          }
           setState(() {
             isLoading = false;
           });
@@ -106,25 +115,43 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
           ),
           widget.user != null ? signOutTile : signInTile,
           Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+            child: Text('Settings'),
+          ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
+            leading: Icon(Icons.color_lens_outlined),
+            title: Text('Theme'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => SettingsPage()),
-              // );
               Navigator.pop(context);
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('About'),
+            leading: Icon(Icons.monetization_on_outlined),
+            title: Text('Currency'),
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => AboutPage()),
-              // );
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.notifications_outlined),
+            title: Text('Notifications'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+
+          ListTile(
+            leading: Icon(Icons.security),
+            title: Text('Passkey'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.dataset_outlined),
+            title: Text('Manage data'),
+            onTap: () {
               Navigator.pop(context);
             },
           ),
