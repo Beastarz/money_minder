@@ -424,180 +424,162 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
     }else if (buttonText == 'calendar') {
 
-      final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
       showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           backgroundColor: AppColor.secondary,
           builder: (periodSheetContext) {
             return SafeArea(
-              child: DraggableScrollableSheet(
-                  initialChildSize: isSmallScreen ? 1 : 0.85,
-                  expand: false,
-                  builder: (context, ScrollController scrollController) =>
-                      SingleChildScrollView(
-                        controller: isSmallScreen ? scrollController : null,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: PeriodBottomSheet(
-                              title: 'Date',
-                              children: [
-                                /// select any date
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Select day',
-                                  icon: Icons.date_range,
-                                  onPressed: () {
-                                    CalendarSelectorHelper.selectDate(context, (date) {
-                                      setState(() {
-                                        _currDate = date;
-                                        _datePrefix = formatDate(_currDate, [DD]);// Update datePrefix
-                                        _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                      });
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  width: MediaQuery.of(context).size.width * 0.84 + 12,
-                                ),
-
-                                /// select yesterday
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Yesterday',
-                                  isSelected: _datePrefix == 'Yesterday',
-                                  selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
-                                  icon: Icons.mode_night_rounded,
-                                  onPressed: () {
-                                    setState(() {
-                                      _currDate = DateTime.now().subtract(const Duration(days: 1));
-                                      _datePrefix = 'Yesterday';
-                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-
-                                /// select today
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Today',
-                                  selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
-                                  isSelected: _datePrefix == 'Today',
-                                  icon: Icons.sunny,
-                                  onPressed: () {
-                                    setState(() {
-                                      _currDate = DateTime.now();
-                                      _datePrefix = 'Today';
-                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-
-                                /// select recurrence
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Recurrence',
-                                  selected: _recurrenceType.name.toUpperCase(),
-                                  isSelected: _recurrenceType != RecurrenceType.none,
-                                  icon: Icons.repeat,
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SimpleDialog(
-                                            title: Text('Select Recurrence'),
-                                            children: [
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.none;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('None'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.daily;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Daily'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekday;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekday'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekend;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekend'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekly'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.monthly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Monthly'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.yearly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Yearly'),
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                    );
-                                  },
-                                ),
-
-                                /// select reminder
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Reminder',
-                                  selected: 'None',
-                                  icon: Icons.access_alarm_sharp,
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close the current sheet
-                                  },
-                                ),
-                              ]),
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: PeriodBottomSheet(
+                      title: 'Date',
+                      children: [
+                        /// select any date
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Select day',
+                          icon: Icons.date_range,
+                          onPressed: () {
+                            CalendarSelectorHelper.selectDate(context, (date) {
+                              setState(() {
+                                _currDate = date;
+                                _datePrefix = formatDate(_currDate, [DD]);// Update datePrefix
+                                _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                              });
+                              Navigator.pop(context);
+                            });
+                          },
                         ),
-                      )),
-            );
+
+                        /// select recurrence
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Recurrence',
+                          selected: _recurrenceType.name.toUpperCase(),
+                          isSelected: _recurrenceType != RecurrenceType.none,
+                          icon: Icons.repeat,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SimpleDialog(
+                                    title: Text('Select Recurrence'),
+                                    children: [
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.none;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('None'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.daily;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Daily'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekday;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekday'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekend;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekend'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekly'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.monthly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Monthly'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.yearly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Yearly'),
+                                      ),
+                                    ],
+                                  );
+                                }
+                            );
+                          },
+                        ),
+
+                        /// select yesterday
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Yesterday',
+                          isSelected: _datePrefix == 'Yesterday',
+                          selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
+                          icon: Icons.mode_night_rounded,
+                          onPressed: () {
+                            setState(() {
+                              _currDate = DateTime.now().subtract(const Duration(days: 1));
+                              _datePrefix = 'Yesterday';
+                              _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+
+                        /// select today
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Today',
+                          selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
+                          isSelected: _datePrefix == 'Today',
+                          icon: Icons.sunny,
+                          onPressed: () {
+                            setState(() {
+                              _currDate = DateTime.now();
+                              _datePrefix = 'Today';
+                              _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ]),
+                ),
+              ));
           }
       );
 
