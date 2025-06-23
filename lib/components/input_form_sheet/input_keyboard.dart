@@ -146,7 +146,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
           _showError
           ? Text(
-            "Please enter positive amount",
+            "Please enter valid amount",
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.red,
@@ -323,7 +323,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       });
 
     } else if (buttonText == '✓') {
-      if (double.parse(_currentAmount) <= 0) {
+      if (double.parse(_currentAmount) <= 0 || double.parse(_currentAmount) > 999999999999.99) {
         setState(() {
           _showError = true;
           _currentAmount = '0';

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/app_body.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
+import 'package:money_minder/main.dart';
 
 class CreateUsernamePage extends StatefulWidget {
   const CreateUsernamePage({super.key, required this.user});
@@ -26,11 +26,12 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
         errorText = 'Username already exists';
       });
     } else {
-      await UsersRepositories.instance.createUsername(widget.user.uid, _usernameController.text);
+      String username = _usernameController.text;
+      await UsersRepositories.instance.createUsername(widget.user.uid, username);
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AppBody(user: widget.user)),
+          MaterialPageRoute(builder: (context) => MoneyMinder()),
         );
       }
     }
