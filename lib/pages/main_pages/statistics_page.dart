@@ -5,6 +5,7 @@ import 'package:money_minder/models/currency.dart';
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../components/categories_page/category_button.dart';
 import '../../components/categories_page/category_helper.dart';
+import '../../components/transaction/transaction_helper.dart';
 import '../../models/budget.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
@@ -98,6 +99,9 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
 
   void getPages() {
     final bool disabledAddBudget = widget.dateFilter.type != DateFilterType.month;
+    final allTimeStartDate = widget.dateFilter.type == DateFilterType.all
+      ? TransactionHelper.getEarlierStartDate(widget.groupedTransactions[50])
+      : widget.dateFilter.startDates[0]; // does not matter which date is used
     setState(() {
       _pages = widget.groupedTransactions.indexed.map((t) {
         int index = t.$1;
@@ -117,7 +121,7 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
           CategoryHelper.getTotalBudget(budgets, false),
         ];
         DateTime startDate = widget.dateFilter.type == DateFilterType.all
-          ? DateTime(2025, 1, 1) // TODO: make it be the first day user using the app
+          ? allTimeStartDate
           : widget.dateFilter.startDates[index];
         return StatisticsPageContent(
           categories: [expenseCats, incomeCats],

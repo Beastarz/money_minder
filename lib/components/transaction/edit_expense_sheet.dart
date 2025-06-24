@@ -94,7 +94,8 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
                 setState(() {
                   this.currency = currency;
                 });
-              }
+              },
+              category: toCategory,
           ),
           topContent: Container(
             decoration: BoxDecoration(

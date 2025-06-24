@@ -151,7 +151,7 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           onPageChanged: _handlePageViewChanged,
           physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
           children: _pages,
-        )
+        ),
     );
   }
 

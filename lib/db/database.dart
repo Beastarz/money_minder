@@ -95,12 +95,12 @@ class DatabaseService {
 
     // Create the Sub Categories table
     await db.execute('''
-          CREATE TABLE sub_categories(
+          CREATE TABLE fast_notes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            note TEXT NOT NULL,
             icon INTEGER, -- Storing icon name or path as TEXT
-            main_category_id INTEGER, -- Foreign key to Categories table
-            FOREIGN KEY (main_category_id) REFERENCES categories(id)
+            category_id INTEGER, -- Foreign key to Categories table
+            FOREIGN KEY (category_id) REFERENCES categories(id)
           )
         ''');
 
@@ -154,7 +154,7 @@ class DatabaseService {
 
 
     await db.execute('''
-      INSERT INTO sub_categories (name, icon, main_category_id) VALUES
+      INSERT INTO fast_notes (note, icon, category_id) VALUES
       ('Groceries', 0xe8cc, 1), -- shopping_cart (Belongs to Food)
       ('Restaurants', 0xe561, 1), -- restaurant_menu (Belongs to Food)
       ('Public Transport', 0xe535, 2), -- directions_transit (Belongs to Transport)
