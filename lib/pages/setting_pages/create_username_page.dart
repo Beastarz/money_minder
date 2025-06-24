@@ -21,9 +21,11 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
 
   void checkUsername() async {
     bool isExist = await UsersRepositories.instance.checkUsernameExist(_usernameController.text);
+    print(isExist);
     if (isExist) {
       setState(() {
-        errorText = 'Username already exists';
+        errorText = 'Username is already exists';
+        isLoading = false;
       });
     } else {
       String username = _usernameController.text;
@@ -63,12 +65,12 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                     child: TextFormField(
                       controller: _usernameController,
                       decoration: InputDecoration(
-                        hintText: 'eg. awesomeGuy1234',
+                        hintText: 'eg. awesome_guy1234',
+                        errorMaxLines: 2,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a username';
@@ -76,9 +78,9 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                         if (value.length < 6) {
                           return 'Username must be at least 6 characters long';
                         }
-                        final RegExp regex = RegExp(r'^[a-zA-Z0-9_]+$');
+                        final RegExp regex = RegExp(r'^[a-z0-9_]+$');
                         if (!regex.hasMatch(value.trim())) {
-                          return 'Username can only contain letters, numbers, or underscores.';
+                          return 'Username can only contain small letters, numbers, or underscores.';
                         }
                         return null;
                       },
@@ -101,9 +103,11 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                   },
                   child: Text('Create')
                 ),
-                errorText.isNotEmpty ? Text(errorText, style: TextStyle(color: Colors.red),) : Container(),
               ],
             ),
+            SizedBox(height: 16),
+            errorText.isEmpty ? Container() :
+                Text(errorText, style: TextStyle(color: Colors.red),),
           ],
         ),
       ),

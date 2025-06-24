@@ -2,7 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
-import 'package:money_minder/pages/loading_screen.dart';
+import 'package:money_minder/utils/loading_screen.dart';
 import 'package:money_minder/pages/main_pages/categories_page.dart';
 import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
@@ -292,6 +292,7 @@ class _AppBodyState extends State<AppBody> {
 
     return Scaffold(
         appBar: MMAppBar(
+          username: widget.username == null ? '' : widget.username!,
           selectedIndex: _tabIndex,
           filteredAccounts: _filteredAccounts,
           onReload: _fetchAccounts,

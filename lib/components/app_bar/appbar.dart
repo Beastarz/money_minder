@@ -4,6 +4,7 @@ import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/pages/accounts/add_accounts_page.dart';
+import 'package:money_minder/pages/online_pages/online_home_page.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/transaction_filter.dart';
@@ -13,6 +14,7 @@ import 'accounts_filter.dart';
 class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
   const MMAppBar( {
     super.key,
+    required this.username,
     required this.selectedIndex,
     required this.filteredAccounts,
     required this.mainCurrency,
@@ -21,6 +23,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
     required this.onTransactionFilterChange,
   });
 
+  final String username;
   final int selectedIndex;
   final List<Account> filteredAccounts;
   final void Function() onReload;
@@ -127,7 +130,10 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             color: Colors.grey[800],
           ),
           onPressed: () {
-            // TODO: Add online space functionality
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OnlineHomePage(username: username))
+            );
           },
         )
       ]

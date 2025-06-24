@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/pages/loading_screen.dart';
+import 'package:money_minder/utils/loading_screen.dart';
 import 'package:money_minder/pages/setting_pages/create_username_page.dart';
 import 'package:money_minder/style/app_themes.dart';
 
