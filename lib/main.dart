@@ -37,11 +37,8 @@ class _MoneyMinderState extends State<MoneyMinder> {
       theme: AppThemes.lightTheme,   // Light theme config
       darkTheme: AppThemes.darkTheme, // Dark theme config
       themeMode: _themeMode,         // Current theme mode
-      home: SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: StreamBuilder(
+      home: Scaffold(
+        body: StreamBuilder(
           stream: _auth.authStateChanges(),
           builder: (context, asyncSnapshot) {
             if (asyncSnapshot.connectionState == ConnectionState.waiting) {

@@ -21,7 +21,6 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
 
   void checkUsername() async {
     bool isExist = await UsersRepositories.instance.checkUsernameExist(_usernameController.text);
-    print(isExist);
     if (isExist) {
       setState(() {
         errorText = 'Username is already exists';
@@ -75,8 +74,8 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a username';
                         }
-                        if (value.length < 6) {
-                          return 'Username must be at least 6 characters long';
+                        if (value.length < 6 || value.length > 20) {
+                          return 'Username must be 6 ~ 20 characters long';
                         }
                         final RegExp regex = RegExp(r'^[a-z0-9_]+$');
                         if (!regex.hasMatch(value.trim())) {

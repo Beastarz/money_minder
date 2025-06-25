@@ -56,10 +56,9 @@ class UsersRepositories {
 
   Future<bool> checkUsernameExist(String username) async {
     try {
-      final result = _db.collection('usernames').doc(username).get().then((doc) {
-        return doc.exists;
-      });
-      return result;
+      final snapshot = await _db.collection('users')
+          .where('username', isEqualTo: username).get();
+      return snapshot.docs.isNotEmpty;
     } catch (e) {
       rethrow;
     }

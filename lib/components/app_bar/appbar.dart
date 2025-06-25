@@ -126,7 +126,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         functionButtons[selectedIndex],
         IconButton(
           icon: Icon(
-            Icons.public,
+            Icons.people_alt_outlined,
             color: Colors.grey[800],
           ),
           onPressed: () {

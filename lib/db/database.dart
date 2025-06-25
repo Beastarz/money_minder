@@ -136,7 +136,7 @@ class DatabaseService {
           CREATE TABLE user_contacts(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
-            nickname Text NOT NULL,
+            nickname Text NOT NULL
           )
         ''');
 

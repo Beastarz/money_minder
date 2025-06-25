@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dart';
 import 'package:money_minder/style/app_color.dart';
-import 'package:money_minder/style/app_size.dart';
 
 class OnlineHomePage extends StatelessWidget {
   const OnlineHomePage({super.key, required this.username});

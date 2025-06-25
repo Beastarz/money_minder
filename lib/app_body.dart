@@ -290,22 +290,25 @@ class _AppBodyState extends State<AppBody> {
     ];
 
 
-    return Scaffold(
-        appBar: MMAppBar(
-          username: widget.username == null ? '' : widget.username!,
-          selectedIndex: _tabIndex,
-          filteredAccounts: _filteredAccounts,
-          onReload: _fetchAccounts,
-          mainCurrency: _mainCurrency,
-          transactionFilter: _transactionFilter,
-          onTransactionFilterChange: _onTransactionFilterChange,
-        ),
-        drawer: AppbarDrawer(user: widget.user, username: widget.username,),
-        body: pages[_tabIndex],
-        bottomNavigationBar: BottomNavbar(
-          onTabChange: _onTabChange,
-          selectedIndex: _tabIndex,
-        )
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+          appBar: MMAppBar(
+            username: widget.username == null ? '' : widget.username!,
+            selectedIndex: _tabIndex,
+            filteredAccounts: _filteredAccounts,
+            onReload: _fetchAccounts,
+            mainCurrency: _mainCurrency,
+            transactionFilter: _transactionFilter,
+            onTransactionFilterChange: _onTransactionFilterChange,
+          ),
+          drawer: AppbarDrawer(user: widget.user, username: widget.username,),
+          body: pages[_tabIndex],
+          bottomNavigationBar: BottomNavbar(
+            onTabChange: _onTabChange,
+            selectedIndex: _tabIndex,
+          )
+      ),
     );
   }
 }
