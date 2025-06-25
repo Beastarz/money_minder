@@ -42,12 +42,9 @@ class CategoriesSheet extends StatefulWidget { // Changed back to StatefulWidget
 class _CategoriesSheetState extends State<CategoriesSheet> {
 
   // Declare final variables to be initialized in initState
-  // late final GlobalKey _gridViewKey;
   late final ScrollController _scrollController;
-  late List<CategoryProp> cateogry;
+  late List<CategoryProp> category;
   bool isUpdating = false;
-  // int _fromPosition = 0;
-  // int _toPosition = 0;
 
   void updatePosition(int from, int to) async {
     setState(() {
@@ -68,7 +65,7 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    cateogry = List.from(widget.categories);
+    category = List.from(widget.categories);
   }
 
   @override
@@ -76,7 +73,7 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.categories != widget.categories && !isUpdating) {
       setState(() {
-        cateogry = List.from(widget.categories);
+        category = List.from(widget.categories);
       });
     }
   }
@@ -97,7 +94,7 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
       child: ReorderableGridView.count(
         onReorder: (int fromPosition, int toPosition) {
           setState(() {
-            cateogry.insert(toPosition, cateogry.removeAt(fromPosition));
+            category.insert(toPosition, category.removeAt(fromPosition));
           });
           updatePosition(fromPosition, toPosition);
         },
@@ -115,7 +112,6 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
         dragWidgetBuilderV2: DragWidgetBuilderV2(
             isScreenshotDragWidget: true,
             builder: (index, child, screenshot) {
-              // return child;
               return Transform.scale(
                 scale: 1.1,
                 child: Material(
@@ -130,34 +126,37 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
         ),
         footer: [CategoryButton(
           key: const ValueKey('add_category_button_unique_id'),
-          prop: cateogry.last,
+          prop: category.last,
           categoriesButtonOnPressed: widget.categoriesButtonOnPressed,
           mainCurrency: widget.mainCurrency,
           onCategoryReload: widget.onCategoryReload,
           onTransactionReload: widget.onTransactionReload,
           onBudgetReload: widget.onBudgetReload,
         )],
-        children: cateogry.sublist(0, cateogry.length - 1).map(
+        children: category.sublist(0, category.length - 1).map(
           (cat) {
-            return CategoryButton(
+            return Draggable<String>(
               key: Key(cat.id.toString()),
-              prop: CategoryProp(
-                id: cat.id,
-                label: cat.label,
-                actualAmount: cat.actualAmount,
-                icon: cat.icon,
-                isExpense: cat.isExpense,
-                pieTouchedIndex: widget.pieTouchedIndex,
-                budget: cat.budget,
-                color: cat.color,
-                position: cat.position,
-                isAddButton: cat.isAddButton,
+              feedback: Container(),
+              child: CategoryButton(
+                prop: CategoryProp(
+                  id: cat.id,
+                  label: cat.label,
+                  actualAmount: cat.actualAmount,
+                  icon: cat.icon,
+                  isExpense: cat.isExpense,
+                  pieTouchedIndex: widget.pieTouchedIndex,
+                  budget: cat.budget,
+                  color: cat.color,
+                  position: cat.position,
+                  isAddButton: cat.isAddButton,
+                ),
+                categoriesButtonOnPressed: widget.categoriesButtonOnPressed,
+                mainCurrency: widget.mainCurrency,
+                onCategoryReload: widget.onCategoryReload,
+                onTransactionReload: widget.onTransactionReload,
+                onBudgetReload: widget.onBudgetReload,
               ),
-              categoriesButtonOnPressed: widget.categoriesButtonOnPressed,
-              mainCurrency: widget.mainCurrency,
-              onCategoryReload: widget.onCategoryReload,
-              onTransactionReload: widget.onTransactionReload,
-              onBudgetReload: widget.onBudgetReload,
             );
           }
         ).toList(),

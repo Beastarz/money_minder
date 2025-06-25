@@ -122,4 +122,14 @@ class TransactionHelper {
     await undoTransfer(oldTransaction);
     await TransactionsRepositories.instance.deleteTransaction(oldTransaction.id);
   }
+
+  static DateTime getEarlierStartDate(List<Transaction> transaction) {
+    DateTime startDate = transaction.first.date;
+    for (Transaction t in transaction) {
+      if (t.date.isBefore(startDate)) {
+        startDate = t.date;
+      }
+    }
+    return startDate;
+  }
 }

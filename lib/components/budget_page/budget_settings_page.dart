@@ -13,8 +13,9 @@ class BudgetSettingsPage extends StatefulWidget {
   final double lastBudget;
   final int month;
   final int year;
+  final bool isRecurring;
   final bool disabledDelete;
-  final void Function(int, double) submitSettings;
+  final void Function(int, double, bool) submitSettings;
   final void Function() deleteBudget;
 
   const BudgetSettingsPage({
@@ -24,6 +25,7 @@ class BudgetSettingsPage extends StatefulWidget {
     required this.lastBudget,
     required this.month,
     required this.year,
+    required this.isRecurring,
     required this.disabledDelete,
     required this.submitSettings,
     required this.deleteBudget,
@@ -36,7 +38,7 @@ class BudgetSettingsPage extends StatefulWidget {
 class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
 
   int _numOfMonths = 3;
-  bool _setRecurring = false;
+  late bool _setRecurring = widget.isRecurring;
   bool _sameAsAmount = false;
   bool _sameAsPrevious = false;
 
@@ -69,7 +71,8 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                       ? widget.expenseAsBudget
                       : _sameAsPrevious
                         ? widget.lastBudget
-                        : -1 // does not change the budget
+                        : -1, // does not change the budget
+                      _sameAsPrevious
                     );
                   },
                   icon: Icon(Icons.arrow_circle_left_outlined)
@@ -184,6 +187,7 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text("Delete Budget"),
+                        content: Text("This action is irreversible."),
                         actions: [
                           TextButton(
                             onPressed: () {

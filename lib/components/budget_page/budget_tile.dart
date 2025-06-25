@@ -54,6 +54,7 @@ class _BudgetTileState extends State<BudgetTile> {
   Widget build(BuildContext context) {
 
     final double borderRadius = 8;
+    _getSizeAndPosition();
 
     double fraction = widget.prop.budget <= 0
         ? 0.02
@@ -110,7 +111,7 @@ class _BudgetTileState extends State<BudgetTile> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
-              subtitle: BalanceText(
+              subtitle: widget.prop.budget <= 0 ? null : BalanceText(
                 balance: balance,
                 currencyName: widget.mainCurrency.toString(),
                 mainAxisAlignment: MainAxisAlignment.start,
