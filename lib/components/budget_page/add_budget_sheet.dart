@@ -81,7 +81,7 @@ class AddBudgetSheet extends StatelessWidget {
         onCurrencyUpdate: (Currency currency) {
 
         },
-        onDelete: onDelete,
+        onDeleteBudget: onDelete,
         disabledBudgetDelete: disabledDelete,
       ),
       topContent: Container(

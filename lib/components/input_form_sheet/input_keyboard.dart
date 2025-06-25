@@ -10,6 +10,7 @@ import 'package:money_minder/repositories/budget_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
+import '../../models/category.dart';
 import '../../models/currency.dart';
 import '../../style/app_size.dart';
 
@@ -17,6 +18,7 @@ import 'package:math_expressions/math_expressions.dart';
 
 import '../calendar_bar/calendar_selector_helper.dart';
 import '../calendar_bar/period_tile.dart';
+import '../categories_page/fast_note/fast_note_container.dart';
 
 
 /// to use InputForm, you need to pass in a list of InputFormButtonProps
@@ -32,6 +34,7 @@ class InputKeyboard extends StatefulWidget {
   // the button on the inputForm
   final List<InputFormButtonProps> buttonProps;
   final bool showNotes; // show notes input
+  final Category? category;
   final double defaultValue; // default value of the input
   final DateTime? defaultDate; // default date of the input
   final RecurrenceType? defaultRecurrence; // default recurrence of the input
@@ -41,12 +44,13 @@ class InputKeyboard extends StatefulWidget {
   final bool disabledBudgetDelete; // for budget input form usage
   final void Function(DateTime, double, String, int, RecurrenceType) onSubmit;
   final void Function(Currency) onCurrencyUpdate;
-  final void Function()? onDelete;
+  final void Function()? onDeleteBudget;
   
   const InputKeyboard({
     super.key,
     required this.buttonProps,
     this.showNotes = true,
+    this.category,
     this.defaultValue = 0,
     this.categoryId = 0,
     this.expenseAsBudget = 0,
@@ -56,7 +60,7 @@ class InputKeyboard extends StatefulWidget {
     required this.onCurrencyUpdate,
     this.defaultDate,
     this.defaultRecurrence,
-    this.onDelete,
+    this.onDeleteBudget,
   });
 
   @override
@@ -74,7 +78,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   DateTime _currDate = DateTime.now();
   String _datePrefix = 'Today';
   RecurrenceType _recurrenceType = RecurrenceType.none;
-
+  bool isRecurringBudget = false;
   bool _showError = false; // show error when user submit negative amount
   final TextEditingController _noteController = TextEditingController(text: '');
   List<Currency> _currencies = [];
@@ -121,7 +125,9 @@ class _InputKeyboardState extends State<InputKeyboard> {
     return Container(
       height: MediaQuery.of(context).size.height * (isSmallScreen
           ? widget.showNotes ? 0.60 : 0.45
-          : widget.showNotes ? 0.45 : 0.40) + 15,
+          : widget.showNotes ? 0.45 : 0.40)
+          + 15
+          + (widget.category == null ? 0 : 40),
       decoration: BoxDecoration(
         color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
@@ -177,7 +183,27 @@ class _InputKeyboardState extends State<InputKeyboard> {
                 ? AppSize.heading3
                 : AppSize.heading3 * 1.5),
           ),
+
           SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
+
+          // show fast notes
+          widget.category == null
+          ? SizedBox.shrink()
+          : FastNoteContainer(
+            color: widget.category!.color,
+            categoryId: widget.category!.id,
+            onTap: (note) {
+              setState(() {
+                if (_noteController.text.isEmpty) {
+                  _noteController.text = note;
+                } else {
+                  _noteController.text += ', $note';
+                }
+              });
+            }
+          ),
+
+          SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding), // small padding
           // Input Form Grid
           GridView.builder(
             padding: EdgeInsets.zero,
@@ -240,11 +266,17 @@ class _InputKeyboardState extends State<InputKeyboard> {
   /// double amount: the amount to set the budget
   ///
   /// Returns: void
-  void _handleBudgetSettingsSubmit(int recurringMonth, double amount) {
+  void _handleBudgetSettingsSubmit(int recurringMonth, double amount, bool isPreviousMonth) {
     if (recurringMonth > 0) {
       setState(() {
         _recurringMonths = recurringMonth;
         _message = 'Recurrence: $_recurringMonths months';
+        isRecurringBudget = true;
+      });
+    } else {
+      setState(() {
+        isRecurringBudget = false;
+        _message = "";
       });
     }
     if (amount >= 0) {
@@ -407,6 +439,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
       showModalBottomSheet(
           context: context,
+          isDismissible: false,
           isScrollControlled: true, // Allows sheet to take more height if needed
           builder: (sheetContext) {
             return BudgetSettingsPage(
@@ -414,9 +447,10 @@ class _InputKeyboardState extends State<InputKeyboard> {
               lastBudget: lastBudget,
               month: month,
               year: year,
+              isRecurring: isRecurringBudget,
               mainCurrency: widget.mainCurrency,
               submitSettings: _handleBudgetSettingsSubmit,
-              deleteBudget: widget.onDelete!,
+              deleteBudget: widget.onDeleteBudget!,
               disabledDelete: widget.disabledBudgetDelete,
             );
           }
@@ -424,180 +458,162 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
     }else if (buttonText == 'calendar') {
 
-      final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
       showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           backgroundColor: AppColor.secondary,
           builder: (periodSheetContext) {
             return SafeArea(
-              child: DraggableScrollableSheet(
-                  initialChildSize: isSmallScreen ? 1 : 0.85,
-                  expand: false,
-                  builder: (context, ScrollController scrollController) =>
-                      SingleChildScrollView(
-                        controller: isSmallScreen ? scrollController : null,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: PeriodBottomSheet(
-                              title: 'Date',
-                              children: [
-                                /// select any date
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Select day',
-                                  icon: Icons.date_range,
-                                  onPressed: () {
-                                    CalendarSelectorHelper.selectDate(context, (date) {
-                                      setState(() {
-                                        _currDate = date;
-                                        _datePrefix = formatDate(_currDate, [DD]);// Update datePrefix
-                                        _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                      });
-                                      Navigator.pop(context);
-                                    });
-                                  },
-                                  width: MediaQuery.of(context).size.width * 0.84 + 12,
-                                ),
-
-                                /// select yesterday
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Yesterday',
-                                  isSelected: _datePrefix == 'Yesterday',
-                                  selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
-                                  icon: Icons.mode_night_rounded,
-                                  onPressed: () {
-                                    setState(() {
-                                      _currDate = DateTime.now().subtract(const Duration(days: 1));
-                                      _datePrefix = 'Yesterday';
-                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-
-                                /// select today
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Today',
-                                  selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
-                                  isSelected: _datePrefix == 'Today',
-                                  icon: Icons.sunny,
-                                  onPressed: () {
-                                    setState(() {
-                                      _currDate = DateTime.now();
-                                      _datePrefix = 'Today';
-                                      _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-
-                                /// select recurrence
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Recurrence',
-                                  selected: _recurrenceType.name.toUpperCase(),
-                                  isSelected: _recurrenceType != RecurrenceType.none,
-                                  icon: Icons.repeat,
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SimpleDialog(
-                                            title: Text('Select Recurrence'),
-                                            children: [
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.none;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('None'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.daily;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Daily'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekday;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekday'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekend;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekend'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.weekly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Weekly'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.monthly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Monthly'),
-                                              ),
-                                              SimpleDialogOption(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _recurrenceType = RecurrenceType.yearly;
-                                                  });
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Yearly'),
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                    );
-                                  },
-                                ),
-
-                                /// select reminder
-                                PeriodTile(
-                                  parentContext: context,
-                                  label: 'Reminder',
-                                  selected: 'None',
-                                  icon: Icons.access_alarm_sharp,
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close the current sheet
-                                  },
-                                ),
-                              ]),
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: PeriodBottomSheet(
+                      title: 'Date',
+                      children: [
+                        /// select any date
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Select day',
+                          icon: Icons.date_range,
+                          onPressed: () {
+                            CalendarSelectorHelper.selectDate(context, (date) {
+                              setState(() {
+                                _currDate = date;
+                                _datePrefix = formatDate(_currDate, [DD]);// Update datePrefix
+                                _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                              });
+                              Navigator.pop(context);
+                            });
+                          },
                         ),
-                      )),
-            );
+
+                        /// select recurrence
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Recurrence',
+                          selected: _recurrenceType.name.toUpperCase(),
+                          isSelected: _recurrenceType != RecurrenceType.none,
+                          icon: Icons.repeat,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SimpleDialog(
+                                    title: Text('Select Recurrence'),
+                                    children: [
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.none;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('None'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.daily;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Daily'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekday;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekday'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekend;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekend'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.weekly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Weekly'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.monthly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Monthly'),
+                                      ),
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          setState(() {
+                                            _recurrenceType = RecurrenceType.yearly;
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Yearly'),
+                                      ),
+                                    ],
+                                  );
+                                }
+                            );
+                          },
+                        ),
+
+                        /// select yesterday
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Yesterday',
+                          isSelected: _datePrefix == 'Yesterday',
+                          selected: formatDate(DateTime.now().subtract(const Duration(days: 1)), [dd, ' ', M, ' ', yyyy]),
+                          icon: Icons.mode_night_rounded,
+                          onPressed: () {
+                            setState(() {
+                              _currDate = DateTime.now().subtract(const Duration(days: 1));
+                              _datePrefix = 'Yesterday';
+                              _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+
+                        /// select today
+                        PeriodTile(
+                          parentContext: context,
+                          label: 'Today',
+                          selected: formatDate(DateTime.now(), [dd, ' ', M, ' ', yyyy]),
+                          isSelected: _datePrefix == 'Today',
+                          icon: Icons.sunny,
+                          onPressed: () {
+                            setState(() {
+                              _currDate = DateTime.now();
+                              _datePrefix = 'Today';
+                              _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ]),
+                ),
+              ));
           }
       );
 

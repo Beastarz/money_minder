@@ -6,6 +6,7 @@ import 'package:money_minder/components/categories_page/center_button.dart';
 import 'package:money_minder/components/categories_page/center_pie_chart.dart';
 
 import '../../models/currency.dart';
+import '../../style/app_color.dart';
 import 'categories_sheet.dart';
 import 'category_helper.dart';
 
@@ -48,6 +49,7 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
   bool _isExpense = true;
   // track which category is chosen
   int _pieTouchedIndex = -1;
+  bool showCard = false;
 
   @override
   void initState() {
@@ -69,6 +71,16 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
     setState(() {
       _pieTouchedIndex = -1;
     });
+
+    if (!showCard) {
+      CategoryHelper.showTransactionInputForm(
+        context,
+        widget.mainCurrency,
+        widget.defaultDateForTransaction,
+        widget.onTransactionReload,
+      )(prop);
+      return;
+    }
 
     CategoryHelper.showCategoryCard(
       context,
@@ -146,7 +158,18 @@ class _CategoriesPageContentState extends State<CategoriesPageContent> {
               _pieTouchedIndex = -1;
             });
           }
-      )]
+      )],
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              showCard = !showCard;
+            });
+          },
+          foregroundColor: AppColor.darkIcon,
+          backgroundColor: AppColor.secondary,
+          shape: CircleBorder(),
+          child: showCard ? Icon(Icons.info) : Icon(Icons.request_page)
+      )
     );
   }
 }

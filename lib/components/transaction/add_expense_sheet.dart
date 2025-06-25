@@ -100,7 +100,8 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             setState(() {
               this.currency = currency;
             });
-          }
+          },
+          category: toCategory,
         ),
         topContent: Container(
           decoration: BoxDecoration(

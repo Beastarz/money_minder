@@ -74,7 +74,6 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
 
   void getPages() {
     final bool disabledAddBudget = widget.dateFilter.type != DateFilterType.month;
-
     setState(() {
       _pages = widget.groupedTransactions.indexed.map((t) {
         int index = t.$1;
@@ -148,10 +147,11 @@ class _CategoriesPageState extends State<CategoriesPage> with TickerProviderStat
           onUpdateDateFilter: _onDateFilterChange,
         ),
         body:  PageView(
-        controller: _pageViewController,
-        onPageChanged: _handlePageViewChanged,
-        children: _pages
-      )
+          controller: _pageViewController,
+          onPageChanged: _handlePageViewChanged,
+          physics: widget.dateFilter.type == DateFilterType.all ? NeverScrollableScrollPhysics() : ScrollPhysics(),
+          children: _pages,
+        ),
     );
   }
 
