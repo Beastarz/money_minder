@@ -11,7 +11,6 @@ class UsersRepositories {
       _db.collection('users').doc(uid).set({
         'username': username,
         'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
       });
 
       _db.collection('usernames').doc(username).set({
@@ -36,12 +35,30 @@ class UsersRepositories {
     }
   }
 
+  Future<List<String>> getUsernameByPrefix(String prefix) async {
+    if (prefix.isEmpty) {
+      return [];
+    }
+    try {
+      prefix = prefix.toLowerCase();
+      final QuerySnapshot snapshot = await _db.collection('users')
+          .where('username', isGreaterThanOrEqualTo: prefix)
+          .where('username', isLessThan: '$prefix\uf8ff')
+          .get();
+      if (snapshot.docs.isEmpty) {
+        return [];
+      }
+      return snapshot.docs.map((doc) => doc.get('username') as String).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> checkUsernameExist(String username) async {
     try {
-      final result = _db.collection('username').doc(username).get().then((doc) {
-        return doc.exists;
-      });
-      return result;
+      final snapshot = await _db.collection('users')
+          .where('username', isEqualTo: username).get();
+      return snapshot.docs.isNotEmpty;
     } catch (e) {
       rethrow;
     }

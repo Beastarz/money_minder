@@ -1,5 +1,6 @@
 /// A central class to manage size for the app.
 class AppSize {
+  AppSize._();
   /// font size
   static final double heading1 = 22;
   static final double heading2 = 18;
