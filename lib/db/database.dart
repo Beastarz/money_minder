@@ -141,6 +141,23 @@ class DatabaseService {
         ''');
 
     await db.execute('''
+          CREATE TABLE passcode(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            salt TEXT NOT NULL,
+            encrypted_passcode Text NOT NULL,
+            active_period INTEGER NOT NULL
+          )
+        ''');
+
+    await db.execute('''
+          CREATE TABLE freeze_time(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            frozen_count INTEGER NOT NULL,
+            frozen_until INTEGER NOT NULL
+          )
+        ''');
+
+    await db.execute('''
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
       ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
       ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
