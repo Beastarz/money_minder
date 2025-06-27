@@ -20,6 +20,10 @@ void main() {
     when(mockDatabaseService.database).thenAnswer((_) async => mockDatabase);
   });
 
+  tearDown(() {
+    CurrencyRepositories.resetInstance();
+  });
+
   group('currencyRepositories', () {
     final sgdMap = {
       'name': 'sgd',

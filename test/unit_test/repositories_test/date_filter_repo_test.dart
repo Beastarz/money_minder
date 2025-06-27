@@ -21,6 +21,10 @@ void main() {
     when(mockDatabaseService.database).thenAnswer((_) async => mockDatabase);
   });
 
+  tearDown(() {
+    DateFilterRepositories.resetInstance();
+  });
+
   group('dateFilterRepositories', () {
     final dateFilterMap = {
       'type': 'month',
