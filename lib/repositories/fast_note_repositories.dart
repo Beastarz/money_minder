@@ -1,14 +1,28 @@
+import 'package:flutter/cupertino.dart';
+
 import '../db/database.dart';
 import '../models/fast_note.dart';
 
 class FastNoteRepositories {
 
-  DatabaseService dbService = DatabaseService.instance;
+  DatabaseService _dbService = DatabaseService.instance;
 
   FastNoteRepositories._privateConstructor();
 
-  static final FastNoteRepositories instance = FastNoteRepositories
-      ._privateConstructor();
+  static final FastNoteRepositories _instance = FastNoteRepositories._privateConstructor();
+
+
+  static FastNoteRepositories get instance => _instance;
+
+  @visibleForTesting
+  static void setMockDbService(DatabaseService mockService) {
+    _instance._dbService = mockService;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance._dbService = DatabaseService.instance;
+  }
 
   /// create a new Fast Note
   ///
@@ -18,7 +32,7 @@ class FastNoteRepositories {
   ///
   /// Returns: void
   Future<void> createFastNote(Map<String, dynamic> fastNote) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.insert(
         'fast_notes',
         fastNote);
@@ -33,7 +47,7 @@ class FastNoteRepositories {
   ///
   /// Returns: List\<FastNote\>
   Future<List<FastNote>> getFastNotes(int categoryId) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query(
         'fast_notes',
         where: 'category_id = ?',
@@ -50,7 +64,7 @@ class FastNoteRepositories {
   ///
   /// Returns: void
   Future<void> updateFastNote(Map<String, dynamic> fastNote, int id, int categoryId) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.update(
         'fast_notes',
         fastNote,
@@ -66,7 +80,7 @@ class FastNoteRepositories {
   ///
   /// Returns: void
   Future<void> deleteFastNote(int id, int categoryId) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.delete(
         'fast_notes',
         where: 'id = ? AND category_id = ?',

@@ -87,7 +87,7 @@ class _AppBodyState extends State<AppBody> {
   }
 
   Future<void> _fetchAccounts() async {
-    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
     setState(() {
       _accounts = res;
       _filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();

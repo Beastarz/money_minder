@@ -26,7 +26,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
   }
 
   Future<void> fetchAccounts() async {
-    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
     setState(() {
       accounts = res;
     });
@@ -72,8 +72,8 @@ class _AccountsFilterState extends State<AccountsFilter> {
                   IconButton(
                       onPressed: () {
                         () async {
-                          await AccountsRepository.instance
-                              .updateSelectedAccount(widget.selectedAccounts);
+                          await AccountsRepositories.instance
+                              .updateIncludedAccount(widget.selectedAccounts);
                           widget.onReload();
                         }();
                         Navigator.pop(context);

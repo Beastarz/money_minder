@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:sqflite/sqflite.dart';
@@ -5,47 +6,66 @@ import 'package:sqflite/sqflite.dart';
 import '../db/database.dart';
 import '../models/account.dart';
 
-class AccountsRepository {
+class AccountsRepositories {
+  DatabaseService _dbService = DatabaseService.instance;
 
-  AccountsRepository._privateConstructor();
+  AccountsRepositories._privateConstructor();
 
-  static final AccountsRepository instance = AccountsRepository._privateConstructor();
+  static final AccountsRepositories _instance = AccountsRepositories._privateConstructor();
 
-  DatabaseService dbService = DatabaseService.instance;
+  static AccountsRepositories? _testInstance;
+
+  static AccountsRepositories get instance => _testInstance ?? _instance;
+
+  @visibleForTesting
+  static void setMockDbService(DatabaseService mockService) {
+    _instance._dbService = mockService;
+  }
+
+  @visibleForTesting
+  static void setTestInstance(AccountsRepositories testInstance) {
+    _testInstance = testInstance;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance._dbService = DatabaseService.instance;
+    _testInstance = null;
+  }
 
   Future<void> createAccount(Map<String, dynamic> account) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     int count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM accounts')) ?? 0;
     account['position'] = count;
     await db.insert('accounts', account);
   }
 
   Future<List<Account>> getAllAccounts() async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
      List<Map<String, dynamic>> result = await db.query('accounts', orderBy: 'position ASC');
      return result.map((row) => Account.fromMap(row)).toList();
   }
 
   Future<Account> getAccountById(int id) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query('accounts', where: 'id = ?', whereArgs: [id]);
     return Account.fromMap(result.first);
   }
 
   Future<Account> getMainAccounts() async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query('accounts',where: 'is_main = 1', orderBy: 'position ASC');
     return Account.fromMap(result.first);
   }
 
   Future<void> updateAccount(Account account) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     Map<String, dynamic> accountMap = account.toMap();
     await db.update('accounts', accountMap, where: 'id = ?', whereArgs: [accountMap['id']]);
   }
 
-  Future<void> updateSelectedAccount(List<int> selectedAccount) async {
-    final db = await dbService.database;
+  Future<void> updateIncludedAccount(List<int> selectedAccount) async {
+    final db = await _dbService.database;
     final batch = db.batch();
     List<Account> res = await instance.getAllAccounts();
     for (Account account in res) {
@@ -61,7 +81,7 @@ class AccountsRepository {
   }
 
   Future<void> updateAccountPosition(List<Account> accounts) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     Batch batch = db.batch();
 
     for (int i = 0; i < accounts.length; i++) {
@@ -73,7 +93,7 @@ class AccountsRepository {
   }
 
   Future<void> updateMainAccount(Account account) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     Map<String, dynamic> mainAccount = await db.query('accounts', where: 'is_main = 1').then((value) => value.first);
     Account prevMainAccount = Account.fromMap(mainAccount).copyWith(isMain: false);
     await db.update('accounts', prevMainAccount.toMap(), where: 'id = ?', whereArgs: [prevMainAccount.id]);
@@ -85,13 +105,13 @@ class AccountsRepository {
     await TransactionsRepositories.instance.deleteTransactionByAccountId(id);
     await RecurrenceRepositories.instance.deleteRecurrenceByAccountId(id);
 
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
   }
 
 
   Future<void> close() async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.close();
   }
 }

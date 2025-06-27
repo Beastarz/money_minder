@@ -193,7 +193,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     onPressed: () {
                       if(!isMain) {
                         () async {
-                          await AccountsRepository.instance.updateMainAccount(widget.account);
+                          await AccountsRepositories.instance.updateMainAccount(widget.account);
                           widget.onReload();
                         }();
                         setState(() {

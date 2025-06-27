@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:money_minder/db/database.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
@@ -9,25 +10,46 @@ import 'package:sqflite/sqflite.dart' as sqf;
 import 'package:money_minder/models/transaction.dart';
 
 class TransactionsRepositories {
-  DatabaseService dbService = DatabaseService.instance;
+  DatabaseService _dbService = DatabaseService.instance;
 
-  static final TransactionsRepositories instance = TransactionsRepositories._privateConstructor();
   TransactionsRepositories._privateConstructor();
 
+  static final TransactionsRepositories _instance = TransactionsRepositories._privateConstructor();
+
+  static TransactionsRepositories? _testInstance;
+
+  static TransactionsRepositories get instance => _testInstance ?? _instance;
+
+  @visibleForTesting
+  static void setMockDbService(DatabaseService mockService) {
+    _instance._dbService = mockService;
+  }
+
+  @visibleForTesting
+  static void setTestInstance(TransactionsRepositories testInstance) {
+    _testInstance = testInstance;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance._dbService = DatabaseService.instance;
+    _testInstance = null;
+  }
+
   Future<void> createTransaction(Map<String, dynamic> transaction) async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
     await db.insert('transactions', transaction);
   }
 
   Future<void> updateTransaction(Transaction transaction) async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
     await db.update('transactions', transaction.toMap(), where: 'id = ?', whereArgs: [transaction.id]);
   }
 
   Future<List<Transaction>> getTransactions() async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
 
-    List<Account> accounts = await AccountsRepository.instance.getAllAccounts();
+    List<Account> accounts = await AccountsRepositories.instance.getAllAccounts();
     List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('transactions');
     Currency mainCurrency = await CurrencyRepositories.instance.getMainCurrency();
@@ -50,18 +72,18 @@ class TransactionsRepositories {
   }
 
   Future<void> deleteTransactionByAccountId(int id) async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
     await db.delete('transactions', where: 'from_account_id = ?', whereArgs: [id]);
     await db.delete('transactions', where: 'to_account_id = ?', whereArgs: [id]);
   }
 
   Future<void> deleteTransaction(int id) async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
     await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> deleteTransactionByCategoryId(int id) async {
-    sqf.Database db = await dbService.database;
+    sqf.Database db = await _dbService.database;
     await db.delete('transactions', where: 'to_category_id = ?', whereArgs: [id]);
   }
 }

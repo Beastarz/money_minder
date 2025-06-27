@@ -81,7 +81,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
       balance: double.parse(_accountBalanceController.text),
     );
     () async {
-      await AccountsRepository.instance.updateAccount(updatedAccount);
+      await AccountsRepositories.instance.updateAccount(updatedAccount);
       widget.onReload();
     }();
     Navigator.pop(context);
@@ -351,7 +351,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                           TextButton(
                             onPressed: () {
                               () async {
-                                await AccountsRepository.instance.deleteAccount(account.id);
+                                await AccountsRepositories.instance.deleteAccount(account.id);
                                 widget.onReload();
                               }();
                               Navigator.pop(context);
