@@ -31,15 +31,10 @@ class _LockScreenState extends State<LockScreen> {
   int frozenCount = 0;
   final List<Duration> frozenTimes = [
     Duration(minutes: 1),
-    Duration(minutes: 2),
-    Duration(minutes: 3),
-    Duration(minutes: 4),
-    Duration(minutes: 5)
-    // Duration(minutes: 1),
-    // Duration(minutes: 5),
-    // Duration(minutes: 30),
-    // Duration(hours: 1),
-    // Duration(days: 1),
+    Duration(minutes: 5),
+    Duration(minutes: 30),
+    Duration(hours: 1),
+    Duration(days: 1),
   ];
   final int maxTry = 3;
   Duration countdown = Duration.zero;
@@ -174,6 +169,8 @@ class _LockScreenState extends State<LockScreen> {
                       color: Colors.white.withAlpha((255 * 0.8).round()),
                       decoration: TextDecoration.none,
                     ),
+                    textAlign: TextAlign.center,
+                    softWrap: true,
                   ),
                   SizedBox(height: 20),
                   Text(
