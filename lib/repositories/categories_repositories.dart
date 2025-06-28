@@ -1,13 +1,36 @@
+import 'package:flutter/cupertino.dart';
+
 import '../db/database.dart';
 import '../models/category.dart';
 
 class CategoriesRepositories {
 
-  DatabaseService dbService = DatabaseService.instance;
+  DatabaseService _dbService = DatabaseService.instance;
 
   CategoriesRepositories._privateConstructor();
 
-  static final CategoriesRepositories instance = CategoriesRepositories._privateConstructor();
+  static final CategoriesRepositories _instance = CategoriesRepositories._privateConstructor();
+
+  static CategoriesRepositories? _testInstance;
+
+  static CategoriesRepositories get instance => _testInstance ?? _instance;
+
+  @visibleForTesting
+  static void setMockDbService(DatabaseService mockService) {
+    _instance._dbService = mockService;
+  }
+
+  @visibleForTesting
+  static void setTestInstance(CategoriesRepositories testInstance) {
+    _testInstance = testInstance;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance._dbService = DatabaseService.instance;
+    _testInstance = null;
+  }
+
 
   /// use this to get all categories
   ///
@@ -15,7 +38,7 @@ class CategoriesRepositories {
   ///
   /// Returns: List\<Category\>
   Future<List<Category>> getAllCategories() async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query(
         'categories',
         orderBy: 'position ASC');
@@ -30,7 +53,7 @@ class CategoriesRepositories {
   ///
   /// Returns: List\<Category\>
   Future<List<Category>> getCategoriesByType(bool isExpense) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query(
         'categories',
         where: 'is_expense = ?',
@@ -49,7 +72,7 @@ class CategoriesRepositories {
   ///
   /// Returns: void
   Future<void> updatePosition(int id, int newPosition) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.update(
         'categories',
         {'position': newPosition},
@@ -66,7 +89,7 @@ class CategoriesRepositories {
   ///
   /// int id: id of the category
   Future<void> updateCategory(Map<String, dynamic> category, int id) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.update(
         'categories',
         category,
@@ -82,7 +105,7 @@ class CategoriesRepositories {
   ///
   /// Returns: void
   Future<void> deleteCategory(int id) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.delete(
         'categories',
         where: 'id = ?',
@@ -97,7 +120,7 @@ class CategoriesRepositories {
   ///
   /// Returns: void
   Future<void> createCategory(Map<String, dynamic> category) async {
-    final db = await dbService.database;
+    final db = await _dbService.database;
     await db.insert(
         'categories',
         category);

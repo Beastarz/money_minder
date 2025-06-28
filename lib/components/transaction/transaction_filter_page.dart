@@ -41,7 +41,7 @@ class _TransactionFilterPageState extends State<TransactionFilterPage> {
   }
 
   void _fetchAccounts() async {
-    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
     setState(() {
       accounts = res;
     });

@@ -1,7 +1,7 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/recurrence/edit_recurrence_sheet.dart';
-import 'package:money_minder/components/transaction/transaction_helper.dart';
+import 'package:money_minder/repositories/transaction_helper.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/utils/account_top_card.dart';

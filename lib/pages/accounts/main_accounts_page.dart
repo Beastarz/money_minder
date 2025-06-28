@@ -101,7 +101,7 @@ class _AccountsPageState extends State<AccountsPage> {
                                   final Account item = accounts.removeAt(acc.elementAt(oldIndex).position);
                                   accounts.insert(acc.elementAt(newIndex).position, item);
                                 });
-                                await AccountsRepository.instance.updateAccountPosition(accounts);
+                                await AccountsRepositories.instance.updateAccountPosition(accounts);
                                 widget.onReload();
                             },
                             itemBuilder: (BuildContext context, int index) {

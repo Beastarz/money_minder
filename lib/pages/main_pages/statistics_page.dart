@@ -5,7 +5,7 @@ import 'package:money_minder/models/currency.dart';
 import '../../components/calendar_bar/calendar_appbar.dart';
 import '../../components/categories_page/category_button.dart';
 import '../../components/categories_page/category_helper.dart';
-import '../../components/transaction/transaction_helper.dart';
+import '../../repositories/transaction_helper.dart';
 import '../../models/budget.dart';
 import '../../models/category.dart';
 import '../../models/date_filter.dart';
@@ -100,7 +100,7 @@ class _StatisticsPageState extends State<StatisticsPage> with TickerProviderStat
   void getPages() {
     final bool disabledAddBudget = widget.dateFilter.type != DateFilterType.month;
     final allTimeStartDate = widget.dateFilter.type == DateFilterType.all
-      ? TransactionHelper.getEarlierStartDate(widget.groupedTransactions[50])
+      ? TransactionHelper.getEarliestStartDate(widget.groupedTransactions[50])
       : widget.dateFilter.startDates[0]; // does not matter which date is used
     setState(() {
       _pages = widget.groupedTransactions.indexed.map((t) {

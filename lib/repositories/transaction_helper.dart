@@ -2,9 +2,9 @@ import 'package:money_minder/models/account.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 
-import '../../models/category.dart';
-import '../../models/currency.dart';
-import '../../models/transaction.dart';
+import '../models/category.dart';
+import '../models/currency.dart';
+import '../models/transaction.dart';
 
 class TransactionHelper {
   TransactionHelper._();
@@ -14,10 +14,10 @@ class TransactionHelper {
       return proceedIncome(date, fromAccountId, toCategory, amount, currency, note);
     }
 
-    Account fromAccount = await AccountsRepository.instance.getAccountById(fromAccountId);
+    Account fromAccount = await AccountsRepositories.instance.getAccountById(fromAccountId);
 
     double balance = fromAccount.balance - Currency.convert(currency, fromAccount.currency, amount);
-    AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: balance));
+    AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: balance));
     TransactionsRepositories.instance.createTransaction(
         Transaction.insertAsMap(
             date: date,
@@ -35,10 +35,10 @@ class TransactionHelper {
       proceedExpense(date, fromAccountId, toCategory, amount, currency, note);
     }
 
-    Account fromAccount = await AccountsRepository.instance.getAccountById(fromAccountId);
+    Account fromAccount = await AccountsRepositories.instance.getAccountById(fromAccountId);
 
     double balance = fromAccount.balance + Currency.convert(currency, fromAccount.currency, amount);
-    AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: balance));
+    AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: balance));
     TransactionsRepositories.instance.createTransaction(
         Transaction.insertAsMap(
             date: date,
@@ -65,26 +65,26 @@ class TransactionHelper {
   }
 
   static Future<void> undoTransaction(Transaction transaction) async {
-    Account fromAccount = await AccountsRepository.instance.getAccountById(transaction.fromAccount.id);
+    Account fromAccount = await AccountsRepositories.instance.getAccountById(transaction.fromAccount.id);
 
     double balance = Currency.convert(transaction.currency, fromAccount.currency, transaction.amount);
     if (transaction.type == TransactionType.income) {
-      await AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance - balance));
+      await AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance - balance));
     } else {
-      await AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance + balance));
+      await AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance + balance));
     }
   }
 
   static Future<void> proceedTransfer(DateTime date, int fromAccountId, int toAccountId, double amount, Currency currency, String note) async {
 
-    Account fromAccount = await AccountsRepository.instance.getAccountById(fromAccountId);
-    Account toAccount = await AccountsRepository.instance.getAccountById(toAccountId);
+    Account fromAccount = await AccountsRepositories.instance.getAccountById(fromAccountId);
+    Account toAccount = await AccountsRepositories.instance.getAccountById(toAccountId);
 
     double balanceFrom = Currency.convert(currency, fromAccount.currency, amount);
     double balanceTo = Currency.convert(currency, toAccount.currency, amount);
 
-    await AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance - balanceFrom));
-    AccountsRepository.instance.updateAccount(toAccount.copyWith(balance: toAccount.balance + balanceTo));
+    await AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance - balanceFrom));
+    AccountsRepositories.instance.updateAccount(toAccount.copyWith(balance: toAccount.balance + balanceTo));
     TransactionsRepositories.instance.createTransaction(
         Transaction.insertAsMap(
             date: date,
@@ -108,14 +108,14 @@ class TransactionHelper {
     if (transaction.toAccount == null || transaction.type != TransactionType.transfer) {
       return;
     }
-    Account fromAccount = await AccountsRepository.instance.getAccountById(transaction.fromAccount.id);
-    Account toAccount = await AccountsRepository.instance.getAccountById(transaction.toAccount!.id);
+    Account fromAccount = await AccountsRepositories.instance.getAccountById(transaction.fromAccount.id);
+    Account toAccount = await AccountsRepositories.instance.getAccountById(transaction.toAccount!.id);
 
     double balanceFrom = Currency.convert(transaction.currency, fromAccount.currency, transaction.amount);
     double balanceTo = Currency.convert(transaction.currency, toAccount.currency, transaction.amount);
 
-    AccountsRepository.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance + balanceFrom));
-    AccountsRepository.instance.updateAccount(toAccount.copyWith(balance: toAccount.balance - balanceTo));
+    AccountsRepositories.instance.updateAccount(fromAccount.copyWith(balance: fromAccount.balance + balanceFrom));
+    AccountsRepositories.instance.updateAccount(toAccount.copyWith(balance: toAccount.balance - balanceTo));
   }
 
   static Future<void> deleteTransfer(Transaction oldTransaction) async {
@@ -123,7 +123,7 @@ class TransactionHelper {
     await TransactionsRepositories.instance.deleteTransaction(oldTransaction.id);
   }
 
-  static DateTime getEarlierStartDate(List<Transaction> transaction) {
+  static DateTime getEarliestStartDate(List<Transaction> transaction) {
     DateTime startDate = transaction.first.date;
     for (Transaction t in transaction) {
       if (t.date.isBefore(startDate)) {

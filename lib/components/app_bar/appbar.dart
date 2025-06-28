@@ -130,6 +130,15 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             color: Colors.grey[800],
           ),
           onPressed: () {
+            if (username.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please Sign in'),
+                  behavior: SnackBarBehavior.floating,
+                )
+              );
+              return;
+            }
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => OnlineHomePage(username: username))
