@@ -1,6 +1,7 @@
-import 'package:money_minder/components/transaction/transaction_helper.dart';
+import 'package:money_minder/repositories/transaction_helper.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/material.dart';
 
 import '../db/database.dart';
 import '../models/account.dart';
@@ -12,16 +13,36 @@ import 'categories_repositories.dart';
 import 'currency_repositories.dart';
 
 class RecurrenceRepositories {
-  DatabaseService dbService = DatabaseService.instance;
+  DatabaseService _dbService = DatabaseService.instance;
 
   RecurrenceRepositories._privateConstructor();
 
-  static RecurrenceRepositories instance = RecurrenceRepositories._privateConstructor();
+  static final RecurrenceRepositories _instance = RecurrenceRepositories._privateConstructor();
+
+  static RecurrenceRepositories? _testInstance;
+
+  static RecurrenceRepositories get instance => _testInstance ?? _instance;
+
+  @visibleForTesting
+  static void setMockDbService(DatabaseService mockService) {
+    _instance._dbService = mockService;
+  }
+
+  @visibleForTesting
+  static void setTestInstance(RecurrenceRepositories testInstance) {
+    _testInstance = testInstance;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance._dbService = DatabaseService.instance;
+    _testInstance = null;
+  }
 
   Future<List<Recurrence>> getAndCheckRecurrences() async {
-    Database db = await dbService.database;
+    Database db = await _dbService.database;
 
-    List<Account> accounts = await AccountsRepository.instance.getAllAccounts();
+    List<Account> accounts = await AccountsRepositories.instance.getAllAccounts();
     List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('recurrence');
     Currency mainCurrency = await CurrencyRepositories.instance.getMainCurrency();
@@ -68,24 +89,24 @@ class RecurrenceRepositories {
   }
 
   Future<void> createRecurrence(Map<String, dynamic> recurrence) async {
-    Database db = await dbService.database;
+    Database db = await _dbService.database;
     await db.insert('recurrence', recurrence);
   }
 
   Future<void> updateRecurrence(Recurrence recurrence) async {
-    Database db = await dbService.database;
+    Database db = await _dbService.database;
     await db.update('recurrence', recurrence.toMap(), where: 'id = ?', whereArgs: [recurrence.id]);
   }
 
 
   Future<void> deleteRecurrenceByAccountId(int id) async {
-    Database db = await dbService.database;
+    Database db = await _dbService.database;
     await db.delete('recurrence', where: 'from_account_id = ?', whereArgs: [id]);
     await db.delete('recurrence', where: 'to_account_id = ?', whereArgs: [id]);
   }
 
   Future<void> deleteRecurrence(int id) async {
-    Database db = await dbService.database;
+    Database db = await _dbService.database;
     await db.delete('recurrence', where: 'id = ?', whereArgs: [id]);
   }
 }

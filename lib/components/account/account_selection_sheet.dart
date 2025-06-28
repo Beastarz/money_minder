@@ -26,7 +26,7 @@ class _AccountSelectionSheetState extends State<AccountSelectionSheet> {
   }
 
   _fetchAccounts() async {
-    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
     setState(() {
       accounts = res;
       if(widget.removeAccount != null) {

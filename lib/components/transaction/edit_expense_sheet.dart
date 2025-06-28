@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/utils/account_top_card.dart';
 import 'package:money_minder/utils/category_top_card.dart';
-import 'package:money_minder/components/transaction/transaction_helper.dart';
+import 'package:money_minder/repositories/transaction_helper.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
 

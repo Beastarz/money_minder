@@ -80,7 +80,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
       currency: mainCurrency,
     );
     () async {
-      await AccountsRepository.instance.createAccount(accountData);
+      await AccountsRepositories.instance.createAccount(accountData);
       widget.onAddAccount();
     }();
     Navigator.pop(context);

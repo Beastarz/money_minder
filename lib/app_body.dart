@@ -99,7 +99,7 @@ class _AppBodyState extends State<AppBody> {
   }
 
   Future<void> _fetchAccounts() async {
-    List<Account> res = await AccountsRepository.instance.getAllAccounts();
+    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
     if (!mounted) return;
     setState(() {
       _accounts = res;
