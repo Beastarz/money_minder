@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screen_lock/flutter_screen_lock.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:money_minder/components/lock_screen/passcode_helper.dart';
 
 import '../../models/freeze_time.dart';
-import '../../repositories/freeze_time_respositories.dart';
+import '../../repositories/freeze_time_repositories.dart';
 import '../../style/app_size.dart';
 
 class LockScreen extends StatefulWidget {
@@ -36,9 +38,12 @@ class _LockScreenState extends State<LockScreen> {
     Duration(hours: 1),
     Duration(days: 1),
   ];
-  final int maxTry = 3;
+  final int maxTry = 5;
   Duration countdown = Duration.zero;
   final inputController = InputController();
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _isBiometricAvailable = false;
+  bool _isAuthenticating = false;
 
   Future<void> _getFreezeTime() async {
     List<FreezeTime> time = await FreezeTimeRepositories.instance.getFreezeTime();
@@ -67,11 +72,74 @@ class _LockScreenState extends State<LockScreen> {
         }
         if (!isFrozen) {
           timer.cancel();
+          if (_isBiometricAvailable) {
+            _checkBiometricAvailability();
+          }
         }
       });
     }
-
   }
+
+  Future<void> _checkBiometricAvailability() async {
+    try {
+      bool isAvailable = await _localAuth.canCheckBiometrics;
+      bool isDeviceSupported = await _localAuth.isDeviceSupported();
+      List<BiometricType> availableBiometrics = await _localAuth.getAvailableBiometrics();
+
+      setState(() {
+        _isBiometricAvailable = isAvailable && isDeviceSupported && availableBiometrics.isNotEmpty;
+      });
+
+      // Auto-trigger biometric authentication if available
+      if (_isBiometricAvailable && !isFrozen) {
+        _authenticateWithBiometrics();
+      }
+    } catch (e) {
+      setState(() {
+        _isBiometricAvailable = false;
+      });
+    }
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    if (_isAuthenticating) return;
+
+    setState(() {
+      _isAuthenticating = true;
+    });
+
+    try {
+      bool authenticated = await _localAuth.authenticate(
+        localizedReason: 'Please authenticate to unlock the app',
+        options: const AuthenticationOptions(
+          biometricOnly: false,
+          stickyAuth: true,
+          useErrorDialogs: true,
+        ),
+      );
+
+      if (authenticated) {
+        // Reset freeze time on successful biometric authentication
+        await FreezeTimeRepositories.instance.deleteFreezeTime();
+        widget.onUnlocked();
+      }
+    } on PlatformException catch (_) {
+      // has error
+    } finally {
+      setState(() {
+        _isAuthenticating = false;
+      });
+    }
+  }
+
+  // void _showSnackBar(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //       duration: Duration(seconds: 3),
+  //     ),
+  //   );
+  // }
 
   void _checkFreezeStatus() {
     if (isFrozen && countdown.inSeconds <= 0) {
@@ -84,13 +152,12 @@ class _LockScreenState extends State<LockScreen> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addObserver(this);
     _getFreezeTime();
+    _checkBiometricAvailability();
   }
 
   @override
   void dispose() {
-    // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -122,6 +189,24 @@ class _LockScreenState extends State<LockScreen> {
       keyPadConfig: LockScreenConfig.keyPadConfig,
       useBlur: false,
       deleteButton: Text("Delete"),
+
+      // for biometric authentication
+      customizedButtonChild: Icon(
+          Icons.fingerprint,
+          size: 30,
+      ),
+      customizedButtonTap: () async {
+        if (_isBiometricAvailable) {
+          await _authenticateWithBiometrics();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please setup biometric authentication first.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      },
     );
   }
 

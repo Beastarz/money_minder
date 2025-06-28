@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:money_minder/components/lock_screen/lock_screen.dart';
 import 'package:money_minder/repositories/passcode_repositories.dart';
 import 'package:money_minder/utils/loading_screen.dart';
@@ -32,6 +33,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   /// TODO: Toggle between dark mode and light mode
   final ThemeMode _themeMode = ThemeMode.light;
 
+  final LocalAuthentication auth = LocalAuthentication();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late bool _isLocked = false;
@@ -93,7 +95,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused) {
       setState(() {
         inactiveStart = DateTime.now();
       });
@@ -112,14 +114,16 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
       themeMode: _themeMode,
       navigatorKey: navigatorKey,
       home: _isLocked
-        ? LockScreen(
-          onUnlocked: () {
-            setState(() {
-              _isLocked = false;
-            });
-          },
-          salt: _salt,
-          encryptedPasscode: _encryptedPasscode,
+        ? Scaffold(
+          body: LockScreen(
+            onUnlocked: () {
+              setState(() {
+                _isLocked = false;
+              });
+            },
+            salt: _salt,
+            encryptedPasscode: _encryptedPasscode,
+          ),
         )
         : _buildMainApp(),
     );

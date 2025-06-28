@@ -55,11 +55,6 @@ class _ActivePeriodSelectorState extends State<ActivePeriodSelector> {
             ),
             Divider(),
             ListTile(
-              title: Text("Immediately"),
-              tileColor: _defaultActivePeriod == 0 ? AppColor.primary : AppColor.secondary,
-              onTap: () {setActivePeriod(context, 0);},
-            ),
-            ListTile(
               title: Text("After 30 seconds"),
               tileColor: _defaultActivePeriod == 30 ? AppColor.primary : AppColor.secondary,
               onTap: () {setActivePeriod(context, 30);},
