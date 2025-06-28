@@ -10,10 +10,16 @@ import '../lock_screen/create_passcode_screen.dart';
 
 // TODO: Add drawer functionality
 class AppbarDrawer extends StatefulWidget {
-  const AppbarDrawer({super.key, required this.user, required this.username});
+  const AppbarDrawer({
+    super.key,
+    required this.user,
+    required this.username,
+    required this.startBioAuth,
+  });
 
   final User? user;
   final String? username;
+  final void Function() startBioAuth;
 
   @override
   State<AppbarDrawer> createState() => _AppbarDrawerState();
@@ -181,6 +187,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CreatePasscodeScreen(
+                          startBioAuth: widget.startBioAuth,
                           setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
                             setState(() {
                               enablePasscode = isPasscodeConfirmed;
@@ -216,6 +223,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CreatePasscodeScreen(
+                      startBioAuth: widget.startBioAuth,
                       setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
                         setState(() {
                           enablePasscode = isPasscodeConfirmed;

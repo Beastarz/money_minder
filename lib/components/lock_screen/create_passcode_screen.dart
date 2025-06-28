@@ -10,9 +10,11 @@ class CreatePasscodeScreen extends StatefulWidget {
   const CreatePasscodeScreen({
     super.key,
     required this.setIsPasscodeConfirmed,
+    required this.startBioAuth,
   });
 
   final void Function(bool) setIsPasscodeConfirmed;
+  final void Function() startBioAuth;
 
   @override
   State<CreatePasscodeScreen> createState() => _CreatePasscodeScreenState();
@@ -56,6 +58,7 @@ class _CreatePasscodeScreenState extends State<CreatePasscodeScreen> {
         // ask user to unlock the app
         Navigator.push(context,
           MaterialPageRoute(builder: (context) => LockScreen(
+            startBioAuth: widget.startBioAuth,
             onUnlocked: () {
               Navigator.pop(context); // pop the lock screen
             },

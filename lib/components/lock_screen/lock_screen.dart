@@ -14,11 +14,13 @@ import '../../style/app_size.dart';
 class LockScreen extends StatefulWidget {
   const LockScreen({
     super.key,
+    required this.startBioAuth,
     required this.onUnlocked,
     required this.salt,
     required this.encryptedPasscode,
   });
 
+  final void Function() startBioAuth;
   final void Function() onUnlocked;
   final String salt;
   final String encryptedPasscode;
@@ -29,22 +31,23 @@ class LockScreen extends StatefulWidget {
 
 class _LockScreenState extends State<LockScreen> {
 
-  bool isFrozen = false;
-  int frozenCount = 0;
+  bool isFrozen = false; /// is true if the user reenter the app before previous frozen time has ended
+  int frozenCount = 0; /// record the number of times the app is frozen, the freeze time will increase gradually
   final List<Duration> frozenTimes = [
     Duration(minutes: 1),
     Duration(minutes: 5),
     Duration(minutes: 30),
     Duration(hours: 1),
     Duration(days: 1),
-  ];
-  final int maxTry = 5;
-  Duration countdown = Duration.zero;
-  final inputController = InputController();
+  ]; /// the freeze times
+  final int maxTry = 5; /// the maximum number of tries before freezing the app
+  Duration countdown = Duration.zero; /// if the previous freeze time has not ended, we need to countdown the freeze time
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isBiometricAvailable = false;
   bool _isAuthenticating = false;
+  bool disabledBioAuth = false; /// is biometric authentication disabled
 
+  /// get the previous freeze time is it has not ended
   Future<void> _getFreezeTime() async {
     List<FreezeTime> time = await FreezeTimeRepositories.instance.getFreezeTime();
     if (time.isNotEmpty) {
@@ -72,14 +75,12 @@ class _LockScreenState extends State<LockScreen> {
         }
         if (!isFrozen) {
           timer.cancel();
-          if (_isBiometricAvailable) {
-            _checkBiometricAvailability();
-          }
         }
       });
     }
   }
 
+  /// check if biometric is setup
   Future<void> _checkBiometricAvailability() async {
     try {
       bool isAvailable = await _localAuth.canCheckBiometrics;
@@ -90,10 +91,6 @@ class _LockScreenState extends State<LockScreen> {
         _isBiometricAvailable = isAvailable && isDeviceSupported && availableBiometrics.isNotEmpty;
       });
 
-      // Auto-trigger biometric authentication if available
-      if (_isBiometricAvailable && !isFrozen) {
-        _authenticateWithBiometrics();
-      }
     } catch (e) {
       setState(() {
         _isBiometricAvailable = false;
@@ -101,6 +98,7 @@ class _LockScreenState extends State<LockScreen> {
     }
   }
 
+  /// authenticate the user with biometric
   Future<void> _authenticateWithBiometrics() async {
     if (_isAuthenticating) return;
 
@@ -121,26 +119,27 @@ class _LockScreenState extends State<LockScreen> {
       if (authenticated) {
         // Reset freeze time on successful biometric authentication
         await FreezeTimeRepositories.instance.deleteFreezeTime();
-        widget.onUnlocked();
+        if (mounted) {
+          // defer popping screen to avoid rebuild issues
+          Future.microtask(() {
+            if (mounted) widget.onUnlocked();
+          });
+        }
       }
     } on PlatformException catch (_) {
       // has error
     } finally {
       setState(() {
-        _isAuthenticating = false;
+        if (mounted) {
+          setState(() {
+            _isAuthenticating = false;
+          });
+        }
       });
     }
   }
 
-  // void _showSnackBar(String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(message),
-  //       duration: Duration(seconds: 3),
-  //     ),
-  //   );
-  // }
-
+  /// check if the freeze time has ended after the timer has started
   void _checkFreezeStatus() {
     if (isFrozen && countdown.inSeconds <= 0) {
       setState(() {
@@ -161,6 +160,7 @@ class _LockScreenState extends State<LockScreen> {
     super.dispose();
   }
 
+  /// get the lock screen
   Widget getScreenLock() {
     return ScreenLock(
       correctString: '______', // just to indicate how many digits
@@ -173,14 +173,28 @@ class _LockScreenState extends State<LockScreen> {
         return guess == widget.encryptedPasscode;
       },
       retryDelay: frozenTimes[frozenCount],
-      delayBuilder: (context, delay) =>
-          Text('Input locked for ${PasscodeHelper.formattedDuration(delay)}.'),
+      delayBuilder: (context, delay) {
+        if (delay.inSeconds == 0 && disabledBioAuth) {
+          // Defer the setState call to after the build phase
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                disabledBioAuth = false;
+              });
+            }
+          });
+        }
+        return Text('Input locked for ${PasscodeHelper.formattedDuration(delay)}.');
+      },
       maxRetries: maxTry,
       onMaxRetries: (_) {
         DateTime frozenUntil = DateTime.now().add(frozenTimes[frozenCount]);
-        frozenCount = frozenCount == frozenTimes.length - 1
-            ? frozenCount
-            : frozenCount + 1;
+        setState(() {
+          disabledBioAuth = true;
+          frozenCount = frozenCount == frozenTimes.length - 1
+              ? frozenCount
+              : frozenCount + 1;
+        });
         FreezeTimeRepositories.instance.addFreezeTime(FreezeTime.insertAsMap(frozenCount, frozenUntil));
       },
       title: Text('Enter Passcode'),
@@ -196,7 +210,11 @@ class _LockScreenState extends State<LockScreen> {
           size: 30,
       ),
       customizedButtonTap: () async {
+        if (disabledBioAuth) {
+          return;
+        }
         if (_isBiometricAvailable) {
+          widget.startBioAuth();
           await _authenticateWithBiometrics();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -210,6 +228,7 @@ class _LockScreenState extends State<LockScreen> {
     );
   }
 
+  /// get the frozen screen when the previous screen time has not ended
   Widget getFrozenScreen() {
     return Positioned.fill(
       child: BackdropFilter(

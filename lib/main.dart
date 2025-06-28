@@ -36,11 +36,14 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   final LocalAuthentication auth = LocalAuthentication();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late bool _isLocked = false;
-  late String _salt;
-  late String _encryptedPasscode;
-  DateTime inactiveStart = DateTime.now();
+  late bool _isLocked = false; // if the user has set a passcode
+  late String _salt; // the salt used to encrypt the passcode
+  late String _encryptedPasscode; // the encrypted passcode
+  DateTime inactiveStart = DateTime.now(); // default datetime for inactiveStart
+  bool isBioAuth = false; // the app should not be counted as inactive when authenticating
 
+  /// load the salt and encrypted passcode
+  /// isLocked will be true if the passcode exists
   Future<void> getPasscode() async {
     List<Passcode> passcode = await PasscodeRepositories.instance.getPasscode();
     if (passcode.isNotEmpty) {
@@ -50,6 +53,99 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
         _isLocked = true;
       });
     }
+  }
+
+  /// if the user leave the app, even the app still operating in the background
+  /// the system need to validate the user again after certain amount of times
+  Future<void> validateUserAgain() async {
+
+    // the app is counted as inactive when we are doing biometric authentication
+    // the case is handled explicitly
+    if (isBioAuth) {
+      if (mounted) {
+        setState(() {
+          isBioAuth = false;
+        });
+      }
+      return;
+    }
+
+    // we want to know how long the user had left the app and decide whether to lock the app
+    DateTime inactiveEnd = DateTime.now();
+    List<Passcode> passcode = await PasscodeRepositories.instance.getPasscode();
+    if (passcode.isEmpty) {
+      return;
+    }
+    int activePeriod = passcode[0].activePeriod;
+    String salt = passcode[0].salt;
+    String encryptedPasscode = passcode[0].encryptedPasscode;
+    if (mounted && inactiveEnd.difference(inactiveStart).inSeconds >= activePeriod) {
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => LockScreen(
+            startBioAuth: () {
+              setState(() {
+                isBioAuth = true;
+              });
+            },
+            onUnlocked: () {
+              setState(() {
+                _isLocked = false;
+              });
+              navigatorKey.currentState?.pop(context);
+            },
+            salt: salt,
+            encryptedPasscode: encryptedPasscode,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildMainApp() {
+    return Scaffold(
+      body: StreamBuilder(
+          stream: _auth.authStateChanges(),
+          builder: (context, asyncSnapshot) {
+            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+              return LoadingScreen();
+            }
+            if (asyncSnapshot.hasData) {
+              User user = asyncSnapshot.data!;
+              return FutureBuilder(
+                  future: UsersRepositories.instance.getUsername(user.uid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return LoadingScreen();
+                    }
+                    else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return AppBody(
+                          user: user,
+                          username: snapshot.data,
+                          startBioAuth: () {
+                            setState(() {
+                              isBioAuth = true;
+                            });
+                          }
+                      );
+                    }
+                    else {
+                      return CreateUsernamePage(user: user);
+                    }
+                  }
+              );
+            } else {
+              return AppBody(
+                  user: null,
+                  startBioAuth: () {
+                    setState(() {
+                      isBioAuth = true;
+                    });
+                  });
+            }
+          }
+      ),
+    );
   }
 
   @override
@@ -65,37 +161,10 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> validateUserAgain() async {
-    DateTime inactiveEnd = DateTime.now();
-    List<Passcode> passcode = await PasscodeRepositories.instance.getPasscode();
-    if (passcode.isEmpty) {
-      return;
-    }
-    int activePeriod = passcode[0].activePeriod;
-    String salt = passcode[0].salt;
-    String encryptedPasscode = passcode[0].encryptedPasscode;
-    if (mounted && inactiveEnd.difference(inactiveStart).inSeconds >= activePeriod) {
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => LockScreen(
-            onUnlocked: () {
-              setState(() {
-                _isLocked = false;
-              });
-              navigatorKey.currentState?.pop(context);
-            },
-            salt: salt,
-            encryptedPasscode: encryptedPasscode,
-          ),
-        ),
-      );
-    }
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.inactive) {
       setState(() {
         inactiveStart = DateTime.now();
       });
@@ -116,6 +185,11 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
       home: _isLocked
         ? Scaffold(
           body: LockScreen(
+            startBioAuth: () {
+              setState(() {
+                isBioAuth = true;
+              });
+            },
             onUnlocked: () {
               setState(() {
                 _isLocked = false;
@@ -126,38 +200,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
           ),
         )
         : _buildMainApp(),
-    );
-  }
-
-  Widget _buildMainApp() {
-    return Scaffold(
-      body: StreamBuilder(
-          stream: _auth.authStateChanges(),
-          builder: (context, asyncSnapshot) {
-            if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-              return LoadingScreen();
-            }
-            if (asyncSnapshot.hasData) {
-              User user = asyncSnapshot.data!;
-              return FutureBuilder(
-                  future: UsersRepositories.instance.getUsername(user.uid),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return LoadingScreen();
-                    }
-                    else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      return AppBody(user: user, username: snapshot.data);
-                    }
-                    else {
-                      return CreateUsernamePage(user: user);
-                    }
-                  }
-              );
-            } else {
-              return AppBody(user: null);
-            }
-          }
-      ),
     );
   }
 }

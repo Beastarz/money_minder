@@ -27,10 +27,16 @@ import 'models/transaction.dart';
 import 'models/transaction_filter.dart';
 
 class AppBody extends StatefulWidget {
-  const AppBody({super.key, required this.user, this.username});
+  const AppBody({
+    super.key,
+    required this.user,
+    this.username,
+    required this.startBioAuth,
+  });
 
   final User? user;
   final String? username;
+  final void Function() startBioAuth;
 
   @override
   State<AppBody> createState() => _AppBodyState();
@@ -321,7 +327,11 @@ class _AppBodyState extends State<AppBody> {
             transactionFilter: _transactionFilter,
             onTransactionFilterChange: _onTransactionFilterChange,
           ),
-          drawer: AppbarDrawer(user: widget.user, username: widget.username,),
+          drawer: AppbarDrawer(
+            user: widget.user,
+            username: widget.username,
+            startBioAuth: widget.startBioAuth,
+          ),
           body: pages[_tabIndex],
           bottomNavigationBar: BottomNavbar(
             onTabChange: _onTabChange,
