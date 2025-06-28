@@ -57,7 +57,13 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
     );
 
     Widget signOutTile = ListTile(
-      title: Text(widget.username ?? '_empty'),
+      title: Text(
+        widget.username == null ? '_empty' : '@${widget.username!}',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       trailing: TextButton(
         onPressed: () {
           setState(() {

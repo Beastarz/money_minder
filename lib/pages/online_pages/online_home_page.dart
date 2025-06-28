@@ -35,9 +35,13 @@ class OnlineHomePage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => ContactsPage())
                     );
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   color: AppColor.secondary,
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
+                    height: 50,
                     child: Row(
                         spacing: 8,
                         mainAxisSize: MainAxisSize.max,
@@ -46,6 +50,29 @@ class OnlineHomePage extends StatelessWidget {
                         children: [
                           Icon(Icons.contact_page_outlined),
                           Text("Contacts"),
+                        ]
+                    ),
+                  )
+              ),
+              MaterialButton(
+                  onPressed: () {
+                    // manage request page
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  color: AppColor.secondary,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    height: 50,
+                    child: Row(
+                        spacing: 8,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.list_alt, color: Colors.brown,),
+                          Text("Manage Requests"),
                         ]
                     ),
                   )
@@ -59,6 +86,9 @@ class OnlineHomePage extends StatelessWidget {
                     onPressed: () {
                       // send money
                     },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: 60,
@@ -77,6 +107,9 @@ class OnlineHomePage extends StatelessWidget {
                     onPressed: () {
                       // ask money
                     },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: 60,
@@ -95,6 +128,9 @@ class OnlineHomePage extends StatelessWidget {
                     onPressed: () {
                       // split money
                     },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: 60,
