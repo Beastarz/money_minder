@@ -1,14 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/auth/auth_service.dart';
+import 'package:money_minder/components/lock_screen/active_period_selector.dart';
 import 'package:money_minder/style/app_color.dart';
+
+import '../../models/passcode.dart';
+import '../../repositories/passcode_repositories.dart';
+import '../lock_screen/create_passcode_screen.dart';
 
 // TODO: Add drawer functionality
 class AppbarDrawer extends StatefulWidget {
-  const AppbarDrawer({super.key, required this.user, required this.username});
+  const AppbarDrawer({
+    super.key,
+    required this.user,
+    required this.username,
+    required this.startBioAuth,
+  });
 
   final User? user;
   final String? username;
+  final void Function() startBioAuth;
 
   @override
   State<AppbarDrawer> createState() => _AppbarDrawerState();
@@ -16,6 +27,22 @@ class AppbarDrawer extends StatefulWidget {
 
 class _AppbarDrawerState extends State<AppbarDrawer> {
   bool isLoading = false;
+  bool enablePasscode = false;
+  bool hasPasscode = false;
+
+  Future<void> getPasscode() async {
+    List<Passcode> passcode = await PasscodeRepositories.instance.getPasscode();
+    setState(() {
+      enablePasscode = passcode.isNotEmpty;
+      hasPasscode = passcode.isNotEmpty;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPasscode();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,9 +176,61 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
 
           ListTile(
             leading: Icon(Icons.security),
-            title: Text('Passkey'),
+            trailing: Switch(
+              value: enablePasscode,
+              onChanged: (bool enable) async {
+                if (enable) {
+                  setState(() {
+                    enablePasscode = true;
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreatePasscodeScreen(
+                          startBioAuth: widget.startBioAuth,
+                          setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
+                            setState(() {
+                              enablePasscode = isPasscodeConfirmed;
+                            });
+                          }),
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    enablePasscode = false;
+                  });
+                  await PasscodeRepositories.instance.deletePasscode();
+                }
+              }, //
+            ),
+            title: Text('Passcode'),
             onTap: () {
-              Navigator.pop(context);
+              if (enablePasscode) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ActivePeriodSelector();
+                    }
+                );
+                return;
+              }
+
+              // set the passcode
+              setState(() {
+                enablePasscode = true;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatePasscodeScreen(
+                      startBioAuth: widget.startBioAuth,
+                      setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
+                        setState(() {
+                          enablePasscode = isPasscodeConfirmed;
+                        });
+                      }),
+                ),
+              );
             },
           ),
           ListTile(

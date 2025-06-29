@@ -27,10 +27,16 @@ import 'models/transaction.dart';
 import 'models/transaction_filter.dart';
 
 class AppBody extends StatefulWidget {
-  const AppBody({super.key, required this.user, this.username});
+  const AppBody({
+    super.key,
+    required this.user,
+    this.username,
+    required this.startBioAuth,
+  });
 
   final User? user;
   final String? username;
+  final void Function() startBioAuth;
 
   @override
   State<AppBody> createState() => _AppBodyState();
@@ -62,10 +68,21 @@ class _AppBodyState extends State<AppBody> {
   @override
   void initState() {
     super.initState();
-    _loadAllInitialData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _loadAllInitialData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _loadAllInitialData() async {
+    if (!mounted) return;
+
     // Set loading to true
     setState(() {
       _isLoadingData = true;
@@ -80,6 +97,7 @@ class _AppBodyState extends State<AppBody> {
     await _fetchCategories();
     await _fetchBudgets(); // Depends on _dateFilter
 
+    if (!mounted) return;
     // After all fetches complete, set loading to false
     setState(() {
       _isLoadingData = false;
@@ -88,6 +106,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchAccounts() async {
     List<Account> res = await AccountsRepositories.instance.getAllAccounts();
+    if (!mounted) return;
     setState(() {
       _accounts = res;
       _filteredAccounts = _accounts.where((account) => account.isIncludesInTotal).toList();
@@ -96,6 +115,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchMainCurrency() async {
     Currency res = await CurrencyRepositories.instance.getMainCurrency();
+    if (!mounted) return;
     setState(() {
       _mainCurrency = res;
     });
@@ -103,6 +123,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchRecurrence() async {
     List<Recurrence> res = await RecurrenceRepositories.instance.getAndCheckRecurrences();
+    if (!mounted) return;
     setState(() {
       List<int> filteredAccountIds = _filteredAccounts.map((e) => e.id).toList();
       List<Recurrence> filteredRecurrences = res.where((r) => filteredAccountIds.contains(r.fromAccount.id)).toList();
@@ -113,6 +134,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchTransactions() async {
     List<Transaction> res = await TransactionsRepositories.instance.getTransactions();
+    if (!mounted) return;
     setState(() {
       List<int> filteredAccountIds = _filteredAccounts.map((e) => e.id).toList();
       List<Transaction> filteredTransactions = res.where((t) => filteredAccountIds.contains(t.fromAccount.id)
@@ -127,6 +149,7 @@ class _AppBodyState extends State<AppBody> {
     await CategoriesRepositories.instance.getCategoriesByType(true);
     List<Category> incomeCat =
     await CategoriesRepositories.instance.getCategoriesByType(false);
+    if (!mounted) return;
     setState(() {
       _categories = [expenseCat, incomeCat];
     });
@@ -134,6 +157,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchDateFilter() async {
     DateFilter res = await DateFilterRepositories.instance.getDateFilter();
+    if (!mounted) return;
     setState(() {
       _dateFilter = res;
       _currentPageIndex = res.initialPageIndex;
@@ -142,6 +166,7 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchBudgets() async {
     List<Budget> res = await BudgetRepositories.instance.getBudgets();
+    if (!mounted) return;
     setState(() {
       _groupedBudgets = Budget.groupBudgetsByDate(res, _dateFilter);
     });
@@ -302,7 +327,11 @@ class _AppBodyState extends State<AppBody> {
             transactionFilter: _transactionFilter,
             onTransactionFilterChange: _onTransactionFilterChange,
           ),
-          drawer: AppbarDrawer(user: widget.user, username: widget.username,),
+          drawer: AppbarDrawer(
+            user: widget.user,
+            username: widget.username,
+            startBioAuth: widget.startBioAuth,
+          ),
           body: pages[_tabIndex],
           bottomNavigationBar: BottomNavbar(
             onTabChange: _onTabChange,
