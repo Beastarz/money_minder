@@ -42,6 +42,20 @@ class CurrencyRepositories {
     return Currency.of(result.first['name'] as String);
   }
 
+  Future<void> setMainCurrency(Currency currency) async {
+    Database db = await _dbService.database;
+    try {
+      await db.update('currencies', {'is_main': 0});
+      await db.update(
+          'currencies', {'is_main': 1}, where: 'name = ?', whereArgs: [currency
+          .currency()
+          .name
+      ]);
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<void> close() async {
     final db = await _dbService.database;
     await db.close();

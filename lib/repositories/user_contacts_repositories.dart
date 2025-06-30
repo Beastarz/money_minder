@@ -43,4 +43,9 @@ class UserContactsRepositories {
     final db = await _dbService.database;
     await db.delete('user_contacts', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteUserContactByUsername(String username) async {
+    final db = await _dbService.database;
+    await db.delete('user_contacts', where: 'username = ?', whereArgs: [username]);
+  }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/auth/auth_service.dart';
 import 'package:money_minder/components/lock_screen/active_period_selector.dart';
+import 'package:money_minder/pages/setting_pages/currency_setting_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../models/passcode.dart';
@@ -15,11 +16,13 @@ class AppbarDrawer extends StatefulWidget {
     required this.user,
     required this.username,
     required this.startBioAuth,
+    required this.onCurrencyReload,
   });
 
   final User? user;
   final String? username;
   final void Function() startBioAuth;
+  final void Function() onCurrencyReload;
 
   @override
   State<AppbarDrawer> createState() => _AppbarDrawerState();
@@ -163,7 +166,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
             leading: Icon(Icons.monetization_on_outlined),
             title: Text('Currency'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencySettingPage(onReload: widget.onCurrencyReload,)));
             },
           ),
           ListTile(
