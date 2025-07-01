@@ -30,6 +30,74 @@ class _EditContactPageState extends State<EditContactPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget blockButton = TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(AppColor.secondary),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Block User'),
+                content: Text('Are you sure you want to block @$_username?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      UserContactsRepositories.instance.blockContact(widget.contact.username);
+                      BlockedUsersRepositories.instance.addBlockedUser(_username);
+                      widget.onContactsReload();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Block', style: TextStyle(color: Colors.red),),
+                  ),
+                ],
+              )
+          );
+        },
+        child: Text('Block', style: TextStyle(color: Colors.red),)
+    );
+
+    Widget unblockButton = TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(AppColor.secondary),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Unblock User'),
+                content: Text('Are you sure you want to unblock @$_username?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      UserContactsRepositories.instance.blockContact(widget.contact.username);
+                      BlockedUsersRepositories.instance.addBlockedUser(_username);
+                      widget.onContactsReload();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Unblock', style: TextStyle(color: Colors.red),),
+                  ),
+                ],
+              )
+          );
+        },
+        child: Text('Unblock', style: TextStyle(color: Colors.red),)
+    );
+
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -53,7 +121,7 @@ class _EditContactPageState extends State<EditContactPage> {
                       children: [
                         Flexible(
                           child: Text(
-                            'Username: @$_username',
+                            'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
                             style: TextStyle(
                                 fontSize: 16
                             ),
@@ -109,39 +177,7 @@ class _EditContactPageState extends State<EditContactPage> {
                       ),
                       child: Text('Save'),
                     ),
-                    TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(AppColor.secondary),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Block User'),
-                                content: Text('Are you sure you want to block @$_username?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      UserContactsRepositories.instance.deleteUserContact(widget.contact.id);
-                                      BlockedUsersRepositories.instance.addBlockedUser(_username);
-                                      widget.onContactsReload();
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Block', style: TextStyle(color: Colors.red),),
-                                  ),
-                                ],
-                              )
-                          );
-                        },
-                        child: Text('Block', style: TextStyle(color: Colors.red),)
-                    ),
+                    widget.contact.isBlocked ? unblockButton : blockButton,
                     TextButton(
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all(AppColor.secondary),

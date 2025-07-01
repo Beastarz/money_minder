@@ -7,10 +7,11 @@ import 'package:money_minder/style/app_color.dart';
 import '../../repositories/blocked_users_repositories.dart';
 
 class UsernameSearchPage extends StatefulWidget {
-  const UsernameSearchPage({super.key, this.onContactsReload, this.onUsernameSelection});
+  const UsernameSearchPage({super.key, this.onContactsReload, this.onUsernameSelection, this.enableBlockedUserSearch = false});
 
   final void Function(String)? onUsernameSelection;
   final Future<void> Function()? onContactsReload;
+  final bool enableBlockedUserSearch;
 
   @override
   State<UsernameSearchPage> createState() => _UsernameSearchPageState();
@@ -27,7 +28,9 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
   @override
   void initState() {
     super.initState();
-    _fetchBlockedUsers();
+    if (!widget.enableBlockedUserSearch) {
+      _fetchBlockedUsers();
+    }
     _fetchMyUsername();
   }
   void _fetchMyUsername() async {

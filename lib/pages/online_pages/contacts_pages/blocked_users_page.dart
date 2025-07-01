@@ -119,9 +119,11 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                     TextButton(
                                       onPressed: () {
                                         BlockedUsersRepositories.instance.addBlockedUser(_selectedUsername);
-                                        UserContactsRepositories.instance.deleteUserContactByUsername(_selectedUsername);
+                                        UserContactsRepositories.instance.blockContact(_selectedUsername);
                                         _fetchBlockedUsers();
-                                        widget.onContactsReload;
+                                        if (widget.onContactsReload != null) {
+                                          widget.onContactsReload!();
+                                        }
                                         Navigator.pop(context);
                                         setState(() {
                                           _selectedUsername = '';
@@ -167,8 +169,12 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                     TextButton(
                                       onPressed: () {
                                         BlockedUsersRepositories.instance.deleteBlockedUser(username);
+                                        UserContactsRepositories.instance.unblockContact(username);
                                         Navigator.pop(context);
                                         _fetchBlockedUsers();
+                                        if (widget.onContactsReload != null) {
+                                          widget.onContactsReload!();
+                                        }
                                       },
                                       child: Text('Delete', style: TextStyle(color: Colors.red),),
                                     ),
