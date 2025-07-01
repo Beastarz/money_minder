@@ -141,6 +141,13 @@ class DatabaseService {
         ''');
 
     await db.execute('''
+          CREATE TABLE blocked_users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL
+          )
+        ''');
+
+    await db.execute('''
           CREATE TABLE passcode(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             salt TEXT NOT NULL,

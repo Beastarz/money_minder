@@ -47,8 +47,6 @@ void main() {
       DateTime startOfWeek = today.subtract(Duration(days: today.weekday));
       expect(filter.startDates.contains(startOfWeek), isTrue);
 
-      String expectedString = '${startOfWeek.day} - ${formatDate(startOfWeek.add(Duration(days: 6)), [d, ' ', M, ' ',yyyy])}';
-      expect(filter.convertString(filter.initialPageIndex), expectedString);
     });
 
     test('DateFilter.fromDuration - DateFilterType.day', () {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:money_minder/components/contacts/username_search_page.dart';
 import 'package:money_minder/models/user_contact.dart';
+import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/edit_contact_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
+import '../../../components/search_users/username_search_page.dart';
 import '../../../repositories/user_contacts_repositories.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -21,11 +22,11 @@ class _ContactsPageState extends State<ContactsPage> {
   @override
   void initState() {
     super.initState();
-    fetchContacts();
+    _fetchContacts();
     _searchController.addListener(_filterContacts);
   }
 
-  Future<void> fetchContacts() async {
+  Future<void> _fetchContacts() async {
     final res = await UserContactsRepositories.instance.getUserContact();
     setState(() {
       _contacts = res;
@@ -52,17 +53,39 @@ class _ContactsPageState extends State<ContactsPage> {
             contact.nickname.toLowerCase().startsWith(query)).toList();
       });
     }
-    _filteredContacts.sort((contact, other) => contact.nickname.compareTo(other.nickname));
   }
 
   @override
   Widget build(BuildContext context) {
+    _filteredContacts.sort((contact, other) => contact.nickname.compareTo(other.nickname));
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Contacts'),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(1, 0, 0, 0),
+                  items: [
+                    PopupMenuItem(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => BlockedUsersPage(onContactsReload: _fetchContacts,))
+                        );
+                      },
+                      child: Text('Blocked Users'),
+                    ),
+                  ]
+                );
+              },
+              icon: Icon(Icons.more_vert),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -81,7 +104,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   leading: Icon(Icons.add),
                   title: Text('Add Contacts'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onContactsReload: fetchContacts)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onContactsReload: _fetchContacts)));
                   }
                 ),
               ] + _filteredContacts.map((contact) {
@@ -111,7 +134,7 @@ class _ContactsPageState extends State<ContactsPage> {
                               onPressed: () {
                                 Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => EditContactPage(contact: contact, onContactsReload: fetchContacts,))
+                                    MaterialPageRoute(builder: (context) => EditContactPage(contact: contact, onContactsReload: _fetchContacts,))
                                 );
                               },
                               icon: Icon(Icons.edit_outlined)

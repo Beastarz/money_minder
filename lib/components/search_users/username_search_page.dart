@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/style/app_color.dart';
+
+import '../../repositories/blocked_users_repositories.dart';
 
 class UsernameSearchPage extends StatefulWidget {
   const UsernameSearchPage({super.key, this.onContactsReload, this.onUsernameSelection});
@@ -16,8 +19,35 @@ class UsernameSearchPage extends StatefulWidget {
 class _UsernameSearchPageState extends State<UsernameSearchPage> {
   final TextEditingController _searchController = TextEditingController();
   List<String> _usernames = [];
+  List<String> _blockedUsers = [];
+  String _myUsername = '';
   String message = 'Search for users!';
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBlockedUsers();
+    _fetchMyUsername();
+  }
+  void _fetchMyUsername() async {
+    setState(() {
+      isLoading = true;
+    });
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+    String? res = await UsersRepositories.instance.getUsername(user.uid);
+    if (res != null) {
+      setState(() {
+        _myUsername = res;
+      });
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   void _fetchUsernames(String prefix) async {
     if (prefix.isEmpty) {
@@ -36,17 +66,26 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     final res = await UsersRepositories.instance.getUsernameByPrefix(prefix);
     setState(() {
       _usernames = res;
-      if (_usernames.isEmpty) {
-        message = 'No users found';
-      } else {
-        message = '';
-      }
       isLoading = false;
+    });
+  }
+
+  void _fetchBlockedUsers() async {
+    final res = await BlockedUsersRepositories.instance.getBlockedUsernames();
+    setState(() {
+      _blockedUsers = res;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _usernames = _usernames.where((name) => name != _myUsername && !_blockedUsers.contains(name)).toList();
+    _usernames.sort();
+    if (_usernames.isEmpty) {
+      message = 'No users found';
+    } else {
+      message = '';
+    }
     return SafeArea(
       top: false,
       child: Scaffold(

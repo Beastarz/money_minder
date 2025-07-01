@@ -322,7 +322,11 @@ class _AppBodyState extends State<AppBody> {
             username: widget.username == null ? '' : widget.username!,
             selectedIndex: _tabIndex,
             filteredAccounts: _filteredAccounts,
-            onReload: _fetchAccounts,
+            onReload: () async {
+              await _fetchAccounts();
+              await _fetchRecurrence();
+              await _fetchTransactions();
+            },
             mainCurrency: _mainCurrency,
             transactionFilter: _transactionFilter,
             onTransactionFilterChange: _onTransactionFilterChange,
@@ -331,6 +335,7 @@ class _AppBodyState extends State<AppBody> {
             user: widget.user,
             username: widget.username,
             startBioAuth: widget.startBioAuth,
+            onCurrencyReload: _fetchMainCurrency,
           ),
           body: pages[_tabIndex],
           bottomNavigationBar: BottomNavbar(

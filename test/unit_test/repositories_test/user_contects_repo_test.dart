@@ -90,5 +90,23 @@ void main() {
         whereArgs: [contactIdToDelete],
       )).called(1);
     });
+
+    test('deleteUserContact deletes a user contact by username', () async {
+      const username = 'abc';
+
+      when(mockDatabase.delete(
+        'user_contacts',
+        where: 'username = ?',
+        whereArgs: [username],
+      )).thenAnswer((_) async => 1); // Simulate successful deletion
+
+      await userContactsRepositories.deleteUserContactByUsername(username);
+
+      verify(mockDatabase.delete(
+        'user_contacts',
+        where: 'username = ?',
+        whereArgs: [username],
+      )).called(1);
+    });
   });
 }
