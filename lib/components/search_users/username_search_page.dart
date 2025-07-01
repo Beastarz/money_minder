@@ -1,16 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
-import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../repositories/blocked_users_repositories.dart';
 
 class UsernameSearchPage extends StatefulWidget {
-  const UsernameSearchPage({super.key, this.onContactsReload, this.onUsernameSelection, this.enableBlockedUserSearch = false});
+  const UsernameSearchPage({super.key, this.onUsernameSelection, this.enableBlockedUserSearch = false});
 
   final void Function(String)? onUsernameSelection;
-  final Future<void> Function()? onContactsReload;
   final bool enableBlockedUserSearch;
 
   @override
@@ -131,16 +129,9 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
                             title: Text('@$username'),
                             onTap: () {
                               if (widget.onUsernameSelection != null) {
-                                widget.onUsernameSelection!(username);
                                 Navigator.pop(context);
+                                widget.onUsernameSelection!(username);
                                 return;
-                              }
-                              if (widget.onContactsReload != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => AddContactPage(username: username,
-                                        onContactsReload: widget.onContactsReload!,))
-                                );
                               }
                             },
                           )).toList(),

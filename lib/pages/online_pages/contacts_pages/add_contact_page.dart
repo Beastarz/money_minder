@@ -21,66 +21,82 @@ class _AddContactPageState extends State<AddContactPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Add Contact'),
-          centerTitle: true,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: AppColor.secondary
         ),
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: Column(
-                spacing: 16,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.3,),
-                  Flexible(
-                    child: Text(
-                        'Username: @${widget.username}',
-                        style: TextStyle(
-                          fontSize: 18
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+              title: Text('Add Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
+              centerTitle: true,
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: Column(
+                  spacing: 16,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                          'Username: @${widget.username}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600
+                          ),
+                      ),
+                    ),
+                    TextField(
+                      controller: _nickNameController,
+                      decoration: InputDecoration(
+                        label: Text('Nickname'),
+                        border: OutlineInputBorder()
+                      ),
+                    ),
+                    Center(
+                      child: TextButton(
+                        onPressed: () async {
+                          if (_nickNameController.text.isEmpty) {
+                            setState(() {
+                              _message = 'Please enter a nickname';
+                            });
+                            return;
+                          }
+                          await UserContactsRepositories.instance.addUserContact(
+                              UserContact.insertAsMap(
+                                username: widget.username,
+                                nickname: _nickNameController.text
+                          ));
+                          widget.onContactsReload();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
                         ),
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                        ),
+                      ),
                     ),
-                  ),
-                  TextField(
-                    controller: _nickNameController,
-                    decoration: InputDecoration(
-                      label: Text('Nickname'),
-                      border: OutlineInputBorder()
-                    ),
-                  ),
-
-                  TextButton(
-                    onPressed: () async {
-                      if (_nickNameController.text.isEmpty) {
-                        setState(() {
-                          _message = 'Please enter a nickname';
-                        });
-                        return;
-                      }
-                      await UserContactsRepositories.instance.addUserContact(
-                          UserContact.insertAsMap(
-                            username: widget.username,
-                            nickname: _nickNameController.text
-                      ));
-                      widget.onContactsReload();
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(AppColor.secondary),
-                    ),
-                    child: Text('Save'),
-                  ),
-                  _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
-                ],
+                    _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

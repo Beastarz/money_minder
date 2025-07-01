@@ -52,6 +52,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            Flexible(child: Text('You cannot change your username afterwards.')),
             SizedBox(height: 16),
             Row(
               spacing: 16,
