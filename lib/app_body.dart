@@ -31,12 +31,12 @@ class AppBody extends StatefulWidget {
     super.key,
     required this.user,
     this.username,
-    required this.startBioAuth,
+    required this.setAuthenticating,
   });
 
   final User? user;
   final String? username;
-  final void Function() startBioAuth;
+  final void Function(bool) setAuthenticating;
 
   @override
   State<AppBody> createState() => _AppBodyState();
@@ -334,7 +334,7 @@ class _AppBodyState extends State<AppBody> {
           drawer: AppbarDrawer(
             user: widget.user,
             username: widget.username,
-            startBioAuth: widget.startBioAuth,
+            setAuthenticating: widget.setAuthenticating,
             onCurrencyReload: _fetchMainCurrency,
           ),
           body: pages[_tabIndex],

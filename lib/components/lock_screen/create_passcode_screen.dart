@@ -10,11 +10,11 @@ class CreatePasscodeScreen extends StatefulWidget {
   const CreatePasscodeScreen({
     super.key,
     required this.setIsPasscodeConfirmed,
-    required this.startBioAuth,
+    required this.setAuthenticating,
   });
 
   final void Function(bool) setIsPasscodeConfirmed;
-  final void Function() startBioAuth;
+  final void Function(bool) setAuthenticating;
 
   @override
   State<CreatePasscodeScreen> createState() => _CreatePasscodeScreenState();
@@ -55,16 +55,19 @@ class _CreatePasscodeScreenState extends State<CreatePasscodeScreen> {
           const SnackBar(content: Text('Passcode set successfully! Restarting app...')),
         );
 
+        widget.setAuthenticating(true);
+
         // ask user to unlock the app
         Navigator.push(context,
-          MaterialPageRoute(builder: (context) => LockScreen(
-            startBioAuth: widget.startBioAuth,
-            onUnlocked: () {
-              Navigator.pop(context); // pop the lock screen
-            },
-            salt: salt,
-            encryptedPasscode: encryptedPasscode)
-          )
+            MaterialPageRoute(builder: (context) => LockScreen(
+                startAuthenticating: () => widget.setAuthenticating(true),
+                onUnlocked: () {
+                  Navigator.pop(context); // pop the lock screen
+                  widget.setAuthenticating(false);
+                },
+                salt: salt,
+                encryptedPasscode: encryptedPasscode)
+            )
         );
 
         // save the new passcode to the database
