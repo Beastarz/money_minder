@@ -136,7 +136,8 @@ class DatabaseService {
           CREATE TABLE user_contacts(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
-            nickname Text NOT NULL
+            nickname Text NOT NULL,
+            is_blocked INTEGER DEFAULT 0 -- Using INTEGER for boolean (0 for false, 1 for true)
           )
         ''');
 

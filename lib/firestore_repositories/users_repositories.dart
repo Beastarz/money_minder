@@ -12,11 +12,6 @@ class UsersRepositories {
         'username': username,
         'createdAt': FieldValue.serverTimestamp(),
       });
-
-      _db.collection('usernames').doc(username).set({
-        'uid': uid,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
     } catch (e) {
       rethrow;
     }

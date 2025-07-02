@@ -39,6 +39,16 @@ class UserContactsRepositories {
     await db.update('user_contacts', userContact.toMap(), where: 'id = ?', whereArgs: [userContact.id]);
   }
 
+  Future<void> blockContact(String username) async {
+    final db = await _dbService.database;
+    await db.update('user_contacts', {'is_blocked': 1}, where: 'username = ?', whereArgs: [username]);
+  }
+
+  Future<void> unblockContact(String username) async {
+    final db = await _dbService.database;
+    await db.update('user_contacts', {'is_blocked': 0}, where: 'username = ?', whereArgs: [username]);
+  }
+
   Future<void> deleteUserContact(int id) async {
     final db = await _dbService.database;
     await db.delete('user_contacts', where: 'id = ?', whereArgs: [id]);

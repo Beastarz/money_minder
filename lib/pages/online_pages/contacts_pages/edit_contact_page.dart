@@ -30,32 +30,117 @@ class _EditContactPageState extends State<EditContactPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget blockButton = TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.red),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Block User'),
+                content: Text('Are you sure you want to block @$_username?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      UserContactsRepositories.instance.blockContact(widget.contact.username);
+                      BlockedUsersRepositories.instance.addBlockedUser(_username);
+                      widget.onContactsReload();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Block', style: TextStyle(color: Colors.red),),
+                  ),
+                ],
+              )
+          );
+        },
+        child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Center(child: Text('Block', style: TextStyle(color: Colors.white),))
+        )
+    );
+
+    Widget unblockButton = TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(Colors.red),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Unblock User'),
+                content: Text('Are you sure you want to unblock @$_username?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      UserContactsRepositories.instance.unblockContact(widget.contact.username);
+                      BlockedUsersRepositories.instance.deleteBlockedUser(_username);
+                      widget.onContactsReload();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Unblock', style: TextStyle(color: Colors.red),),
+                  ),
+                ],
+              )
+          );
+        },
+        child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Center(child: Text('Unblock', style: TextStyle(color: Colors.white),))
+        )
+    );
+
     return SafeArea(
       top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Edit Contact'),
-          centerTitle: true,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: AppColor.secondary
         ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              title: Text('Edit Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
+              centerTitle: true,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: Column(
                   spacing: 16,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.25,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
                           child: Text(
-                            'Username: @$_username',
+                            'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
                             style: TextStyle(
-                                fontSize: 16
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600
                             ),
                           ),
                         ),
@@ -105,46 +190,17 @@ class _EditContactPageState extends State<EditContactPage> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(AppColor.secondary),
+                        backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
                       ),
-                      child: Text('Save'),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                      ),
                     ),
-                    TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(AppColor.secondary),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Block User'),
-                                content: Text('Are you sure you want to block @$_username?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      UserContactsRepositories.instance.deleteUserContact(widget.contact.id);
-                                      BlockedUsersRepositories.instance.addBlockedUser(_username);
-                                      widget.onContactsReload();
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Block', style: TextStyle(color: Colors.red),),
-                                  ),
-                                ],
-                              )
-                          );
-                        },
-                        child: Text('Block', style: TextStyle(color: Colors.red),)
-                    ),
+                    widget.contact.isBlocked ? unblockButton : blockButton,
                     TextButton(
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(AppColor.secondary),
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
                       ),
                       onPressed: () {
                         showDialog(
@@ -172,14 +228,17 @@ class _EditContactPageState extends State<EditContactPage> {
                           )
                         );
                       },
-                      child: Text('Delete', style: TextStyle(color: Colors.red),)
+                      child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Center(child: Text('Delete', style: TextStyle(color: Colors.white),))
+                      )
                     ),
                     _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
                   ],
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

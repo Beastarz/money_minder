@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/user_contact.dart';
+import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/edit_contact_page.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -55,6 +56,16 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
+  void _onUsernameSelection(String username) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return AddContactPage(username: username, onContactsReload: _fetchContacts);
+        }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _filteredContacts.sort((contact, other) => contact.nickname.compareTo(other.nickname));
@@ -104,7 +115,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   leading: Icon(Icons.add),
                   title: Text('Add Contacts'),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onContactsReload: _fetchContacts)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onUsernameSelection: _onUsernameSelection)));
                   }
                 ),
               ] + _filteredContacts.map((contact) {
@@ -132,9 +143,11 @@ class _ContactsPageState extends State<ContactsPage> {
                           ),
                           IconButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => EditContactPage(contact: contact, onContactsReload: _fetchContacts,))
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return EditContactPage(contact: contact, onContactsReload: _fetchContacts);
+                                    }
                                 );
                               },
                               icon: Icon(Icons.edit_outlined)
