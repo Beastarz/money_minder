@@ -4,6 +4,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'notification_helper.dart';
+
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
   FlutterLocalNotificationsPlugin();
@@ -65,14 +67,6 @@ class NotificationService {
         }
       }
 
-      // PermissionStatus batteryStatus = await Permission.ignoreBatteryOptimizations.status;
-      // if (batteryStatus.isDenied) {
-      //   batteryStatus = await Permission.ignoreBatteryOptimizations.request();
-      //   if (batteryStatus.isDenied) {
-      //     print("Battery optimization exemption denied - notifications may be unreliable");
-      //   }
-      // }
-
       print('All permissions granted');
       return true;
     }
@@ -121,17 +115,17 @@ class NotificationService {
     await _notificationsPlugin.zonedSchedule(
       0, // notification id
       'Daily Reminder', // title
-      'Don\'t forget to check your app!', // body
+      'Don\'t forget to track your expenses today!', // body
       _nextInstanceOfTime(time),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_channel',
           'Daily Notifications',
-          channelDescription: 'Daily notification at 7 PM',
+          channelDescription: 'Daily notification at ${NotificationHelper.convertTimeToString(time)}',
           importance: Importance.max,
           priority: Priority.high,
         ),
-        iOS: DarwinNotificationDetails(
+        iOS: const DarwinNotificationDetails(
           sound: 'default.wav',
           presentAlert: true,
           presentBadge: true,
