@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:money_minder/components/notification/notification_service.dart';
 
 import '../../models/notification_time.dart';
@@ -41,11 +40,6 @@ class _NotificationTileState extends State<NotificationTile> {
         await NotificationService.showPermissionDialog(context);
         return;
       }
-    }
-
-    List<PendingNotificationRequest> pendingNotifications = await NotificationService.getPendingNotifications();
-    for (PendingNotificationRequest pendingNotification in pendingNotifications) {
-      print(pendingNotification.id);
     }
 
     if (!mounted) { return;}

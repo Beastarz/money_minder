@@ -38,6 +38,9 @@ class _ContactsPageState extends State<ContactsPage> {
   void _filterContacts() {
     String query = _searchController.text.toLowerCase();
     if (query.isEmpty) {
+      setState(() {
+        _filteredContacts = _contacts;
+      });
       return;
     }
     if (query.startsWith('@')) {

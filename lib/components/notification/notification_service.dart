@@ -48,13 +48,11 @@ class NotificationService {
       }
 
       if (notificationStatus.isPermanentlyDenied || notificationStatus.isDenied) {
-        print("Notification permission denied");
         return false;
       }
 
       // Check exact alarm permission
       final bool? exactAlarmsAllowed = await androidImplementation.canScheduleExactNotifications();
-      print(exactAlarmsAllowed);
 
       if (exactAlarmsAllowed != true) {
 
@@ -62,12 +60,10 @@ class NotificationService {
         final bool? exactAlarmsStillAllowed = await androidImplementation.canScheduleExactNotifications();
 
         if (exactAlarmsStillAllowed != true) {
-          print("Exact alarm permission denied");
           return false;
         }
       }
 
-      print('All permissions granted');
       return true;
     }
     return false;
