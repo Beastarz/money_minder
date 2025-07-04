@@ -5,6 +5,7 @@ import 'package:money_minder/components/lock_screen/passcode_tile.dart';
 import 'package:money_minder/pages/setting_pages/currency_setting_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
+import '../manage_data/manage_data_tile.dart';
 import '../notification/notification_tile.dart';
 
 // TODO: Add drawer functionality
@@ -13,13 +14,11 @@ class AppbarDrawer extends StatefulWidget {
     super.key,
     required this.user,
     required this.username,
-    required this.setAuthenticating,
     required this.onCurrencyReload,
   });
 
   final User? user;
   final String? username;
-  final void Function(bool) setAuthenticating;
   final void Function() onCurrencyReload;
 
   @override
@@ -154,17 +153,9 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
 
             NotificationTile(),
 
-            PasscodeTile(
-                setAuthenticating: widget.setAuthenticating
-            ),
+            PasscodeTile(),
 
-            ListTile(
-              leading: Icon(Icons.dataset_outlined),
-              title: Text('Manage data'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+            ManageDataTile(),
           ],
         )
     );

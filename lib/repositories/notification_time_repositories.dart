@@ -8,6 +8,9 @@ class NotificationTimeRepositories {
 
   DatabaseService dbService = DatabaseService.instance;
 
+  /// get the notification time from the database
+  ///
+  /// Returns: NotificationTime?
   Future<NotificationTime?> getNotificationTime() async {
     final db = await dbService.database;
     final res = await db.query('notification_time');
@@ -17,16 +20,33 @@ class NotificationTimeRepositories {
     return NotificationTime.fromMap(res.first);
   }
 
+  /// add the notification time to the database
+  ///
+  /// Parameters:
+  ///
+  /// Map<\String, dynamic\> map: the notification time
+  ///
+  /// Returns: void
   Future<void> addNotificationTime(Map<String, dynamic> map) async {
     final db = await dbService.database;
     await db.insert('notification_time', map);
   }
 
+  /// update the notification time in the database
+  ///
+  /// Parameters:
+  ///
+  /// Map<\String, dynamic\> map: the notification time
+  ///
+  /// Returns: void
   Future<void> updateNotificationTime(Map<String, dynamic> map) async {
     final db = await dbService.database;
     await db.update('notification_time', map);
   }
 
+  /// delete the notification time from the database
+  ///
+  /// Returns: void
   Future<void> deleteNotificationTime() async {
     final db = await dbService.database;
     await db.delete('notification_time');

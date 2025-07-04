@@ -109,6 +109,27 @@ class AccountsRepositories {
     await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
   }
 
+  Future<void> deleteAllNonMainAccounts() async {
+    final db = await _dbService.database;
+    await db.delete('accounts', where: 'is_main = 0');
+  }
+
+  Future<void> resetMainAccount() async {
+    // ('Main Wallet', 0xe850, 0, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0)
+    final db = await _dbService.database;
+    await db.update('accounts', {
+      'name': 'Main Wallet',
+      'icon': 0xe850,
+      'balance': 0,
+      'color': 0xFF4CAF50,
+      'is_main': 1,
+      'description': 'My primary cash wallet',
+      'includes_in_total': 1,
+      'type': 'accounts',
+      'currency': 'sgd',
+      'position': 0,
+    }, where: 'is_main = 1');
+  }
 
   Future<void> close() async {
     final db = await _dbService.database;

@@ -31,7 +31,6 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initializationSettings);
-    await requestPermissions();
   }
 
   static Future<bool> requestPermissions() async {

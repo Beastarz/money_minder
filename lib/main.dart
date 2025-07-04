@@ -6,6 +6,7 @@ import 'package:money_minder/repositories/passcode_repositories.dart';
 import 'package:money_minder/utils/loading_screen.dart';
 import 'package:money_minder/pages/setting_pages/create_username_page.dart';
 import 'package:money_minder/style/app_themes.dart';
+import 'package:money_minder/utils/restart_widget.dart';
 
 import 'app_body.dart';
 import 'components/notification/notification_service.dart';
@@ -19,7 +20,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService.initialize();
-  runApp(const MoneyMinder());
+  runApp(RestartWidget(child: const MoneyMinder()));
+  // runApp(const MoneyMinder());
 }
 
 class MoneyMinder extends StatefulWidget {
@@ -128,11 +130,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
                       return AppBody(
                         user: user,
                         username: snapshot.data,
-                        setAuthenticating: (bool isAuthenticating){
-                          setState(() {
-                            _isAuthenticating = isAuthenticating;
-                          });
-                        },
                       );
                     }
                     else {
@@ -143,11 +140,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
             } else {
               return AppBody(
                 user: null,
-                setAuthenticating: (bool isAuthenticating){
-                  setState(() {
-                    _isAuthenticating = isAuthenticating;
-                  });
-                },
               );
             }
           }

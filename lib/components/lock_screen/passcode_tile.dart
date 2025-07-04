@@ -7,15 +7,8 @@ import 'create_passcode_screen.dart';
 
 class PasscodeTile extends StatefulWidget {
 
-  // final bool enablePasscode;
-  // final void Function(bool) setEnablePasscode;
-  final void Function(bool) setAuthenticating;
-
   const PasscodeTile({
     super.key,
-    // required this.enablePasscode,
-    // required this.setEnablePasscode,
-    required this.setAuthenticating,
   });
 
   @override
@@ -58,12 +51,16 @@ class _PasscodeTileState extends State<PasscodeTile> {
               context,
               MaterialPageRoute(
                 builder: (context) => CreatePasscodeScreen(
-                    setAuthenticating: widget.setAuthenticating,
                     setIsPasscodeConfirmed: setEnablePasscode),
               ),
             );
           } else {
             setEnablePasscode(false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Passcode is disabled.'),
+              ),
+            );
             await PasscodeRepositories.instance.deletePasscode();
           }
         }, //
@@ -86,7 +83,6 @@ class _PasscodeTileState extends State<PasscodeTile> {
           context,
           MaterialPageRoute(
             builder: (context) => CreatePasscodeScreen(
-                setAuthenticating: widget.setAuthenticating,
                 setIsPasscodeConfirmed: setEnablePasscode),
           ),
         );
