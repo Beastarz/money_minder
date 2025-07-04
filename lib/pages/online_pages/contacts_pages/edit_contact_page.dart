@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/user_contact.dart';
 import 'package:money_minder/repositories/blocked_users_repositories.dart';
-import 'package:money_minder/repositories/user_contacts_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../components/search_users/username_search_page.dart';
+import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class EditContactPage extends StatefulWidget {
   const EditContactPage({super.key, required this.contact, required this.onContactsReload, });
@@ -18,6 +19,7 @@ class EditContactPage extends StatefulWidget {
 
 class _EditContactPageState extends State<EditContactPage> {
   final TextEditingController _nickNameController = TextEditingController();
+  String myUid = FirebaseAuth.instance.currentUser!.uid;
   String _username = '';
   String _message = '';
 
@@ -48,12 +50,14 @@ class _EditContactPageState extends State<EditContactPage> {
                     child: Text('Cancel'),
                   ),
                   TextButton(
-                    onPressed: () {
-                      UserContactsRepositories.instance.blockContact(widget.contact.username);
-                      BlockedUsersRepositories.instance.addBlockedUser(_username);
+                    onPressed: () async {
+                      await UserContactsRepositories.instance.blockContact(myUid, widget.contact.username);
+                      await BlockedUsersRepositories.instance.addBlockedUser(_username);
                       widget.onContactsReload();
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
                     },
                     child: Text('Block', style: TextStyle(color: Colors.red),),
                   ),
@@ -85,12 +89,14 @@ class _EditContactPageState extends State<EditContactPage> {
                     child: Text('Cancel'),
                   ),
                   TextButton(
-                    onPressed: () {
-                      UserContactsRepositories.instance.unblockContact(widget.contact.username);
-                      BlockedUsersRepositories.instance.deleteBlockedUser(_username);
+                    onPressed: () async {
+                      await UserContactsRepositories.instance.unblockContact(myUid, widget.contact.username);
+                      await BlockedUsersRepositories.instance.deleteBlockedUser(_username);
                       widget.onContactsReload();
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
                     },
                     child: Text('Unblock', style: TextStyle(color: Colors.red),),
                   ),
@@ -179,6 +185,7 @@ class _EditContactPageState extends State<EditContactPage> {
                           return;
                         }
                         await UserContactsRepositories.instance.updateUserContact(
+                            myUid,
                             widget.contact.copyWith(
                               username: _username,
                               nickname: _nickNameController.text
@@ -216,11 +223,13 @@ class _EditContactPageState extends State<EditContactPage> {
                                 child: Text('Cancel'),
                               ),
                               TextButton(
-                                onPressed: () {
-                                  UserContactsRepositories.instance.deleteUserContact(widget.contact.id);
+                                onPressed: () async {
+                                  await UserContactsRepositories.instance.deleteUserContact(myUid, widget.contact.id);
                                   widget.onContactsReload();
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  }
                                 },
                                 child: Text('Delete', style: TextStyle(color: Colors.red),),
                               ),

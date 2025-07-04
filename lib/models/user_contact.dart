@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserContact {
-  final int id;
+  final String id;
   final String username;
   final String nickname;
   final bool isBlocked;
@@ -10,16 +12,16 @@ class UserContact {
     return {
       'username': username,
       'nickname': nickname,
-      'is_blocked': isBlocked ? 1 : 0,
+      'isBlocked': isBlocked ? 1 : 0,
     };
   }
 
-  factory UserContact.fromMap(Map<String, dynamic> map) {
+  factory UserContact.fromMap(String id, Map<String, dynamic> map) {
     return UserContact._(
-      id: map['id'],
+      id: id,
       username: map['username'],
       nickname: map['nickname'],
-      isBlocked: map['is_blocked'] == 1 ? true : false,
+      isBlocked: map['isBlocked'],
     );
   }
 
@@ -27,6 +29,8 @@ class UserContact {
     return {
       'username': username,
       'nickname': nickname,
+      'isBlocked': false,
+      'createdAt': FieldValue.serverTimestamp()
     };
   }
 

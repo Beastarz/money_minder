@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/user_contact.dart';
-import 'package:money_minder/repositories/user_contacts_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
+
+import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class AddContactPage extends StatefulWidget {
   const AddContactPage({super.key, required this.username, required this.onContactsReload,});
@@ -73,6 +75,7 @@ class _AddContactPageState extends State<AddContactPage> {
                             return;
                           }
                           await UserContactsRepositories.instance.addUserContact(
+                              FirebaseAuth.instance.currentUser!.uid,
                               UserContact.insertAsMap(
                                 username: widget.username,
                                 nickname: _nickNameController.text

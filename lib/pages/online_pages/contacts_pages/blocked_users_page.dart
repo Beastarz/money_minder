@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../components/search_users/username_search_page.dart';
-import '../../../repositories/user_contacts_repositories.dart';
+import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class BlockedUsersPage extends StatefulWidget {
   const BlockedUsersPage({super.key, this.onContactsReload});
@@ -119,7 +120,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                     TextButton(
                                       onPressed: () {
                                         BlockedUsersRepositories.instance.addBlockedUser(_selectedUsername);
-                                        UserContactsRepositories.instance.blockContact(_selectedUsername);
+                                        UserContactsRepositories.instance.blockContact(FirebaseAuth.instance.currentUser!.uid, _selectedUsername);
                                         _fetchBlockedUsers();
                                         if (widget.onContactsReload != null) {
                                           widget.onContactsReload!();
@@ -169,7 +170,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                     TextButton(
                                       onPressed: () {
                                         BlockedUsersRepositories.instance.deleteBlockedUser(username);
-                                        UserContactsRepositories.instance.unblockContact(username);
+                                        UserContactsRepositories.instance.unblockContact(FirebaseAuth.instance.currentUser!.uid, username);
                                         Navigator.pop(context);
                                         _fetchBlockedUsers();
                                         if (widget.onContactsReload != null) {
