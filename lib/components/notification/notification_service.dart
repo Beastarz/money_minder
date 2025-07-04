@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+import 'notification_helper.dart';
+
+class NotificationService {
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
+  static Future<void> initialize() async {
+    // Initialize timezone
+    tz.initializeTimeZones();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings initializationSettingsIOS =
+    DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const InitializationSettings initializationSettings =
+    InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    await _notificationsPlugin.initialize(initializationSettings);
+    await requestPermissions();
+  }
+
+  static Future<bool> requestPermissions() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+    _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+    if (androidImplementation != null) {
+      // Check current notification permission status
+      PermissionStatus notificationStatus = await Permission.notification.status;
+
+      if (notificationStatus.isDenied) {
+        // First time asking or user hasn't permanently denied
+        notificationStatus = await Permission.notification.request();
+      }
+
+      if (notificationStatus.isPermanentlyDenied || notificationStatus.isDenied) {
+        return false;
+      }
+
+      // Check exact alarm permission
+      final bool? exactAlarmsAllowed = await androidImplementation.canScheduleExactNotifications();
+
+      if (exactAlarmsAllowed != true) {
+
+        // Check again after request
+        final bool? exactAlarmsStillAllowed = await androidImplementation.canScheduleExactNotifications();
+
+        if (exactAlarmsStillAllowed != true) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+    return false;
+  }
+
+  static Future<void> showPermissionDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Permissions Required'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('This app needs notification permissions to send you daily reminders.'),
+                SizedBox(height: 10),
+                Text('Please enable:'),
+                Text('• Notifications')
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Open Settings'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings(); // This opens the app settings
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<void> scheduleDailyNotification(TimeOfDay time) async {
+
+    await _notificationsPlugin.zonedSchedule(
+      0, // notification id
+      'Daily Reminder', // title
+      'Don\'t forget to track your expenses today!', // body
+      _nextInstanceOfTime(time),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_channel',
+          'Daily Notifications',
+          channelDescription: 'Daily notification at ${NotificationHelper.convertTimeToString(time)}',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+        iOS: const DarwinNotificationDetails(
+          sound: 'default.wav',
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time, // This makes it repeat daily
+    );
+  }
+
+  static tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
+
+    // If it's already past 7 PM today, schedule for tomorrow
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    return scheduledDate;
+  }
+
+  static Future<void> cancelAllNotifications() async {
+    await _notificationsPlugin.cancelAll();
+  }
+
+  static Future<void> cancelNotification(int id) async {
+    await _notificationsPlugin.cancel(id);
+  }
+
+  // Check if notifications are scheduled
+  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return await _notificationsPlugin.pendingNotificationRequests();
+  }
+}

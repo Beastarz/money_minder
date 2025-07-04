@@ -14,13 +14,13 @@ import '../../style/app_size.dart';
 class LockScreen extends StatefulWidget {
   const LockScreen({
     super.key,
-    required this.startBioAuth,
+    required this.startAuthenticating,
     required this.onUnlocked,
     required this.salt,
     required this.encryptedPasscode,
   });
 
-  final void Function() startBioAuth;
+  final void Function() startAuthenticating;
   final void Function() onUnlocked;
   final String salt;
   final String encryptedPasscode;
@@ -206,15 +206,15 @@ class _LockScreenState extends State<LockScreen> {
 
       // for biometric authentication
       customizedButtonChild: Icon(
-          Icons.fingerprint,
-          size: 30,
+        Icons.fingerprint,
+        size: 30,
       ),
       customizedButtonTap: () async {
         if (disabledBioAuth) {
           return;
         }
         if (_isBiometricAvailable) {
-          widget.startBioAuth();
+          widget.startAuthenticating();
           await _authenticateWithBiometrics();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -300,11 +300,11 @@ class _LockScreenState extends State<LockScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
-        getScreenLock(),
-        if (isFrozen)
-          getFrozenScreen()
-      ]
+        children: [
+          getScreenLock(),
+          if (isFrozen)
+            getFrozenScreen()
+        ]
     );
   }
 }
