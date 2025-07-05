@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/models/user_contact.dart';
+import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/models/online/user.dart' as model;
 
 import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class AddContactPage extends StatefulWidget {
-  const AddContactPage({super.key, required this.username, required this.onContactsReload,});
+  const AddContactPage({super.key, required this.user, required this.onContactsReload,});
 
-  final String username;
+  final model.User user;
   final Future<void> Function() onContactsReload;
 
   @override
@@ -51,11 +52,20 @@ class _AddContactPageState extends State<AddContactPage> {
                   children: [
                     Flexible(
                       child: Text(
-                          'Username: @${widget.username}',
+                          'Username: @${widget.user.username}',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600
                           ),
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Phone Number: @${widget.user.phoneNumber}',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400
+                        ),
                       ),
                     ),
                     TextField(
@@ -77,7 +87,8 @@ class _AddContactPageState extends State<AddContactPage> {
                           await UserContactsRepositories.instance.addUserContact(
                               FirebaseAuth.instance.currentUser!.uid,
                               UserContact.insertAsMap(
-                                username: widget.username,
+                                username: widget.user.username,
+                                phoneNumber: widget.user.phoneNumber,
                                 nickname: _nickNameController.text
                           ));
                           widget.onContactsReload();

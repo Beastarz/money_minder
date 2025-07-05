@@ -16,7 +16,6 @@ import 'package:money_minder/models/date_filter.dart' as _i6;
 import 'package:money_minder/models/fast_note.dart' as _i21;
 import 'package:money_minder/models/recurrence.dart' as _i12;
 import 'package:money_minder/models/transaction.dart' as _i10;
-import 'package:money_minder/models/user_contact.dart' as _i23;
 import 'package:money_minder/repositories/accounts_repositories.dart' as _i13;
 import 'package:money_minder/repositories/budget_repositories.dart' as _i14;
 import 'package:money_minder/repositories/categories_repositories.dart' as _i16;

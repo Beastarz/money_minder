@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/models/user_contact.dart';
-import 'package:money_minder/repositories/blocked_users_repositories.dart';
+import 'package:flutter/services.dart';
+import 'package:money_minder/models/online/user_contact.dart';
+import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../components/search_users/username_search_page.dart';
@@ -21,12 +22,14 @@ class _EditContactPageState extends State<EditContactPage> {
   final TextEditingController _nickNameController = TextEditingController();
   String myUid = FirebaseAuth.instance.currentUser!.uid;
   String _username = '';
+  String _phoneNumber = '';
   String _message = '';
 
   @override
   void initState() {
     super.initState();
     _username = widget.contact.username;
+    _phoneNumber = widget.contact.phoneNumber;
     _nickNameController.text = widget.contact.nickname;
   }
 
@@ -52,7 +55,7 @@ class _EditContactPageState extends State<EditContactPage> {
                   TextButton(
                     onPressed: () async {
                       await UserContactsRepositories.instance.blockContact(myUid, widget.contact.username);
-                      await BlockedUsersRepositories.instance.addBlockedUser(_username);
+                      await BlockedUsersRepositories.instance.addBlockedUser(myUid, _username);
                       widget.onContactsReload();
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -91,7 +94,7 @@ class _EditContactPageState extends State<EditContactPage> {
                   TextButton(
                     onPressed: () async {
                       await UserContactsRepositories.instance.unblockContact(myUid, widget.contact.username);
-                      await BlockedUsersRepositories.instance.deleteBlockedUser(_username);
+                      await BlockedUsersRepositories.instance.deleteBlockedUser(myUid, _username);
                       widget.onContactsReload();
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -138,34 +141,60 @@ class _EditContactPageState extends State<EditContactPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Flexible(
-                          child: Text(
-                            'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600
+                                ),
+                              ),
                             ),
-                          ),
+                            IconButton(
+                              iconSize: 24,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => UsernameSearchPage(
+                                    onUsernameSelection: (user) {
+                                      setState(() {
+                                        _username = user.username;
+                                        _phoneNumber = user.phoneNumber;
+                                      });
+                                    },
+                                  ))
+                                );
+                              },
+                              icon: Icon(Icons.search)
+                            )
+                          ],
                         ),
-                        IconButton(
-                          iconSize: 24,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => UsernameSearchPage(
-                                onUsernameSelection: (username) {
-                                  setState(() {
-                                    _username = username;
-                                  });
-                                },
-                              ))
-                            );
-                          },
-                          icon: Icon(Icons.search)
-                        )
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Phone Number: ${widget.contact.phoneNumber}',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: widget.contact.phoneNumber));
+                              },
+                              icon: Icon(Icons.copy_all_outlined,)
+                            )
+                          ],
+                        ),
                       ],
                     ),
                     TextField(
@@ -188,7 +217,8 @@ class _EditContactPageState extends State<EditContactPage> {
                             myUid,
                             widget.contact.copyWith(
                               username: _username,
-                              nickname: _nickNameController.text
+                              nickname: _nickNameController.text,
+                              phoneNumber: _phoneNumber,
                             ));
                          widget.onContactsReload();
 

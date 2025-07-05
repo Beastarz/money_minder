@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:money_minder/models/user_contact.dart';
+import 'package:money_minder/models/online/user_contact.dart';
 
 class UserContactsRepositories {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

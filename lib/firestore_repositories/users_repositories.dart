@@ -1,4 +1,5 @@
  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:money_minder/models/online/user.dart';
 
 class UsersRepositories {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -6,10 +7,11 @@ class UsersRepositories {
   static final UsersRepositories instance = UsersRepositories._();
   UsersRepositories._();
 
-  Future<void> createUsername(String uid, String username) async {
+  Future<void> createUsername(String uid, String phoneNumber, String username) async {
     try {
       _db.collection('users').doc(uid).set({
         'username': username,
+        'phoneNumber': phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -30,7 +32,7 @@ class UsersRepositories {
     }
   }
 
-  Future<List<String>> getUsernameByPrefix(String prefix) async {
+  Future<List<User>> getUsernameByPrefix(String prefix) async {
     if (prefix.isEmpty) {
       return [];
     }
@@ -43,7 +45,7 @@ class UsersRepositories {
       if (snapshot.docs.isEmpty) {
         return [];
       }
-      return snapshot.docs.map((doc) => doc.get('username') as String).toList();
+      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>)).toList();
     } catch (e) {
       rethrow;
     }
