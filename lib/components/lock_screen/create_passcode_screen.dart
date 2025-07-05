@@ -37,6 +37,7 @@ class _CreatePasscodeScreenState extends State<CreatePasscodeScreen> {
 
     // restart the app
     if (mounted) {
+      widget.setIsPasscodeConfirmed(true);
       RestartWidget.restartApp(context, "Passcode is set. Restarting app...");
     }
   }

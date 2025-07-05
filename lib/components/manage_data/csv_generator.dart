@@ -88,26 +88,6 @@ class CSVGenerator {
     }
   }
 
-  // Generate sample employee data
-  static List<List<dynamic>> generateData() {
-    return [
-      ['ID', 'Name', 'Email', 'Department', 'Salary', 'Join Date'],
-      [1, 'John Doe', 'john@company.com', 'Engineering', 75000, '2023-01-15'],
-      [2, 'Jane Smith', 'jane@company.com', 'Marketing', 65000, '2023-02-20'],
-      [3, 'Mike Johnson', 'mike@company.com', 'Sales', 55000, '2023-03-10'],
-      [4, 'Sarah Wilson', 'sarah@company.com', 'HR', 60000, '2023-04-05'],
-      [5, 'Tom Brown', 'tom@company.com', 'Finance', 70000, '2023-05-12'],
-      [],
-      [],
-      ['Order ID', 'Customer', 'Product', 'Quantity', 'Price', 'Total', 'Date'],
-      ['ORD001', 'Alice Johnson', 'Laptop', 1, 1200.00, 1200.00, '2024-01-10'],
-      ['ORD002', 'Bob Smith', 'Mouse', 3, 25.00, 75.00, '2024-01-11'],
-      ['ORD003', 'Carol Davis', 'Keyboard', 2, 80.00, 160.00, '2024-01-12'],
-      ['ORD004', 'David Wilson', 'Monitor', 1, 350.00, 350.00, '2024-01-13'],
-      ['ORD005', 'Eva Brown', 'Tablet', 1, 600.00, 600.00, '2024-01-14'],
-    ];
-  }
-
   // Check if file exists
   static Future<bool> fileExists(String fileName) async {
     try {

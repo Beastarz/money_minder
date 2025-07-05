@@ -88,12 +88,15 @@ class _ExportDataState extends State<ExportData> {
 
           accounts = await AccountsRepositories.instance.getAllAccounts();
           transactions = await TransactionsRepositories.instance.getTransactions();
+          final List<List<dynamic>> data = await generateData();
 
-          CSVGenerator.generateCSV(
-              data: await generateData(),
-              fileName: "MoneyMinder_${formattedDate(DateTime.now())}",
-              context: context.mounted ? context : context
-          );
+          if (context.mounted) {
+            await CSVGenerator.generateCSV(
+                data: data,
+                fileName: "MoneyMinder_${formattedDate(DateTime.now())}",
+                context: context
+            );
+          }
           if (context.mounted) {
             Navigator.pop(context);
           }

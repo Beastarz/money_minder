@@ -46,7 +46,6 @@ class _PasscodeTileState extends State<PasscodeTile> {
         value: enablePasscode,
         onChanged: (bool enable) async {
           if (enable) {
-            setEnablePasscode(true);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -78,7 +77,6 @@ class _PasscodeTileState extends State<PasscodeTile> {
         }
 
         // set the passcode
-        setEnablePasscode(true);
         Navigator.push(
           context,
           MaterialPageRoute(

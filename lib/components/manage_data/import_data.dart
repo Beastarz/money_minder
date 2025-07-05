@@ -6,7 +6,7 @@ import '../../style/app_size.dart';
 class ImportData extends StatelessWidget {
   const ImportData({super.key});
 
-  Future<List<List<dynamic>>> generateSampleData() async {
+  List<List<dynamic>> generateSampleData() {
     return [
       ['Transactions'],
       ['Date (DDMMYYYY)', 'Type (expense/income/transfer)', 'From Account',
@@ -14,7 +14,7 @@ class ImportData extends StatelessWidget {
       [],
       [],
       ['Accounts', 'First Account will be Main Account'],
-      ['Name', 'Type (Account, Savings, Debt)', 'Balance', 'Currency (SGD/MYR)', 'Description'],
+      ['Name', 'Type (Account/Savings/Debt)', 'Balance', 'Currency (SGD/MYR)', 'Description'],
     ];
   }
 
@@ -72,10 +72,10 @@ class ImportData extends StatelessWidget {
                             ),
                           ),
                         onTap: () async {
-                          CSVGenerator.generateCSV(
-                              data: await generateSampleData(),
+                          await CSVGenerator.generateCSV(
+                              data: generateSampleData(),
                               fileName: 'Sample_Data',
-                              context: context.mounted ? context : context
+                              context: context
                           );
                           if (context.mounted) {
                             Navigator.pop(context);
