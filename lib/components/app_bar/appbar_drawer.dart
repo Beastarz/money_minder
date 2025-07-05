@@ -1,13 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/auth/auth_service.dart';
-import 'package:money_minder/components/lock_screen/active_period_selector.dart';
+import 'package:money_minder/components/lock_screen/passcode_tile.dart';
 import 'package:money_minder/pages/setting_pages/currency_setting_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
-import '../../models/passcode.dart';
-import '../../repositories/passcode_repositories.dart';
-import '../lock_screen/create_passcode_screen.dart';
+import '../notification/notification_tile.dart';
 
 // TODO: Add drawer functionality
 class AppbarDrawer extends StatefulWidget {
@@ -15,13 +13,13 @@ class AppbarDrawer extends StatefulWidget {
     super.key,
     required this.user,
     required this.username,
-    required this.startBioAuth,
+    required this.setAuthenticating,
     required this.onCurrencyReload,
   });
 
   final User? user;
   final String? username;
-  final void Function() startBioAuth;
+  final void Function(bool) setAuthenticating;
   final void Function() onCurrencyReload;
 
   @override
@@ -30,29 +28,13 @@ class AppbarDrawer extends StatefulWidget {
 
 class _AppbarDrawerState extends State<AppbarDrawer> {
   bool isLoading = false;
-  bool enablePasscode = false;
-  bool hasPasscode = false;
-
-  Future<void> getPasscode() async {
-    List<Passcode> passcode = await PasscodeRepositories.instance.getPasscode();
-    setState(() {
-      enablePasscode = passcode.isNotEmpty;
-      hasPasscode = passcode.isNotEmpty;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getPasscode();
-  }
 
   @override
   Widget build(BuildContext context) {
     Widget signInTile = ListTile(
       title: Text(
-          'Not Signed In',
-          style: TextStyle(fontSize: 18),
+        'Not Signed In',
+        style: TextStyle(fontSize: 18),
       ),
       trailing: isLoading ? CircularProgressIndicator() : TextButton(
         onPressed: () async {
@@ -78,9 +60,9 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
           foregroundColor: WidgetStateProperty.all(Colors.white),
         ),
         child: Text(
-            "Google Sign In",
+          "Google Sign In",
           style: TextStyle(
-            fontSize: 16
+              fontSize: 16
           ),
         ),
       ),
@@ -132,119 +114,59 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
     );
 
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          SizedBox(
-            height: 125,
-            child: DrawerHeader(
-              decoration: BoxDecoration(
-                color: AppColor.secondary,
-              ),
-              child: const Text(
-                'MoneyMinder',
-                style: TextStyle(
-                  fontSize: 22,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            SizedBox(
+              height: 125,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: AppColor.secondary,
+                ),
+                child: const Text(
+                  'MoneyMinder',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
                 ),
               ),
             ),
-          ),
-          widget.user != null ? signOutTile : signInTile,
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-            child: Text('Settings'),
-          ),
-          ListTile(
-            leading: Icon(Icons.color_lens_outlined),
-            title: Text('Theme'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.monetization_on_outlined),
-            title: Text('Currency'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencySettingPage(onReload: widget.onCurrencyReload,)));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.notifications_outlined),
-            title: Text('Notifications'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-
-          ListTile(
-            leading: Icon(Icons.security),
-            trailing: Switch(
-              value: enablePasscode,
-              onChanged: (bool enable) async {
-                if (enable) {
-                  setState(() {
-                    enablePasscode = true;
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreatePasscodeScreen(
-                          startBioAuth: widget.startBioAuth,
-                          setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
-                            setState(() {
-                              enablePasscode = isPasscodeConfirmed;
-                            });
-                          }),
-                    ),
-                  );
-                } else {
-                  setState(() {
-                    enablePasscode = false;
-                  });
-                  await PasscodeRepositories.instance.deletePasscode();
-                }
-              }, //
+            widget.user != null ? signOutTile : signInTile,
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              child: Text('Settings'),
             ),
-            title: Text('Passcode'),
-            onTap: () {
-              if (enablePasscode) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return ActivePeriodSelector();
-                    }
-                );
-                return;
-              }
+            ListTile(
+              leading: Icon(Icons.color_lens_outlined),
+              title: Text('Theme'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.monetization_on_outlined),
+              title: Text('Currency'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencySettingPage(onReload: widget.onCurrencyReload,)));
+              },
+            ),
 
-              // set the passcode
-              setState(() {
-                enablePasscode = true;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreatePasscodeScreen(
-                      startBioAuth: widget.startBioAuth,
-                      setIsPasscodeConfirmed: (bool isPasscodeConfirmed) {
-                        setState(() {
-                          enablePasscode = isPasscodeConfirmed;
-                        });
-                      }),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.dataset_outlined),
-            title: Text('Manage data'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      )
+            NotificationTile(),
+
+            PasscodeTile(
+                setAuthenticating: widget.setAuthenticating
+            ),
+
+            ListTile(
+              leading: Icon(Icons.dataset_outlined),
+              title: Text('Manage data'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        )
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:money_minder/components/lock_screen/lock_screen.dart';
 import 'package:money_minder/repositories/passcode_repositories.dart';
 import 'package:money_minder/utils/loading_screen.dart';
@@ -9,6 +8,7 @@ import 'package:money_minder/pages/setting_pages/create_username_page.dart';
 import 'package:money_minder/style/app_themes.dart';
 
 import 'app_body.dart';
+import 'components/notification/notification_service.dart';
 import 'firebase_options.dart';
 import 'firestore_repositories/users_repositories.dart';
 import 'models/passcode.dart';
@@ -18,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.initialize();
   runApp(const MoneyMinder());
 }
 
@@ -33,14 +34,14 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   /// TODO: Toggle between dark mode and light mode
   final ThemeMode _themeMode = ThemeMode.light;
 
-  final LocalAuthentication auth = LocalAuthentication();
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late bool _isLocked = false; // if the user has set a passcode
   late String _salt; // the salt used to encrypt the passcode
   late String _encryptedPasscode; // the encrypted passcode
-  DateTime inactiveStart = DateTime.now(); // default datetime for inactiveStart
-  bool isBioAuth = false; // the app should not be counted as inactive when authenticating
+  DateTime? _inactiveStart; // default datetime for inactiveStart
+  // bool _isBioAuth = false; // the app should not be counted as inactive when authenticating
+  bool _isAuthenticating = false; // if the user is authenticating, don't load the lock screen again
 
   /// load the salt and encrypted passcode
   /// isLocked will be true if the passcode exists
@@ -51,6 +52,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
         _salt = passcode[0].salt;
         _encryptedPasscode = passcode[0].encryptedPasscode;
         _isLocked = true;
+        _isAuthenticating = true;
       });
     }
   }
@@ -59,14 +61,13 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   /// the system need to validate the user again after certain amount of times
   Future<void> validateUserAgain() async {
 
-    // the app is counted as inactive when we are doing biometric authentication
-    // the case is handled explicitly
-    if (isBioAuth) {
-      if (mounted) {
-        setState(() {
-          isBioAuth = false;
-        });
-      }
+    // make sure the app is paused
+    if (_inactiveStart == null) {
+      return;
+    }
+
+    // don't prompt the user to authenticate again before they finished last authentication
+    if (_isAuthenticating) {
       return;
     }
 
@@ -79,20 +80,24 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
     int activePeriod = passcode[0].activePeriod;
     String salt = passcode[0].salt;
     String encryptedPasscode = passcode[0].encryptedPasscode;
-    if (mounted && inactiveEnd.difference(inactiveStart).inSeconds >= activePeriod) {
-      navigatorKey.currentState?.push(
+    if (mounted && inactiveEnd.difference(_inactiveStart!).inSeconds >= activePeriod) {
+      setState(() {
+        _isAuthenticating = true;
+      });
+      _navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (_) => LockScreen(
-            startBioAuth: () {
+            startAuthenticating: () {
               setState(() {
-                isBioAuth = true;
+                _isAuthenticating = true;
               });
             },
             onUnlocked: () {
               setState(() {
                 _isLocked = false;
+                _isAuthenticating = false;
               });
-              navigatorKey.currentState?.pop(context);
+              _navigatorKey.currentState?.pop(context);
             },
             salt: salt,
             encryptedPasscode: encryptedPasscode,
@@ -100,12 +105,13 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
         ),
       );
     }
+    _inactiveStart = null;
   }
 
   Widget _buildMainApp() {
     return Scaffold(
       body: StreamBuilder(
-          stream: _auth.authStateChanges(),
+          stream: _firebaseAuth.authStateChanges(),
           builder: (context, asyncSnapshot) {
             if (asyncSnapshot.connectionState == ConnectionState.waiting) {
               return LoadingScreen();
@@ -120,13 +126,13 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
                     }
                     else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                       return AppBody(
-                          user: user,
-                          username: snapshot.data,
-                          startBioAuth: () {
-                            setState(() {
-                              isBioAuth = true;
-                            });
-                          }
+                        user: user,
+                        username: snapshot.data,
+                        setAuthenticating: (bool isAuthenticating){
+                          setState(() {
+                            _isAuthenticating = isAuthenticating;
+                          });
+                        },
                       );
                     }
                     else {
@@ -136,12 +142,13 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
               );
             } else {
               return AppBody(
-                  user: null,
-                  startBioAuth: () {
-                    setState(() {
-                      isBioAuth = true;
-                    });
+                user: null,
+                setAuthenticating: (bool isAuthenticating){
+                  setState(() {
+                    _isAuthenticating = isAuthenticating;
                   });
+                },
+              );
             }
           }
       ),
@@ -164,9 +171,9 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused) {
       setState(() {
-        inactiveStart = DateTime.now();
+        _inactiveStart = DateTime.now();
       });
     }
     if (state == AppLifecycleState.resumed) {
@@ -181,25 +188,26 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       themeMode: _themeMode,
-      navigatorKey: navigatorKey,
+      navigatorKey: _navigatorKey,
       home: _isLocked
-        ? Scaffold(
-          body: LockScreen(
-            startBioAuth: () {
-              setState(() {
-                isBioAuth = true;
-              });
-            },
-            onUnlocked: () {
-              setState(() {
-                _isLocked = false;
-              });
-            },
-            salt: _salt,
-            encryptedPasscode: _encryptedPasscode,
-          ),
-        )
-        : _buildMainApp(),
+          ? Scaffold(
+        body: LockScreen(
+          startAuthenticating: () {
+            setState(() {
+              _isAuthenticating = true;
+            });
+          },
+          onUnlocked: () {
+            setState(() {
+              _isLocked = false;
+              _isAuthenticating = false;
+            });
+          },
+          salt: _salt,
+          encryptedPasscode: _encryptedPasscode,
+        ),
+      )
+          : _buildMainApp(),
     );
   }
 }

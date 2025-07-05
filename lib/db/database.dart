@@ -18,7 +18,7 @@ class DatabaseService {
   Future<Database> _initDatabase() async {
     String databasesPath = await getDatabasesPath();
     String path = '$databasesPath/money_minder.db';
-    
+
     return await openDatabase(
       path,
       version: 1,
@@ -162,6 +162,13 @@ class DatabaseService {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             frozen_count INTEGER NOT NULL,
             frozen_until INTEGER NOT NULL
+          )
+        ''');
+
+    await db.execute('''
+          CREATE TABLE notification_time(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            time TEXT NOT NULL
           )
         ''');
 
