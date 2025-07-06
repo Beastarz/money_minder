@@ -10,7 +10,7 @@ import '../../models/category.dart';
 import '../../models/transaction.dart';
 import '../../repositories/accounts_repositories.dart';
 import '../../repositories/categories_repositories.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 
 class CSVGenerator {
 

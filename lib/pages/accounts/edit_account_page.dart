@@ -7,7 +7,7 @@ import '../../models/account.dart';
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 import '../../utils/main_icon.dart';
 
 class EditAccountPage extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/passcode.dart';
 import '../../repositories/passcode_repositories.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 import 'active_period_selector.dart';
 import 'create_passcode_screen.dart';
 

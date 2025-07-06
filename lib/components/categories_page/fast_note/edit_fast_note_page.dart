@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../models/fast_note.dart';
 import '../../../style/app_color.dart';
 import '../../../style/app_size.dart';
-import '../../../utils/AppMessage.dart';
+import '../../../utils/app_message.dart';
 import '../icon_selector.dart';
 
 class EditFastNotePage extends StatefulWidget {

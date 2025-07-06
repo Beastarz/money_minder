@@ -8,7 +8,7 @@ import 'package:money_minder/utils/main_icon.dart';
 import '../../repositories/currency_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 
 class AddAccountPage extends StatefulWidget {
   const AddAccountPage({super.key, required this.onAddAccount});

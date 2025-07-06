@@ -3,7 +3,7 @@ import 'package:money_minder/components/notification/notification_service.dart';
 
 import '../../models/notification_time.dart';
 import '../../repositories/notification_time_repositories.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 
 class NotificationTile extends StatefulWidget {
   const NotificationTile({super.key});

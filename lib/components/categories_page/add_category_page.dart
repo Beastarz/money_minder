@@ -6,7 +6,7 @@ import 'package:money_minder/repositories/budget_repositories.dart';
 import '../../repositories/transactions_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
-import '../../utils/AppMessage.dart';
+import '../../utils/app_message.dart';
 import 'color_selector.dart';
 import 'icon_selector.dart';
 

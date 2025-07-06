@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'AppMessage.dart';
+import 'app_message.dart';
 
 class RestartWidget extends StatefulWidget {
   final Widget child;
@@ -8,10 +8,8 @@ class RestartWidget extends StatefulWidget {
   const RestartWidget({required this.child, super.key});
 
   static void restartApp(BuildContext oldContext, String message) {
-    print("restarting");
     final state = oldContext.findAncestorStateOfType<RestartWidgetState>();
     if (state != null) {
-      print("found ancestor");
       // Show snackbar BEFORE restarting the app
       AppMessage.showMessage(oldContext, message);
 
