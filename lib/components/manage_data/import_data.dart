@@ -93,10 +93,6 @@ class _ImportDataState extends State<ImportData> {
 
       }
 
-      for (String line in lines) {
-        print(line);
-      }
-
       for (String line in lines.sublist(2)) {
         data.add(line.split(','));
       }
@@ -207,7 +203,6 @@ class _ImportDataState extends State<ImportData> {
     accountMap = await CSVGenerator.getMap<Account>(isAcc: true);
     categoryMap = await CSVGenerator.getMap<Category>(isCat: true);
     for (Map<String, dynamic> transaction in newTransactions) {
-      print(transaction);
       if (transaction['type'] == TransactionType.transfer) {
         await TransactionHelper.proceedTransfer(
             transaction['date'],

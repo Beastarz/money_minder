@@ -166,42 +166,4 @@ class CSVGenerator {
       return null;
     }
   }
-
-  // Delete CSV file
-  static Future<bool> deleteCSV(String fileName) async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName.csv';
-      final file = File(filePath);
-      if (await file.exists()) {
-        await file.delete();
-        print('🗑️ File deleted successfully');
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('❌ Error deleting file: $e');
-      return false;
-    }
-  }
-
-  // Append data to existing CSV
-  static Future<void> appendToCSV(String fileName, List<List<dynamic>> newData) async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName.csv';
-
-      // Convert new data to CSV format
-      String csvString = const ListToCsvConverter().convert(newData);
-
-      // Append to existing file
-      final file = File(filePath);
-      await file.writeAsString(csvString, mode: FileMode.append);
-
-      print('📝 Data appended to CSV file');
-    } catch (e) {
-      print('❌ Error appending to CSV: $e');
-      rethrow;
-    }
-  }
 }

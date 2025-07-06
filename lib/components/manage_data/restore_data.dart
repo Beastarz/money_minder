@@ -10,7 +10,7 @@ class RestoreData extends StatelessWidget {
         leading: Icon(Icons.restore_outlined),
         onTap: () {
           // TODO: restore data
-          print("Restore data");
+          // print("Restore data");
         }
     );
   }

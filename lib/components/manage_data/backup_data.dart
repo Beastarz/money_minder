@@ -10,7 +10,7 @@ class BackupData extends StatelessWidget {
         leading: Icon(Icons.backup_outlined),
         onTap: () {
           // TODO: backup data
-          print("Backup data");
+          // print("Backup data");
         }
     );
   }
