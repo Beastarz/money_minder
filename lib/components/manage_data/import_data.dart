@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:docx_to_text/docx_to_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/manage_data/csv_generator.dart';
@@ -12,7 +14,7 @@ import '../../models/currency.dart';
 import '../../models/transaction.dart';
 import '../../repositories/accounts_repositories.dart';
 import '../../repositories/categories_repositories.dart';
-import '../../repositories/transactions_repositories.dart';
+import '../../repositories/transaction_helper.dart';
 import '../../style/app_size.dart';
 import '../../utils/app_message.dart';
 
@@ -57,14 +59,7 @@ class _ImportDataState extends State<ImportData> {
     return 0;
   }
 
-  void importData() async {
-    File file = File(platformFile!.path!);
-    List<int> bytes = await file.readAsBytes();
-    String csvString = String.fromCharCodes(bytes);
-    List<List<dynamic>> data = [];
-    for (String row in csvString.split('\n').sublist(2)) {
-      data.add(row.split(','));
-    }
+  Future<void> importData() async {
 
     // existing account and category
     Map<String, Account> accountMap = await CSVGenerator.getMap<Account>(isAcc: true);
@@ -78,6 +73,34 @@ class _ImportDataState extends State<ImportData> {
 
     try {
 
+      File file = File(platformFile!.path!);
+      List<List<dynamic>> data = [];
+      List<String> lines;
+
+      if (platformFile!.extension == 'csv') {
+
+        lines = await file.readAsLines();
+
+      } else if (platformFile!.extension == 'docx') {
+
+        final Uint8List bytes = await file.readAsBytes();
+        final String textContent = docxToText(bytes);
+        lines = textContent.split('\n');
+
+      } else {
+
+        throw FormatException('Invalid format');
+
+      }
+
+      for (String line in lines) {
+        print(line);
+      }
+
+      for (String line in lines.sublist(2)) {
+        data.add(line.split(','));
+      }
+
       // two lines for transaction header
       int index = 0;
       while (index < data.length) {
@@ -88,7 +111,6 @@ class _ImportDataState extends State<ImportData> {
         List<dynamic> row = data[index];
 
         if (row.sublist(0, 6).any((item) => item.toString().isEmpty)) {
-          print("error");
           throw FormatException('Invalid format');
         }
 
@@ -133,7 +155,6 @@ class _ImportDataState extends State<ImportData> {
       }
 
     } catch (e) {
-      print(e);
       if (mounted) {
         AppMessage.showMessage(context, 'Import Data failed. Invalid format.');
       }
@@ -143,7 +164,6 @@ class _ImportDataState extends State<ImportData> {
     /// save new expense category
     int expPos = getPosition(true, categoryMap.values.toList());
     for (String name in newExpCat) {
-      print(name);
       await CategoriesRepositories.instance.createCategory(
           Category.insertAsMap(
               name: name,
@@ -157,7 +177,6 @@ class _ImportDataState extends State<ImportData> {
     /// save new income category
     int incPos = getPosition(false, categoryMap.values.toList());
     for (String name in newIncCat) {
-      print(name);
       await CategoriesRepositories.instance.createCategory(
           Category.insertAsMap(
               name: name,
@@ -170,7 +189,6 @@ class _ImportDataState extends State<ImportData> {
 
     /// save new accounts
     for (String name in newAccounts) {
-      print(name);
       await AccountsRepositories.instance.createAccount(
           Account.insertAsMap(
               name: name,
@@ -190,26 +208,28 @@ class _ImportDataState extends State<ImportData> {
     categoryMap = await CSVGenerator.getMap<Category>(isCat: true);
     for (Map<String, dynamic> transaction in newTransactions) {
       print(transaction);
-      await TransactionsRepositories.instance.createTransaction(
-          Transaction.insertAsMap(
-              date: transaction['date'],
-              type: transaction['type'],
-              fromAccountId: accountMap[transaction['from_account'].toLowerCase()]!.id,
-              toAccountId: transaction['to_account'] != null
-                ? accountMap[transaction['to_account'].toLowerCase()]!.id
-                : null,
-              toCategoryId: transaction['to_category'] != null
-                ? categoryMap[transaction['to_category'].toLowerCase()]!.id
-                : null,
-              amount: transaction['amount'],
-              currency: transaction['currency'],
-              note: transaction['note']
-          )
-      );
+      if (transaction['type'] == TransactionType.transfer) {
+        await TransactionHelper.proceedTransfer(
+            transaction['date'],
+            accountMap[transaction['from_account'].toLowerCase()]!.id,
+            accountMap[transaction['to_account'].toLowerCase()]!.id,
+            transaction['amount'],
+            transaction['currency'],
+            transaction['note']
+        );
+      } else {
+        await TransactionHelper.proceedExpense(
+            transaction['date'],
+            accountMap[transaction['from_account'].toLowerCase()]!.id,
+            categoryMap[transaction['to_category'].toLowerCase()]!,
+            transaction['amount'],
+            transaction['currency'],
+            transaction['note']
+        );
+      }
     }
 
     if (mounted) {
-      print("restart");
       RestartWidget.restartApp(context, 'Data imported successfully! Restart App...');
     }
   }
@@ -227,7 +247,7 @@ class _ImportDataState extends State<ImportData> {
         ),
         onTap: () {
 
-          return;
+          // return;
           // TODO: import data
 
           /// Only import transactions is supported
@@ -297,11 +317,11 @@ class _ImportDataState extends State<ImportData> {
                                 break;
                               }
                             }
+                            if (confirmed != null && confirmed && platformFile != null) {
+                              await importData();
+                            }
                             if (context.mounted) {
                               Navigator.pop(context);
-                            }
-                            if (confirmed != null && confirmed && platformFile != null) {
-                              importData();
                             }
                           }
                         }
