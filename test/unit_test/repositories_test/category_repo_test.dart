@@ -41,8 +41,8 @@ void main() {
 
       expect(result, isA<List<Category>>());
       expect(result.length, 2);
-      expect(result[0].label, 'Food');
-      expect(result[1].label, 'Salary');
+      expect(result[0].name, 'Food');
+      expect(result[1].name, 'Salary');
     });
 
     test('getCategoriesByType returns a list of expense categories', () async {
@@ -57,7 +57,7 @@ void main() {
 
       expect(result, isA<List<Category>>());
       expect(result.length, 1);
-      expect(result[0].label, 'Food');
+      expect(result[0].name, 'Food');
       verify(mockDatabase.query('categories', where: 'is_expense = ?', whereArgs: [1], orderBy: 'position ASC')).called(1);
     });
 
@@ -73,7 +73,7 @@ void main() {
 
       expect(result, isA<List<Category>>());
       expect(result.length, 1);
-      expect(result[0].label, 'Salary');
+      expect(result[0].name, 'Salary');
       expect(result[0].isExpense, false);
       verify(mockDatabase.query('categories', where: 'is_expense = ?', whereArgs: [0], orderBy: 'position ASC')).called(1);
     });
@@ -146,7 +146,7 @@ void main() {
     });
 
     test('createCategory inserts a new category', () async {
-      final newCategoryData = Category.insertAsMap(label: 'new', position: 2, codePoint: icon.icon!.codePoint, colorValue: color.toARGB32(), isExpense: true);
+      final newCategoryData = Category.insertAsMap(name: 'new', position: 2, codePoint: icon.icon!.codePoint, colorValue: color.toARGB32(), isExpense: true);
 
       when(mockDatabase.insert('categories', newCategoryData))
           .thenAnswer((_) async => 1); // Simulate successful insertion

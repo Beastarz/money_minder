@@ -3,6 +3,7 @@ import 'package:money_minder/components/notification/notification_service.dart';
 
 import '../../models/notification_time.dart';
 import '../../repositories/notification_time_repositories.dart';
+import '../../utils/AppMessage.dart';
 
 class NotificationTile extends StatefulWidget {
   const NotificationTile({super.key});
@@ -32,11 +33,7 @@ class _NotificationTileState extends State<NotificationTile> {
     // get the permissions
     if (!await NotificationService.requestPermissions()) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Notification permissions not granted'),
-          ),
-        );
+        AppMessage.showMessage(context, 'Notification permissions not granted');
         await NotificationService.showPermissionDialog(context);
         return;
       }
@@ -57,16 +54,12 @@ class _NotificationTileState extends State<NotificationTile> {
       _pickedTime = newTime;
       enabledNotification = true;
     });
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Daily notification time set to ${_pickedTime!.format(context)}'),
-        ),
-      );
-    }
     await NotificationService.scheduleDailyNotification(_pickedTime!);
     await NotificationTimeRepositories.instance.deleteNotificationTime();
     await NotificationTimeRepositories.instance.addNotificationTime(NotificationTime.insertAsMap(_pickedTime!));
+    if (mounted) {
+      AppMessage.showMessage(context, 'Daily notification time set to ${_pickedTime!.format(context)}');
+    }
   }
 
   @override
@@ -91,11 +84,7 @@ class _NotificationTileState extends State<NotificationTile> {
           if (enabled) {
             pickTime();
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Daily notification is disabled.'),
-              ),
-            );
+            AppMessage.showMessage(context, 'Daily notification is disabled.');
             setState(() {
               _pickedTime = null;
             });

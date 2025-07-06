@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
@@ -60,30 +61,26 @@ class CenterButton extends StatelessWidget {
 
               // in expense mode, showing the total expense, then total income
               // in income mode, showing the total income, then total expense
-              Text(
-                '${mainCurrency.toString()} ${isExpense
-                    ? totalExpense.toStringAsFixed(2)
-                    : totalIncome.toStringAsFixed(2) }',
-                style: TextStyle(
-                  fontSize: isSmallScreen ? 12: AppSize.heading2,
-                  color: isExpense
+              BalanceText(
+                  balance: isExpense ? totalExpense : totalIncome,
+                  currencyName: mainCurrency.toString(),
+                  showColor: true,
+                  fontColor: isExpense
                       ? Colors.redAccent
                       : CupertinoColors.activeGreen,
-                ),
-                textAlign: TextAlign.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  size: isSmallScreen ? 12 : AppSize.heading2,
               ),
-              Text(
-                '${mainCurrency.toString()} ${isExpense
-                    ? totalIncome.toStringAsFixed(2)
-                    : totalExpense.toStringAsFixed(2) }',
-                style: TextStyle(
-                  fontSize: isSmallScreen ? 10 : AppSize.heading3,
-                  color: isExpense
+              BalanceText(
+                  balance: isExpense ? totalIncome : totalExpense,
+                  currencyName: mainCurrency.toString(),
+                  showColor: true,
+                  fontColor: isExpense
                       ? CupertinoColors.activeGreen
                       : Colors.redAccent,
-                ),
-                textAlign: TextAlign.center,
-              )
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  size: isSmallScreen ? 10 : AppSize.heading3,
+              ),
             ],
           ),
         ),

@@ -91,6 +91,7 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(10),
+                childAspectRatio: 0.8,
                 children: categories.map((expense) => Column(
                   children: [
                     IconButton(
@@ -100,7 +101,7 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                         Navigator.pop(context);
                       },
                     ),
-                    Text(expense.label, style: TextStyle(fontSize: 12),)
+                    Text(expense.name, style: TextStyle(fontSize: 12),)
                   ],
                 )).toList(),
               ),

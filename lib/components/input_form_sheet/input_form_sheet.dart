@@ -20,8 +20,6 @@ class InputFormSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -35,10 +33,7 @@ class InputFormSheet extends StatelessWidget {
           children: [
             topContent,
             Container(
-              padding: EdgeInsets.all(isSmallScreen
-                  ? AppSize.smallPadding
-                  : AppSize.bigPadding
-              ),
+              padding: EdgeInsets.all(AppSize.smallPadding),
               child: inputForm,
             )
           ],

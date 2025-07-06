@@ -10,6 +10,7 @@ import 'package:money_minder/components/lock_screen/passcode_helper.dart';
 import '../../models/freeze_time.dart';
 import '../../repositories/freeze_time_repositories.dart';
 import '../../style/app_size.dart';
+import '../../utils/AppMessage.dart';
 
 class LockScreen extends StatefulWidget {
   const LockScreen({
@@ -217,12 +218,7 @@ class _LockScreenState extends State<LockScreen> {
           widget.startAuthenticating();
           await _authenticateWithBiometrics();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Please setup biometric authentication first.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
+          AppMessage.showMessage(context, 'Please setup biometric authentication first');
         }
       },
     );

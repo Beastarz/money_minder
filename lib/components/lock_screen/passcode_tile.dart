@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/passcode.dart';
 import '../../repositories/passcode_repositories.dart';
+import '../../utils/AppMessage.dart';
 import 'active_period_selector.dart';
 import 'create_passcode_screen.dart';
 
@@ -55,11 +56,7 @@ class _PasscodeTileState extends State<PasscodeTile> {
             );
           } else {
             setEnablePasscode(false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Passcode is disabled.'),
-              ),
-            );
+            AppMessage.showMessage(context, 'Passcode is disabled');
             await PasscodeRepositories.instance.deletePasscode();
           }
         }, //

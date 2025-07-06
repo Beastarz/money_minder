@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../models/fast_note.dart';
 import '../../../style/app_color.dart';
 import '../../../style/app_size.dart';
+import '../../../utils/AppMessage.dart';
 import '../icon_selector.dart';
 
 class EditFastNotePage extends StatefulWidget {
@@ -43,13 +44,13 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
       setState(() {
         showEmptyError = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Fast Note is Empty!')));
+      AppMessage.showMessage(context, 'The Fast Note is Empty!');
       return;
     }
 
     // error unhandled
     if (showLengthError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Fast Note Exceed Limited Length!')));
+      AppMessage.showMessage(context, 'The Fast Note Exceed Limited Length!');
       return;
     }
     
@@ -165,6 +166,7 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                         )
                       ),
                       child: Scaffold(
+                        resizeToAvoidBottomInset: false,
                         backgroundColor: Colors.transparent,
                         body: IconSelector(
                           changeIcon: (int codePoint) {

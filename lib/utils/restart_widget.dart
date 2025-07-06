@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
+import 'AppMessage.dart';
+
 class RestartWidget extends StatefulWidget {
   final Widget child;
 
   const RestartWidget({required this.child, super.key});
 
   static void restartApp(BuildContext oldContext, String message) {
+    print("restarting");
     final state = oldContext.findAncestorStateOfType<RestartWidgetState>();
     if (state != null) {
+      print("found ancestor");
       // Show snackbar BEFORE restarting the app
-      ScaffoldMessenger.of(oldContext).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      AppMessage.showMessage(oldContext, message);
 
       // Delay the restart slightly to allow the snackbar to show
       Future.delayed(const Duration(seconds: 3), () {

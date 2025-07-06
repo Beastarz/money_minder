@@ -16,6 +16,19 @@ class CategoryTable extends StatelessWidget {
 
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
+    if (catList.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: const Text(
+            'No categories yet...',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+      );
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

@@ -48,7 +48,7 @@ class DatabaseService {
     await db.execute('''
           CREATE TABLE categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            label TEXT NOT NULL,
+            name TEXT NOT NULL,
             position INTEGER, -- the sequence of the category
             icon INTEGER, -- Storing icon's codePoint
             color INTEGER, -- Storing color value
@@ -183,7 +183,7 @@ class DatabaseService {
 
 
     await db.execute('''
-      INSERT INTO categories (label, position, icon, color, is_expense) VALUES
+      INSERT INTO categories (name, position, icon, color, is_expense) VALUES
       ('Food', 2, 0xe56c, 0xFFFF5722, 1), -- restaurant, Deep Orange
       ('Transport', 0, 0xe530, 0xFF673AB7, 1), -- directions_bus, Deep Purple
       ('Salary', 0, 0xe227, 0xFF8BC34A, 0), -- attach_money, Light Green (Income category)

@@ -173,7 +173,7 @@ class _TransactionFilterPageState extends State<TransactionFilterPage> {
                       children: expenses.map((category) {
                         return ChoiceChip(
                           label: Text(
-                              category.label,
+                              category.name,
                             style: TextStyle(
                               color: selectedCategories.contains(category.id) ? Colors.white : category.color,
                             )
@@ -202,7 +202,7 @@ class _TransactionFilterPageState extends State<TransactionFilterPage> {
                       children: incomes.map((category) {
                         return ChoiceChip(
                           label: Text(
-                              category.label,
+                              category.name,
                               style: TextStyle(
                                 color: selectedCategories.contains(category.id) ? Colors.white : category.color,
                               )

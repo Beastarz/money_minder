@@ -6,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/account.dart';
+import '../../models/category.dart';
 import '../../models/transaction.dart';
+import '../../repositories/accounts_repositories.dart';
+import '../../repositories/categories_repositories.dart';
+import '../../utils/AppMessage.dart';
 
 class CSVGenerator {
 
@@ -33,6 +37,23 @@ class CSVGenerator {
     'savings': AccountType.savings,
     'debt': AccountType.debts,
   };
+
+  static Future<Map<String, T>> getMap<T>({isAcc = false, isCat = false}) async {
+    Map<String, T> map = {};
+    if (isAcc) {
+      List<Account> accounts = await AccountsRepositories.instance.getAllAccounts();
+      for (Account account in accounts) {
+        map[account.name.toLowerCase()] = account as T;
+      }
+    }
+    if (isCat) {
+      List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
+      for (Category category in categories) {
+        map[category.name.toLowerCase()] = category as T;
+      }
+    }
+    return map;
+  }
 
   // Generate CSV file and save to app's documents directory
   static Future<void> generateCSV({
@@ -115,20 +136,34 @@ class CSVGenerator {
   }
 
   // Read CSV file
-  static Future<List<List<dynamic>>> readCSV(String fileName) async {
+  static Future<PlatformFile?> readFile(BuildContext context) async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName.csv';
-      final file = File(filePath);
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        // type: FileType.custom,
+        // allowedExtensions: ['csv'] // only csv file is accepted
+      );
 
-      if (await file.exists()) {
-        final contents = await file.readAsString();
-        return const CsvToListConverter().convert(contents);
+      if (result != null) {
+
+        // file is selected correctly
+        if (context.mounted) {
+          AppMessage.showMessage(context, 'File is imported, please wait...');
+        }
+        return result.files.single;
+      } else {
+        // User canceled the picker
+        if (context.mounted) {
+          AppMessage.showMessage(context, 'File import cancelled.');
+        }
+
+        // cancelled, return empty list
+        return null;
       }
-      return [];
     } catch (e) {
-      print('❌ Error reading CSV file: $e');
-      return [];
+      if (context.mounted) {
+        AppMessage.showMessage(context, 'Import CSV file fail!');
+      }
+      return null;
     }
   }
 

@@ -37,8 +37,8 @@ void main() {
     final Icon icon = Icon(Icons.add);
     final Color color = Colors.red;
     final mockCategories = [
-      Category(id: 1, label: 'Food', icon: icon, color: color, isExpense: true, position: 0),
-      Category(id: 2, label: 'Salary', icon: icon, color: color, isExpense: false, position: 2),
+      Category(id: 1, name: 'Food', icon: icon, color: color, isExpense: true, position: 0),
+      Category(id: 2, name: 'Salary', icon: icon, color: color, isExpense: false, position: 2),
     ];
     final mockBudgetMaps = [
       {'id': 1, 'category_id': 1, 'amount': 200.0, 'month': 6, 'year': 2025},
@@ -58,13 +58,13 @@ void main() {
       expect(result[0].id, 1);
       expect(result[0].amount, 200.0);
       expect(result[0].category.id, 1);
-      expect(result[0].category.label, 'Food');
+      expect(result[0].category.name, 'Food');
 
       // Verify the second budget
       expect(result[1].id, 2);
       expect(result[1].amount, 100.0);
       expect(result[1].category.id, 2);
-      expect(result[1].category.label, 'Salary');
+      expect(result[1].category.name, 'Salary');
 
       verify(mockCategoriesRepositories.getAllCategories()).called(1);
       verify(mockDatabase.query('budgets')).called(1);

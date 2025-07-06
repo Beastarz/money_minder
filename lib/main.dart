@@ -112,6 +112,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
 
   Widget _buildMainApp() {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: StreamBuilder(
           stream: _firebaseAuth.authStateChanges(),
           builder: (context, asyncSnapshot) {

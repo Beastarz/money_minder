@@ -47,7 +47,7 @@ class _ExportDataState extends State<ExportData> {
           formattedDate(transaction.date),
           CSVGenerator.transferTypeToString[transaction.type],
           transaction.fromAccount.name,
-          transaction.toAccount != null ? transaction.toAccount!.name : transaction.toCategory!.label,
+          transaction.toAccount != null ? transaction.toAccount!.name : transaction.toCategory!.name,
           transaction.amount,
           transaction.currency.currency().name.toUpperCase(),
           transaction.note,

@@ -62,7 +62,7 @@ class TransactionTile extends StatelessWidget {
                       ? MainIcon(icon: transaction.toAccount!.icon, color: transaction.toAccount!.color, isRound: false, size: 36,)
                       : MainIcon(icon: transaction.toCategory!.icon, color: transaction.toCategory!.color, size: 36,),
                   title: Text(
-                    transaction.toCategory == null ? transaction.toAccount!.name : transaction.toCategory!.label,
+                    transaction.toCategory == null ? transaction.toAccount!.name : transaction.toCategory!.name,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),

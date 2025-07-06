@@ -86,7 +86,7 @@ class CategoryTopCard extends StatelessWidget {
                     bottom: AppSize.smallPadding,
                   ),
                   child: Text(
-                      category.label,
+                      category.name,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: AppSize.heading1 * 1.15,
