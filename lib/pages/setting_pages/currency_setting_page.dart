@@ -56,6 +56,7 @@ class _CurrencySettingPageState extends State<CurrencySettingPage> {
               child: Column(
                 children: [
                   ListTile(
+                    leading: Icon(Icons.attach_money_outlined),
                     title: Text('Main Currency'),
                     trailing: Text(snapshot.data!.currency().name.toUpperCase(), style: TextStyle(fontSize: 16),),
                     onTap: () {

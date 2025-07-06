@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/transaction/transaction_filter_page.dart';
 import 'package:money_minder/models/account.dart';
+import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/models/online/user.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/pages/accounts/add_accounts_page.dart';
 import 'package:money_minder/pages/online_pages/online_home_page.dart';
@@ -14,18 +16,22 @@ import 'accounts_filter.dart';
 class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
   const MMAppBar( {
     super.key,
-    required this.username,
+    required this.userData,
     required this.selectedIndex,
     required this.filteredAccounts,
     required this.mainCurrency,
     required this.onReload,
     required this.transactionFilter,
     required this.onTransactionFilterChange,
+    required this.accounts,
+    required this.categories,
   });
 
-  final String username;
+  final User? userData;
   final int selectedIndex;
   final List<Account> filteredAccounts;
+  final List<Account> accounts;
+  final List<List<Category>> categories;
   final void Function() onReload;
   final Currency mainCurrency;
   final TransactionFilter transactionFilter;
@@ -49,13 +55,6 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         },
       ),
       Container(),
-      // IconButton(
-      //   icon: Icon(
-      //     Icons.edit,
-      //     color: Colors.grey[800],
-      //   ),
-      //   onPressed: () {},
-      // ),
       IconButton(
         icon: Badge(
           isLabelVisible: !transactionFilter.isOff,
@@ -69,18 +68,11 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => TransactionFilterPage(
-                onTransactionFilterChange: onTransactionFilterChange, filter: transactionFilter)),
+                onTransactionFilterChange: onTransactionFilterChange, filter: transactionFilter, accounts: accounts, categories: categories)),
           );
         },
       ),
       Container(),
-      // IconButton(
-      //   icon: Icon(
-      //     Icons.location_on_outlined,
-      //     color: Colors.grey[800],
-      //   ),
-      //   onPressed: () {},
-      // ),
     ];
 
     return AppBar(
@@ -130,7 +122,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             color: Colors.grey[800],
           ),
           onPressed: () {
-            if (username.isEmpty) {
+            if (userData == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Please Sign in'),
@@ -141,7 +133,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             }
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OnlineHomePage(username: username))
+                MaterialPageRoute(builder: (context) => OnlineHomePage(username: userData!.username))
             );
           },
         )

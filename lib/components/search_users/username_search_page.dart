@@ -40,10 +40,10 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     if (user == null) {
       return;
     }
-    String? res = await UsersRepositories.instance.getUsername(user.uid);
+    model.User? res = await UsersRepositories.instance.getMyUserData(user.uid);
     if (res != null) {
       setState(() {
-        _myUsername = res;
+        _myUsername = res.username;
       });
     }
     setState(() {

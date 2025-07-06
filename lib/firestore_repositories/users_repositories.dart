@@ -19,11 +19,11 @@ class UsersRepositories {
     }
   }
 
-  Future<String?> getUsername(String uid) async {
+  Future<User?> getMyUserData(String uid) async {
     try {
-      final DocumentSnapshot snapshot = await _db.collection('users').doc(uid).get();
-      if (snapshot.exists) {
-        return snapshot.get('username');
+      final DocumentSnapshot doc = await _db.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return User.fromMap(doc.data() as Map<String, dynamic>, doc.id);
       } else {
         return null;
       }
@@ -45,7 +45,7 @@ class UsersRepositories {
       if (snapshot.docs.isEmpty) {
         return [];
       }
-      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>)).toList();
+      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>, doc.id),).toList();
     } catch (e) {
       rethrow;
     }
@@ -56,6 +56,14 @@ class UsersRepositories {
       final snapshot = await _db.collection('users')
           .where('username', isEqualTo: username).get();
       return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteMyAccount(String uid) async {
+    try {
+      _db.collection('users').doc(uid).delete();
     } catch (e) {
       rethrow;
     }
