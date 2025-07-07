@@ -11,6 +11,7 @@ import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/transaction_filter.dart';
 import '../../style/app_color.dart';
+import '../../utils/app_message.dart';
 import 'accounts_filter.dart';
 
 class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
@@ -123,12 +124,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
           ),
           onPressed: () {
             if (userData == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Please Sign in'),
-                  behavior: SnackBarBehavior.floating,
-                )
-              );
+              AppMessage.showMessage(context, 'Please Sign in');
               return;
             }
             Navigator.push(

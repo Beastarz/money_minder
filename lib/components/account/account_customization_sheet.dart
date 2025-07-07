@@ -50,6 +50,7 @@ class AccountCustomizationSheet extends StatelessWidget {
                       child: DefaultTabController(
                           length: 2,
                           child: Scaffold(
+                              resizeToAvoidBottomInset: false,
                               backgroundColor: AppColor.secondary,
                               appBar: TabBar(
                                   tabs: <Widget>[

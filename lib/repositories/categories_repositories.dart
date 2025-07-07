@@ -125,4 +125,12 @@ class CategoriesRepositories {
         'categories',
         category);
   }
+
+  /// delete all categories
+  ///
+  /// Returns: void
+  Future<void> deleteAllCategories() async {
+    final db = await _dbService.database;
+    await db.delete('categories');
+  }
 }

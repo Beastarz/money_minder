@@ -4,17 +4,15 @@ import 'package:money_minder/components/lock_screen/passcode_helper.dart';
 
 import '../../models/passcode.dart';
 import '../../repositories/passcode_repositories.dart';
-import 'lock_screen.dart';
+import '../../utils/restart_widget.dart';
 
 class CreatePasscodeScreen extends StatefulWidget {
   const CreatePasscodeScreen({
     super.key,
     required this.setIsPasscodeConfirmed,
-    required this.setAuthenticating,
   });
 
   final void Function(bool) setIsPasscodeConfirmed;
-  final void Function(bool) setAuthenticating;
 
   @override
   State<CreatePasscodeScreen> createState() => _CreatePasscodeScreenState();
@@ -25,6 +23,23 @@ class _CreatePasscodeScreenState extends State<CreatePasscodeScreen> {
   void returnToApp() {
     widget.setIsPasscodeConfirmed(false);
     Navigator.pop(context);
+  }
+
+  void confirmPasscode(String passcode) async {
+    // create the salt and encrypted passcode
+    String salt = PasscodeHelper.generateSalt();
+    String encryptedPasscode = PasscodeHelper.generateSha256Hash(salt + passcode);
+
+    // save the new passcode to the database
+    await PasscodeRepositories.instance.deletePasscode(); // in case of existing passcode
+    await PasscodeRepositories.instance.addPasscode(
+        Passcode.insertAsMap(salt, encryptedPasscode, 30));
+
+    // restart the app
+    if (mounted) {
+      widget.setIsPasscodeConfirmed(true);
+      RestartWidget.restartApp(context, "Passcode is set. Restarting app...");
+    }
   }
 
   @override
@@ -41,40 +56,7 @@ class _CreatePasscodeScreenState extends State<CreatePasscodeScreen> {
       onMaxRetries: (_) {
         returnToApp();
       },
-      onConfirmed: (String passcode) async {
-
-        // create the salt and encrypted passcode
-        String salt = PasscodeHelper.generateSalt();
-        String encryptedPasscode = PasscodeHelper.generateSha256Hash(salt + passcode);
-
-        Navigator.pop(context); // pop the create passcode screen
-        Navigator.pop(context); // pop the drawer
-
-        // show message to the user
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passcode set successfully! Restarting app...')),
-        );
-
-        widget.setAuthenticating(true);
-
-        // ask user to unlock the app
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LockScreen(
-                startAuthenticating: () => widget.setAuthenticating(true),
-                onUnlocked: () {
-                  Navigator.pop(context); // pop the lock screen
-                  widget.setAuthenticating(false);
-                },
-                salt: salt,
-                encryptedPasscode: encryptedPasscode)
-            )
-        );
-
-        // save the new passcode to the database
-        await PasscodeRepositories.instance.deletePasscode(); // in case of existing passcode
-        await PasscodeRepositories.instance.addPasscode(
-            Passcode.insertAsMap(salt, encryptedPasscode, 30));
-      },
+      onConfirmed: confirmPasscode,
       onCancelled: returnToApp,
       cancelButton: const Text("Cancel"),
       deleteButton: const Text("Delete"),

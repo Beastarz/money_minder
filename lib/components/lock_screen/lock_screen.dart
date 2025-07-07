@@ -10,17 +10,16 @@ import 'package:money_minder/components/lock_screen/passcode_helper.dart';
 import '../../models/freeze_time.dart';
 import '../../repositories/freeze_time_repositories.dart';
 import '../../style/app_size.dart';
+import '../../utils/app_message.dart';
 
 class LockScreen extends StatefulWidget {
   const LockScreen({
     super.key,
-    required this.startAuthenticating,
     required this.onUnlocked,
     required this.salt,
     required this.encryptedPasscode,
   });
 
-  final void Function() startAuthenticating;
   final void Function() onUnlocked;
   final String salt;
   final String encryptedPasscode;
@@ -214,15 +213,9 @@ class _LockScreenState extends State<LockScreen> {
           return;
         }
         if (_isBiometricAvailable) {
-          widget.startAuthenticating();
           await _authenticateWithBiometrics();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Please setup biometric authentication first.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
+          AppMessage.showMessage(context, 'Please setup biometric authentication first');
         }
       },
     );

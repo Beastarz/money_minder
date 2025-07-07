@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../models/passcode.dart';
 import '../../repositories/passcode_repositories.dart';
+import '../../utils/app_message.dart';
 import 'active_period_selector.dart';
 import 'create_passcode_screen.dart';
 
 class PasscodeTile extends StatefulWidget {
 
-  // final bool enablePasscode;
-  // final void Function(bool) setEnablePasscode;
-  final void Function(bool) setAuthenticating;
-
   const PasscodeTile({
     super.key,
-    // required this.enablePasscode,
-    // required this.setEnablePasscode,
-    required this.setAuthenticating,
   });
 
   @override
@@ -53,17 +47,16 @@ class _PasscodeTileState extends State<PasscodeTile> {
         value: enablePasscode,
         onChanged: (bool enable) async {
           if (enable) {
-            setEnablePasscode(true);
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => CreatePasscodeScreen(
-                    setAuthenticating: widget.setAuthenticating,
                     setIsPasscodeConfirmed: setEnablePasscode),
               ),
             );
           } else {
             setEnablePasscode(false);
+            AppMessage.showMessage(context, 'Passcode is disabled');
             await PasscodeRepositories.instance.deletePasscode();
           }
         }, //
@@ -81,12 +74,10 @@ class _PasscodeTileState extends State<PasscodeTile> {
         }
 
         // set the passcode
-        setEnablePasscode(true);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CreatePasscodeScreen(
-                setAuthenticating: widget.setAuthenticating,
                 setIsPasscodeConfirmed: setEnablePasscode),
           ),
         );

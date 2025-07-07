@@ -7,6 +7,7 @@ import '../../models/account.dart';
 import '../../models/currency.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../../utils/app_message.dart';
 import '../../utils/main_icon.dart';
 
 class EditAccountPage extends StatefulWidget {
@@ -58,19 +59,11 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
   void _handleSubmit() {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Please fill in a name')
-          ));
+      AppMessage.showMessage(context, 'Please fill in a name');
       return;
     }
     if (double.parse(_accountBalanceController.text) > 99999999999.99) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Amount is too large!')
-          ));
+      AppMessage.showMessage(context, 'Amount is too large!');
       return;
     }
     Account updatedAccount = account.copyWith(

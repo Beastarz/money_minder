@@ -8,6 +8,7 @@ import 'package:money_minder/utils/main_icon.dart';
 import '../../repositories/currency_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../../utils/app_message.dart';
 
 class AddAccountPage extends StatefulWidget {
   const AddAccountPage({super.key, required this.onAddAccount});
@@ -54,19 +55,11 @@ class _AddAccountPageState extends State<AddAccountPage> {
 
   void _handleSubmit() {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Please fill in a name')
-      ));
+      AppMessage.showMessage(context, 'Please fill in a name');
       return;
     }
     if (double.parse(_accountBalanceController.text) > 99999999999.99) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              behavior: SnackBarBehavior.floating,
-              content: Text('Amount is too large!')
-          ));
+      AppMessage.showMessage(context, 'Amount is too large!');
       return;
     }
     Map<String, dynamic> accountData = Account.insertAsMap(
@@ -90,6 +83,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.close),
