@@ -121,7 +121,7 @@ class NotificationService {
       0, // notification id
       'Daily Reminder', // title
       'Don\'t forget to track your expenses today!', // body
-      nextInstanceOfTime(time),
+      _nextInstanceOfTime(time),
       NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_channel',
@@ -142,7 +142,7 @@ class NotificationService {
     );
   }
 
-  static tz.TZDateTime nextInstanceOfTime(TimeOfDay time) {
+  static tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
       tz.local,
