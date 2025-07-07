@@ -134,4 +134,12 @@ class BudgetRepositories {
     sqf.Database db = await _dbService.database;
     await db.delete('budgets', where: 'category_id = ?', whereArgs: [categoryId]);
   }
+
+  /// delete all budget
+  ///
+  /// Returns: void
+  Future<void> deleteAllBudgets() async {
+    sqf.Database db = await _dbService.database;
+    await db.delete('budgets');
+  }
 }

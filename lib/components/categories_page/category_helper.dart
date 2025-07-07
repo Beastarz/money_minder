@@ -120,7 +120,7 @@ class CategoryHelper {
         CategoryProp(
             id: category.id,
             position: category.position,
-            label: category.label,
+            label: category.name,
             icon: category.icon,
             color: category.color,
             actualAmount: amounts[i],
@@ -153,7 +153,7 @@ class CategoryHelper {
               mainCurrency: mainCurrency,
               toCategory: Category(
                   id: prop.id,
-                  label: prop.label,
+                  name: prop.label,
                   position: prop.position,
                   icon: prop.icon,
                   color: prop.color,
@@ -360,7 +360,7 @@ class CategoryHelper {
     int colorValue, bool isExpense) async {
     await CategoriesRepositories.instance.createCategory(
       Category.insertAsMap(
-        label: label,
+        name: label,
         position: position,
         codePoint: codePoint,
         colorValue: colorValue,

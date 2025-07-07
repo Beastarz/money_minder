@@ -60,14 +60,14 @@ void main() {
   );
 
   final expenseCategory = Category(id: 1,
-      label: 'food',
+      name: 'food',
       position: 0,
       icon: icon,
       color: color,
       isExpense: true);
 
   final incomeCategory = Category(id: 1,
-      label: 'income',
+      name: 'income',
       position: 0,
       icon: icon,
       color: color,

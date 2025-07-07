@@ -6,6 +6,7 @@ import 'package:money_minder/repositories/budget_repositories.dart';
 import '../../repositories/transactions_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
+import '../../utils/app_message.dart';
 import 'color_selector.dart';
 import 'icon_selector.dart';
 
@@ -49,13 +50,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       setState(() {
         showEmptyError = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name is Empty!')));
+      AppMessage.showMessage(context, 'The Category Name is Empty!');
       return;
     }
 
     // error unhandled
     if (showLengthError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name Exceed Limited Length!')));
+      AppMessage.showMessage(context, 'The Category Name Exceed Limited Length!');
       return;
     }
 
@@ -72,13 +73,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       setState(() {
         showEmptyError = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name is Empty!')));
+      AppMessage.showMessage(context, 'The Category Name is Empty!');
       return;
     }
 
     // error unhandled
     if (showLengthError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The Category Name Exceed Limited Length!')));
+      AppMessage.showMessage(context, 'The Category Name Exceed Limited Length!');
       return;
     }
 
@@ -221,6 +222,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                   child: DefaultTabController(
                     length: 2,
                     child: Scaffold(
+                      resizeToAvoidBottomInset: false,
                       backgroundColor: AppColor.secondary,
                       appBar: TabBar(
                         tabs: <Widget>[

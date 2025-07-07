@@ -66,7 +66,7 @@ class RecurrenceTile extends StatelessWidget {
                         ? MainIcon(icon: recurrence.toAccount!.icon, color: recurrence.toAccount!.color.withValues(alpha: 0.7), isRound: false, size: 36,)
                         : MainIcon(icon: recurrence.toCategory!.icon, color: recurrence.toCategory!.color.withValues(alpha: 0.7), size: 36,),
                     title: Text(
-                      recurrence.toCategory == null ? recurrence.toAccount!.name : recurrence.toCategory!.label,
+                      recurrence.toCategory == null ? recurrence.toAccount!.name : recurrence.toCategory!.name,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: TextStyle(

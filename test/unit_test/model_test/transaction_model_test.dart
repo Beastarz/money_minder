@@ -49,7 +49,7 @@ void main() {
 
       category = Category(
         id: 101,
-        label: 'Groceries',
+        name: 'Groceries',
         position: 0,
         icon: Icon(Icons.shopping_basket),
         color: Colors.red,

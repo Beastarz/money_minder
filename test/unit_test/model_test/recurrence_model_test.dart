@@ -12,7 +12,7 @@ void main() {
   final mainCurrency = sgdCurrency;
   final fromAccount = Account(id: 1, name: 'fromAcc', balance: 1000, icon: Icon(Icons.account_balance_wallet), color: Colors.grey, description: '', isMain: true, isIncludesInTotal: true, type: AccountType.accounts, currency: sgdCurrency, position: 1);
   final toAccount = Account(id: 2, name: 'toAcc', balance: 500, icon: Icon(Icons.account_balance_wallet), color: Colors.grey, description: '', isMain: false, isIncludesInTotal: true, type: AccountType.accounts, currency: sgdCurrency, position: 2);
-  final toCategory = Category(id: 101, label: 'category', position: 1, icon: Icon(Icons.check_box), color: Colors.red, isExpense: true);
+  final toCategory = Category(id: 101, name: 'category', position: 1, icon: Icon(Icons.check_box), color: Colors.red, isExpense: true);
 
   group('Recurrence', () {
     // Test the stringToRecurrenceType function
@@ -123,7 +123,7 @@ void main() {
           'note': 'Salary',
           'recurrence_type': 'monthly',
         };
-        final incomeCategory = Category(id: 102, label: 'income', position: 2, icon: Icon(Icons.add), color: Colors.red, isExpense: false);
+        final incomeCategory = Category(id: 102, name: 'income', position: 2, icon: Icon(Icons.add), color: Colors.red, isExpense: false);
         final recurrence = Recurrence.fromMap(
             map, fromAccount, null, incomeCategory, mainCurrency);
 

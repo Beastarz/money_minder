@@ -6,6 +6,7 @@ import 'package:money_minder/repositories/passcode_repositories.dart';
 import 'package:money_minder/utils/loading_screen.dart';
 import 'package:money_minder/pages/setting_pages/create_username_page.dart';
 import 'package:money_minder/style/app_themes.dart';
+import 'package:money_minder/utils/restart_widget.dart';
 
 import 'app_body.dart';
 import 'components/notification/notification_service.dart';
@@ -19,7 +20,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService.initialize();
-  runApp(const MoneyMinder());
+  runApp(RestartWidget(child: const MoneyMinder()));
 }
 
 class MoneyMinder extends StatefulWidget {
@@ -40,7 +41,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   late String _salt; // the salt used to encrypt the passcode
   late String _encryptedPasscode; // the encrypted passcode
   DateTime? _inactiveStart; // default datetime for inactiveStart
-  // bool _isBioAuth = false; // the app should not be counted as inactive when authenticating
   bool _isAuthenticating = false; // if the user is authenticating, don't load the lock screen again
 
   /// load the salt and encrypted passcode
@@ -61,13 +61,14 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   /// the system need to validate the user again after certain amount of times
   Future<void> validateUserAgain() async {
 
-    // make sure the app is paused
+    // make sure the app is paused and not resumed from biometric authentication
     if (_inactiveStart == null) {
       return;
     }
 
     // don't prompt the user to authenticate again before they finished last authentication
     if (_isAuthenticating) {
+      _inactiveStart = null;
       return;
     }
 
@@ -77,7 +78,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
     if (passcode.isEmpty) {
       return;
     }
-    int activePeriod = passcode[0].activePeriod;
+    int activePeriod = passcode[0].activePeriod; // buffer time
     String salt = passcode[0].salt;
     String encryptedPasscode = passcode[0].encryptedPasscode;
     if (mounted && inactiveEnd.difference(_inactiveStart!).inSeconds >= activePeriod) {
@@ -87,11 +88,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
       _navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (_) => LockScreen(
-            startAuthenticating: () {
-              setState(() {
-                _isAuthenticating = true;
-              });
-            },
             onUnlocked: () {
               setState(() {
                 _isLocked = false;
@@ -105,11 +101,13 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
         ),
       );
     }
+
     _inactiveStart = null;
   }
 
   Widget _buildMainApp() {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: StreamBuilder(
           stream: _firebaseAuth.authStateChanges(),
           builder: (context, asyncSnapshot) {
@@ -128,11 +126,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
                       return AppBody(
                         user: user,
                         username: snapshot.data,
-                        setAuthenticating: (bool isAuthenticating){
-                          setState(() {
-                            _isAuthenticating = isAuthenticating;
-                          });
-                        },
                       );
                     }
                     else {
@@ -143,11 +136,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
             } else {
               return AppBody(
                 user: null,
-                setAuthenticating: (bool isAuthenticating){
-                  setState(() {
-                    _isAuthenticating = isAuthenticating;
-                  });
-                },
               );
             }
           }
@@ -192,11 +180,6 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
       home: _isLocked
           ? Scaffold(
         body: LockScreen(
-          startAuthenticating: () {
-            setState(() {
-              _isAuthenticating = true;
-            });
-          },
           onUnlocked: () {
             setState(() {
               _isLocked = false;

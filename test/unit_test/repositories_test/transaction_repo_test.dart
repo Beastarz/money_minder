@@ -81,7 +81,7 @@ void main() {
         position: 1);
 
     final toCategory = Category(id: 1,
-        label: 'Food',
+        name: 'Food',
         position: 0,
         icon: icon,
         color: color,

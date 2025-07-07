@@ -124,8 +124,8 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
     return Container(
       height: MediaQuery.of(context).size.height * (isSmallScreen
-          ? widget.showNotes ? 0.60 : 0.45
-          : widget.showNotes ? 0.45 : 0.40)
+          ? widget.showNotes ? 0.65 : 0.50
+          : widget.showNotes ? 0.50 : 0.45)
           + 15
           + (widget.category == null ? 0 : 40),
       decoration: BoxDecoration(
@@ -134,125 +134,128 @@ class _InputKeyboardState extends State<InputKeyboard> {
             top: Radius.circular(AppSize.borderRadius)
         ),
       ),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: ReverseEllipsisText(
-              '$currency $_currentAmount',
-              style: TextStyle(
-                fontSize: isSmallScreen
-                    ? AppSize.heading1
-                    : AppSize.heading1 * 1.5,
-                fontWeight: FontWeight.bold,
-                color: AppColor.darkText,
-              ),
-            ),
-          ),
-
-          _showError
-          ? Text(
-            "Please enter valid amount",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.red,
-                fontSize: isSmallScreen
-                    ? AppSize.paragraph
-                    : AppSize.paragraph * 1.2),
-          )
-          : SizedBox.shrink(),
-
-          SizedBox(height: AppSize.smallPadding), // small padding
-
-          // Notes input
-          !widget.showNotes
-          ? SizedBox.shrink()
-          : TextField(
-            controller: _noteController,
-            decoration: InputDecoration(
-              hintText: 'Notes...',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppSize.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: AppColor.primary,
-              contentPadding: EdgeInsets.all(AppSize.smallPadding),
-            ),
-            style: TextStyle(fontSize: isSmallScreen
-                ? AppSize.heading3
-                : AppSize.heading3 * 1.5),
-          ),
-
-          SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
-
-          // show fast notes
-          widget.category == null
-          ? SizedBox.shrink()
-          : FastNoteContainer(
-            color: widget.category!.color,
-            categoryId: widget.category!.id,
-            onTap: (note) {
-              setState(() {
-                if (_noteController.text.isEmpty) {
-                  _noteController.text = note;
-                } else {
-                  _noteController.text += ', $note';
-                }
-              });
-            }
-          ),
-
-          SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding), // small padding
-          // Input Form Grid
-          GridView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              childAspectRatio: 1.2, // Adjust aspect ratio for button size
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              return index == 19
-                  ? InputFormButton(
-                  props: InputFormButtonProps(
-                    text: _lastButton,
-                    icon: _lastButton == '✓' ? Icons.check : null,
-                    backgroundColor: Colors.greenAccent,
-                    textColor: AppColor.lightText,
-                  ),
-                  onPressed: () {
-                    _onButtonPressed(_lastButton);
-                  }
-              )
-                  : InputFormButton(
-                  props: buttonProps[index],
-                  onPressed: () {
-                    _onButtonPressed(buttonProps[index].text);
-                  }
-              );
-            },
-          ),
-          // show setting at the bottom
-          _message.isEmpty
-              ? SizedBox.shrink()
-              : SizedBox(height: 4), // small padding
-
-          _message.isEmpty
-            ? SizedBox.shrink()
-            : Text(
-                _recurrenceType == RecurrenceType.none ? _message : '$_message, ${_recurrenceType.name[0].toUpperCase()}${_recurrenceType.name.substring(1)}',
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: ReverseEllipsisText(
+                '$currency $_currentAmount',
                 style: TextStyle(
-                    color: AppColor.darkText,
-                    fontSize: isSmallScreen
-                        ? AppSize.heading3
-                        : AppSize.heading3 * 1.2),
-              )
-        ],
+                  fontSize: isSmallScreen
+                      ? AppSize.heading1
+                      : AppSize.heading1 * 1.5,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.darkText,
+                ),
+              ),
+            ),
+
+            _showError
+            ? Text(
+              "Please enter valid amount",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: isSmallScreen
+                      ? AppSize.paragraph
+                      : AppSize.paragraph * 1.2),
+            )
+            : SizedBox.shrink(),
+
+            SizedBox(height: AppSize.smallPadding), // small padding
+
+            // Notes input
+            !widget.showNotes
+            ? SizedBox.shrink()
+            : TextField(
+              controller: _noteController,
+              decoration: InputDecoration(
+                hintText: 'Notes...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.borderRadius),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: AppColor.primary,
+                contentPadding: EdgeInsets.all(AppSize.smallPadding),
+              ),
+              style: TextStyle(fontSize: isSmallScreen
+                  ? AppSize.heading3
+                  : AppSize.heading3 * 1.5),
+            ),
+
+            SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
+
+            // show fast notes
+            widget.category == null
+            ? SizedBox.shrink()
+            : FastNoteContainer(
+              color: widget.category!.color,
+              categoryId: widget.category!.id,
+              onTap: (note) {
+                setState(() {
+                  if (_noteController.text.isEmpty) {
+                    _noteController.text = note;
+                  } else {
+                    _noteController.text += ', $note';
+                  }
+                });
+              }
+            ),
+
+            SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding), // small padding
+            // Input Form Grid
+            GridView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                childAspectRatio: 1.2, // Adjust aspect ratio for button size
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                return index == 19
+                    ? InputFormButton(
+                    props: InputFormButtonProps(
+                      text: _lastButton,
+                      icon: _lastButton == '✓' ? Icons.check : null,
+                      backgroundColor: Colors.greenAccent,
+                      textColor: AppColor.lightText,
+                    ),
+                    onPressed: () {
+                      _onButtonPressed(_lastButton);
+                    }
+                )
+                    : InputFormButton(
+                    props: buttonProps[index],
+                    onPressed: () {
+                      _onButtonPressed(buttonProps[index].text);
+                    }
+                );
+              },
+            ),
+            // show setting at the bottom
+            _message.isEmpty
+                ? SizedBox.shrink()
+                : SizedBox(height: 4), // small padding
+
+            _message.isEmpty
+              ? SizedBox.shrink()
+              : Text(
+                  _recurrenceType == RecurrenceType.none ? _message : '$_message, ${_recurrenceType.name[0].toUpperCase()}${_recurrenceType.name.substring(1)}',
+                  style: TextStyle(
+                      color: AppColor.darkText,
+                      fontSize: isSmallScreen
+                          ? AppSize.heading3
+                          : AppSize.heading3 * 1.2),
+                )
+          ],
+        ),
       ),
     );
   }

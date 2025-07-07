@@ -86,4 +86,13 @@ class FastNoteRepositories {
         where: 'id = ? AND category_id = ?',
         whereArgs: [id, categoryId]);
   }
+
+  /// delete all Fast Notes
+  ///
+  /// Returns: void
+  Future<void> deleteAllFastNotes() async {
+    final db = await _dbService.database;
+    await db.delete('fast_notes');
+  }
+
 }

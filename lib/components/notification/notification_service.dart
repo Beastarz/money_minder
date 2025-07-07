@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -13,6 +14,15 @@ class NotificationService {
   static Future<void> initialize() async {
     // Initialize timezone
     tz.initializeTimeZones();
+
+    // Get and set the local timezone. Use a robust fallback.
+    String timeZoneName;
+    try {
+      timeZoneName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (e) {
+      tz.setLocalLocation(tz.UTC);
+    }
 
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -31,7 +41,6 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initializationSettings);
-    await requestPermissions();
   }
 
   static Future<bool> requestPermissions() async {
@@ -112,7 +121,7 @@ class NotificationService {
       0, // notification id
       'Daily Reminder', // title
       'Don\'t forget to track your expenses today!', // body
-      _nextInstanceOfTime(time),
+      nextInstanceOfTime(time),
       NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_channel',
@@ -133,7 +142,7 @@ class NotificationService {
     );
   }
 
-  static tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
+  static tz.TZDateTime nextInstanceOfTime(TimeOfDay time) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
       tz.local,
@@ -144,7 +153,7 @@ class NotificationService {
       time.minute,
     );
 
-    // If it's already past 7 PM today, schedule for tomorrow
+    // If it's already past scheduled time today, schedule for tomorrow
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }

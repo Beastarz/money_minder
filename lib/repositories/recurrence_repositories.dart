@@ -109,4 +109,9 @@ class RecurrenceRepositories {
     Database db = await _dbService.database;
     await db.delete('recurrence', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> deleteAllRecurrences() async {
+    Database db = await _dbService.database;
+    await db.delete('recurrence');
+  }
 }
