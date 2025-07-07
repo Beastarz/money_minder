@@ -133,22 +133,6 @@ class DatabaseService {
         ''');
 
     await db.execute('''
-          CREATE TABLE user_contacts(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            nickname Text NOT NULL,
-            is_blocked INTEGER DEFAULT 0 -- Using INTEGER for boolean (0 for false, 1 for true)
-          )
-        ''');
-
-    await db.execute('''
-          CREATE TABLE blocked_users(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL
-          )
-        ''');
-
-    await db.execute('''
           CREATE TABLE passcode(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             salt TEXT NOT NULL,

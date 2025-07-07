@@ -1,12 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/models/user_contact.dart';
+import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/edit_contact_page.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/models/online/user.dart' as model;
 
 import '../../../components/search_users/username_search_page.dart';
-import '../../../repositories/user_contacts_repositories.dart';
+import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -28,7 +30,7 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   Future<void> _fetchContacts() async {
-    final res = await UserContactsRepositories.instance.getUserContact();
+    final res = await UserContactsRepositories.instance.getUserContact(FirebaseAuth.instance.currentUser!.uid);
     setState(() {
       _contacts = res;
       _filteredContacts = _contacts;
@@ -59,12 +61,11 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  void _onUsernameSelection(String username) {
-    showModalBottomSheet(
+  void _onUsernameSelection(model.User username) {
+    showDialog(
         context: context,
-        isScrollControlled: true,
         builder: (context) {
-          return AddContactPage(username: username, onContactsReload: _fetchContacts);
+          return AddContactPage(user: username, onContactsReload: _fetchContacts);
         }
     );
   }
@@ -146,7 +147,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           ),
                           IconButton(
                               onPressed: () {
-                                showModalBottomSheet(
+                                showDialog(
                                     context: context,
                                     builder: (context) {
                                       return EditContactPage(contact: contact, onContactsReload: _fetchContacts);

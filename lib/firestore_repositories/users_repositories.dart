@@ -1,4 +1,8 @@
  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:money_minder/firestore_repositories/user_contacts_repositories.dart';
+import 'package:money_minder/models/online/user.dart';
+
+import 'blocked_users_repositories.dart';
 
 class UsersRepositories {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -6,10 +10,11 @@ class UsersRepositories {
   static final UsersRepositories instance = UsersRepositories._();
   UsersRepositories._();
 
-  Future<void> createUsername(String uid, String username) async {
+  Future<void> createUsername(String uid, String phoneNumber, String username) async {
     try {
       _db.collection('users').doc(uid).set({
         'username': username,
+        'phoneNumber': phoneNumber,
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -17,11 +22,11 @@ class UsersRepositories {
     }
   }
 
-  Future<String?> getUsername(String uid) async {
+  Future<User?> getMyUserData(String uid) async {
     try {
-      final DocumentSnapshot snapshot = await _db.collection('users').doc(uid).get();
-      if (snapshot.exists) {
-        return snapshot.get('username');
+      final DocumentSnapshot doc = await _db.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return User.fromMap(doc.data() as Map<String, dynamic>, doc.id);
       } else {
         return null;
       }
@@ -30,7 +35,27 @@ class UsersRepositories {
     }
   }
 
-  Future<List<String>> getUsernameByPrefix(String prefix) async {
+  Future<void> updateMyPhoneNumber(String uid, String phoneNumber) async {
+    try {
+      _db.collection('users').doc(uid).update({
+        'phoneNumber': phoneNumber,
+      });
+      } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteMyAccount(String uid) async {
+    try {
+      await UserContactsRepositories.instance.deleteAllContact(uid);
+      await BlockedUsersRepositories.instance.deleteAllBlockedUsers(uid);
+      await _db.collection('users').doc(uid).delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<User>> getUsernameByPrefix(String prefix) async {
     if (prefix.isEmpty) {
       return [];
     }
@@ -43,7 +68,7 @@ class UsersRepositories {
       if (snapshot.docs.isEmpty) {
         return [];
       }
-      return snapshot.docs.map((doc) => doc.get('username') as String).toList();
+      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>, doc.id),).toList();
     } catch (e) {
       rethrow;
     }
@@ -58,4 +83,6 @@ class UsersRepositories {
       rethrow;
     }
   }
+
+
 }

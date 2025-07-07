@@ -16,7 +16,6 @@ import 'package:money_minder/models/date_filter.dart' as _i6;
 import 'package:money_minder/models/fast_note.dart' as _i21;
 import 'package:money_minder/models/recurrence.dart' as _i12;
 import 'package:money_minder/models/transaction.dart' as _i10;
-import 'package:money_minder/models/user_contact.dart' as _i23;
 import 'package:money_minder/repositories/accounts_repositories.dart' as _i13;
 import 'package:money_minder/repositories/budget_repositories.dart' as _i14;
 import 'package:money_minder/repositories/categories_repositories.dart' as _i16;
@@ -27,8 +26,6 @@ import 'package:money_minder/repositories/fast_note_repositories.dart' as _i20;
 import 'package:money_minder/repositories/recurrence_repositories.dart' as _i11;
 import 'package:money_minder/repositories/transactions_repositories.dart'
     as _i9;
-import 'package:money_minder/repositories/user_contacts_repositories.dart'
-    as _i22;
 import 'package:sqflite/sqflite.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -1082,53 +1079,6 @@ class MockFastNoteRepositories extends _i1.Mock
   _i3.Future<void> deleteFastNote(int? id, int? categoryId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteFastNote, [id, categoryId]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
-}
-
-/// A class which mocks [UserContactsRepositories].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockUserContactsRepositories extends _i1.Mock
-    implements _i22.UserContactsRepositories {
-  MockUserContactsRepositories() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.Future<List<_i23.UserContact>> getUserContact() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUserContact, []),
-            returnValue: _i3.Future<List<_i23.UserContact>>.value(
-              <_i23.UserContact>[],
-            ),
-          )
-          as _i3.Future<List<_i23.UserContact>>);
-
-  @override
-  _i3.Future<void> addUserContact(Map<String, dynamic>? map) =>
-      (super.noSuchMethod(
-            Invocation.method(#addUserContact, [map]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> updateUserContact(_i23.UserContact? userContact) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateUserContact, [userContact]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> deleteUserContact(int? id) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteUserContact, [id]),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
