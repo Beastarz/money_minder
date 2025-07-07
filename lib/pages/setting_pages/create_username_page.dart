@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
-import 'package:money_minder/main.dart';
+import 'package:money_minder/utils/restart_widget.dart';
 
 class CreateUsernamePage extends StatefulWidget {
   const CreateUsernamePage({super.key, required this.user});
@@ -34,10 +34,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
       String username = _usernameController.text;
       await UsersRepositories.instance.createUsername(widget.user.uid, _phoneNumber.phoneNumber!, username);
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MoneyMinder()),
-        );
+        RestartWidget.restartApp(context, 'Username creation successful. Restarting app');
       }
     }
   }

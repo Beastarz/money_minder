@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user.dart';
+import 'package:money_minder/utils/app_message.dart';
+import 'package:money_minder/utils/loading_screen.dart';
 
 import '../../auth/auth_service.dart';
 import '../../style/app_color.dart';
@@ -16,7 +18,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool isLoading = false;
+  bool _isLoading = false;
+  late User myData;
+
+  @override
+  void initState() {
+    super.initState();
+    myData = widget.userData;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +34,11 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('Profile'),
         centerTitle: true,
       ),
-      body: Column(
+      body: _isLoading ? LoadingScreen() : Column(
         children: [
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Name'),
+            title: Text('Username'),
             subtitle: Text(widget.userData.username),
           ),
           ListTile(
@@ -56,9 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisSize: MainAxisSize.min,
                           spacing: 16,
                           children: [
-                            Text('Edit Phone Number', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                            Text('Edit Phone Number', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                             Text('Please enter your new phone number', style: TextStyle(fontSize: 14),),
-                            Text('Old Number: ${widget.userData.phoneNumber}'),
+                            Text('Old Number: ${widget.userData.phoneNumber}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                             Flexible(
                               child: Form(
                                 key: phoneNumberFormKey,
@@ -89,7 +98,28 @@ class _ProfilePageState extends State<ProfilePage> {
                             Center(
                               child: TextButton(
                                 onPressed: () async {
-
+                                  if (phoneNumberFormKey.currentState!.validate()) {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    try {
+                                      await UsersRepositories.instance.updateMyPhoneNumber(
+                                          widget.userData.uid, phoneNumber.phoneNumber!);
+                                      setState(() {
+                                        myData.updatePhoneNumber(phoneNumber.phoneNumber!);
+                                      });
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        AppMessage.showMessage(context,
+                                            'Phone number update failed');
+                                      }
+                                    } finally {
+                                      setState(() {
+                                        _isLoading = false;
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                  }
                                 },
                                 style: ButtonStyle(
                                   backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
@@ -103,8 +133,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                       ),
-                                              )
-                    );
+                    )
+                  );
                   }
                 );
               },
@@ -117,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
             minWidth: MediaQuery.of(context).size.width * 0.9,
             onPressed: () {
               setState(() {
-                isLoading = true;
+                _isLoading = true;
               });
               showDialog(
                   context: context,
@@ -133,9 +163,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Text("Cancel"),
                         ),
                         TextButton(
-                          onPressed: () {
-                            AuthService().signOut();
-                            Navigator.of(context).pop();
+                          onPressed: () async {
+                            await AuthService().signOut();
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            }
                           },
                           child: Text("Sign Out"),
                         ),
@@ -144,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
               );
               setState(() {
-                isLoading = false;
+                _isLoading = false;
               });
             },
             child: Text('Sign Out'),
@@ -168,11 +201,27 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         TextButton(
                           onPressed: () async {
+
                             setState(() {
-                              isLoading = true;
+                              _isLoading = true;
                             });
-                            await AuthService().deleteAccount();
-                            await UsersRepositories.instance.deleteMyAccount(widget.userData.uid);
+                            try {
+                              await AuthService().deleteAccount();
+                              await UsersRepositories.instance.deleteMyAccount(
+                                  widget.userData.uid);
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                AppMessage.showMessage(context,
+                                    'Account deletion failed');
+                              }
+                            }
+                            setState(() {
+                              _isLoading = false;
+                            });
                           },
                           child: Text("Delete Account"),
                         ),
@@ -181,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
               );
               setState(() {
-                isLoading = false;
+                _isLoading = false;
               });
             },
             child: Text('Delete Account'),

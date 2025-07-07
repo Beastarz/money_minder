@@ -81,7 +81,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
       onTap: () {
         if (widget.userData != null) {
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ProfilePage(userData: widget.userData!)));
+              builder: (context) => ProfilePage(userData: widget.userData!,)));
         }
       },
     );

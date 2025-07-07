@@ -84,16 +84,23 @@ class _AddContactPageState extends State<AddContactPage> {
                             });
                             return;
                           }
-                          await UserContactsRepositories.instance.addUserContact(
-                              FirebaseAuth.instance.currentUser!.uid,
-                              UserContact.insertAsMap(
-                                username: widget.user.username,
-                                phoneNumber: widget.user.phoneNumber,
-                                nickname: _nickNameController.text
-                          ));
-                          widget.onContactsReload();
-                          if (context.mounted) {
-                            Navigator.pop(context);
+                          try {
+                            await UserContactsRepositories.instance
+                                .addUserContact(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                UserContact.insertAsMap(
+                                    username: widget.user.username,
+                                    phoneNumber: widget.user.phoneNumber,
+                                    nickname: _nickNameController.text
+                                ));
+                            widget.onContactsReload();
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          } catch (e) {
+                            setState(() {
+                              _message = 'Failed to add contact';
+                            });
                           }
                         },
                         style: ButtonStyle(

@@ -47,4 +47,16 @@ class BlockedUsersRepositories {
       rethrow;
     }
   }
+
+  Future<void> deleteAllBlockedUsers(String uid) async {
+    try {
+      final snapshot = await _db.collection('users').doc(uid).collection(
+          'blockList').get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -68,4 +68,16 @@ class UserContactsRepositories {
       rethrow;
     }
   }
+
+  Future<void> deleteAllContact(String uid) async {
+    try {
+      final snapshot = await _db.collection('users').doc(uid).collection(
+          'contacts').get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

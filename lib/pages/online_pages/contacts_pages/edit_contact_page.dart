@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/utils/app_message.dart';
 
 import '../../../components/search_users/username_search_page.dart';
 import '../../../firestore_repositories/user_contacts_repositories.dart';
@@ -54,12 +55,20 @@ class _EditContactPageState extends State<EditContactPage> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      await UserContactsRepositories.instance.blockContact(myUid, widget.contact.username);
-                      await BlockedUsersRepositories.instance.addBlockedUser(myUid, _username);
-                      widget.onContactsReload();
                       if (context.mounted) {
                         Navigator.pop(context);
                         Navigator.pop(context);
+                      }
+                      try {
+                        await UserContactsRepositories.instance.blockContact(
+                            myUid, widget.contact.username);
+                        await BlockedUsersRepositories.instance.addBlockedUser(
+                            myUid, _username);
+                        widget.onContactsReload();
+                      } catch(e) {
+                        if (context.mounted) {
+                          AppMessage.showMessage(context, 'Block Failed');
+                        }
                       }
                     },
                     child: Text('Block', style: TextStyle(color: Colors.red),),
@@ -93,12 +102,20 @@ class _EditContactPageState extends State<EditContactPage> {
                   ),
                   TextButton(
                     onPressed: () async {
-                      await UserContactsRepositories.instance.unblockContact(myUid, widget.contact.username);
-                      await BlockedUsersRepositories.instance.deleteBlockedUser(myUid, _username);
-                      widget.onContactsReload();
                       if (context.mounted) {
                         Navigator.pop(context);
                         Navigator.pop(context);
+                      }
+                      try {
+                        await UserContactsRepositories.instance.unblockContact(
+                            myUid, widget.contact.username);
+                        await BlockedUsersRepositories.instance
+                            .deleteBlockedUser(myUid, _username);
+                        widget.onContactsReload();
+                      } catch(e) {
+                        if (context.mounted) {
+                          AppMessage.showMessage(context, 'Unblock Failed');
+                        }
                       }
                     },
                     child: Text('Unblock', style: TextStyle(color: Colors.red),),
@@ -213,15 +230,21 @@ class _EditContactPageState extends State<EditContactPage> {
                           });
                           return;
                         }
-                        await UserContactsRepositories.instance.updateUserContact(
-                            myUid,
-                            widget.contact.copyWith(
-                              username: _username,
-                              nickname: _nickNameController.text,
-                              phoneNumber: _phoneNumber,
-                            ));
-                         widget.onContactsReload();
-
+                        try {
+                          await UserContactsRepositories.instance
+                              .updateUserContact(
+                              myUid,
+                              widget.contact.copyWith(
+                                username: _username,
+                                nickname: _nickNameController.text,
+                                phoneNumber: _phoneNumber,
+                              ));
+                          widget.onContactsReload();
+                        } catch (e) {
+                          if (context.mounted) {
+                            AppMessage.showMessage(context, 'Update Failed');
+                          }
+                        }
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
@@ -254,11 +277,21 @@ class _EditContactPageState extends State<EditContactPage> {
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  await UserContactsRepositories.instance.deleteUserContact(myUid, widget.contact.id);
-                                  widget.onContactsReload();
-                                  if (context.mounted) {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                  try {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    }
+                                    await UserContactsRepositories.instance
+                                        .deleteUserContact(
+                                        myUid, widget.contact.id);
+                                    widget.onContactsReload();
+
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      AppMessage.showMessage(
+                                          context, 'Deletion Failed');
+                                    }
                                   }
                                 },
                                 child: Text('Delete', style: TextStyle(color: Colors.red),),
