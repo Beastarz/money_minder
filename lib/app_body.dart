@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/accounts/main_accounts_page.dart';
@@ -25,16 +24,17 @@ import 'models/date_filter.dart';
 import 'models/recurrence.dart';
 import 'models/transaction.dart';
 import 'models/transaction_filter.dart';
+import 'models/online/user.dart' as app_user;
 
 class AppBody extends StatefulWidget {
   const AppBody({
     super.key,
     required this.user,
-    this.username,
+    this.userData,
   });
 
   final User? user;
-  final String? username;
+  final app_user.User? userData;
 
   @override
   State<AppBody> createState() => _AppBodyState();
@@ -317,8 +317,10 @@ class _AppBodyState extends State<AppBody> {
       top: false,
       child: Scaffold(
           appBar: MMAppBar(
-            username: widget.username == null ? '' : widget.username!,
+            userData: widget.userData,
             selectedIndex: _tabIndex,
+            accounts: _accounts,
+            categories: _categories,
             filteredAccounts: _filteredAccounts,
             onReload: () async {
               await _fetchAccounts();
@@ -331,7 +333,7 @@ class _AppBodyState extends State<AppBody> {
           ),
           drawer: AppbarDrawer(
             user: widget.user,
-            username: widget.username,
+            userData: widget.userData,
             onCurrencyReload: _fetchMainCurrency,
           ),
           body: pages[_tabIndex],

@@ -117,15 +117,15 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
             if (asyncSnapshot.hasData) {
               User user = asyncSnapshot.data!;
               return FutureBuilder(
-                  future: UsersRepositories.instance.getUsername(user.uid),
+                  future: UsersRepositories.instance.getMyUserData(user.uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return LoadingScreen();
                     }
-                    else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    else if (snapshot.hasData) {
                       return AppBody(
                         user: user,
-                        username: snapshot.data,
+                        userData: snapshot.data,
                       );
                     }
                     else {

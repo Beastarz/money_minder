@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:money_minder/repositories/blocked_users_repositories.dart';
+import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/models/online/user.dart' as model;
 
 import '../../../components/search_users/username_search_page.dart';
-import '../../../repositories/user_contacts_repositories.dart';
+import '../../../firestore_repositories/user_contacts_repositories.dart';
 
 class BlockedUsersPage extends StatefulWidget {
   const BlockedUsersPage({super.key, this.onContactsReload});
@@ -18,6 +22,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
   List<String> _blockedUsers = [];
   List<String> _filteredUsers = [];
   String _selectedUsername = '';
+  String myUid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -28,7 +33,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
   }
 
   Future<void> _fetchBlockedUsers() async {
-    final res = await BlockedUsersRepositories.instance.getBlockedUsernames();
+    final res = await BlockedUsersRepositories.instance.getBlockedUsernames(myUid);
     setState(() {
       _blockedUsers = res;
       _filteredUsers = res;
@@ -47,9 +52,9 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
     });
   }
 
-  void _onSelectUsername(String username) {
+  void _onSelectUsername(model.User user) {
     setState(() {
-      _selectedUsername = username;
+      _selectedUsername = user.username;
     });
   }
 
@@ -117,14 +122,16 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                       child: Text('Cancel'),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        BlockedUsersRepositories.instance.addBlockedUser(_selectedUsername);
-                                        UserContactsRepositories.instance.blockContact(_selectedUsername);
+                                      onPressed: () async {
+                                        await BlockedUsersRepositories.instance.addBlockedUser(myUid, _selectedUsername);
+                                        await UserContactsRepositories.instance.blockContact(myUid, _selectedUsername);
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
                                         _fetchBlockedUsers();
                                         if (widget.onContactsReload != null) {
                                           widget.onContactsReload!();
                                         }
-                                        Navigator.pop(context);
                                         setState(() {
                                           _selectedUsername = '';
                                         });
@@ -167,10 +174,12 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                       child: Text('Cancel'),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        BlockedUsersRepositories.instance.deleteBlockedUser(username);
-                                        UserContactsRepositories.instance.unblockContact(username);
-                                        Navigator.pop(context);
+                                      onPressed: () async {
+                                        await BlockedUsersRepositories.instance.deleteBlockedUser(myUid, username);
+                                        await UserContactsRepositories.instance.unblockContact(myUid, username);
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
                                         _fetchBlockedUsers();
                                         if (widget.onContactsReload != null) {
                                           widget.onContactsReload!();

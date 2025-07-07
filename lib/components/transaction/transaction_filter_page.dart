@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/models/transaction_filter.dart';
-import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../models/account.dart';
 import '../../models/category.dart';
 
 class TransactionFilterPage extends StatefulWidget {
-  const TransactionFilterPage({super.key, required this.filter, required this.onTransactionFilterChange});
+  const TransactionFilterPage({super.key, required this.filter, required this.onTransactionFilterChange, required this.accounts, required this.categories});
 
   final void Function(List<int>, List<int>, List<TransactionType>, String) onTransactionFilterChange;
   final TransactionFilter filter;
+  final List<Account> accounts;
+  final List<List<Category>> categories;
 
 
   @override
@@ -32,30 +32,13 @@ class _TransactionFilterPageState extends State<TransactionFilterPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCategories();
-    _fetchAccounts();
+    accounts = widget.accounts;
+    incomes = widget.categories[1];
+    expenses = widget.categories[0];
     selectedAccounts = widget.filter.accountIds;
     selectedCategories = widget.filter.categoryIds;
     selectedTransactionTypes = widget.filter.transactionTypes;
     notePrefixController.text = widget.filter.notePrefix;
-  }
-
-  void _fetchAccounts() async {
-    List<Account> res = await AccountsRepositories.instance.getAllAccounts();
-    setState(() {
-      accounts = res;
-    });
-  }
-
-  void _fetchCategories() async {
-    List<Category> exp = await CategoriesRepositories.instance
-        .getCategoriesByType(true);
-    List<Category> inc = await CategoriesRepositories.instance
-        .getCategoriesByType(false);
-    setState(() {
-      incomes = inc;
-      expenses = exp;
-    });
   }
 
     @override

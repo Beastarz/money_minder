@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
+import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
 
-import '../../repositories/blocked_users_repositories.dart';
+import '../../firestore_repositories/blocked_users_repositories.dart';
 
 class UsernameSearchPage extends StatefulWidget {
   const UsernameSearchPage({super.key, this.onUsernameSelection, this.enableBlockedUserSearch = false});
 
-  final void Function(String)? onUsernameSelection;
+  final void Function(model.User)? onUsernameSelection;
   final bool enableBlockedUserSearch;
 
   @override
@@ -17,7 +18,7 @@ class UsernameSearchPage extends StatefulWidget {
 
 class _UsernameSearchPageState extends State<UsernameSearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> _usernames = [];
+  List<model.User> _users = [];
   List<String> _blockedUsers = [];
   String _myUsername = '';
   String message = 'Search for users!';
@@ -39,10 +40,10 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     if (user == null) {
       return;
     }
-    String? res = await UsersRepositories.instance.getUsername(user.uid);
+    model.User? res = await UsersRepositories.instance.getMyUserData(user.uid);
     if (res != null) {
       setState(() {
-        _myUsername = res;
+        _myUsername = res.username;
       });
     }
     setState(() {
@@ -53,7 +54,7 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
   void _fetchUsernames(String prefix) async {
     if (prefix.isEmpty) {
       setState(() {
-        _usernames = [];
+        _users = [];
         message = 'Search for users!';
       });
       return;
@@ -66,13 +67,13 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     });
     final res = await UsersRepositories.instance.getUsernameByPrefix(prefix);
     setState(() {
-      _usernames = res;
+      _users = res;
       isLoading = false;
     });
   }
 
   void _fetchBlockedUsers() async {
-    final res = await BlockedUsersRepositories.instance.getBlockedUsernames();
+    final res = await BlockedUsersRepositories.instance.getBlockedUsernames(FirebaseAuth.instance.currentUser!.uid);
     setState(() {
       _blockedUsers = res;
     });
@@ -80,9 +81,9 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    _usernames = _usernames.where((name) => name != _myUsername && !_blockedUsers.contains(name)).toList();
-    _usernames.sort();
-    if (_usernames.isEmpty) {
+    _users = _users.where((user) => user.username != _myUsername && !_blockedUsers.contains(user.username)).toList();
+    _users.sort();
+    if (_users.isEmpty) {
       message = 'No users found';
     } else {
       message = '';
@@ -122,15 +123,16 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
                       color: AppColor.secondary,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: _usernames.isEmpty ? ListTile(title: Text(message),) :
+                    child: _users.isEmpty ? ListTile(title: Text(message),) :
                     Column(
-                      children: _usernames.map((username) =>
+                      children: _users.map((user) =>
                           ListTile(
-                            title: Text('@$username'),
+                            title: Text('@${user.username}'),
+                            subtitle: Text(user.phoneNumber),
                             onTap: () {
                               if (widget.onUsernameSelection != null) {
                                 Navigator.pop(context);
-                                widget.onUsernameSelection!(username);
+                                widget.onUsernameSelection!(user);
                                 return;
                               }
                             },
