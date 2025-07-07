@@ -15,7 +15,7 @@ class CurrencySettingDialog extends StatefulWidget {
 
 class _CurrencySettingDialogState extends State<CurrencySettingDialog> {
   List<Currency> currencies = [];
-  late Currency _selectedCurrency;
+  Currency _selectedCurrency = Currency.of('sgd');
 
   @override
   void initState() {
