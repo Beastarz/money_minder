@@ -22,8 +22,7 @@ class _AddContactPageState extends State<AddContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
+    return Dialog(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),

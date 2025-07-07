@@ -62,9 +62,8 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   void _onUsernameSelection(model.User username) {
-    showModalBottomSheet(
+    showDialog(
         context: context,
-        isScrollControlled: true,
         builder: (context) {
           return AddContactPage(user: username, onContactsReload: _fetchContacts);
         }
@@ -148,7 +147,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           ),
                           IconButton(
                               onPressed: () {
-                                showModalBottomSheet(
+                                showDialog(
                                     context: context,
                                     builder: (context) {
                                       return EditContactPage(contact: contact, onContactsReload: _fetchContacts);

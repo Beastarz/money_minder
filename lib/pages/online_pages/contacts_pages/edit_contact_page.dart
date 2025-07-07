@@ -130,8 +130,7 @@ class _EditContactPageState extends State<EditContactPage> {
         )
     );
 
-    return SafeArea(
-      top: false,
+    return Dialog(
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
