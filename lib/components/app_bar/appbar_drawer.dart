@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/auth/auth_service.dart';
 import 'package:money_minder/components/lock_screen/passcode_tile.dart';
-import 'package:money_minder/pages/setting_pages/currency_setting_page.dart';
 import 'package:money_minder/pages/setting_pages/profile_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
+import '../../pages/setting_pages/currency_setting_dialog.dart';
 import '../manage_data/manage_data_tile.dart';
 import '../notification/notification_tile.dart';
 import 'package:money_minder/models/online/user.dart' as app_user;
@@ -121,7 +121,16 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
               leading: Icon(Icons.monetization_on_outlined),
               title: Text('Currency'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencySettingPage(onReload: widget.onCurrencyReload,)));
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                        child: CurrencySettingDialog(
+                            onReload: widget.onCurrencyReload
+                        )
+                    );
+                  }
+                );
               },
             ),
 
