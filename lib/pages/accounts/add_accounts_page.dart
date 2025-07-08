@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_minder/components/account/account_customization_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
@@ -57,6 +58,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
     if (_nameController.text.isEmpty) {
       AppMessage.showMessage(context, 'Please fill in a name');
       return;
+    }
+    if (_accountBalanceController.text.isEmpty) {
+      _accountBalanceController.text = '0';
     }
     if (double.parse(_accountBalanceController.text) > 99999999999.99) {
       AppMessage.showMessage(context, 'Amount is too large!');
@@ -296,6 +300,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
                     child: TextField(
                       controller: _accountBalanceController,
                       textAlign: TextAlign.end,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                      ],
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
                       ),

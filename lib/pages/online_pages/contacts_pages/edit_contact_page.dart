@@ -283,7 +283,7 @@ class _EditContactPageState extends State<EditContactPage> {
                                     }
                                     await UserContactsRepositories.instance
                                         .deleteUserContact(
-                                        myUid, widget.contact.id);
+                                        myUid, widget.contact.uid);
                                     widget.onContactsReload();
 
                                   } catch (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dart';
+import 'package:money_minder/pages/online_pages/send_money_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 class OnlineHomePage extends StatelessWidget {
@@ -84,7 +85,7 @@ class OnlineHomePage extends StatelessWidget {
                   MaterialButton(
                     color: AppColor.secondary,
                     onPressed: () {
-                      // send money
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SendMoneyPage()));
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

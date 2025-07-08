@@ -3,10 +3,10 @@ class User {
   final String username;
   String phoneNumber;
 
-  User._({required this.uid, required this.username, required this.phoneNumber});
+  User({required this.uid, required this.username, required this.phoneNumber});
 
   factory User.fromMap(Map<String, dynamic> map, String uid) {
-    return User._(uid: uid, username: map['username'], phoneNumber: map['phoneNumber'],);
+    return User(uid: uid, username: map['username'], phoneNumber: map['phoneNumber'],);
   }
 
   Map<String, dynamic> toMap() {

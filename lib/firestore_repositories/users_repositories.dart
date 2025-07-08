@@ -74,6 +74,10 @@ class UsersRepositories {
     }
   }
 
+  DocumentReference getUserReference(String uid) {
+    return _db.collection('users').doc(uid);
+  }
+
   Future<bool> checkUsernameExist(String username) async {
     try {
       final snapshot = await _db.collection('users')

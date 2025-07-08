@@ -31,7 +31,7 @@ class UserContactsRepositories {
   Future<void> updateUserContact(String uid, UserContact userContact) async {
     try {
       final snapshot = _db.collection('users').doc(uid).collection(
-          'contacts').doc(userContact.id);
+          'contacts').doc(userContact.uid);
       await snapshot.set(userContact.toMap());
     } catch (e) {
       rethrow;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 
@@ -61,6 +62,9 @@ class _EditAccountPageState extends State<EditAccountPage> {
     if (_nameController.text.isEmpty) {
       AppMessage.showMessage(context, 'Please fill in a name');
       return;
+    }
+    if (_accountBalanceController.text.isEmpty) {
+      _accountBalanceController.text = '0';
     }
     if (double.parse(_accountBalanceController.text) > 99999999999.99) {
       AppMessage.showMessage(context, 'Amount is too large!');
@@ -297,6 +301,9 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
                       ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                      ],
                       decoration: InputDecoration(
                         prefixText: account.currency.toString(),
                         border: InputBorder.none,
