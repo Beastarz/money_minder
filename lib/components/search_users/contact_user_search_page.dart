@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -119,8 +120,42 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
                 Card(
                   color: AppColor.secondary,
                   child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('Search user ${_searchController.text.toLowerCase()}'),
+                    padding: EdgeInsets.all(12),
+                    child: ListTile(
+                      title: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Search user '),
+                          Flexible(child: Text(_searchController.text.toLowerCase(), style: TextStyle(fontWeight: FontWeight.w600),))
+                        ],
+                      ),
+                      onTap: () async {
+                        model.User? result = await UsersRepositories.instance.getUserByUsername(_searchController.text.substring(1));
+                        if (context.mounted) {
+                          if (result == null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('No user found!'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('OK'),
+                                    )
+                                  ],
+                                );
+                              }
+                            );
+                          } else {
+                            Navigator.pop(context);
+                            widget.onUserSelection(result);
+                          }
+                        }
+                      },
+                    ),
                   ),
                 )
               ] + _filteredContacts.map((contact) {

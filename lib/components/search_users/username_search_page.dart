@@ -65,7 +65,7 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     setState(() {
       isLoading = true;
     });
-    final res = await UsersRepositories.instance.getUsernameByPrefix(prefix);
+    final res = await UsersRepositories.instance.getUserByUsernamePrefix(prefix);
     setState(() {
       _users = res;
       isLoading = false;

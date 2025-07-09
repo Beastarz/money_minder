@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dart';
-import 'package:money_minder/pages/online_pages/send_money_page.dart';
+import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.dart';
+import 'package:money_minder/pages/online_pages/request_pages/manage_requests_page.dart';
+import 'package:money_minder/pages/online_pages/request_pages/send_money_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 class OnlineHomePage extends StatelessWidget {
@@ -57,7 +59,7 @@ class OnlineHomePage extends StatelessWidget {
               ),
               MaterialButton(
                   onPressed: () {
-                    // manage request page
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ManageRequestsPage()));
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -106,7 +108,7 @@ class OnlineHomePage extends StatelessWidget {
                   MaterialButton(
                     color: AppColor.secondary,
                     onPressed: () {
-                      // ask money
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AskMoneyPage()));
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

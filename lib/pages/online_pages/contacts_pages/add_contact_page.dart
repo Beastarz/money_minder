@@ -87,6 +87,7 @@ class _AddContactPageState extends State<AddContactPage> {
                             await UserContactsRepositories.instance
                                 .addUserContact(
                                 FirebaseAuth.instance.currentUser!.uid,
+                                widget.user.uid,
                                 UserContact.insertAsMap(
                                     username: widget.user.username,
                                     phoneNumber: widget.user.phoneNumber,

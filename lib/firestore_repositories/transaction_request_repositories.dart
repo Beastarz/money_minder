@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
+import 'package:money_minder/models/online/user.dart';
 
 class TransactionRequestRepositories {
   TransactionRequestRepositories._();
@@ -18,8 +19,22 @@ class TransactionRequestRepositories {
       if (res.docs.isEmpty) {
         return [];
       }
-      return res.docs.map((doc) =>
-          TransactionRequest.fromMap(doc.data(), doc.id)).toList();
+      List<TransactionRequest> requests = [];
+      for (final doc in res.docs) {
+        final receiverRef = doc.data()['receiver'] as DocumentReference;
+        final senderRef = doc.data()['sender'] as DocumentReference;
+        final receiver = await receiverRef.get();
+        final sender = await senderRef.get();
+        requests.add(
+            TransactionRequest.fromMap(
+                doc.data(),
+                doc.id,
+                User.fromMap(sender.data() as Map<String, dynamic>, sender.id),
+                User.fromMap(receiver.data() as Map<String, dynamic>, receiver.id)
+            )
+        );
+      }
+      return requests;
     } catch (e) {
       rethrow;
     }
@@ -34,8 +49,23 @@ class TransactionRequestRepositories {
       if (res.docs.isEmpty) {
         return [];
       }
-      return res.docs.map((doc) =>
-          TransactionRequest.fromMap(doc.data(), doc.id)).toList();
+
+      List<TransactionRequest> requests = [];
+      for (final doc in res.docs) {
+        final receiverRef = doc.data()['receiver'] as DocumentReference;
+        final senderRef = doc.data()['sender'] as DocumentReference;
+        final receiver = await receiverRef.get();
+        final sender = await senderRef.get();
+        requests.add(
+            TransactionRequest.fromMap(
+                doc.data(),
+                doc.id,
+                User.fromMap(sender.data() as Map<String, dynamic>, sender.id),
+                User.fromMap(receiver.data() as Map<String, dynamic>, receiver.id)
+            )
+        );
+      }
+      return requests;
     } catch (e) {
       rethrow;
     }

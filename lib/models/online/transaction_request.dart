@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/models/currency.dart';
+import 'package:money_minder/models/online/user.dart';
 
 enum TransactionRequestType {
   send,
@@ -14,14 +15,14 @@ enum RequestStatus {
 
 class TransactionRequest {
   final String id;
-  final DocumentReference sender;
-  final DocumentReference receiver;
+  final User sender;
+  final User receiver;
   final TransactionRequestType requestType;
   final Currency currency;
   final double amount;
-  final RequestStatus status;
+  RequestStatus status;
   final String message;
-  final String date;
+  final Timestamp date;
 
   TransactionRequest({
     required this.id,
@@ -35,11 +36,11 @@ class TransactionRequest {
     required this.date
   });
 
-  factory TransactionRequest.fromMap(Map<String, dynamic> map, String id) {
+  factory TransactionRequest.fromMap(Map<String, dynamic> map, String id, User sender, User receiver) {
     return TransactionRequest(
       id: id,
-      sender: map['senderUsername'],
-      receiver: map['receiverUsername'],
+      sender: sender,
+      receiver: receiver,
       requestType: map['requestType'] == 'send'
           ? TransactionRequestType.send
           : TransactionRequestType.ask,
@@ -63,8 +64,8 @@ class TransactionRequest {
     required TransactionRequestType requestType
   }) {
     return {
-      'senderUsername': sender,
-      'receiverUsername': receiver,
+      'sender': sender,
+      'receiver': receiver,
       'requestType': requestType.name,
       'amount': amount,
       'currency': currency.currency().name,

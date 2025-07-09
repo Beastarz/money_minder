@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_minder/components/search_users/contact_user_search_page.dart';
 import 'package:money_minder/firestore_repositories/transaction_request_repositories.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
@@ -7,9 +8,9 @@ import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
 
-import '../../models/currency.dart';
-import '../../repositories/currency_repositories.dart';
-import '../../utils/app_message.dart';
+import '../../../models/currency.dart';
+import '../../../repositories/currency_repositories.dart';
+import '../../../utils/app_message.dart';
 
 class SendMoneyPage extends StatefulWidget {
   const SendMoneyPage({super.key});
@@ -19,44 +20,65 @@ class SendMoneyPage extends StatefulWidget {
 }
 
 class _SendMoneyPageState extends State<SendMoneyPage> {
-  model.User? targetUser;
-  List<Currency> currencies = [];
+  model.User? _targetUser;
+  List<Currency> _currencies = [];
   Currency _currency = Currency.of('sgd');
   final TextEditingController _amountController = TextEditingController(text: '0');
   final TextEditingController _messageController = TextEditingController();
 
+  bool _isLoading = false;
 
   Future<void> _fetchCurrencies() async {
     List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
     setState(() {
-      currencies = res;
+      _currencies = res;
     });
   }
 
-  void _handleSubmit() {
-    if (targetUser == null) {
+  void _handleSubmit() async {
+    if (_targetUser == null) {
       AppMessage.showMessage(context, 'Please select a user.');
       return;
     }
     if (_amountController.text.isEmpty) {
       AppMessage.showMessage(context, 'Please fill in an amount');
+      return;
     }
     double amount = double.parse(_amountController.text);
+    if (amount <= 0) {
+      AppMessage.showMessage(context, 'Amount must be greater than 0');
+      return;
+    }
     if (amount > 99999999999.99) {
       AppMessage.showMessage(context, 'Amount is too large!');
       return;
     }
-    final receiverRef = UsersRepositories.instance.getUserReference(targetUser!.uid);
+    setState(() {
+      _isLoading = true;
+    });
+
+    final receiverRef = UsersRepositories.instance.getUserReference(_targetUser!.uid);
     final senderRef = UsersRepositories.instance.getUserReference(FirebaseAuth.instance.currentUser!.uid);
 
     Map<String, dynamic> map = TransactionRequest.submitAsMap(sender: senderRef, receiver: receiverRef, amount: amount, currency: _currency, message: _messageController.text, requestType: TransactionRequestType.send);
-    () async {
+
+    try {
       await TransactionRequestRepositories.instance.submitTransactionRequest(map);
-    }();
-    Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        AppMessage.showMessage(context, 'error');
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
-  void onUsernameSelection(model.User user) => setState(() => targetUser = user);
+  void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
   @override
   void initState() {
@@ -91,6 +113,9 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                           controller: _amountController,
                           textAlign: TextAlign.end,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                          ],
                           keyboardType: TextInputType.numberWithOptions(
                             decimal: true,
                           ),
@@ -105,7 +130,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
               ),
               ListTile(
                 leading: Icon(Icons.person_outline),
-                title: Text('To: ${targetUser == null ? 'Select a user' : '@${targetUser!.username}'}', style: TextStyle(fontSize: 18),),
+                title: Text('To: ${_targetUser == null ? 'Select a user' : '@${_targetUser!.username}'}', style: TextStyle(fontSize: 18),),
                 trailing: IconButton(
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ContactUserSearchPage(onUserSelection: onUsernameSelection)));
@@ -124,7 +149,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                     builder: (BuildContext context) {
                       return SimpleDialog(
                         title: Text('Choose a currency'),
-                        children: currencies.map((currency) => ListTile(
+                        children: _currencies.map((currency) => ListTile(
                             title: Text(currency.fullName),
                             onTap: () {
                               setState(() {
@@ -144,9 +169,12 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                   decoration: InputDecoration(
                     label: Text('Message'),
                   ),
+                  minLines: 1,
+                  maxLines: 5,
                 ),
               ),
               SizedBox(height: 16),
+              _isLoading ? CircularProgressIndicator() :
               ElevatedButton(
                 onPressed: _handleSubmit,
                 child: Text('Send'),
