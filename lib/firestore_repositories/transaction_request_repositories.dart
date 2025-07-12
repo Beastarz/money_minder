@@ -22,9 +22,8 @@ class TransactionRequestRepositories {
       List<TransactionRequest> requests = [];
       for (final doc in res.docs) {
         final receiverRef = doc.data()['receiver'] as DocumentReference;
-        final senderRef = doc.data()['sender'] as DocumentReference;
         final receiver = await receiverRef.get();
-        final sender = await senderRef.get();
+        final sender = await myRef.get();
         requests.add(
             TransactionRequest.fromMap(
                 doc.data(),
@@ -52,9 +51,8 @@ class TransactionRequestRepositories {
 
       List<TransactionRequest> requests = [];
       for (final doc in res.docs) {
-        final receiverRef = doc.data()['receiver'] as DocumentReference;
         final senderRef = doc.data()['sender'] as DocumentReference;
-        final receiver = await receiverRef.get();
+        final receiver = await myRef.get();
         final sender = await senderRef.get();
         requests.add(
             TransactionRequest.fromMap(

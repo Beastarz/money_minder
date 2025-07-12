@@ -16,11 +16,12 @@ import '../input_form_sheet/input_form_sheet.dart';
 import '../input_form_sheet/input_keyboard.dart';
 
 class AddExpenseSheet extends StatefulWidget {
-  const AddExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload, required this.defaultDate });
+  const AddExpenseSheet({super.key, required this.mainCurrency, required this.toCategory, required this.onAddTransactionReload, required this.defaultDate, this.defaultAmount });
 
   final Currency mainCurrency;
   final Category toCategory;
   final DateTime defaultDate;
+  final double? defaultAmount;
   final void Function() onAddTransactionReload;
 
   @override
@@ -91,6 +92,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
           }
           ),
           mainCurrency: currency,
+          defaultValue: widget.defaultAmount ?? 0,
           defaultDate: widget.defaultDate,
           onSubmit: (DateTime date, double amount, String note, int recurringMonths, RecurrenceType recurrenceType) {
             _handleSubmit(date, fromAccount!, toCategory, amount, currency, note, recurrenceType);

@@ -9,7 +9,9 @@ import 'package:money_minder/utils/loading_screen.dart';
 import '../../../firestore_repositories/transaction_request_repositories.dart';
 
 class ManageRequestsPage extends StatefulWidget {
-  const ManageRequestsPage({super.key});
+  const ManageRequestsPage({super.key, required this.onReload});
+
+  final void Function() onReload;
 
   @override
   State<ManageRequestsPage> createState() => _ManageRequestsPageState();
@@ -55,7 +57,7 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
             break;
           }
         }
-        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.sender.username}', isSender: false,);
+        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.sender.username}', isSender: false, onReload: widget.onReload,);
       }).toList(),
     );
 
@@ -69,7 +71,7 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
             break;
           }
         }
-        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.receiver.username}', isSender: true,);
+        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.receiver.username}', isSender: true, onReload: widget.onReload,);
       }).toList(),
     );
 

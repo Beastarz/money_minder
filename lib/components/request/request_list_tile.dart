@@ -8,11 +8,12 @@ import 'package:money_minder/utils/main_icon.dart';
 import '../../firestore_repositories/transaction_request_repositories.dart';
 
 class RequestListTile extends StatefulWidget {
-  const RequestListTile({super.key, required this.transactionRequest, required this.displayName, required this.isSender });
+  const RequestListTile({super.key, required this.transactionRequest, required this.displayName, required this.isSender, required this.onReload });
 
   final TransactionRequest transactionRequest;
   final String displayName;
   final bool isSender;
+  final void Function() onReload;
 
   @override
   State<RequestListTile> createState() => _RequestListTileState();
@@ -47,9 +48,11 @@ class _RequestListTileState extends State<RequestListTile> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              widget.transactionRequest.requestType == TransactionRequestType.send ? 'Send to ' : 'Ask from ',
-              style: TextStyle(fontSize: 18),
+            Flexible(
+              child: Text(
+                widget.transactionRequest.requestType == TransactionRequestType.send ? 'Send: ' : 'Ask: ',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
             Flexible(
               child: Text(
@@ -94,7 +97,8 @@ class _RequestListTileState extends State<RequestListTile> {
             ]
         ),
         onTap: () {
-          showDialog(context: context, builder: (context) => RequestDetailsDialog(request: widget.transactionRequest));
+          showDialog(context: context, builder: (context) =>
+              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender,));
         },
       );
     }
@@ -109,38 +113,58 @@ class _RequestListTileState extends State<RequestListTile> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            widget.transactionRequest.requestType == TransactionRequestType.send ? 'Received from ' : 'Requested by ',
+          Flexible(
+            child: Text(
+              widget.transactionRequest.requestType == TransactionRequestType.send ? 'Received: ' : 'Asked: ',
+              style: TextStyle(fontSize: 18),
+            ),
           ),
-          Text(widget.displayName),
+          Flexible(
+              child: Text(
+                widget.displayName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              )
+          ),
         ],
       ),
-        subtitle: Column(
+      subtitle: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BalanceText(
+            balance: widget.transactionRequest.amount,
+            currencyName: widget.transactionRequest.currency.toString(),
+            size: 18,
+            fontColor: widget.transactionRequest.requestType == TransactionRequestType.send
+                ? Colors.green
+                : Colors.red,
+          ),
+          Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14,)),
+        ],
+      ),
+      trailing: widget.transactionRequest.status ==  RequestStatus.accepted
+          ? Text('Accepted', style: TextStyle(fontSize: 16, color: Colors.green),)
+          : widget.transactionRequest.status == RequestStatus.rejected
+          ? Text('Rejected', style: TextStyle(fontSize: 16, color: Colors.red))
+          :Row(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BalanceText(
-              balance: widget.transactionRequest.amount,
-              currencyName: widget.transactionRequest.currency.toString(),
-              size: 18,
-              fontColor: widget.transactionRequest.requestType == TransactionRequestType.send
-                  ? Colors.green
-                  : Colors.red,
+            IconButton(
+                onPressed: _handleReject,
+                icon: Icon(Icons.close)
             ),
-            Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14,)),
-          ],
-        ),
-        trailing: widget.transactionRequest.status ==  RequestStatus.accepted
-            ? Text('accepted',)
-            : widget.transactionRequest.status == RequestStatus.rejected
-            ? Text('rejected')
-            :Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(onPressed: _handleReject, icon: Icon(Icons.close)),
-                  IconButton(onPressed: _handleAccept, icon: Icon(Icons.check)),
-                ]
-            )
+            IconButton(
+                onPressed: _handleAccept,
+                icon: Icon(Icons.check)
+            ),
+          ]
+      ),
+        onTap: () {
+          showDialog(context: context, builder: (context) =>
+              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender,));
+        },
     );
   }
 }

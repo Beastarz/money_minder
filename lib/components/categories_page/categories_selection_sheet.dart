@@ -97,8 +97,8 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                     IconButton(
                       icon: MainIcon(icon: expense.icon, color: expense.color),
                       onPressed: () {
-                        widget.onSelect(expense);
                         Navigator.pop(context);
+                        widget.onSelect(expense);
                       },
                     ),
                     Text(expense.name, style: TextStyle(fontSize: 12),)

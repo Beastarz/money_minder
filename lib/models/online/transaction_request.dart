@@ -44,7 +44,7 @@ class TransactionRequest {
       requestType: map['requestType'] == 'send'
           ? TransactionRequestType.send
           : TransactionRequestType.ask,
-      amount: map['amount'],
+      amount: map['amount'] is int ? map['amount'].toDouble() : map['amount'],
       currency: Currency.of(map['currency']),
       status: map['status'] == 'pending'
           ? RequestStatus.pending

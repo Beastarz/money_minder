@@ -6,20 +6,20 @@ import 'package:money_minder/pages/online_pages/request_pages/send_money_page.da
 import 'package:money_minder/style/app_color.dart';
 
 class OnlineHomePage extends StatelessWidget {
-  const OnlineHomePage({super.key, required this.username});
+  const OnlineHomePage({super.key, required this.username, required this.onReload});
 
   final String username;
+  final void Function() onReload;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Money Minder Online'),
-          centerTitle: true,
-        ),
-        body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Money Minder Online'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Center(
           child: Column(
             spacing: 8,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -59,7 +59,7 @@ class OnlineHomePage extends StatelessWidget {
               ),
               MaterialButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ManageRequestsPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ManageRequestsPage(onReload: onReload,)));
                   },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
