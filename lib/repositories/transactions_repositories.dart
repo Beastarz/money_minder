@@ -4,7 +4,7 @@ import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:sqflite/sqflite.dart' as sqf;
 import 'package:money_minder/models/transaction.dart';
@@ -50,7 +50,7 @@ class TransactionsRepositories {
     sqf.Database db = await _dbService.database;
 
     List<Account> accounts = await AccountsRepositories.instance.getAllAccounts();
-    List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
+    List<Category> categories = await CategoryRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('transactions');
     Currency mainCurrency = await CurrencyRepositories.instance.getMainCurrency();
     List<Transaction> transactions = [];
@@ -69,6 +69,12 @@ class TransactionsRepositories {
       transactions.add(Transaction.fromMap(r, fromAccount, toAccount, toCategory, mainCurrency));
     }
     return transactions;
+  }
+
+  Future<List<Map<String, dynamic>>> getRawTransactions() async {
+    sqf.Database db = await _dbService.database;
+    List<Map<String, dynamic>> res = await db.query('transactions');
+    return res;
   }
 
   Future<void> deleteTransactionByAccountId(int id) async {

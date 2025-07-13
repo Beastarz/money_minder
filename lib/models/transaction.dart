@@ -102,6 +102,29 @@ class Transaction {
     };
   }
 
+  static Map<String, dynamic> insertAsRawMap(
+      {
+        required String date,
+        required String type,
+        required int fromAccountId,
+        int? toAccountId,
+        int? toCategoryId,
+        required double amount,
+        required String currency,
+        required String note,
+      }) {
+    return {
+      'date': date,
+      'type': type,
+      'from_account_id': fromAccountId,
+      'to_account_id': toAccountId,
+      'to_category_id': toCategoryId,
+      'amount': amount,
+      'currency': currency,
+      'note': note,
+    };
+  }
+
   Transaction copyWith({
     DateTime? date,
     Account? fromAccount,

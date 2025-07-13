@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/models/budget.dart';
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/repositories/budget_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 
 import 'test.mocks.dart';
 
@@ -25,12 +25,12 @@ void main() {
     BudgetRepositories.setMockDbService(mockDbService);
     budgetRepositories = BudgetRepositories.instance;
 
-    CategoriesRepositories.setTestInstance(mockCategoriesRepositories);
+    CategoryRepositories.setTestInstance(mockCategoriesRepositories);
   });
 
   tearDown(() {
     BudgetRepositories.resetInstance();
-    CategoriesRepositories.resetInstance();
+    CategoryRepositories.resetInstance();
   });
 
   group('BudgetRepositories', () {

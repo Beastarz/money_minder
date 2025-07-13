@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../auth/auth_service.dart';
 import 'app_message.dart';
 
 class RestartWidget extends StatefulWidget {
@@ -7,7 +8,7 @@ class RestartWidget extends StatefulWidget {
 
   const RestartWidget({required this.child, super.key});
 
-  static void restartApp(BuildContext oldContext, String message) {
+  static void restartApp(BuildContext oldContext, String message, {bool signOut = false}) {
     final state = oldContext.findAncestorStateOfType<RestartWidgetState>();
     if (state != null) {
       // Show snackbar BEFORE restarting the app
@@ -16,6 +17,9 @@ class RestartWidget extends StatefulWidget {
       // Delay the restart slightly to allow the snackbar to show
       Future.delayed(const Duration(seconds: 3), () {
         state.restartApp();
+        if (signOut) {
+          AuthService().signOut();
+        }
       });
     }
   }

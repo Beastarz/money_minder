@@ -138,7 +138,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
 
             PasscodeTile(),
 
-            ManageDataTile(),
+            ManageDataTile(user: widget.user),
           ],
         )
     );

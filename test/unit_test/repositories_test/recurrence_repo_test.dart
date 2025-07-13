@@ -7,7 +7,7 @@ import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
@@ -87,7 +87,7 @@ void main() {
     RecurrenceRepositories.setMockDbService(mockDatabaseService);
 
     AccountsRepositories.setTestInstance(mockAccountsRepositories);
-    CategoriesRepositories.setTestInstance(mockCategoriesRepositories);
+    CategoryRepositories.setTestInstance(mockCategoriesRepositories);
     CurrencyRepositories.setTestInstance(mockCurrencyRepositories);
     TransactionsRepositories.setTestInstance(mockTransactionsRepositories);
 
@@ -98,7 +98,7 @@ void main() {
     // Reset the instances after each test to avoid interference
     RecurrenceRepositories.resetInstance();
     AccountsRepositories.resetInstance();
-    CategoriesRepositories.resetInstance();
+    CategoryRepositories.resetInstance();
     CurrencyRepositories.resetInstance();
     TransactionsRepositories.resetInstance();
   });
