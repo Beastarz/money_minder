@@ -39,7 +39,7 @@ class RestoreData extends StatelessWidget {
 
     await FirebaseDataHelper.addTransactions(accountMap, categoryMap, user!);
     await FirebaseDataHelper.addBudgets(categoryMap, user!);
-    await FirebaseDataHelper.addFastNotes(user!);
+    await FirebaseDataHelper.addFastNotes(categoryMap, user!);
     await FirebaseDataHelper.setMainCurrency(user!);
   }
 

@@ -116,10 +116,11 @@ class FirebaseDataHelper {
     }
   }
 
-  static Future<void> addFastNotes(User user) async {
+  static Future<void> addFastNotes(Map<String, int> categoryMap, User user) async {
     final data = await FirebaseFastNotesRepositories.instance.getAllFastNotes(user.uid);
     for (var element in data) {
       Map<String, dynamic> fastNote = Map<String, dynamic>.from(element);
+      fastNote['category_id'] = categoryMap[element['category']];
       await FastNoteRepositories.instance.createFastNote(FastNote.insertAsMap(
         note: fastNote['note'],
         codePoint: fastNote['icon'],
