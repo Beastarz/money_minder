@@ -98,6 +98,29 @@ class Account {
     };
   }
 
+  static Map<String, dynamic> insertAsRawMap(
+      {required String name,
+        required double balance,
+        required int icon,
+        required int isMain,
+        required int color,
+        required String description,
+        required int isIncludesInTotal,
+        required String type,
+        required String currency}) {
+    return {
+      'name': name,
+      'balance': balance,
+      'icon': icon,
+      'color': color,
+      'description': description,
+      'is_main': isMain,
+      'includes_in_total': isIncludesInTotal,
+      'type': type,
+      'currency': currency,
+    };
+  }
+
   static double calculateBalance(List<Account> accounts, Currency mainCurrency) {
     double total = 0;
     for (var account in accounts) {

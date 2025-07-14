@@ -18,7 +18,7 @@ import 'package:money_minder/models/recurrence.dart' as _i12;
 import 'package:money_minder/models/transaction.dart' as _i10;
 import 'package:money_minder/repositories/accounts_repositories.dart' as _i13;
 import 'package:money_minder/repositories/budget_repositories.dart' as _i14;
-import 'package:money_minder/repositories/categories_repositories.dart' as _i16;
+import 'package:money_minder/repositories/category_repositories.dart' as _i16;
 import 'package:money_minder/repositories/currency_repositories.dart' as _i18;
 import 'package:money_minder/repositories/date_filter_repositories.dart'
     as _i19;
@@ -906,7 +906,7 @@ class MockBudgetRepositories extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCategoriesRepositories extends _i1.Mock
-    implements _i16.CategoriesRepositories {
+    implements _i16.CategoryRepositories {
   MockCategoriesRepositories() {
     _i1.throwOnMissingStub(this);
   }

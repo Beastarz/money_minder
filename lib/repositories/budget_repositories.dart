@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:money_minder/db/database.dart';
 import 'package:money_minder/models/category.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:sqflite/sqflite.dart' as sqf;
 
 import '../models/budget.dart';
@@ -35,7 +35,7 @@ class BudgetRepositories {
   Future<List<Budget>> getBudgets() async {
     sqf.Database db = await _dbService.database;
 
-    List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
+    List<Category> categories = await CategoryRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('budgets');
     List<Budget> budgets = [];
     for (Map<String, dynamic> r in res) {
@@ -43,6 +43,15 @@ class BudgetRepositories {
       budgets.add(Budget.fromMap(r, category));
     }
     return budgets;
+  }
+
+  /// get all budgets
+  ///
+  /// Returns: List\<Map\<String, dynamic\>\>
+  Future<List<Map<String, dynamic>>> getRawBudgets() async {
+    sqf.Database db = await _dbService.database;
+    List<Map<String, dynamic>> res = await db.query('budgets');
+    return res;
   }
 
   /// use this to get budget of the category in the month

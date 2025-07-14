@@ -3,17 +3,17 @@ import 'package:flutter/cupertino.dart';
 import '../db/database.dart';
 import '../models/category.dart';
 
-class CategoriesRepositories {
+class CategoryRepositories {
 
   DatabaseService _dbService = DatabaseService.instance;
 
-  CategoriesRepositories._privateConstructor();
+  CategoryRepositories._privateConstructor();
 
-  static final CategoriesRepositories _instance = CategoriesRepositories._privateConstructor();
+  static final CategoryRepositories _instance = CategoryRepositories._privateConstructor();
 
-  static CategoriesRepositories? _testInstance;
+  static CategoryRepositories? _testInstance;
 
-  static CategoriesRepositories get instance => _testInstance ?? _instance;
+  static CategoryRepositories get instance => _testInstance ?? _instance;
 
   @visibleForTesting
   static void setMockDbService(DatabaseService mockService) {
@@ -21,7 +21,7 @@ class CategoriesRepositories {
   }
 
   @visibleForTesting
-  static void setTestInstance(CategoriesRepositories testInstance) {
+  static void setTestInstance(CategoryRepositories testInstance) {
     _testInstance = testInstance;
   }
 
@@ -60,6 +60,15 @@ class CategoriesRepositories {
         whereArgs: [isExpense ? 1 : 0],
         orderBy: 'position ASC');
     return result.map((row) => Category.fromMap(row)).toList();
+  }
+
+  /// get all categories
+  ///
+  /// Returns: List\<Map\<String, dynamic\>\>
+  Future<List<Map<String, dynamic>>> getRawCategories() async {
+    final db = await _dbService.database;
+    List<Map<String, dynamic>> result = await db.query('categories');
+    return result;
   }
 
   /// update the position of the category
