@@ -14,7 +14,9 @@ import '../../../utils/app_message.dart';
 
 
 class AskMoneyPage extends StatefulWidget {
-  const AskMoneyPage({super.key});
+  const AskMoneyPage({super.key, this.defaultUser});
+
+  final model.User? defaultUser;
 
   @override
   State<AskMoneyPage> createState() => _AskMoneyPageState();
@@ -24,7 +26,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
   model.User? _targetUser;
   List<Currency> _currencies = [];
   Currency _currency = Currency.of('sgd');
-  final TextEditingController _amountController = TextEditingController(text: '0');
+  final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = false;
@@ -84,6 +86,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
   @override
   void initState() {
     super.initState();
+    _targetUser = widget.defaultUser;
     _fetchCurrencies();
   }
 
@@ -108,22 +111,35 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text('Amount', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: TextField(
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                          controller: _amountController,
-                          textAlign: TextAlign.end,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                          ],
-                          keyboardType: TextInputType.numberWithOptions(
-                            decimal: true,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_currency.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: TextField(
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                              controller: _amountController,
+                              textAlign: TextAlign.end,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                              ],
+                              keyboardType: TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                              onTap: () {
+                                if (_amountController.text.isNotEmpty && double.parse(_amountController.text) == 0) {
+                                  _amountController.text = '';
+                                }
+                              },
+                              onEditingComplete: () {
+                                if (_amountController.text.isEmpty || double.parse(_amountController.text) == 0) {
+                                  _amountController.text = '0.00';
+                                }
+                              },
+                            ),
                           ),
-                          decoration: InputDecoration(
-                            prefixText: _currency.toString(),
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),

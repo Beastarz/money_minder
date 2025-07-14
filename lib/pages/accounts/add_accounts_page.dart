@@ -30,7 +30,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   List<Currency> _currencies = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _accountBalanceController = TextEditingController(text: '0');
+  final TextEditingController _accountBalanceController = TextEditingController(text: '0.00');
 
 
   @override
@@ -293,24 +293,40 @@ class _AddAccountPageState extends State<AddAccountPage> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: Text(_accountType == AccountType.debts ? 'Debt balance' :'Account balance')),
-                  SizedBox(
-                    width: 150, // Adjust width as needed
-                    child: TextField(
-                      controller: _accountBalanceController,
-                      textAlign: TextAlign.end,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                      ],
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
+                  Text(_accountType == AccountType.debts ? 'Debt balance' :'Account balance'),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_mainCurrency.toString() + (_accountType == AccountType.debts ? ' ( - )' : ''), style: TextStyle(fontSize: 18),),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.3, // Adjust width as needed
+                        child: TextField(
+                          controller: _accountBalanceController,
+                          textAlign: TextAlign.end,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                          ],
+                          onTap: () {
+                            if (_accountBalanceController.text.isNotEmpty && double.parse(_accountBalanceController.text) == 0) {
+                              _accountBalanceController.text = '';
+                            }
+                          },
+                          onEditingComplete: () {
+                            if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
+                              _accountBalanceController.text = '0.00';
+                            }
+                          },
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                        ),
                       ),
-                      decoration: InputDecoration(
-                        prefixText: _mainCurrency.toString() + (_accountType == AccountType.debts ? ' ( - )' : ''),
-                        border: InputBorder.none,
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),

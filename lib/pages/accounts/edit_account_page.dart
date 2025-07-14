@@ -304,6 +304,16 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
                       ],
+                      onTap: () {
+                        if (_accountBalanceController.text.isNotEmpty && double.parse(_accountBalanceController.text) == 0) {
+                          _accountBalanceController.text = '';
+                        }
+                      },
+                      onEditingComplete: () {
+                        if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
+                          _accountBalanceController.text = '0.00';
+                        }
+                      },
                       decoration: InputDecoration(
                         prefixText: _account.currency.toString(),
                         border: InputBorder.none,

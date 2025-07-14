@@ -78,7 +78,7 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Contacts'),
+          title: Text('Search user'),
           centerTitle: true,
           actions: [
             IconButton(

@@ -3,6 +3,7 @@ import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dar
 import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.dart';
 import 'package:money_minder/pages/online_pages/request_pages/manage_requests_page.dart';
 import 'package:money_minder/pages/online_pages/request_pages/send_money_page.dart';
+import 'package:money_minder/pages/online_pages/request_pages/split_bill_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 class OnlineHomePage extends StatelessWidget {
@@ -129,7 +130,7 @@ class OnlineHomePage extends StatelessWidget {
                   MaterialButton(
                     color: AppColor.secondary,
                     onPressed: () {
-                      // split money
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SplitBillPage()));
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

@@ -83,19 +83,7 @@ class _RequestListTileState extends State<RequestListTile> {
             ? Text('Accepted', style: TextStyle(fontSize: 16, color: Colors.green),)
             : widget.transactionRequest.status == RequestStatus.rejected
             ? Text('Rejected', style: TextStyle(fontSize: 16, color: Colors.red))
-            :Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: _handleReject,
-                icon: Icon(Icons.close)
-              ),
-              IconButton(
-                onPressed: _handleAccept,
-                icon: Icon(Icons.check)
-              ),
-            ]
-        ),
+            : Text('Pending', style: TextStyle(fontSize: 16, color: Colors.amber)),
         onTap: () {
           showDialog(context: context, builder: (context) =>
               RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender,));
@@ -148,7 +136,7 @@ class _RequestListTileState extends State<RequestListTile> {
           ? Text('Accepted', style: TextStyle(fontSize: 16, color: Colors.green),)
           : widget.transactionRequest.status == RequestStatus.rejected
           ? Text('Rejected', style: TextStyle(fontSize: 16, color: Colors.red))
-          :Row(
+          : Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(

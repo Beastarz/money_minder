@@ -1,4 +1,5 @@
 import 'package:date_format/date_format.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:money_minder/components/categories_page/categories_selection_sheet.dart';
@@ -6,6 +7,9 @@ import 'package:money_minder/components/transaction/add_expense_sheet.dart';
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/utils/app_message.dart';
+
+import '../../firestore_repositories/blocked_users_repositories.dart';
+import '../../firestore_repositories/user_contacts_repositories.dart';
 
 class RequestDetailsDialog extends StatelessWidget {
   const RequestDetailsDialog({super.key, required this.request, required this.onReload, required this.isSender, });
@@ -99,92 +103,153 @@ class RequestDetailsDialog extends StatelessWidget {
     );
 
     return Dialog(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            spacing: 2,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(child: Text('Request Details', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),)),
-              SizedBox(height: 16,),
-              isSender ? receiverDetail : senderDetail,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Amount: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                  Flexible(child: Text('${request.currency} ${request.amount.toStringAsFixed(2)}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
-                ],
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Text('Request Details', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),)),
+            SizedBox(height: 16,),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.6
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Request Type: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                  Flexible(child: Text(request.requestType.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Status: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                  Flexible(child: Text(request.status.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Date: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                  Flexible(child: Text(formatDate(request.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
-                ],
-              ),
-              SizedBox(height: 8,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Message: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                  Flexible(child: Text(request.message, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
-                ],
-              ),
-              SizedBox(height: 16,),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          bool isExpense = isSender
-                              ? request.requestType == TransactionRequestType.send
-                              : request.requestType == TransactionRequestType.ask;
-                          return CategoriesSelectionSheet(
-                              isExpense: isExpense,
-                              onSelect: (Category category) {
-                                showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      return AddExpenseSheet(
-                                          mainCurrency: request.currency,
-                                          onAddTransactionReload: onReload,
-                                          defaultAmount: request.amount,
-                                          toCategory: category,
-                                          defaultDate: request.date.toDate(),
-                                      );
-                                    }
-                                );
-                              },
-                          );
-                        }
-                    );
-                  },
-                  child: Text('Create Transactions'),
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 2,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    isSender ? receiverDetail : senderDetail,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Amount: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text('${request.currency} ${request.amount.toStringAsFixed(2)}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Request Type: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(request.requestType.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Status: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(request.status.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Date: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(formatDate(request.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                      ],
+                    ),
+                    SizedBox(height: 8,),
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Message: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                          Flexible(child: Text(request.message, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400,),)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              )
-            ]
-          ),
+              ),
+            ),
+            SizedBox(height: 16,),
+            Stack(
+              children: [
+                Row(
+                  children: [
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        String myUid = FirebaseAuth.instance.currentUser!.uid;
+                        String username = isSender ? request.receiver.username : request.sender.username;
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Block User'),
+                              content: Text('Are you sure you want to block @$username?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    }
+                                    try {
+                                      await UserContactsRepositories.instance.blockContact(
+                                          myUid, username);
+                                      await BlockedUsersRepositories.instance.addBlockedUser(
+                                          myUid, username);
+                                    } catch(e) {
+                                      if (context.mounted) {
+                                        AppMessage.showMessage(context, 'Block Failed');
+                                      }
+                                    }
+                                  },
+                                  child: Text('Block', style: TextStyle(color: Colors.red),),
+                                ),
+                              ],
+                            )
+                        );
+                      },
+                      icon: Icon(Icons.person_off_outlined),
+                    ),
+                  ],
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            bool isExpense = isSender
+                                ? request.requestType == TransactionRequestType.send
+                                : request.requestType == TransactionRequestType.ask;
+                            return CategoriesSelectionSheet(
+                                isExpense: isExpense,
+                                onSelect: (Category category) {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return AddExpenseSheet(
+                                            mainCurrency: request.currency,
+                                            onAddTransactionReload: onReload,
+                                            defaultAmount: request.amount,
+                                            toCategory: category,
+                                            defaultDate: request.date.toDate(),
+                                        );
+                                      }
+                                  );
+                                },
+                            );
+                          }
+                      );
+                    },
+                    child: Text('Create Transactions'),
+                  ),
+                ),
+              ],
+            )
+          ]
         ),
       ),
     );
