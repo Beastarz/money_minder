@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 
 import '../../../components/search_users/contact_user_search_page.dart';
@@ -10,7 +9,6 @@ import '../../../firestore_repositories/users_repositories.dart';
 import '../../../models/currency.dart';
 import '../../../models/online/transaction_request.dart';
 import '../../../repositories/currency_repositories.dart';
-import '../../../style/app_color.dart';
 import '../../../utils/app_message.dart';
 
 enum SplitType {

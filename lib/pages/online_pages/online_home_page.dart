@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dart';
 import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.dart';
 import 'package:money_minder/pages/online_pages/request_pages/manage_requests_page.dart';
 import 'package:money_minder/pages/online_pages/request_pages/send_money_page.dart';
 import 'package:money_minder/pages/online_pages/request_pages/split_bill_page.dart';
-import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
 import '../../components/categories_page/category_helper.dart';
