@@ -33,6 +33,7 @@ class TransactionRequestRepositories {
             )
         );
       }
+      requests.sort((a, b) => -a.date.compareTo(b.date));
       return requests;
     } catch (e) {
       rethrow;
@@ -63,6 +64,7 @@ class TransactionRequestRepositories {
             )
         );
       }
+      requests.sort((a, b) => -a.date.compareTo(b.date));
       return requests;
     } catch (e) {
       rethrow;

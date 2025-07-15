@@ -56,6 +56,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
     CategoryTopCard categoryCard = CategoryTopCard(
       width: MediaQuery.of(context).size.width * 0.5,
       topRight: isExpense,
+      topLeft: !isExpense,
       initialCategory: toCategory,
       onPressed: (Category category) {
         setState(() {
@@ -68,6 +69,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
     Widget accountCard = fromAccount == null ? Container() : AccountTopCard(
       width: MediaQuery.of(context).size.width * 0.5,
       topLeft: isExpense,
+      topRight: !isExpense,
       initialAccount: fromAccount!,
       onPressed: (Account account) {
         setState(() {

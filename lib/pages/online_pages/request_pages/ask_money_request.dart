@@ -69,6 +69,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
       await TransactionRequestRepositories.instance.submitTransactionRequest(map);
       if (mounted) {
         Navigator.pop(context);
+        AppMessage.showMessage(context, 'Sent successfully');
       }
     } catch (e) {
       if (mounted) {

@@ -25,7 +25,7 @@ class MainIcon extends StatelessWidget {
         shape: isRound ? BoxShape.circle : BoxShape.rectangle,
         color: color,
         border: Border.all(
-          color: Colors.white,
+          color: Colors.transparent,
           width: 2,
         ),
       ),

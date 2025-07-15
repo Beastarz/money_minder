@@ -40,83 +40,90 @@ class _AccountSelectionSheetState extends State<AccountSelectionSheet> {
 
     List<AccountType> accountTypes = AccountType.values;
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.close),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Stack(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(AppSize.smallPadding),
-                    child: Text(
-                        'Select Account',
-                        style: TextStyle(
-                          fontSize: AppSize.heading1,
-                        )
-                    ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(AppSize.smallPadding),
+                        child: Text(
+                            'Select Account',
+                            style: TextStyle(
+                              fontSize: AppSize.heading1,
+                            )
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+              ListView(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                children:  accountTypes.map((accountType) {
+                  return accounts.where((acc) => acc.type == accountType).isNotEmpty
+                      ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 8, 0),
+                        child: Text(
+                          accountType.name[0].toUpperCase() + accountType.name.substring(1),
+                          style: TextStyle(
+                            fontSize: AppSize.heading2,
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.darkText,
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        color: Colors.grey[700],
+                        thickness: 1,
+                        indent: 10,
+                        endIndent: 10,
+                      ),
+                      GridView.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 2.5,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(10),
+                        children: accounts.where((acc) => acc.type == accountType).map((account) {
+                          return AccountTile(
+                            account: account,
+                            onSelect: () {
+                              Navigator.pop(context);
+                              widget.onSelect(account);
+                            },
+                            showColor: false,
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  )
+                      : Container();
+                }).toList(),
               ),
             ],
           ),
-          ListView(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            children:  accountTypes.map((accountType) {
-              return accounts.where((acc) => acc.type == accountType).isNotEmpty
-                  ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 8, 0),
-                    child: Text(
-                      accountType.name[0].toUpperCase() + accountType.name.substring(1),
-                      style: TextStyle(
-                        fontSize: AppSize.heading2,
-                        fontWeight: FontWeight.bold,
-                        color: AppColor.darkText,
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    color: Colors.grey[700],
-                    thickness: 1,
-                    indent: 10,
-                    endIndent: 10,
-                  ),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 2.5,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(10),
-                    children: accounts.where((acc) => acc.type == accountType).map((account) {
-                      return AccountTile(
-                        account: account,
-                        onSelect: () {
-                          Navigator.pop(context);
-                          widget.onSelect(account);
-                        },
-                        showColor: false,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              )
-                  : Container();
-            }).toList(),
-          ),
-        ],
+        ),
       ),
     );
   }

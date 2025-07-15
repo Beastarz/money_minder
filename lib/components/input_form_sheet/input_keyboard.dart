@@ -123,11 +123,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Container(
-      height: MediaQuery.of(context).size.height * (isSmallScreen
-          ? widget.showNotes ? 0.65 : 0.50
-          : widget.showNotes ? 0.50 : 0.45)
-          + 15
-          + (widget.category == null ? 0 : 40),
+      padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
@@ -151,7 +147,6 @@ class _InputKeyboardState extends State<InputKeyboard> {
                 ),
               ),
             ),
-
             _showError
             ? Text(
               "Please enter valid amount",
