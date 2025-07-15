@@ -42,7 +42,7 @@ class AppBody extends StatefulWidget {
 
 class _AppBodyState extends State<AppBody> {
 
-  int _tabIndex = 2;
+  int _tabIndex = 1;
 
   List<Account> _accounts = [];
   List<Account> _filteredAccounts = [];

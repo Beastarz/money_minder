@@ -177,26 +177,30 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
-      themeMode: _themeMode,
-      navigatorKey: _navigatorKey,
-      home: _isLocked
-          ? Scaffold(
-        body: LockScreen(
-          onUnlocked: () {
-            setState(() {
-              _isLocked = false;
-              _isAuthenticating = false;
-            });
-          },
-          salt: _salt,
-          encryptedPasscode: _encryptedPasscode,
-        ),
-      )
-          : _buildMainApp(),
+    return MediaQuery.withClampedTextScaling(
+      minScaleFactor: 0.8,
+      maxScaleFactor: 1.2,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
+        themeMode: _themeMode,
+        navigatorKey: _navigatorKey,
+        home: _isLocked
+            ? Scaffold(
+          body: LockScreen(
+            onUnlocked: () {
+              setState(() {
+                _isLocked = false;
+                _isAuthenticating = false;
+              });
+            },
+            salt: _salt,
+            encryptedPasscode: _encryptedPasscode,
+          ),
+        )
+            : _buildMainApp(),
+      ),
     );
   }
 }

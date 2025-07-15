@@ -4,6 +4,8 @@ import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/edit_contact_page.dart';
+import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.dart';
+import 'package:money_minder/pages/online_pages/request_pages/send_money_page.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 
@@ -138,11 +140,15 @@ class _ContactsPageState extends State<ContactsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SendMoneyPage(defaultUser: contact.toUserModel(),)));
+                              },
                               icon: Icon(Icons.upload_outlined, color: Colors.green[800],)
                           ),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => AskMoneyPage(defaultUser: contact.toUserModel(),)));
+                              },
                               icon: Icon(Icons.download_outlined, color: Colors.red[800],)
                           ),
                           IconButton(

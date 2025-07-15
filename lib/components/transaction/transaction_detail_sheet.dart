@@ -81,13 +81,21 @@ class TransactionDetailSheet extends StatelessWidget {
                     currencyName: transaction.currency.toString(),
                     size: 30,
                   ),
-                  transaction.note == '' ? Container() : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      transaction.note,
-                      style: TextStyle(
-                        fontSize: 18,
-                      )
+                  transaction.note == '' ? Container() :
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 200
+                    ),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          transaction.note,
+                          style: TextStyle(
+                            fontSize: 18,
+                          )
+                        ),
+                      ),
                     ),
                   ),
                   Wrap(

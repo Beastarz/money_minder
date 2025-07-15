@@ -20,9 +20,9 @@ class UserContactsRepositories {
     }
   }
 
-  Future<void> addUserContact(String uid, Map<String, dynamic> map) async {
+  Future<void> addUserContact(String uid, String targetUserUid ,Map<String, dynamic> map) async {
     try {
-      await _db.collection('users').doc(uid).collection('contacts').add(map);
+      await _db.collection('users').doc(uid).collection('contacts').doc(targetUserUid).set(map);
     } catch (e) {
       rethrow;
     }
@@ -31,7 +31,7 @@ class UserContactsRepositories {
   Future<void> updateUserContact(String uid, UserContact userContact) async {
     try {
       final snapshot = _db.collection('users').doc(uid).collection(
-          'contacts').doc(userContact.id);
+          'contacts').doc(userContact.uid);
       await snapshot.set(userContact.toMap());
     } catch (e) {
       rethrow;
@@ -66,6 +66,18 @@ class UserContactsRepositories {
           .delete();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<UserContact?> getUserContactById(String uid, String username) async {
+    try {
+      final snapshot = await _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username).get();
+      if (snapshot.docs.isEmpty) {
+        return null;
+      }
+      return UserContact.fromMap(snapshot.docs.first.id, snapshot.docs.first.data());
+    } catch (e) {
+      return null;
     }
   }
 

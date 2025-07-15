@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:money_minder/components/account/account_customization_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
@@ -22,14 +23,14 @@ class AddAccountPage extends StatefulWidget {
 class _AddAccountPageState extends State<AddAccountPage> {
 
   bool _includeInTotalBalance = true;
-  int codePoint = 0xeb94;
-  int colorValue = 0xFF578FCA;
-  AccountType accountType = AccountType.accounts;
-  Currency mainCurrency = Currency.of('sgd');
-  List<Currency> currencies = [];
+  int _codePoint = 0xeb94;
+  int _colorValue = 0xFF578FCA;
+  AccountType _accountType = AccountType.accounts;
+  Currency _mainCurrency = Currency.of('sgd');
+  List<Currency> _currencies = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _accountBalanceController = TextEditingController(text: '0');
+  final TextEditingController _accountBalanceController = TextEditingController(text: '0.00');
 
 
   @override
@@ -41,7 +42,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   Future<void> fetchCurrencies() async {
     List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
     setState(() {
-      currencies = res;
+      _currencies = res;
     });
   }
 
@@ -58,19 +59,22 @@ class _AddAccountPageState extends State<AddAccountPage> {
       AppMessage.showMessage(context, 'Please fill in a name');
       return;
     }
+    if (_accountBalanceController.text.isEmpty) {
+      _accountBalanceController.text = '0';
+    }
     if (double.parse(_accountBalanceController.text) > 99999999999.99) {
       AppMessage.showMessage(context, 'Amount is too large!');
       return;
     }
     Map<String, dynamic> accountData = Account.insertAsMap(
       name: _nameController.text,
-      balance: double.parse(_accountBalanceController.text) * (accountType == AccountType.debts ? -1 : 1),
-      icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
-      color: Color(colorValue),
+      balance: double.parse(_accountBalanceController.text) * (_accountType == AccountType.debts ? -1 : 1),
+      icon: Icon(IconData(_codePoint, fontFamily: "MaterialSymbolsOutlined")),
+      color: Color(_colorValue),
       description: _descriptionController.text,
       isIncludesInTotal: _includeInTotalBalance,
-      type: accountType,
-      currency: mainCurrency,
+      type: _accountType,
+      currency: _mainCurrency,
     );
     () async {
       await AccountsRepositories.instance.createAccount(accountData);
@@ -150,17 +154,17 @@ class _AddAccountPageState extends State<AddAccountPage> {
                                   ),
                                 ),
                                 child: AccountCustomizationSheet(
-                                    codePoint: codePoint,
-                                    colorValue: colorValue,
+                                    codePoint: _codePoint,
+                                    colorValue: _colorValue,
                                     changeCodePoint: (int newCodePoint) {
                                       setState(() {
-                                        codePoint = newCodePoint;
+                                        _codePoint = newCodePoint;
                                       });
                                       innerSetState(() {});
                                     },
                                     changeColorValue: (int newColorValue) {
                                       setState(() {
-                                        colorValue = newColorValue;
+                                        _colorValue = newColorValue;
                                       });
                                       innerSetState(() {});
                                     },
@@ -172,8 +176,8 @@ class _AddAccountPageState extends State<AddAccountPage> {
                     );
                   },
                   icon: MainIcon(
-                    icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
-                    color: Color(colorValue),
+                    icon: Icon(IconData(_codePoint, fontFamily: "MaterialSymbolsOutlined")),
+                    color: Color(_colorValue),
                     isRound: false,),
                 ),
               ],
@@ -194,7 +198,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
               leading: Icon(Icons.account_balance_wallet_outlined),
               // Placeholder icon
               title: Text('Type'),
-              subtitle: Text(accountType.name[0].toUpperCase() + accountType.name.substring(1)),
+              subtitle: Text(_accountType.name[0].toUpperCase() + _accountType.name.substring(1)),
               trailing: Icon(Icons.chevron_right),
               onTap: () => showDialog(
                 context: context,
@@ -207,7 +211,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                         subtitle: Text('For regular expenses: Cash, Card, Bank Deposits, etc'),
                         onTap: () {
                           setState(() {
-                            accountType = AccountType.accounts;
+                            _accountType = AccountType.accounts;
                           });
                           Navigator.pop(context);
                         },
@@ -217,7 +221,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                         subtitle: Text('For saving money: Savings account, Wishes, Future Trip, etc'),
                         onTap: () {
                           setState(() {
-                            accountType = AccountType.savings;
+                            _accountType = AccountType.savings;
                             _includeInTotalBalance = false;
                           });
                           Navigator.pop(context);
@@ -228,7 +232,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                         subtitle: Text('For owned debts: Credit Cards, Loans, trip, etc'),
                         onTap: () {
                           setState(() {
-                            accountType = AccountType.debts;
+                            _accountType = AccountType.debts;
                             _includeInTotalBalance = false;
                           });
                           Navigator.pop(context);
@@ -244,18 +248,18 @@ class _AddAccountPageState extends State<AddAccountPage> {
               leading: Icon(Icons.attach_money),
               // Placeholder icon
               title: Text('Account currency'),
-              subtitle: Text(mainCurrency.fullName),
+              subtitle: Text(_mainCurrency.fullName),
               trailing: Icon(Icons.chevron_right),
               onTap: () => showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return SimpleDialog(
                     title: Text('Choose a currency'),
-                    children: currencies.map((currency) => ListTile(
+                    children: _currencies.map((currency) => ListTile(
                       title: Text(currency.fullName),
                       onTap: () {
                         setState(() {
-                          mainCurrency = currency;
+                          _mainCurrency = currency;
                         });
                         Navigator.pop(context);
                       }
@@ -289,21 +293,40 @@ class _AddAccountPageState extends State<AddAccountPage> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: Text(accountType == AccountType.debts ? 'Debt balance' :'Account balance')),
-                  SizedBox(
-                    width: 150, // Adjust width as needed
-                    child: TextField(
-                      controller: _accountBalanceController,
-                      textAlign: TextAlign.end,
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
+                  Text(_accountType == AccountType.debts ? 'Debt balance' :'Account balance'),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_mainCurrency.toString() + (_accountType == AccountType.debts ? ' ( - )' : ''), style: TextStyle(fontSize: 18),),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.3, // Adjust width as needed
+                        child: TextField(
+                          controller: _accountBalanceController,
+                          textAlign: TextAlign.end,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                          ],
+                          onTap: () {
+                            if (_accountBalanceController.text.isNotEmpty && double.parse(_accountBalanceController.text) == 0) {
+                              _accountBalanceController.text = '';
+                            }
+                          },
+                          onEditingComplete: () {
+                            if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
+                              _accountBalanceController.text = '0.00';
+                            }
+                          },
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                        ),
                       ),
-                      decoration: InputDecoration(
-                        prefixText: mainCurrency.toString() + (accountType == AccountType.debts ? ' ( - )' : ''),
-                        border: InputBorder.none,
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
