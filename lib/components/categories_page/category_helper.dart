@@ -6,7 +6,7 @@ import 'package:money_minder/models/date_filter.dart';
 import '../../models/budget.dart';
 import '../../models/currency.dart';
 import '../../models/transaction.dart';
-import '../../repositories/categories_repositories.dart';
+import '../../repositories/category_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../budget_page/add_budget_sheet.dart';
@@ -314,12 +314,12 @@ class CategoryHelper {
       List<int> ids = getIdsFromPositions(toPosition, fromPosition, categories);
 
       // set the position of the last category to the first
-      await CategoriesRepositories.instance.updatePosition(
+      await CategoryRepositories.instance.updatePosition(
           ids.last, toPosition);
 
       // add the position of the remaining categories by 1
       for (int i = toPosition + 1; i <= fromPosition; i++) {
-        await CategoriesRepositories.instance.updatePosition(
+        await CategoryRepositories.instance.updatePosition(
             ids[i - toPosition - 1], i);
       }
 
@@ -330,12 +330,12 @@ class CategoryHelper {
       List<int> ids = getIdsFromPositions(fromPosition, toPosition, categories);
 
       // set the position of the last category to the first
-      await CategoriesRepositories.instance.updatePosition(
+      await CategoryRepositories.instance.updatePosition(
           ids.first, toPosition);
 
       // add the position of the remaining categories by 1
       for (int i = fromPosition + 1; i <= toPosition; i++) {
-        await CategoriesRepositories.instance.updatePosition(
+        await CategoryRepositories.instance.updatePosition(
             ids[i - fromPosition], i - 1);
       }
     }
@@ -358,7 +358,7 @@ class CategoryHelper {
   /// return: void
   static Future<void> addCategory(int position, String label, int codePoint,
     int colorValue, bool isExpense) async {
-    await CategoriesRepositories.instance.createCategory(
+    await CategoryRepositories.instance.createCategory(
       Category.insertAsMap(
         name: label,
         position: position,
@@ -371,7 +371,7 @@ class CategoryHelper {
 
   /// update existing category
   static Future<void> updateCategory(int id, String label, int codePoint, int colorValue, bool isExpense) async {
-    await CategoriesRepositories.instance.updateCategory(
+    await CategoryRepositories.instance.updateCategory(
         {
           'label': label,
           'icon': codePoint,
@@ -385,6 +385,6 @@ class CategoryHelper {
   /// delete existing category by id
   static Future<void> deleteCategory(int id, int position, List<CategoryProp> categories) async {
     await movePosition(position, categories.length - 2, categories); // swap with second last in the list (include add button)
-    await CategoriesRepositories.instance.deleteCategory(id); // currently at the last of the array
+    await CategoryRepositories.instance.deleteCategory(id); // currently at the last of the array
   }
 }

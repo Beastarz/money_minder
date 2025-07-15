@@ -38,6 +38,14 @@ class FastNoteRepositories {
         fastNote);
   }
 
+  /// get all Fast Notes
+  ///
+  /// Returns: List\<FastNote\>
+  Future<List<Map<String, dynamic>>> getRawFastNotes() async {
+    final db = await _dbService.database;
+    return await db.query('fast_notes');
+  }
+
 
   /// get all Fast Notes of a category
   ///

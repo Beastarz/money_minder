@@ -46,6 +46,12 @@ class AccountsRepositories {
      return result.map((row) => Account.fromMap(row)).toList();
   }
 
+  Future<List<Map<String, dynamic>>> getRawAccounts() async {
+    final db = await _dbService.database;
+    List<Map<String, dynamic>> result = await db.query('accounts');
+    return result;
+  }
+
   Future<Account> getAccountById(int id) async {
     final db = await _dbService.database;
     List<Map<String, dynamic>> result = await db.query('accounts', where: 'id = ?', whereArgs: [id]);
@@ -112,6 +118,11 @@ class AccountsRepositories {
   Future<void> deleteAllNonMainAccounts() async {
     final db = await _dbService.database;
     await db.delete('accounts', where: 'is_main = 0');
+  }
+
+  Future<void> deleteAllAccounts() async {
+    final db = await _dbService.database;
+    await db.delete('accounts');
   }
 
   Future<void> resetMainAccount() async {

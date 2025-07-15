@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:money_minder/components/manage_data/backup_data.dart';
 import 'package:money_minder/components/manage_data/export_data.dart';
 import 'package:money_minder/components/manage_data/import_data.dart';
@@ -8,7 +9,12 @@ import '../../style/app_size.dart';
 import 'reset.dart';
 
 class ManageDataTile extends StatelessWidget {
-  const ManageDataTile({super.key});
+  const ManageDataTile({
+    super.key,
+    required this.user,
+  });
+
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +34,8 @@ class ManageDataTile extends StatelessWidget {
 
                       ImportData(),
                       ExportData(),
-                      BackupData(),
-                      RestoreData(),
+                      BackupData(user: user),
+                      RestoreData(user: user),
 
                       Divider(),
 

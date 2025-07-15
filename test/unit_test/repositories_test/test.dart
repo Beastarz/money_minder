@@ -2,7 +2,7 @@ import 'package:mockito/annotations.dart'; // For @GenerateMocks
 
 import 'package:money_minder/db/database.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:sqflite/sqflite.dart';
@@ -14,7 +14,7 @@ import 'package:sqflite/sqflite.dart';
   TransactionsRepositories,
   RecurrenceRepositories,
   AccountsRepositories,
-  CategoriesRepositories,
+  CategoryRepositories,
 ])
 
 void main() {

@@ -9,7 +9,7 @@ import '../models/category.dart';
 import '../models/currency.dart';
 import '../models/transaction.dart';
 import 'accounts_repositories.dart';
-import 'categories_repositories.dart';
+import 'category_repositories.dart';
 import 'currency_repositories.dart';
 
 class RecurrenceRepositories {
@@ -43,7 +43,7 @@ class RecurrenceRepositories {
     Database db = await _dbService.database;
 
     List<Account> accounts = await AccountsRepositories.instance.getAllAccounts();
-    List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
+    List<Category> categories = await CategoryRepositories.instance.getAllCategories();
     List<Map<String, dynamic>> res = await db.query('recurrence');
     Currency mainCurrency = await CurrencyRepositories.instance.getMainCurrency();
     List<Recurrence>  recurrences = [];

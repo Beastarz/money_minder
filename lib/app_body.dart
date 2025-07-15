@@ -7,7 +7,7 @@ import 'package:money_minder/pages/main_pages/statistics_page.dart';
 import 'package:money_minder/pages/main_pages/transactions_page.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/repositories/budget_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/date_filter_repositories.dart';
 import 'package:money_minder/repositories/recurrence_repositories.dart';
@@ -144,9 +144,9 @@ class _AppBodyState extends State<AppBody> {
 
   Future<void> _fetchCategories() async {
     List<Category> expenseCat =
-    await CategoriesRepositories.instance.getCategoriesByType(true);
+    await CategoryRepositories.instance.getCategoriesByType(true);
     List<Category> incomeCat =
-    await CategoriesRepositories.instance.getCategoriesByType(false);
+    await CategoryRepositories.instance.getCategoriesByType(false);
     if (!mounted) return;
     setState(() {
       _categories = [expenseCat, incomeCat];

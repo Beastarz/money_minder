@@ -9,7 +9,7 @@ import '../../models/account.dart';
 import '../../models/category.dart';
 import '../../models/transaction.dart';
 import '../../repositories/accounts_repositories.dart';
-import '../../repositories/categories_repositories.dart';
+import '../../repositories/category_repositories.dart';
 import '../../utils/app_message.dart';
 
 class CSVGenerator {
@@ -47,7 +47,7 @@ class CSVGenerator {
       }
     }
     if (isCat) {
-      List<Category> categories = await CategoriesRepositories.instance.getAllCategories();
+      List<Category> categories = await CategoryRepositories.instance.getAllCategories();
       for (Category category in categories) {
         map[category.name.toLowerCase()] = category as T;
       }
@@ -83,28 +83,16 @@ class CSVGenerator {
 
       if (outputFile != null) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('File is saved successfully!'),
-            ),
-          );
+          AppMessage.showMessage(context, 'File is saved successfully!');
         }
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('File save cancelled.'),
-            ),
-          );
+          AppMessage.showMessage(context, 'File save cancelled.');
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Generate CSV file fail!'),
-          ),
-        );
+        AppMessage.showMessage(context, 'Generate CSV file fail!');
       }
     }
   }

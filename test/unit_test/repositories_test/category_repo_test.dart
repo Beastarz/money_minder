@@ -2,13 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
 import 'package:money_minder/models/category.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 
 import 'test.mocks.dart';
 
 
 void main() {
-  late CategoriesRepositories categoriesRepositories;
+  late CategoryRepositories categoriesRepositories;
   late MockDatabaseService mockDbService;
   late MockDatabase mockDatabase;
 
@@ -17,12 +17,12 @@ void main() {
     mockDatabase = MockDatabase();
     when(mockDbService.database).thenAnswer((_) async => mockDatabase);
 
-    CategoriesRepositories.setMockDbService(mockDbService);
-    categoriesRepositories = CategoriesRepositories.instance;
+    CategoryRepositories.setMockDbService(mockDbService);
+    categoriesRepositories = CategoryRepositories.instance;
   });
 
   tearDown(() {
-    CategoriesRepositories.resetInstance();
+    CategoryRepositories.resetInstance();
   });
 
   group('CategoriesRepositories', () {

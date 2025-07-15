@@ -5,7 +5,7 @@ import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ void main() {
 
     // Set the static instances of other repositories to their mocks
     AccountsRepositories.setTestInstance(mockAccountsRepositories);
-    CategoriesRepositories.setTestInstance(mockCategoriesRepositories);
+    CategoryRepositories.setTestInstance(mockCategoriesRepositories);
     CurrencyRepositories.setTestInstance(mockCurrencyRepositories);
 
     transactionsRepositories = TransactionsRepositories.instance;
@@ -46,7 +46,7 @@ void main() {
     // Reset the instances after each test to avoid interference
     TransactionsRepositories.resetInstance();
     AccountsRepositories.resetInstance();
-    CategoriesRepositories.resetInstance();
+    CategoryRepositories.resetInstance();
     CurrencyRepositories.resetInstance();
   });
 

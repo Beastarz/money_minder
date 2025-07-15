@@ -13,7 +13,7 @@ import '../../models/category.dart';
 import '../../models/currency.dart';
 import '../../models/transaction.dart';
 import '../../repositories/accounts_repositories.dart';
-import '../../repositories/categories_repositories.dart';
+import '../../repositories/category_repositories.dart';
 import '../../repositories/transaction_helper.dart';
 import '../../style/app_size.dart';
 import '../../utils/app_message.dart';
@@ -160,7 +160,7 @@ class _ImportDataState extends State<ImportData> {
     /// save new expense category
     int expPos = getPosition(true, categoryMap.values.toList());
     for (String name in newExpCat) {
-      await CategoriesRepositories.instance.createCategory(
+      await CategoryRepositories.instance.createCategory(
           Category.insertAsMap(
               name: name,
               position: expPos++,
@@ -173,7 +173,7 @@ class _ImportDataState extends State<ImportData> {
     /// save new income category
     int incPos = getPosition(false, categoryMap.values.toList());
     for (String name in newIncCat) {
-      await CategoriesRepositories.instance.createCategory(
+      await CategoryRepositories.instance.createCategory(
           Category.insertAsMap(
               name: name,
               position: incPos++,
@@ -242,9 +242,6 @@ class _ImportDataState extends State<ImportData> {
         ),
         onTap: () {
 
-          // return;
-          // TODO: import data
-
           /// Only import transactions is supported
           showDialog(
               context: context,
@@ -273,7 +270,6 @@ class _ImportDataState extends State<ImportData> {
                         title: Text('Select File'),
                         leading: Icon(Icons.manage_search_outlined),
                         onTap: () async {
-                          // TODO: SELECT FILE
                           platformFile = await CSVGenerator.readFile(dialogContext);
                           bool? confirmed = false;
                           if (dialogContext.mounted) {

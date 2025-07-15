@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/models/category.dart';
-import 'package:money_minder/repositories/categories_repositories.dart';
+import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
 import '../../style/app_color.dart';
@@ -26,7 +26,7 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
   }
 
   _fetchCategories() async {
-    List<Category> res = await CategoriesRepositories.instance.getCategoriesByType(widget.isExpense);
+    List<Category> res = await CategoryRepositories.instance.getCategoriesByType(widget.isExpense);
     setState(() {
       categories = res;
     });

@@ -3,11 +3,10 @@ import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/repositories/fast_note_repositories.dart';
 import 'package:money_minder/utils/restart_widget.dart';
 
-import '../../auth/auth_service.dart';
 import '../../models/currency.dart';
 import '../../repositories/accounts_repositories.dart';
 import '../../repositories/budget_repositories.dart';
-import '../../repositories/categories_repositories.dart';
+import '../../repositories/category_repositories.dart';
 import '../../repositories/notification_time_repositories.dart';
 import '../../repositories/passcode_repositories.dart';
 import '../../repositories/recurrence_repositories.dart';
@@ -19,15 +18,13 @@ class Reset extends StatefulWidget {
 
   @override
   State<Reset> createState() => _ResetState();
-}
 
-class _ResetState extends State<Reset> {
-  Future<void> deleteAllData() async {
+  static Future<void> deleteAllData() async {
 
     /// delete all data
     await AccountsRepositories.instance.deleteAllNonMainAccounts();
     await BudgetRepositories.instance.deleteAllBudgets();
-    await CategoriesRepositories.instance.deleteAllCategories();
+    await CategoryRepositories.instance.deleteAllCategories();
     await FastNoteRepositories.instance.deleteAllFastNotes();
     await NotificationTimeRepositories.instance.deleteNotificationTime();
     await PasscodeRepositories.instance.deletePasscode();
@@ -39,19 +36,10 @@ class _ResetState extends State<Reset> {
 
     /// reset the main currency to SGD
     await CurrencyRepositories.instance.setMainCurrency(Currency.of('sgd'));
-
-    /// restart the app
-    if (mounted) {
-      Navigator.of(context).pop(); // pop the alert dialog
-      Navigator.of(context).pop(); // pop the manage_data
-      Navigator.of(context).pop(); // pop the app_drawer
-
-      /// google sign out
-      AuthService().signOut();
-
-      RestartWidget.restartApp(context, "All data is reset. Restarting app...");
-    }
   }
+}
+
+class _ResetState extends State<Reset> {
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +68,19 @@ class _ResetState extends State<Reset> {
                       child: Text('Cancel'),
                     ),
                     TextButton(
-                      onPressed: deleteAllData,
+                      onPressed: () async {
+                        await Reset.deleteAllData();
+
+                        /// restart the app
+                        if (context.mounted) {
+                          Navigator.of(context).pop(); // pop the alert dialog
+                          Navigator.of(context).pop(); // pop the manage_data
+                          Navigator.of(context).pop(); // pop the app_drawer
+
+                          RestartWidget.restartApp(context, 'Your data has been successfully reset. Restarting app...', signOut: true);
+
+                        }
+                      },
                       child: Text('Confirm'),
                     ),
                   ],
