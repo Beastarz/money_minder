@@ -41,7 +41,11 @@ class UserContactsRepositories {
   Future<void> blockContact(String uid, String username) async {
     try {
       final ref = _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username);
-      await ref.get().then((snapshot) => snapshot.docs.first.reference.update({'isBlocked': true}));
+      await ref.get().then((snapshot) => {
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.first.reference.update({'isBlocked': true})
+        }
+      });
     } catch (e) {
       rethrow;
     }
@@ -50,7 +54,11 @@ class UserContactsRepositories {
   Future<void> unblockContact(String uid, String username) async {
     try {
       final ref = _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username);
-      await ref.get().then((snapshot) => snapshot.docs.first.reference.update({'isBlocked': false}));
+      await ref.get().then((snapshot) => {
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.first.reference.update({'isBlocked': false})
+        }
+      });
     } catch (e) {
       rethrow;
     }

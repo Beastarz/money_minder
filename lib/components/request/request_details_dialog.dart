@@ -12,10 +12,11 @@ import '../../firestore_repositories/blocked_users_repositories.dart';
 import '../../firestore_repositories/user_contacts_repositories.dart';
 
 class RequestDetailsDialog extends StatelessWidget {
-  const RequestDetailsDialog({super.key, required this.request, required this.onReload, required this.isSender, });
+  const RequestDetailsDialog({super.key, required this.request, required this.onReload, required this.isSender, required this.onUserBlocked, });
 
   final TransactionRequest request;
   final bool isSender;
+  final void Function(String) onUserBlocked;
   final void Function() onReload;
 
   @override
@@ -117,7 +118,7 @@ class RequestDetailsDialog extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 child: Column(
-                  spacing: 2,
+                  spacing: 4,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     isSender ? receiverDetail : senderDetail,
@@ -196,6 +197,7 @@ class RequestDetailsDialog extends StatelessWidget {
                                           myUid, username);
                                       await BlockedUsersRepositories.instance.addBlockedUser(
                                           myUid, username);
+                                      onUserBlocked(username);
                                     } catch(e) {
                                       if (context.mounted) {
                                         AppMessage.showMessage(context, 'Block Failed');

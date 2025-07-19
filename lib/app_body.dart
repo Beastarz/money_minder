@@ -91,7 +91,7 @@ class _AppBodyState extends State<AppBody> {
     await _fetchAccounts();
     await _fetchMainCurrency();
     await _fetchRecurrence();
-    await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter
+    await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter ans _recurrence
     await _fetchCategories();
     await _fetchBudgets(); // Depends on _dateFilter
 
@@ -334,7 +334,14 @@ class _AppBodyState extends State<AppBody> {
           drawer: AppbarDrawer(
             user: widget.user,
             userData: widget.userData,
-            onCurrencyReload: _fetchMainCurrency,
+            onCurrencyReload: () async {
+              await _fetchMainCurrency();
+              await _fetchAccounts();
+              await _fetchRecurrence();
+              await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter ans _recurrence
+              await _fetchCategories();
+              await _fetchBudgets();
+            },
           ),
           body: pages[_tabIndex],
           bottomNavigationBar: BottomNavbar(

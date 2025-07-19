@@ -8,11 +8,12 @@ import 'package:money_minder/utils/main_icon.dart';
 import '../../firestore_repositories/transaction_request_repositories.dart';
 
 class RequestListTile extends StatefulWidget {
-  const RequestListTile({super.key, required this.transactionRequest, required this.displayName, required this.isSender, required this.onReload });
+  const RequestListTile({super.key, required this.transactionRequest, required this.displayName, required this.isSender, required this.onReload, required this.onUserBlocked });
 
   final TransactionRequest transactionRequest;
   final String displayName;
   final bool isSender;
+  final void Function(String) onUserBlocked;
   final void Function() onReload;
 
   @override
@@ -86,7 +87,7 @@ class _RequestListTileState extends State<RequestListTile> {
             : Text('Pending', style: TextStyle(fontSize: 16, color: Colors.amber)),
         onTap: () {
           showDialog(context: context, builder: (context) =>
-              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender,));
+              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender, onUserBlocked: widget.onUserBlocked,));
         },
       );
     }
@@ -151,7 +152,7 @@ class _RequestListTileState extends State<RequestListTile> {
       ),
         onTap: () {
           showDialog(context: context, builder: (context) =>
-              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender,));
+              RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender, onUserBlocked: widget.onUserBlocked,));
         },
     );
   }

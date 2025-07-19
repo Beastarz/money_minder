@@ -195,6 +195,9 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                         () async {
                           await AccountsRepositories.instance.updateMainAccount(widget.account);
                           widget.onReload();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
                         }();
                         setState(() {
                           isMain = true;
