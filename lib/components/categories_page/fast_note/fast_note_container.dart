@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:money_minder/repositories/fast_note_repositories.dart';
 
 import '../../../models/fast_note.dart';
-import '../../../style/app_color.dart';
 import 'edit_fast_note_page.dart';
 import 'fast_note_card.dart';
 
@@ -97,8 +97,9 @@ class _FastNoteContainerState extends State<FastNoteContainer> {
             padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
+              color: CategoryHelper.lightenColor(widget.color, 0.96),
               border: Border.all(
-                color: AppColor.darkText,
+                color: Colors.transparent,
                 width: 1,
               ),
             ),

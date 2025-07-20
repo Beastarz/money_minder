@@ -978,14 +978,6 @@ class MockCurrencyRepositories extends _i1.Mock
   }
 
   @override
-  _i3.Future<List<_i5.Currency>> getCurrencies() =>
-      (super.noSuchMethod(
-            Invocation.method(#getCurrencies, []),
-            returnValue: _i3.Future<List<_i5.Currency>>.value(<_i5.Currency>[]),
-          )
-          as _i3.Future<List<_i5.Currency>>);
-
-  @override
   _i3.Future<_i5.Currency> getMainCurrency() =>
       (super.noSuchMethod(
             Invocation.method(#getMainCurrency, []),

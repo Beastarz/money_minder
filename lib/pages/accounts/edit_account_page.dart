@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
-import 'package:money_minder/repositories/currency_repositories.dart';
 
 import '../../components/account/account_customization_sheet.dart';
 import '../../models/account.dart';
@@ -26,7 +25,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
   late Account _account;
   late int _codePoint;
   late int _colorValue;
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _accountBalanceController = TextEditingController(text: '0');
@@ -49,13 +48,6 @@ class _EditAccountPageState extends State<EditAccountPage> {
     _descriptionController.dispose();
     _accountBalanceController.dispose();
     super.dispose();
-  }
-
-  Future<void> fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
   }
 
   void _handleSubmit() {

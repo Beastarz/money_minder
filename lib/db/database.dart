@@ -118,10 +118,8 @@ class DatabaseService {
 
     // Create the currencies table
     await db.execute('''
-          CREATE TABLE currencies(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            is_main INTEGER DEFAULT 0 -- Using INTEGER for boolean (0 for false, 1 for true)
+          CREATE TABLE main_currency(
+            name TEXT NOT NULL
           )
         ''');
 
@@ -221,9 +219,8 @@ class DatabaseService {
     ''');
 
     await db.execute('''
-      INSERT INTO currencies (name, is_main) VALUES
-      ('sgd', 1),
-      ('myr', 0);
+      INSERT INTO main_currency (name) VALUES
+      ('SGD');
     ''');
 
     await db.execute('''

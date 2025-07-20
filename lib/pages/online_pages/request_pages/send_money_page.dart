@@ -9,7 +9,6 @@ import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../models/currency.dart';
-import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
 
 class SendMoneyPage extends StatefulWidget {
@@ -23,20 +22,12 @@ class SendMoneyPage extends StatefulWidget {
 
 class _SendMoneyPageState extends State<SendMoneyPage> {
   model.User? _targetUser;
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
   Currency _currency = Currency.of('sgd');
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = false;
-
-  Future<void> _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    _targetUser = widget.defaultUser;
-    setState(() {
-      _currencies = res;
-    });
-  }
 
   void _handleSubmit() async {
     if (_targetUser == null) {
@@ -87,7 +78,6 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCurrencies();
   }
 
   @override

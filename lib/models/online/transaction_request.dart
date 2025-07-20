@@ -68,7 +68,7 @@ class TransactionRequest {
       'receiver': receiver,
       'requestType': requestType.name,
       'amount': amount,
-      'currency': currency.currency().name,
+      'currency': currency.name,
       'status': 'pending',
       'message': message,
       'date': FieldValue.serverTimestamp(),

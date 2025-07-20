@@ -8,7 +8,6 @@ import '../../../firestore_repositories/transaction_request_repositories.dart';
 import '../../../firestore_repositories/users_repositories.dart';
 import '../../../models/currency.dart';
 import '../../../models/online/transaction_request.dart';
-import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
 
 enum SplitType {
@@ -33,7 +32,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
   SplitType _splitType = SplitType.custom;
 
   Currency _currency = Currency.of('sgd');
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
   final List<Color> _borderColors = [Colors.deepPurple, Colors.indigo, Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.orange,];
 
   bool _isLoading = false;
@@ -48,14 +47,6 @@ class _SplitBillPageState extends State<SplitBillPage> {
     ratioC.addListener(calculateSplit);
     _ratioControllers.add(ratioC);
     _totalController.addListener(calculateSplit);
-    _fetchCurrencies();
-  }
-
-  Future<void> _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
   }
 
   void calculateTotal() {

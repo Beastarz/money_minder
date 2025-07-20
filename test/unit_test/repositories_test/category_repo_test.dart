@@ -29,8 +29,8 @@ void main() {
     final Icon icon = Icon(Icons.food_bank);
     final Color color = Colors.red;
     final mockData = [
-      {'id': 1, 'label': 'Food', 'icon': icon.icon?.codePoint, 'color': color.toARGB32(), 'is_expense': 1, 'position': 0},
-      {'id': 2, 'label': 'Salary', 'icon': icon.icon?.codePoint, 'color': color.toARGB32(), 'is_expense': 0, 'position': 1},
+      {'id': 1, 'name': 'Food', 'icon': icon.icon?.codePoint, 'color': color.toARGB32(), 'is_expense': 1, 'position': 0},
+      {'id': 2, 'name': 'Salary', 'icon': icon.icon?.codePoint, 'color': color.toARGB32(), 'is_expense': 0, 'position': 1},
     ];
 
     test('getAllCategories returns a list of Category', () async {

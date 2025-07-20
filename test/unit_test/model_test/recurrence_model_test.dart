@@ -201,7 +201,7 @@ void main() {
         'to_account_id': null,
         'to_category_id': 101,
         'amount': 200.0,
-        'currency': 'sgd',
+        'currency': 'SGD',
         'note': 'Side gig',
         'recurrence_type': 'yearly',
       };
@@ -320,7 +320,7 @@ void main() {
         'to_account_id': null,
         'to_category_id': 101,
         'amount': 75.0,
-        'currency': 'sgd',
+        'currency': 'SGD',
         'note': 'Groceries weekly',
       };
       expect(recurrence.toTransactionMap(), expectedMap);
@@ -466,7 +466,7 @@ void main() {
           'to_account_id': null,
           'to_category_id': 101,
           'amount': 120.0,
-          'currency': 'sgd',
+          'currency': 'SGD',
           'note': 'Shopping',
           'recurrence_type': 'monthly',
         };
@@ -493,7 +493,7 @@ void main() {
           'to_account_id': 2,
           'to_category_id': null,
           'amount': 300.0,
-          'currency': 'sgd',
+          'currency': 'SGD',
           'note': 'Transfer to savings',
           'recurrence_type': 'yearly',
         };
