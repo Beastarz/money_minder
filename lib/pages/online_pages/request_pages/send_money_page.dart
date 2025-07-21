@@ -9,6 +9,7 @@ import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../models/currency.dart';
+import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
 
 class SendMoneyPage extends StatefulWidget {
@@ -75,9 +76,18 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
 
   void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _fetchMainCurrency();
+    _targetUser = widget.defaultUser;
   }
 
   @override

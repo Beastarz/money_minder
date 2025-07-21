@@ -2,7 +2,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/budget_page/budget_settings_page.dart';
-import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';

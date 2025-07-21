@@ -6,6 +6,7 @@ import 'package:money_minder/firestore_repositories/transaction_request_reposito
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart' as model;
+import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../models/currency.dart';
@@ -24,7 +25,7 @@ class AskMoneyPage extends StatefulWidget {
 class _AskMoneyPageState extends State<AskMoneyPage> {
   model.User? _targetUser;
   final List<Currency> _currencies = Currency.currencies;
-  Currency _currency = Currency.of('sgd');
+  Currency _currency = Currency.of('SGD');
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
@@ -74,11 +75,19 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
     }
   }
 
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
   void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
   @override
   void initState() {
     super.initState();
+    _fetchMainCurrency();
     _targetUser = widget.defaultUser;
   }
 

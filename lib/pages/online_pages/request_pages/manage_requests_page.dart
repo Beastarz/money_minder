@@ -71,12 +71,13 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
           }
         }
 
-        return RequestListTile(transactionRequest: request,
+        return RequestListTile(
+          transactionRequest: request,
           displayName: nickname ?? '@${request.sender.username}',
           isSender: false,
           onReload: widget.onReload,
-          onUserBlocked: _onUserBlocked,);
-
+          onUserBlocked: _onUserBlocked,
+        );
       }).toList(),
     );
 
@@ -90,11 +91,13 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
             break;
           }
         }
-        return RequestListTile(transactionRequest: request,
+        return RequestListTile(
+          transactionRequest: request,
           displayName: nickname ?? '@${request.receiver.username}',
           isSender: true,
           onReload: widget.onReload,
-          onUserBlocked: _onUserBlocked,);
+          onUserBlocked: _onUserBlocked,
+        );
 
       }).toList(),
     );

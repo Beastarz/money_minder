@@ -80,7 +80,7 @@ class RequestDetailsDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Flexible(child: Text(request.sender.phoneNumber, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                Flexible(child: Text(request.receiver.phoneNumber, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
                 Flexible(
                   child: SizedBox(
                     height: 30,

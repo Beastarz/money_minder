@@ -8,6 +8,7 @@ import '../../../firestore_repositories/transaction_request_repositories.dart';
 import '../../../firestore_repositories/users_repositories.dart';
 import '../../../models/currency.dart';
 import '../../../models/online/transaction_request.dart';
+import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
 
 enum SplitType {
@@ -33,13 +34,14 @@ class _SplitBillPageState extends State<SplitBillPage> {
 
   Currency _currency = Currency.of('sgd');
   final List<Currency> _currencies = Currency.currencies;
-  final List<Color> _borderColors = [Colors.deepPurple, Colors.indigo, Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.orange,];
+  final List<Color> _borderColors = [Colors.deepPurple, Colors.red, Colors.indigo, Colors.green, Colors.blue, Colors.pink, Colors.orange,];
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _fetchMainCurrency();
     final amountController = TextEditingController(text: '0.00');
     amountController.addListener(calculateTotal);
     _amountControllers.add(amountController);
@@ -142,6 +144,14 @@ class _SplitBillPageState extends State<SplitBillPage> {
   }
 
   void onUsernameSelection(model.User user, int index) => setState(() => _users[index] = user);
+
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -300,8 +310,8 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
                                             child: SizedBox(
-                                              width: 20,
-                                              height: 20,
+                                              width: 30,
+                                              height: 30,
                                               child: IconButton(
                                                 color: Colors.red,
                                                 padding: EdgeInsets.all(0),
@@ -317,7 +327,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                                     calculateSplit();
                                                   }
                                                 },
-                                                icon: Icon(Icons.remove),
+                                                icon: Icon(Icons.remove, size: 30,),
                                               ),
                                             ),
                                           ),
