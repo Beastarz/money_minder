@@ -305,6 +305,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
                           _accountBalanceController.text = '0.00';
                         }
+                        FocusScope.of(context).unfocus();
                       },
                       decoration: InputDecoration(
                         prefixText: _account.currency.toString(),

@@ -42,12 +42,20 @@ class CenterPieChart extends StatelessWidget {
             if (data.actualAmount != 0) {
               isEmpty = false;
             }
+            final percentage = data.actualAmount / totalAmount * 100;
+            if (percentage < 0.01) {
+              return PieChartSectionData(
+                value: 0,
+                color: AppColor.tertiary,
+                showTitle: false,
+                radius: 15,
+              );
+            }
             return PieChartSectionData(
               value: data.actualAmount,
               color: data.color,
               showTitle: isTouched,
-              title: "${(data.actualAmount / totalAmount * 100)
-                  .toStringAsFixed(2)}%",
+              title: "${percentage.toStringAsFixed(2)}%",
               titleStyle: TextStyle(
                 fontSize: isSmallScreen ? 10 : AppSize.paragraph,
               ),

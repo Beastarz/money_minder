@@ -277,7 +277,10 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                       onEditingComplete: () {
                                         if (_totalController.text.isEmpty || double.parse(_totalController.text) == 0) {
                                           _totalController.text = '0.00';
+                                        } else {
+                                          _totalController.text = double.parse(_totalController.text).toStringAsFixed(2);
                                         }
+                                        FocusScope.of(context).unfocus();
                                       },
 
                                     ),
@@ -375,7 +378,10 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                               onEditingComplete: () {
                                                 if (_amountControllers[index].text.isEmpty || double.parse(_amountControllers[index].text) == 0) {
                                                   _amountControllers[index].text = '0.00';
+                                                } else {
+                                                  _amountControllers[index].text = double.parse(_amountControllers[index].text).toStringAsFixed(2);
                                                 }
+                                                FocusScope.of(context).unfocus();
                                               },
 
                                             ),
@@ -406,8 +412,9 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                           },
                                           onEditingComplete: () {
                                             if (_ratioControllers[index].text.isEmpty || double.parse(_ratioControllers[index].text) == 0) {
-                                              _ratioControllers[index].text = '0.00';
+                                              _ratioControllers[index].text = '1';
                                             }
+                                            FocusScope.of(context).unfocus();
                                           },
 
                                         ),

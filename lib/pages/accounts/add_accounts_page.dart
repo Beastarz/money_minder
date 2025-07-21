@@ -308,6 +308,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                             if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
                               _accountBalanceController.text = '0.00';
                             }
+                            FocusScope.of(context).unfocus();
                           },
                           keyboardType: TextInputType.numberWithOptions(
                             decimal: true,

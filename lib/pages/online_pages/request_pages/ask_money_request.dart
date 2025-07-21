@@ -136,7 +136,10 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                               onEditingComplete: () {
                                 if (_amountController.text.isEmpty || double.parse(_amountController.text) == 0) {
                                   _amountController.text = '0.00';
+                                } else {
+                                  _amountController.text = double.parse(_amountController.text).toStringAsFixed(2);
                                 }
+                                FocusScope.of(context).unfocus();
                               },
                             ),
                           ),
