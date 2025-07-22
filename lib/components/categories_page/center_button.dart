@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
@@ -67,7 +66,7 @@ class CenterButton extends StatelessWidget {
                   showColor: true,
                   fontColor: isExpense
                       ? Colors.redAccent
-                      : CupertinoColors.activeGreen,
+                      : Colors.green,
                   mainAxisAlignment: MainAxisAlignment.center,
                   size: isSmallScreen ? 12 : AppSize.heading2,
               ),
@@ -76,7 +75,7 @@ class CenterButton extends StatelessWidget {
                   currencyName: mainCurrency.toString(),
                   showColor: true,
                   fontColor: isExpense
-                      ? CupertinoColors.activeGreen
+                      ? Colors.green
                       : Colors.redAccent,
                   mainAxisAlignment: MainAxisAlignment.center,
                   size: isSmallScreen ? 10 : AppSize.heading3,

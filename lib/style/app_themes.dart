@@ -15,7 +15,10 @@ class AppThemes {
         size: AppSize.bigIcon,
     ),
     textTheme: TextTheme(
-      bodyLarge: TextStyle(color: AppColor.darkText),
+      labelLarge: TextStyle(fontWeight: FontWeight.w800),
+      bodyLarge: TextStyle(color: AppColor.darkText, ),
+      bodyMedium: TextStyle(fontWeight: FontWeight.w600),
+      bodySmall: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColor.secondary,

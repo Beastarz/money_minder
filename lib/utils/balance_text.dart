@@ -58,6 +58,7 @@ class BalanceText extends StatelessWidget {
                   style: TextStyle(
                     color: color,
                     fontSize: size - 4,
+                    fontWeight: FontWeight.w500
                   )
               ),
               const SizedBox(width: 4,),
@@ -70,7 +71,7 @@ class BalanceText extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: color,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: size,
                     )
                 ),

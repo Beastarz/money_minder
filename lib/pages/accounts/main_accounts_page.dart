@@ -38,7 +38,7 @@ class _AccountsPageState extends State<AccountsPage> {
       child: Scaffold(
         appBar: TabBar(
           tabs: <Widget>[
-            Tab(text: 'Accounts'),
+            Tab(text: 'Accounts',),
             Tab(text: 'Savings'),
             Tab(text: 'Debts',)
           ]
@@ -113,6 +113,10 @@ class _AccountsPageState extends State<AccountsPage> {
                                   account.name + (account.isMain ? '★' : ''),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 subtitle: Text(
                                   account.description,

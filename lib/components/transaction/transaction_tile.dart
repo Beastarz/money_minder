@@ -65,6 +65,7 @@ class TransactionTile extends StatelessWidget {
                     transaction.toCategory == null ? transaction.toAccount!.name : transaction.toCategory!.name,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,6 +89,9 @@ class TransactionTile extends StatelessWidget {
                             transaction.note,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           ),
                     ],
                   ),

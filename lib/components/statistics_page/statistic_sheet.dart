@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistics_cat_tile.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';

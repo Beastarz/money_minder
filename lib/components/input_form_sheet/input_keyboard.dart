@@ -35,6 +35,7 @@ class InputKeyboard extends StatefulWidget {
   final bool showNotes; // show notes input
   final Category? category;
   final double defaultValue; // default value of the input
+  final String? defaultNote;
   final DateTime? defaultDate; // default date of the input
   final RecurrenceType? defaultRecurrence; // default recurrence of the input
   final Currency mainCurrency; // default currency of the input
@@ -60,6 +61,7 @@ class InputKeyboard extends StatefulWidget {
     this.defaultDate,
     this.defaultRecurrence,
     this.onDeleteBudget,
+    this.defaultNote,
   });
 
   @override
@@ -96,6 +98,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       widget.defaultDate == null ? _currDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day) : _currDate = widget.defaultDate!;
       widget.defaultDate == null ? _datePrefix = 'Today' : _datePrefix = formatDate(_currDate, [DD]);
       widget.defaultRecurrence == null ? _recurrenceType = RecurrenceType.none : _recurrenceType = widget.defaultRecurrence!;
+      widget.defaultNote == null ? _noteController.text = '' : _noteController.text = widget.defaultNote!;
 
       // if showNotes == true, it is a budget input form, else transaction input form
       if (!widget.showNotes) {

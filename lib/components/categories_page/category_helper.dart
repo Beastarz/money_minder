@@ -373,7 +373,7 @@ class CategoryHelper {
   static Future<void> updateCategory(int id, String label, int codePoint, int colorValue, bool isExpense) async {
     await CategoryRepositories.instance.updateCategory(
         {
-          'label': label,
+          'name': label,
           'icon': codePoint,
           'color': colorValue,
           'is_expense': isExpense ? 1 : 0,
