@@ -110,13 +110,13 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
               padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
               child: Text('Settings'),
             ),
-            ListTile(
-              leading: Icon(Icons.color_lens_outlined),
-              title: Text('Theme'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.color_lens_outlined),
+            //   title: Text('Theme'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //   },
+            // ),
             ListTile(
               leading: Icon(Icons.monetization_on_outlined),
               title: Text('Currency'),
