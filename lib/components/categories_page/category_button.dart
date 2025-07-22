@@ -233,7 +233,7 @@ class _CategoryButtonState extends State<CategoryButton>
         const SizedBox(height: 4),
         Text(
           prop.label,
-          style: TextStyle(fontSize: 12),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
@@ -255,7 +255,7 @@ class _CategoryButtonState extends State<CategoryButton>
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                style: TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               ),
             ),
           ],

@@ -264,8 +264,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   ),
                   IconButton(
                     icon: _isAscending
-                        ? const Icon(CupertinoIcons.sort_up) // Consistent sorting icon
-                        : const Icon(CupertinoIcons.sort_down), // Consistent sorting icon
+                        ? const Icon(Icons.arrow_upward) // Consistent sorting icon
+                        : const Icon(Icons.arrow_downward), // Consistent sorting icon
                     onPressed: () {
                       setState(() {
                         _isAscending = !_isAscending;
