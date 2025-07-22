@@ -33,14 +33,15 @@ class _SplitBillPageState extends State<SplitBillPage> {
   SplitType _splitType = SplitType.custom;
 
   Currency _currency = Currency.of('sgd');
-  List<Currency> _currencies = [];
-  final List<Color> _borderColors = [Colors.deepPurple, Colors.indigo, Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.orange,];
+  final List<Currency> _currencies = Currency.currencies;
+  final List<Color> _borderColors = [Colors.deepPurple, Colors.red, Colors.indigo, Colors.green, Colors.blue, Colors.pink, Colors.orange,];
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _fetchMainCurrency();
     final amountController = TextEditingController(text: '0.00');
     amountController.addListener(calculateTotal);
     _amountControllers.add(amountController);
@@ -48,14 +49,6 @@ class _SplitBillPageState extends State<SplitBillPage> {
     ratioC.addListener(calculateSplit);
     _ratioControllers.add(ratioC);
     _totalController.addListener(calculateSplit);
-    _fetchCurrencies();
-  }
-
-  Future<void> _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
   }
 
   void calculateTotal() {
@@ -151,6 +144,14 @@ class _SplitBillPageState extends State<SplitBillPage> {
   }
 
   void onUsernameSelection(model.User user, int index) => setState(() => _users[index] = user);
+
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +277,10 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                       onEditingComplete: () {
                                         if (_totalController.text.isEmpty || double.parse(_totalController.text) == 0) {
                                           _totalController.text = '0.00';
+                                        } else {
+                                          _totalController.text = double.parse(_totalController.text).toStringAsFixed(2);
                                         }
+                                        FocusScope.of(context).unfocus();
                                       },
 
                                     ),
@@ -309,8 +313,8 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
                                             child: SizedBox(
-                                              width: 20,
-                                              height: 20,
+                                              width: 30,
+                                              height: 30,
                                               child: IconButton(
                                                 color: Colors.red,
                                                 padding: EdgeInsets.all(0),
@@ -326,7 +330,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                                     calculateSplit();
                                                   }
                                                 },
-                                                icon: Icon(Icons.remove),
+                                                icon: Icon(Icons.remove, size: 30,),
                                               ),
                                             ),
                                           ),
@@ -374,7 +378,10 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                               onEditingComplete: () {
                                                 if (_amountControllers[index].text.isEmpty || double.parse(_amountControllers[index].text) == 0) {
                                                   _amountControllers[index].text = '0.00';
+                                                } else {
+                                                  _amountControllers[index].text = double.parse(_amountControllers[index].text).toStringAsFixed(2);
                                                 }
+                                                FocusScope.of(context).unfocus();
                                               },
 
                                             ),
@@ -405,8 +412,9 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                           },
                                           onEditingComplete: () {
                                             if (_ratioControllers[index].text.isEmpty || double.parse(_ratioControllers[index].text) == 0) {
-                                              _ratioControllers[index].text = '0.00';
+                                              _ratioControllers[index].text = '1';
                                             }
+                                            FocusScope.of(context).unfocus();
                                           },
 
                                         ),

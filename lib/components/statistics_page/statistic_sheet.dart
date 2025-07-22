@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/statistics_page/statistics_cat_tile.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
@@ -264,8 +263,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   ),
                   IconButton(
                     icon: _isAscending
-                        ? const Icon(CupertinoIcons.sort_up) // Consistent sorting icon
-                        : const Icon(CupertinoIcons.sort_down), // Consistent sorting icon
+                        ? const Icon(Icons.arrow_upward) // Consistent sorting icon
+                        : const Icon(Icons.arrow_downward), // Consistent sorting icon
                     onPressed: () {
                       setState(() {
                         _isAscending = !_isAscending;

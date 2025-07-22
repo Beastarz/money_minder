@@ -23,20 +23,12 @@ class SendMoneyPage extends StatefulWidget {
 
 class _SendMoneyPageState extends State<SendMoneyPage> {
   model.User? _targetUser;
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
   Currency _currency = Currency.of('sgd');
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = false;
-
-  Future<void> _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    _targetUser = widget.defaultUser;
-    setState(() {
-      _currencies = res;
-    });
-  }
 
   void _handleSubmit() async {
     if (_targetUser == null) {
@@ -84,10 +76,18 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
 
   void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _fetchCurrencies();
+    _fetchMainCurrency();
+    _targetUser = widget.defaultUser;
   }
 
   @override
@@ -135,7 +135,10 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                               onEditingComplete: () {
                                 if (_amountController.text.isEmpty || double.parse(_amountController.text) == 0) {
                                   _amountController.text = '0.00';
+                                } else {
+                                  _amountController.text = double.parse(_amountController.text).toStringAsFixed(2);
                                 }
+                                FocusScope.of(context).unfocus();
                               },
                             ),
                           ),

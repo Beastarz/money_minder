@@ -90,6 +90,7 @@ class _EditExpenseSheetState extends State<EditExpenseSheet> {
               },
               defaultValue: widget.oldTransaction.amount,
               defaultDate: widget.oldTransaction.date,
+              defaultNote: widget.oldTransaction.note,
               onCurrencyUpdate: (Currency currency) {
                 setState(() {
                   this.currency = currency;

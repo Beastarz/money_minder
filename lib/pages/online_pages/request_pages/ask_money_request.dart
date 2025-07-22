@@ -6,10 +6,10 @@ import 'package:money_minder/firestore_repositories/transaction_request_reposito
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart' as model;
+import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../../models/currency.dart';
-import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
 
 
@@ -24,20 +24,13 @@ class AskMoneyPage extends StatefulWidget {
 
 class _AskMoneyPageState extends State<AskMoneyPage> {
   model.User? _targetUser;
-  List<Currency> _currencies = [];
-  Currency _currency = Currency.of('sgd');
+  final List<Currency> _currencies = Currency.currencies;
+  Currency _currency = Currency.of('SGD');
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
   bool _isLoading = false;
 
-
-  Future<void> _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
-  }
 
   void _handleSubmit() async {
     if (_targetUser == null) {
@@ -82,13 +75,20 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
     }
   }
 
+  void _fetchMainCurrency() async {
+    final res = await CurrencyRepositories.instance.getMainCurrency();
+    setState(() {
+      _currency = res;
+    });
+  }
+
   void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
   @override
   void initState() {
     super.initState();
+    _fetchMainCurrency();
     _targetUser = widget.defaultUser;
-    _fetchCurrencies();
   }
 
   @override
@@ -136,7 +136,10 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                               onEditingComplete: () {
                                 if (_amountController.text.isEmpty || double.parse(_amountController.text) == 0) {
                                   _amountController.text = '0.00';
+                                } else {
+                                  _amountController.text = double.parse(_amountController.text).toStringAsFixed(2);
                                 }
+                                FocusScope.of(context).unfocus();
                               },
                             ),
                           ),

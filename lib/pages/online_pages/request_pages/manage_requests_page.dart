@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/components/request/request_list_tile.dart';
+import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/firestore_repositories/user_contacts_repositories.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user_contact.dart';
@@ -19,6 +20,7 @@ class ManageRequestsPage extends StatefulWidget {
 
 class _ManageRequestsPageState extends State<ManageRequestsPage> {
   List<UserContact> _contacts = [];
+  List<String> _blockedList = [];
   List<TransactionRequest> _receivedRequest = [];
   List<TransactionRequest> _sentRequest = [];
 
@@ -28,14 +30,25 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
     setState(() {
       _isLoading = true;
     });
-    final contacts = await UserContactsRepositories.instance.getUserContact(FirebaseAuth.instance.currentUser!.uid);
-    final receivedRequest = await TransactionRequestRepositories.instance.getReceivedTransactionRequests(FirebaseAuth.instance.currentUser!.uid);
-    final sentRequest = await TransactionRequestRepositories.instance.getSentTransactionRequests(FirebaseAuth.instance.currentUser!.uid);
+    final String myUid = FirebaseAuth.instance.currentUser!.uid;
+    final contacts = await UserContactsRepositories.instance.getUserContact(myUid);
+    final blockedList = await BlockedUsersRepositories.instance.getBlockedUsernames(myUid);
+    final receivedRequest = await TransactionRequestRepositories.instance.getReceivedTransactionRequests(myUid);
+    final sentRequest = await TransactionRequestRepositories.instance.getSentTransactionRequests(myUid);
+    receivedRequest.removeWhere((request) => blockedList.contains(request.sender.username));
     setState(() {
       _contacts = contacts;
+      _blockedList = blockedList;
       _receivedRequest = receivedRequest;
       _sentRequest = sentRequest;
       _isLoading = false;
+    });
+  }
+
+  void _onUserBlocked(String username) {
+    setState(() {
+      _receivedRequest.removeWhere((request) => request.sender.username == username);
+      _blockedList.add(username);
     });
   }
 
@@ -57,7 +70,14 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
             break;
           }
         }
-        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.sender.username}', isSender: false, onReload: widget.onReload,);
+
+        return RequestListTile(
+          transactionRequest: request,
+          displayName: nickname ?? '@${request.sender.username}',
+          isSender: false,
+          onReload: widget.onReload,
+          onUserBlocked: _onUserBlocked,
+        );
       }).toList(),
     );
 
@@ -71,7 +91,14 @@ class _ManageRequestsPageState extends State<ManageRequestsPage> {
             break;
           }
         }
-        return RequestListTile(transactionRequest: request, displayName: nickname ?? '@${request.receiver.username}', isSender: true, onReload: widget.onReload,);
+        return RequestListTile(
+          transactionRequest: request,
+          displayName: nickname ?? '@${request.receiver.username}',
+          isSender: true,
+          onReload: widget.onReload,
+          onUserBlocked: _onUserBlocked,
+        );
+
       }).toList(),
     );
 

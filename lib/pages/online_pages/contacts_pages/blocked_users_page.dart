@@ -185,7 +185,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                           widget.onContactsReload!();
                                         }
                                       },
-                                      child: Text('Delete', style: TextStyle(color: Colors.red),),
+                                      child: Text('Unblock', style: TextStyle(color: Colors.red),),
                                     ),
                                   ],
                                 )

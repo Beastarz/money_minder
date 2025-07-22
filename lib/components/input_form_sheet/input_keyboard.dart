@@ -7,7 +7,6 @@ import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.d
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/repositories/budget_repositories.dart';
-import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../models/category.dart';
@@ -36,6 +35,7 @@ class InputKeyboard extends StatefulWidget {
   final bool showNotes; // show notes input
   final Category? category;
   final double defaultValue; // default value of the input
+  final String? defaultNote;
   final DateTime? defaultDate; // default date of the input
   final RecurrenceType? defaultRecurrence; // default recurrence of the input
   final Currency mainCurrency; // default currency of the input
@@ -61,6 +61,7 @@ class InputKeyboard extends StatefulWidget {
     this.defaultDate,
     this.defaultRecurrence,
     this.onDeleteBudget,
+    this.defaultNote,
   });
 
   @override
@@ -81,7 +82,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   bool isRecurringBudget = false;
   bool _showError = false; // show error when user submit negative amount
   final TextEditingController _noteController = TextEditingController(text: '');
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
 
   @override
   void initState() {
@@ -97,6 +98,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       widget.defaultDate == null ? _currDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day) : _currDate = widget.defaultDate!;
       widget.defaultDate == null ? _datePrefix = 'Today' : _datePrefix = formatDate(_currDate, [DD]);
       widget.defaultRecurrence == null ? _recurrenceType = RecurrenceType.none : _recurrenceType = widget.defaultRecurrence!;
+      widget.defaultNote == null ? _noteController.text = '' : _noteController.text = widget.defaultNote!;
 
       // if showNotes == true, it is a budget input form, else transaction input form
       if (!widget.showNotes) {
@@ -104,14 +106,6 @@ class _InputKeyboardState extends State<InputKeyboard> {
       } else  {
         _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
       }
-    });
-    _fetchCurrencies();
-  }
-
-  _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
     });
   }
 
@@ -125,7 +119,6 @@ class _InputKeyboardState extends State<InputKeyboard> {
     return Container(
       padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppSize.borderRadius)
         ),

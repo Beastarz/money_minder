@@ -21,6 +21,7 @@ class BottomNavbar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: GNav(
+          duration: Duration(milliseconds: 100),
           onTabChange: onTabChange,
           selectedIndex: selectedIndex,
           color: Colors.grey[400],

@@ -6,7 +6,6 @@ import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
 
-import '../../repositories/currency_repositories.dart';
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
 import '../../utils/app_message.dart';
@@ -27,7 +26,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   int _colorValue = 0xFF578FCA;
   AccountType _accountType = AccountType.accounts;
   Currency _mainCurrency = Currency.of('sgd');
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _accountBalanceController = TextEditingController(text: '0.00');
@@ -36,14 +35,6 @@ class _AddAccountPageState extends State<AddAccountPage> {
   @override
   void initState() {
     super.initState();
-    fetchCurrencies();
-  }
-
-  Future<void> fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
   }
 
   @override
@@ -317,6 +308,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                             if (_accountBalanceController.text.isEmpty || double.parse(_accountBalanceController.text) == 0) {
                               _accountBalanceController.text = '0.00';
                             }
+                            FocusScope.of(context).unfocus();
                           },
                           keyboardType: TextInputType.numberWithOptions(
                             decimal: true,

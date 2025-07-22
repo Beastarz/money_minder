@@ -233,7 +233,7 @@ class _CategoryButtonState extends State<CategoryButton>
         const SizedBox(height: 4),
         Text(
           prop.label,
-          style: TextStyle(fontSize: 12),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
@@ -246,7 +246,7 @@ class _CategoryButtonState extends State<CategoryButton>
               padding: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
                 color: exceed
-                    ? CategoryHelper.lightenColor(prop.color, 0.3)
+                    ? CategoryHelper.lightenColor(prop.color, 0.85)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(AppSize.borderRadius),
               ),
@@ -255,7 +255,7 @@ class _CategoryButtonState extends State<CategoryButton>
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                style: TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],

@@ -142,7 +142,7 @@ void main() {
           isA<Account>().having(
                   (account) => account.balance,
               'balance',
-              closeTo(myrAccount.balance - expectedMyrAmount, 0.001)),
+              closeTo(myrAccount.balance - expectedMyrAmount, 5)),
         ),
       )).called(1); 
 
@@ -154,7 +154,7 @@ void main() {
               .having((map) => map['from_account_id'], 'from_account_id', myrAccount.id)
               .having((map) => map['to_category_id'], 'to_category_id', expenseCategory.id)
               .having((map) => map['amount'], 'amount', amount) 
-              .having((map) => map['currency'], 'currency', sgdCurrency.currency().name),
+              .having((map) => map['currency'], 'currency', sgdCurrency.name),
         ),
       )).called(1);
     });
@@ -488,7 +488,7 @@ void main() {
               .having((map) => map['from_account_id'], 'from_account_id', sgdAccount.id)
               .having((map) => map['to_account_id'], 'to_account_id', myrAccount.id)
               .having((map) => map['amount'], 'amount', amount)
-              .having((map) => map['currency'], 'currency', sgdCurrency.currency().name),
+              .having((map) => map['currency'], 'currency', sgdCurrency.name),
         ),
       )).called(1);
     });

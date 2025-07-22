@@ -1,5 +1,5 @@
 name: money_minder
-description: "A new Flutter project."
+description: "A modern expense tracker app."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -33,12 +33,9 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
   google_nav_bar: ^5.0.6
   sqflite: ^2.4.2
-  selectable_box: ^1.0.8
   dotted_border: ^3.0.1
-  provider: ^6.1.5
   date_format: ^2.0.9
   fl_chart: ^1.0.0
   math_expressions: ^2.7.0
@@ -77,6 +74,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   mockito: ^5.4.6
   build_runner: ^2.5.4
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: "launcher_icon" # Set to true to use default, or provide a name like "my_app_icon"
+  ios: true # Set to true to generate for iOS
+  image_path: "assets/money_minder_logo.png" # Path to your icon file
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

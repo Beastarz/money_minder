@@ -68,7 +68,7 @@ class Account {
       'is_main': isMain ? 1 : 0,
       'includes_in_total': isIncludesInTotal ? 1 : 0,
       'type': type.name,
-      'currency': currency.currency().name,
+      'currency': currency.name,
       'position': position,
     };
   }
@@ -92,9 +92,7 @@ class Account {
       'is_main': 0,
       'includes_in_total': isIncludesInTotal ? 1 : 0,
       'type': type.name,
-      'currency': currency
-          .currency()
-          .name,
+      'currency': currency.name,
     };
   }
 

@@ -233,7 +233,7 @@ class _ImportDataState extends State<ImportData> {
   Widget build(BuildContext context) {
     return ListTile(
         title: Text('Import Data'),
-        leading: Icon(Icons.upload_outlined),
+        leading: Icon(Icons.download_outlined),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(AppSize.borderRadius),
