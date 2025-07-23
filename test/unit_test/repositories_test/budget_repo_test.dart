@@ -147,7 +147,7 @@ void main() {
     });
 
     test('createBudget inserts a new budget', () async {
-      final newBudgetMap = Budget.insertAsMap(amount: 100.0, month: 6, year: 2025, categoryId: 1);
+      final newBudgetMap = Budget.insertAsMap(amount: 100.0, month: 6, year: 2025, currency: "SGD", categoryId: 1);
 
       when(mockDatabase.insert('budgets', newBudgetMap))
           .thenAnswer((_) async => 1); // Simulate successful insertion

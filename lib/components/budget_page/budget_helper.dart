@@ -14,7 +14,7 @@ class BudgetHelper {
   /// int categoryId: id of category
   ///
   /// return: void
-  static Future<void> addBudget(DateTime date, double amount, int categoryId) async {
+  static Future<void> addBudget(DateTime date, double amount, int categoryId, String currency) async {
     int month = date.month;
     int year = date.year;
 
@@ -28,6 +28,7 @@ class BudgetHelper {
         amount: amount,
         month: month,
         year: year,
+        currency: currency,
         categoryId: categoryId,
     );
 
