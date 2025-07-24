@@ -49,6 +49,7 @@ class TransactionsContent extends StatelessWidget {
                     Text('Starting Balance'),
                     BalanceText(
                       balance: initialBalance,
+                      size: 18,
                       currencyName: mainCurrency.toString(),
                       mainAxisAlignment: MainAxisAlignment.center,
                     ),
@@ -69,6 +70,7 @@ class TransactionsContent extends StatelessWidget {
                       Flexible(
                         child: BalanceText(
                           balance: finalBalance,
+                          size: 19,
                           currencyName: mainCurrency.toString(),
                           mainAxisAlignment: MainAxisAlignment.center,
                         ),

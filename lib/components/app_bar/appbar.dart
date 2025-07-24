@@ -129,7 +129,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             }
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OnlineHomePage(username: userData!.username, onReload: onReload,))
+                MaterialPageRoute(builder: (context) => OnlineHomePage(userdata: userData!, onReload: onReload,))
             );
           },
         )

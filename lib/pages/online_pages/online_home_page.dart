@@ -7,12 +7,13 @@ import 'package:money_minder/pages/online_pages/request_pages/split_bill_page.da
 import 'package:money_minder/utils/main_icon.dart';
 
 import '../../components/categories_page/category_helper.dart';
+import '../../models/online/user.dart';
 import '../../style/app_size.dart';
 
 class OnlineHomePage extends StatelessWidget {
-  const OnlineHomePage({super.key, required this.username, required this.onReload});
+  const OnlineHomePage({super.key, required this.userdata, required this.onReload});
 
-  final String username;
+  final User userdata;
   final void Function() onReload;
 
   @override
@@ -29,7 +30,7 @@ class OnlineHomePage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Welcome! @$username',
+                  'Welcome! @${userdata.username}',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -124,7 +125,7 @@ class OnlineHomePage extends StatelessWidget {
                           color: CategoryHelper.lightenColor(Colors.deepPurple, 0.9),
                           child: MaterialButton(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => SplitBillPage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => SplitBillPage(myself: userdata,)));
                             },
                             padding: const EdgeInsets.all(8.0),
                             shape: RoundedRectangleBorder(

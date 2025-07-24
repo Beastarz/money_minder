@@ -254,7 +254,6 @@ class _CategoryButtonState extends State<CategoryButton>
                 '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                maxLines: 2,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),

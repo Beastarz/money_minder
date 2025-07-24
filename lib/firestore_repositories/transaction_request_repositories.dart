@@ -28,8 +28,8 @@ class TransactionRequestRepositories {
             TransactionRequest.fromMap(
                 doc.data(),
                 doc.id,
-                User.fromMap(sender.data() as Map<String, dynamic>, sender.id),
-                User.fromMap(receiver.data() as Map<String, dynamic>, receiver.id)
+                User.fromMap(sender.data() as Map<String, dynamic>?, sender.id),
+                User.fromMap(receiver.data() as Map<String, dynamic>?, receiver.id)
             )
         );
       }
@@ -59,8 +59,8 @@ class TransactionRequestRepositories {
             TransactionRequest.fromMap(
                 doc.data(),
                 doc.id,
-                User.fromMap(sender.data() as Map<String, dynamic>, sender.id),
-                User.fromMap(receiver.data() as Map<String, dynamic>, receiver.id)
+                User.fromMap(sender.data() as Map<String, dynamic>?, sender.id),
+                User.fromMap(receiver.data() as Map<String, dynamic>?, receiver.id)
             )
         );
       }

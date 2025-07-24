@@ -56,6 +56,17 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
     final receiverRef = UsersRepositories.instance.getUserReference(_targetUser!.uid);
     final senderRef = UsersRepositories.instance.getUserReference(FirebaseAuth.instance.currentUser!.uid);
 
+    final res = await receiverRef.get();
+    if (res.data() == null) {
+      if (mounted) {
+        AppMessage.showMessage(context, 'User not found');
+      }
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     Map<String, dynamic> map = TransactionRequest.submitAsMap(sender: senderRef, receiver: receiverRef, amount: amount, currency: _currency, message: _messageController.text, requestType: TransactionRequestType.ask);
 
     try {

@@ -18,7 +18,9 @@ enum SplitType {
 }
 
 class SplitBillPage extends StatefulWidget {
-  const SplitBillPage({super.key});
+  const SplitBillPage({super.key, required this.myself,});
+
+  final model.User myself;
 
   @override
   State<SplitBillPage> createState() => _SplitBillPageState();
@@ -31,10 +33,11 @@ class _SplitBillPageState extends State<SplitBillPage> {
   final List<model.User?> _users = [null];
   final TextEditingController _messageController = TextEditingController();
   SplitType _splitType = SplitType.custom;
+  bool _isIncludeMyself = false;
 
   Currency _currency = Currency.of('sgd');
   final List<Currency> _currencies = Currency.currencies;
-  final List<Color> _borderColors = [Colors.deepPurple, Colors.red, Colors.indigo, Colors.green, Colors.blue, Colors.pink, Colors.orange,];
+  final List<Color> _borderColors = [Colors.deepPurple, Colors.indigo, Colors.green, Colors.blue, Colors.pink, Colors.orange,];
 
   bool _isLoading = false;
 
@@ -86,23 +89,44 @@ class _SplitBillPageState extends State<SplitBillPage> {
       model.User? targetUser = item.$2;
       TextEditingController amountController = _amountControllers[item.$1];
       if (targetUser == null) {
-        AppMessage.showMessage(context, 'Please select a user.');
-        return;
+        if (mounted) {
+          AppMessage.showMessage(context, 'Please select a user.');
+          return;
+        }
       }
       if (amountController.text.isEmpty || _totalController.text.isEmpty) {
-        AppMessage.showMessage(context, 'Please fill in an amount');
-        return;
+        if (mounted) {
+          AppMessage.showMessage(context, 'Please fill in an amount');
+          return;
+        }
       }
       double amount = double.parse(amountController.text);
       double total = double.parse(_totalController.text);
-      if (amount <= 0) {
+      if (amount <= 0 && mounted) {
         AppMessage.showMessage(context, 'Amount must be greater than 0');
         return;
       }
       if (amount > 99999999999.99 || total > 99999999999.99) {
-        AppMessage.showMessage(context, 'Amount is too large!');
+        if (mounted) {
+          AppMessage.showMessage(context, 'Amount is too large!');
+        }
         return;
       }
+
+      final receiverRef = UsersRepositories.instance.getUserReference(
+          targetUser!.uid);
+
+      final res = await receiverRef.get();
+      if (res.data() == null) {
+        if (mounted) {
+          AppMessage.showMessage(context, '@${targetUser.username} not found');
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
     }
     setState(() {
       _isLoading = true;
@@ -233,6 +257,32 @@ class _SplitBillPageState extends State<SplitBillPage> {
                       }
                   ),
                 ),
+                ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text('Include myself'),
+                  trailing: Switch(
+                    value: _isIncludeMyself,
+                    onChanged: (value) {
+                      setState(() {
+                        _isIncludeMyself = value;
+                        if (!_isIncludeMyself) {
+                          _users.removeAt(0);
+                          _amountControllers.removeAt(0);
+                          _ratioControllers.removeAt(0);
+                        } else {
+                          _users.insert(0, widget.myself);
+                          final c = TextEditingController(text: '0.00');
+                          final r = TextEditingController(text: '1');
+                          r.addListener(calculateSplit);
+                          c.addListener(calculateTotal);
+                          _amountControllers.insert(0, c);
+                          _ratioControllers.insert(0, r);
+                        }
+                        _splitType == SplitType.custom ? calculateTotal() : calculateSplit();
+                      });
+                    },
+                  )
+                ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text('Recipients', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),),
@@ -306,8 +356,8 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                   children: [
                                     Stack(
                                       children: [
-                                        Center(child: Text('Recipient ${index+1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
-                                        index == 0 ? Container() :
+                                        Center(child: Text(_isIncludeMyself && index == 0 ? 'Myself' : 'Recipient ${index+1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
+                                        index == 0 || _isIncludeMyself && index == 1  ? Container() :
                                         Align(
                                           alignment: Alignment.centerRight,
                                           child: Padding(
@@ -340,7 +390,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                     ListTile(
                                       leading: Icon(Icons.person_outline),
                                       title: Text('To: ${user == null ? 'Select a user' : '@${user.username}'}', style: TextStyle(fontSize: 18),),
-                                      trailing: IconButton(
+                                      trailing: _isIncludeMyself && index == 0 ? SizedBox.shrink() : IconButton(
                                           onPressed: () {
                                             Navigator.push(context,
                                                 MaterialPageRoute(builder: (context) =>
