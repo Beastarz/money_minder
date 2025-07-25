@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../models/account.dart';
 import '../../models/category.dart';
@@ -97,39 +95,10 @@ class CSVGenerator {
     }
   }
 
-  // Check if file exists
-  static Future<bool> fileExists(String fileName) async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName.csv';
-      return await File(filePath).exists();
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // Get file size
-  static Future<int> getFileSize(String fileName) async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/$fileName.csv';
-      final file = File(filePath);
-      if (await file.exists()) {
-        return await file.length();
-      }
-      return 0;
-    } catch (e) {
-      return 0;
-    }
-  }
-
   // Read CSV file
   static Future<PlatformFile?> readFile(BuildContext context) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        // type: FileType.custom,
-        // allowedExtensions: ['csv'] // only csv file is accepted
-      );
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
       if (result != null) {
 

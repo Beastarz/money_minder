@@ -46,7 +46,7 @@ class _ImportDataState extends State<ImportData> {
     return [
       ['Transactions'],
       ['Date (DDMMYYYY)', 'Type (expense/income/transfer)', 'From Account',
-        'To Account/Category', 'Amount', 'Currency (SGD/MYR)', 'Note']
+        'To Account/Category', 'Amount', 'Currency (ISO 4217 - Currency Code)', 'Note']
     ];
   }
 
