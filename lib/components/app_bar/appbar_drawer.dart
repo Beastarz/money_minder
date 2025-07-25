@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:money_minder/auth/auth_service.dart';
 import 'package:money_minder/components/lock_screen/passcode_tile.dart';
 import 'package:money_minder/pages/setting_pages/profile_page.dart';
+import 'package:money_minder/pages/setting_pages/tutorial_page.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../pages/setting_pages/currency_setting_dialog.dart';
@@ -139,6 +140,14 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
             PasscodeTile(),
 
             ManageDataTile(user: widget.user),
+            
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text('Tutorial'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TutorialPage()));
+              },
+            )
           ],
         )
     );
