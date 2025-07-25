@@ -11,6 +11,7 @@ import 'package:money_minder/style/app_color.dart';
 import '../../../models/currency.dart';
 import '../../../repositories/currency_repositories.dart';
 import '../../../utils/app_message.dart';
+import '../../../utils/loading_screen.dart';
 
 class SendMoneyPage extends StatefulWidget {
   const SendMoneyPage({super.key, this.defaultUser});
@@ -28,6 +29,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
+  bool _isSubmitting = false;
   bool _isLoading = false;
 
   void _handleSubmit() async {
@@ -49,7 +51,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
       return;
     }
     setState(() {
-      _isLoading = true;
+      _isSubmitting = true;
     });
 
     final receiverRef = UsersRepositories.instance.getUserReference(_targetUser!.uid);
@@ -61,7 +63,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
         AppMessage.showMessage(context, 'User not found');
       }
       setState(() {
-        _isLoading = false;
+        _isSubmitting = false;
       });
       return;
     }
@@ -80,7 +82,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
       }
     } finally {
       setState(() {
-        _isLoading = false;
+        _isSubmitting = false;
       });
     }
   }
@@ -88,9 +90,13 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   void onUsernameSelection(model.User user) => setState(() => _targetUser = user);
 
   void _fetchMainCurrency() async {
+    setState(() {
+      _isLoading = true;
+    });
     final res = await CurrencyRepositories.instance.getMainCurrency();
     setState(() {
       _currency = res;
+      _isLoading = false;
     });
   }
 
@@ -111,7 +117,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Column(
+          child: _isLoading ? LoadingScreen() : Column(
             children: [
               Card(
                 color: AppColor.secondary,
@@ -205,7 +211,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                 ),
               ),
               SizedBox(height: 16),
-              _isLoading ? CircularProgressIndicator() :
+              _isSubmitting ? CircularProgressIndicator() :
               ElevatedButton(
                 onPressed: _handleSubmit,
                 child: Text('Send'),

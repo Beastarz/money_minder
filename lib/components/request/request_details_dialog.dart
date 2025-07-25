@@ -31,6 +31,7 @@ class RequestDetailsDialog extends StatelessWidget {
             Flexible(child: Text('@${request.sender.username}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
           ],
         ),
+        request.sender.phoneNumber.isEmpty ? SizedBox.shrink():
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -72,6 +73,7 @@ class RequestDetailsDialog extends StatelessWidget {
             Flexible(child: Text('@${request.receiver.username}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
           ],
         ),
+        request.receiver.phoneNumber.isEmpty ? SizedBox.shrink():
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

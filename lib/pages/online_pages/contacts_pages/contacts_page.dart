@@ -136,6 +136,14 @@ class _ContactsPageState extends State<ContactsPage> {
                         '@${contact.username}',
                         overflow: TextOverflow.ellipsis,
                       ),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return EditContactPage(contact: contact, onContactsReload: _fetchContacts);
+                            }
+                        );
+                      },
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -150,17 +158,6 @@ class _ContactsPageState extends State<ContactsPage> {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => AskMoneyPage(defaultUser: contact.toUserModel(),)));
                               },
                               icon: Icon(Icons.download_outlined, color: Colors.red[800],)
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return EditContactPage(contact: contact, onContactsReload: _fetchContacts);
-                                    }
-                                );
-                              },
-                              icon: Icon(Icons.edit_outlined)
                           ),
                         ],
                       ),

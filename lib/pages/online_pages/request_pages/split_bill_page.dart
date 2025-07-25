@@ -259,7 +259,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                 ),
                 ListTile(
                   leading: Icon(Icons.person),
-                  title: Text('Include myself'),
+                  title: Text('Include Myself'),
                   trailing: Switch(
                     value: _isIncludeMyself,
                     onChanged: (value) {
@@ -357,7 +357,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                     Stack(
                                       children: [
                                         Center(child: Text(_isIncludeMyself && index == 0 ? 'Myself' : 'Recipient ${index+1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
-                                        index == 0 || _isIncludeMyself && index == 1  ? Container() :
+                                        _users.length == 1 && index == 0 || _isIncludeMyself && index == 0  || _isIncludeMyself && _users.length == 2 && index == 1 ? Container() :
                                         Align(
                                           alignment: Alignment.centerRight,
                                           child: Padding(

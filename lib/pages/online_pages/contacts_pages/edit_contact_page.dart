@@ -136,180 +136,182 @@ class _EditContactPageState extends State<EditContactPage> {
             borderRadius: BorderRadius.circular(16),
             color: AppColor.secondary
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppBar(
-              title: Text('Edit Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
-              centerTitle: true,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Column(
-                  spacing: 16,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              iconSize: 24,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => UsernameSearchPage(
-                                    onUsernameSelection: (user) {
-                                      setState(() {
-                                        _username = user.username;
-                                        _phoneNumber = user.phoneNumber;
-                                      });
-                                    },
-                                  ))
-                                );
-                              },
-                              icon: Icon(Icons.search)
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Phone Number: ${widget.contact.phoneNumber}',
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(text: widget.contact.phoneNumber));
-                              },
-                              icon: Icon(Icons.copy_all_outlined,)
-                            )
-                          ],
-                        ),
-                      ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                title: Text('Edit Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
+                centerTitle: true,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
-                    TextField(
-                      controller: _nickNameController,
-                      decoration: InputDecoration(
-                          label: Text('Nickname'),
-                          border: OutlineInputBorder()
-                      ),
-                    ),
-
-                    TextButton(
-                      onPressed: () async {
-                        if (_nickNameController.text.isEmpty) {
-                          setState(() {
-                            _message = 'Please enter a nickname';
-                          });
-                          return;
-                        }
-                        try {
-                          await UserContactsRepositories.instance
-                              .updateUserContact(
-                              myUid,
-                              widget.contact.copyWith(
-                                username: _username,
-                                nickname: _nickNameController.text,
-                                phoneNumber: _phoneNumber,
-                              ));
-                          widget.onContactsReload();
-                        } catch (e) {
-                          if (context.mounted) {
-                            AppMessage.showMessage(context, 'Update Failed');
-                          }
-                        }
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
-                      ),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
-                      ),
-                    ),
-                    widget.contact.isBlocked ? unblockButton : blockButton,
-                    TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.red),
-                      ),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Delete Contact'),
-                            content: Text('Are you sure you want to delete this contact?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  try {
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    }
-                                    await UserContactsRepositories.instance
-                                        .deleteUserContact(
-                                        myUid, widget.contact.uid);
-                                    widget.onContactsReload();
-
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      AppMessage.showMessage(
-                                          context, 'Deletion Failed');
-                                    }
-                                  }
-                                },
-                                child: Text('Delete', style: TextStyle(color: Colors.red),),
-                              ),
-                            ],
-                          )
-                        );
-                      },
-                      child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Center(child: Text('Delete', style: TextStyle(color: Colors.white),))
-                      )
-                    ),
-                    _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
-                  ],
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: Column(
+                    spacing: 16,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  'Username: @$_username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                iconSize: 24,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => UsernameSearchPage(
+                                      onUsernameSelection: (user) {
+                                        setState(() {
+                                          _username = user.username;
+                                          _phoneNumber = user.phoneNumber;
+                                        });
+                                      },
+                                    ))
+                                  );
+                                },
+                                icon: Icon(Icons.search)
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  'Phone Number: ${widget.contact.phoneNumber}',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(text: widget.contact.phoneNumber));
+                                },
+                                icon: Icon(Icons.copy_all_outlined,)
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                      TextField(
+                        controller: _nickNameController,
+                        decoration: InputDecoration(
+                            label: Text('Nickname'),
+                            border: OutlineInputBorder()
+                        ),
+                      ),
+
+                      TextButton(
+                        onPressed: () async {
+                          if (_nickNameController.text.isEmpty) {
+                            setState(() {
+                              _message = 'Please enter a nickname';
+                            });
+                            return;
+                          }
+                          try {
+                            await UserContactsRepositories.instance
+                                .updateUserContact(
+                                myUid,
+                                widget.contact.copyWith(
+                                  username: _username,
+                                  nickname: _nickNameController.text,
+                                  phoneNumber: _phoneNumber,
+                                ));
+                            widget.onContactsReload();
+                          } catch (e) {
+                            if (context.mounted) {
+                              AppMessage.showMessage(context, 'Update Failed');
+                            }
+                          }
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
+                        ),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                        ),
+                      ),
+                      widget.contact.isBlocked ? unblockButton : blockButton,
+                      TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(Colors.red),
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Delete Contact'),
+                              content: Text('Are you sure you want to delete this contact?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                      }
+                                      await UserContactsRepositories.instance
+                                          .deleteUserContact(
+                                          myUid, widget.contact.uid);
+                                      widget.onContactsReload();
+
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        AppMessage.showMessage(
+                                            context, 'Deletion Failed');
+                                      }
+                                    }
+                                  },
+                                  child: Text('Delete', style: TextStyle(color: Colors.red),),
+                                ),
+                              ],
+                            )
+                          );
+                        },
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: Center(child: Text('Delete', style: TextStyle(color: Colors.white),))
+                        )
+                      ),
+                      _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
