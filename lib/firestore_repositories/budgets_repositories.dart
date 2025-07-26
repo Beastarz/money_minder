@@ -3,14 +3,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../repositories/budget_repositories.dart';
 
 class FirebaseBudgetsRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseBudgetsRepositories._privateConstructor();
+  FirebaseBudgetsRepositories._(this._db);
 
-  static final FirebaseBudgetsRepositories _instance = FirebaseBudgetsRepositories
-      ._privateConstructor();
+  static FirebaseBudgetsRepositories? _instance;
 
-  static FirebaseBudgetsRepositories get instance => _instance;
+  static FirebaseBudgetsRepositories get instance {
+    _instance ??= FirebaseBudgetsRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseBudgetsRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getAllBudgets(String uid) async {
     try {

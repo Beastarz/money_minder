@@ -2,14 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 
 class UserContactsRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  UserContactsRepositories._privateConstructor();
+  UserContactsRepositories._(this._db);
 
-  static final UserContactsRepositories _instance = UserContactsRepositories._privateConstructor();
+  static UserContactsRepositories? _instance;
 
+  static UserContactsRepositories get instance {
+    _instance ??= UserContactsRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
 
-  static UserContactsRepositories get instance => _instance;
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = UserContactsRepositories._(mockDb);
+  }
 
   Future<List<UserContact>> getUserContact(String uid) async {
     try {

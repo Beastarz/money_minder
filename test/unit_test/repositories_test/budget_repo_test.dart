@@ -41,8 +41,8 @@ void main() {
       Category(id: 2, name: 'Salary', icon: icon, color: color, isExpense: false, position: 2),
     ];
     final mockBudgetMaps = [
-      {'id': 1, 'category_id': 1, 'amount': 200.0, 'month': 6, 'year': 2025},
-      {'id': 2, 'category_id': 2, 'amount': 100.0, 'month': 6, 'year': 2025},
+      {'id': 1, 'category_id': 1, 'amount': 200.0, 'month': 6, 'year': 2025, 'currency': 'SGD'},
+      {'id': 2, 'category_id': 2, 'amount': 100.0, 'month': 6, 'year': 2025, 'currency': 'MYR'},
     ];
 
     test('getBudgets returns a list of Budget objects with linked categories', () async {
@@ -59,12 +59,14 @@ void main() {
       expect(result[0].amount, 200.0);
       expect(result[0].category.id, 1);
       expect(result[0].category.name, 'Food');
+      expect(result[0].currency.name, 'SGD');
 
       // Verify the second budget
       expect(result[1].id, 2);
       expect(result[1].amount, 100.0);
       expect(result[1].category.id, 2);
       expect(result[1].category.name, 'Salary');
+      expect(result[1].currency.name, 'MYR');
 
       verify(mockCategoriesRepositories.getAllCategories()).called(1);
       verify(mockDatabase.query('budgets')).called(1);
@@ -72,7 +74,7 @@ void main() {
 
     test('getBudget returns the correct amount if found', () async {
       final mockBudgetResult = [
-        {'id': 1, 'category_id': 1, 'amount': 250.0, 'month': 7, 'year': 2025},
+        {'id': 1, 'category_id': 1, 'amount': 250.0, 'month': 7, 'year': 2025, 'currency': 'SGD'},
       ];
 
       when(mockDatabase.query(
