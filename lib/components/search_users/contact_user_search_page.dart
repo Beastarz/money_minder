@@ -157,6 +157,16 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
                       },
                     ),
                   ),
+                ),
+                ListTile(
+                  leading: SizedBox(),
+                  minLeadingWidth: 8,
+                  title: Text('non_user'),
+                  subtitle: Text('select this if user are not registered'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onUserSelection(model.User.nonUser);
+                  },
                 )
               ] + _filteredContacts.map((contact) {
                 return ListTile(

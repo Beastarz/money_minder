@@ -39,13 +39,15 @@ class TransactionTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                  child: BalanceText(
-                    balance: _getTransactionBalance(),
-                    currencyName: transactions[0].mainCurrency.toString(),
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    showColor: true,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                    child: BalanceText(
+                      balance: _getTransactionBalance(),
+                      currencyName: transactions[0].mainCurrency.toString(),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      showColor: true,
+                    ),
                   ),
                 )
               ],
@@ -95,33 +97,38 @@ class TransactionTile extends StatelessWidget {
                           ),
                     ],
                   ),
-                  trailing: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      BalanceText(
-                        balance: transaction.toCategory != null
-                            ? transaction.toCategory!.isExpense
-                            ? -transaction.mainAmount
-                            : transaction.mainAmount
-                            : transaction.mainAmount,
-                        currencyName: transaction.mainCurrency.toString(),
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        showColor: transaction.type != TransactionType.transfer,
-                        size: 18,
-                      ),
-                      transaction.mainCurrency.toString() == transaction.currency.toString() ? SizedBox.shrink() :
-                      BalanceText(
-                        balance: transaction.toCategory != null
-                            ? transaction.toCategory!.isExpense
-                            ? -transaction.amount
-                            : transaction.amount
-                            : transaction.amount,
-                        currencyName: transaction.currency.toString(),
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        showColor: transaction.type != TransactionType.transfer,
-                        size: 16,
-                      ),
-                    ],
+                  trailing: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.6
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        BalanceText(
+                          balance: transaction.toCategory != null
+                              ? transaction.toCategory!.isExpense
+                              ? -transaction.mainAmount
+                              : transaction.mainAmount
+                              : transaction.mainAmount,
+                          currencyName: transaction.mainCurrency.toString(),
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          showColor: transaction.type != TransactionType.transfer,
+                          size: 18,
+                        ),
+                        transaction.mainCurrency.toString() == transaction.currency.toString() ? SizedBox.shrink() :
+                        BalanceText(
+                          balance: transaction.toCategory != null
+                              ? transaction.toCategory!.isExpense
+                              ? -transaction.amount
+                              : transaction.amount
+                              : transaction.amount,
+                          currencyName: transaction.currency.toString(),
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          showColor: transaction.type != TransactionType.transfer,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ),
                   onTap: () => showModalBottomSheet(
                     context: context,

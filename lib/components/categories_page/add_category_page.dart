@@ -96,19 +96,19 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     Navigator.pop(context); // pop add category page
     Navigator.pop(context); // pop category card
 
-    // delete the category
-    await CategoryHelper.deleteCategory(prop.id, prop.position, widget.categories);
-
     // delete relevant transactions
     await TransactionsRepositories.instance.deleteTransactionByCategoryId(prop.id);
+
+    // delete the category
+    await CategoryHelper.deleteCategory(prop.id, prop.position, widget.categories);
 
     // delete relevant budgets
     await BudgetRepositories.instance.deleteBudgetById(prop.id);
 
     // fetch new data
-    await widget.onCategoryReload();
     await widget.onTransactionReload();
     await widget.onBudgetReload();
+    await widget.onCategoryReload();
   }
 
   @override

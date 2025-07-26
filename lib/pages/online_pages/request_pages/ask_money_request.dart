@@ -8,6 +8,7 @@ import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/utils/loading_screen.dart';
 
 import '../../../models/currency.dart';
 import '../../../utils/app_message.dart';
@@ -29,6 +30,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
   final TextEditingController _amountController = TextEditingController(text: '0.00');
   final TextEditingController _messageController = TextEditingController();
 
+  bool _isSubmitting = false;
   bool _isLoading = false;
 
 
@@ -51,10 +53,21 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
       return;
     }
     setState(() {
-      _isLoading = true;
+      _isSubmitting = true;
     });
     final receiverRef = UsersRepositories.instance.getUserReference(_targetUser!.uid);
     final senderRef = UsersRepositories.instance.getUserReference(FirebaseAuth.instance.currentUser!.uid);
+
+    final res = await receiverRef.get();
+    if (res.data() == null) {
+      if (mounted) {
+        AppMessage.showMessage(context, 'User not found');
+      }
+      setState(() {
+        _isSubmitting = false;
+      });
+      return;
+    }
 
     Map<String, dynamic> map = TransactionRequest.submitAsMap(sender: senderRef, receiver: receiverRef, amount: amount, currency: _currency, message: _messageController.text, requestType: TransactionRequestType.ask);
 
@@ -70,15 +83,19 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
       }
     } finally {
       setState(() {
-        _isLoading = false;
+        _isSubmitting = false;
       });
     }
   }
 
   void _fetchMainCurrency() async {
+    setState(() {
+      _isLoading = true;
+    });
     final res = await CurrencyRepositories.instance.getMainCurrency();
     setState(() {
       _currency = res;
+      _isLoading = false;
     });
   }
 
@@ -101,7 +118,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Column(
+          child: _isLoading ? LoadingScreen() : Column(
             children: [
               Card(
                 color: AppColor.secondary,
@@ -195,7 +212,7 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                 ),
               ),
               SizedBox(height: 16),
-              _isLoading ? CircularProgressIndicator() :
+              _isSubmitting ? CircularProgressIndicator() :
               ElevatedButton(
                 onPressed: _handleSubmit,
                 child: Text('Send'),
