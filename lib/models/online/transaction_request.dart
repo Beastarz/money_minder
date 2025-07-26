@@ -61,7 +61,7 @@ class TransactionRequest {
     required double amount,
     required Currency currency,
     required String message,
-    required TransactionRequestType requestType
+    required TransactionRequestType requestType,
   }) {
     return {
       'sender': sender,
@@ -69,7 +69,7 @@ class TransactionRequest {
       'requestType': requestType.name,
       'amount': amount,
       'currency': currency.name,
-      'status': 'pending',
+      'status': receiver.id == '0' ? 'accepted' : 'pending',
       'message': message,
       'date': FieldValue.serverTimestamp(),
     };

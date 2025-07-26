@@ -51,23 +51,27 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     });
   }
 
-  void _fetchUsernames(String prefix) async {
-    if (prefix.isEmpty) {
+  void _fetchUsernames(String username) async {
+    if (username.isEmpty) {
       setState(() {
         _users = [];
         message = 'Search for users!';
       });
       return;
     }
-    if (prefix.startsWith('@')) {
-      prefix = prefix.substring(1);
+    if (username.startsWith('@')) {
+      username = username.substring(1);
     }
     setState(() {
       isLoading = true;
     });
-    final res = await UsersRepositories.instance.getUserByUsernamePrefix(prefix);
+    final res = await UsersRepositories.instance.getUserByUsername(username);
     setState(() {
-      _users = res;
+      if (res != null) {
+        _users = [res];
+      } else {
+        _users = [];
+      }
       isLoading = false;
     });
   }

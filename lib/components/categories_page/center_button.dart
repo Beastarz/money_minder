@@ -68,7 +68,7 @@ class CenterButton extends StatelessWidget {
                       ? Colors.redAccent
                       : Colors.green,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  size: isSmallScreen ? 12 : AppSize.heading2,
+                  size: isSmallScreen ? 11 : AppSize.heading2,
               ),
               BalanceText(
                   balance: isExpense ? totalIncome : totalExpense,

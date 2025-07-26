@@ -67,25 +67,6 @@ class UsersRepositories {
     }
   }
 
-  Future<List<User>> getUserByUsernamePrefix(String prefix) async {
-    if (prefix.isEmpty) {
-      return [];
-    }
-    try {
-      prefix = prefix.toLowerCase();
-      final QuerySnapshot snapshot = await _db.collection('users')
-          .where('username', isGreaterThanOrEqualTo: prefix)
-          .where('username', isLessThan: '$prefix\uf8ff')
-          .get();
-      if (snapshot.docs.isEmpty) {
-        return [];
-      }
-      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>, doc.id),).toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<User?> getUserByUsername(String username) async {
     if (username.isEmpty) {
       return null;

@@ -179,7 +179,7 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MediaQuery.withClampedTextScaling(
       minScaleFactor: 0.8,
-      maxScaleFactor: 1.2,
+      maxScaleFactor: 1.1,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppThemes.lightTheme,
