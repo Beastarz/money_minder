@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:money_minder/pages/tutorial_pages/account_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/ask_send_tutorial.dart';
 import 'package:money_minder/pages/tutorial_pages/category_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/contacts_tutorial.dart';
 import 'package:money_minder/pages/tutorial_pages/home_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/input_form_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/manage_request_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/online_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/split_bill_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/statistics_tutorial.dart';
+import 'package:money_minder/pages/tutorial_pages/transactions_tutorial.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -18,8 +26,33 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
   late TabController _tabController;
   int _currentPageIndex = 0;
 
-  final List<Widget> _pages = [HomeTutorial(), AccountTutorial(), CategoryTutorial(), Text('3')];
-  final List<String> _tabTitles = ['Home', 'Accounts', 'Categories', 'Settings'];
+  final List<Widget> _pages = [
+    HomeTutorial(),
+    AccountTutorial(),
+    CategoryTutorial(),
+    InputFormTutorial(),
+    TransactionTutorial(),
+    StatisticsTutorial(),
+    OnlineTutorial(),
+    ContactsTutorial(),
+    ManageRequestTutorial(),
+    SendAskTutorial(),
+    SplitBillTutorial()
+  ];
+
+  final List<String> _tabTitles = [
+    'Home',
+    'Accounts',
+    'Categories',
+    'Input Form',
+    'Transactions',
+    'Statistics',
+    'Online',
+    'Contacts',
+    'Manage Requests',
+    'Send/Ask Money',
+    'Split Bill',
+  ];
 
   @override
   void initState() {
@@ -76,7 +109,25 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
                   ),
                   MaterialButton(
                     onPressed: () {
-                      },
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SimpleDialog(
+                              children: _tabTitles.indexed.map((e) {
+                                  final s  = e.$2;
+                                  final index = e.$1;
+                                  return SimpleDialogOption(
+                                    onPressed: () {
+                                      _updateCurrentPageIndex(index);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(s, style: TextStyle(fontSize: 18),),
+                                  );
+                              }).toList(),
+                          );
+                        }
+                      );
+                    },
                     height: 50,
                     color: AppColor.primary,
                     shape: RoundedRectangleBorder(
