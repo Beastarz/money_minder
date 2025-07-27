@@ -1,14 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseAccountsRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseAccountsRepositories._privateConstructor();
+  FirebaseAccountsRepositories._(this._db);
 
-  static final FirebaseAccountsRepositories _instance = FirebaseAccountsRepositories
-      ._privateConstructor();
+  static FirebaseAccountsRepositories? _instance;
 
-  static FirebaseAccountsRepositories get instance => _instance;
+  static FirebaseAccountsRepositories get instance {
+    _instance ??= FirebaseAccountsRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseAccountsRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getAllAccounts(String uid) async {
     try {
@@ -47,5 +54,10 @@ class FirebaseAccountsRepositories {
     } catch(e) {
       rethrow;
     }
+  }
+
+  // Clean up any injected instances after each test
+  static Future<void> resetInstance() async {
+    _instance = null;
   }
 }

@@ -5,10 +5,22 @@ import 'package:money_minder/models/online/user.dart';
 import 'blocked_users_repositories.dart';
 
 class UsersRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  static final UsersRepositories instance = UsersRepositories._();
-  UsersRepositories._();
+  UsersRepositories._(this._db);
+
+  static UsersRepositories? _instance;
+
+  static UsersRepositories get instance {
+    _instance ??= UsersRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = UsersRepositories._(mockDb);
+  }
+
 
   Future<void> createUsername(String uid, String phoneNumber, String username) async {
     try {

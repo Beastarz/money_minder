@@ -1,12 +1,15 @@
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/models/date_filter.dart';
 
+import 'currency.dart';
+
 class Budget {
   final int id;
   final double amount;
   final int month;
   final int year;
   final Category category;
+  final Currency currency;
 
   const Budget({
     required this.id,
@@ -14,6 +17,7 @@ class Budget {
     required this.month,
     required this.year,
     required this.category,
+    required this.currency,
   });
 
   /// use this to convert map to budget
@@ -32,6 +36,7 @@ class Budget {
       month: map['month'],
       year: map['year'],
       category: category,
+      currency: Currency.of(map['currency']),
     );
   }
 
@@ -52,12 +57,14 @@ class Budget {
     required double amount,
     required int month,
     required int year,
+    required String currency,
     required int categoryId,
   }) {
     return {
       'amount': amount,
       'month': month,
       'year': year,
+      'currency': currency,
       'category_id': categoryId,
     };
   }
@@ -121,6 +128,7 @@ class Budget {
             month: budget.month,
             year: budget.year,
             category: budget.category,
+            currency: budget.currency,
             )
           )
           .toList());

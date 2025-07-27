@@ -3,12 +3,19 @@ import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart';
 
 class TransactionRequestRepositories {
-  TransactionRequestRepositories._();
+  /// Use this for the app — default singleton
+  static TransactionRequestRepositories get instance {
+    _instance ??= TransactionRequestRepositories._();
+    return _instance!;
+  }
 
-  static final TransactionRequestRepositories instance =
-  TransactionRequestRepositories._();
+  static TransactionRequestRepositories? _instance;
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  /// Allows injection of mock Firestore for tests
+  TransactionRequestRepositories._({FirebaseFirestore? db})
+      : db = db ?? FirebaseFirestore.instance;
+
+  final FirebaseFirestore db;
 
   Future<List<TransactionRequest>> getSentTransactionRequests(
       String myUid) async {

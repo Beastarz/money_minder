@@ -2,14 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/repositories/fast_note_repositories.dart';
 
 class FirebaseFastNotesRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseFastNotesRepositories._privateConstructor();
+  FirebaseFastNotesRepositories._(this._db);
 
-  static final FirebaseFastNotesRepositories _instance = FirebaseFastNotesRepositories
-      ._privateConstructor();
+  static FirebaseFastNotesRepositories? _instance;
 
-  static FirebaseFastNotesRepositories get instance => _instance;
+  static FirebaseFastNotesRepositories get instance {
+    _instance ??= FirebaseFastNotesRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseFastNotesRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getAllFastNotes(String uid) async {
     try {

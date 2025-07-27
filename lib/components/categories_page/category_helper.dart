@@ -26,11 +26,11 @@ class CategoryHelper {
   /// bool isExpense: whether the budget is for expense or income
   ///
   /// return: double
-  static double getTotalBudget(List<Budget> budgets, bool isExpense) {
+  static double getTotalBudget(List<Budget> budgets, bool isExpense, Currency mainCurrency) {
     double amount = 0;
     for (Budget b in budgets) {
       if (b.category.isExpense == isExpense) {
-        amount += b.amount;
+        amount += Currency.convert(b.currency, mainCurrency, b.amount);
       }
     }
     return amount;
@@ -45,11 +45,11 @@ class CategoryHelper {
   /// int catId: the id of the category
   ///
   /// return: double
-  static double getBudget(List<Budget> budgets, int catId) {
+  static double getBudget(List<Budget> budgets, int catId, Currency mainCurrency) {
     double amount = 0;
     for (Budget b in budgets) {
       if (b.category.id == catId) {
-        amount += b.amount;
+        amount += Currency.convert(b.currency, mainCurrency, b.amount);
       }
     }
     return amount;
@@ -92,6 +92,7 @@ class CategoryHelper {
       List<Transaction> transactions,
       List<Budget> budgets,
       List<double> totalAmounts,
+      Currency mainCurrency,
       bool isExpense,
       DateFilter dateFilter
       ) {
@@ -115,7 +116,7 @@ class CategoryHelper {
     List<CategoryProp> result = [];
     for (int i = 0; i < categories.length; i++) {
       Category category = categories[i];
-      double budget = getBudget(budgets, category.id);
+      double budget = getBudget(budgets, category.id, mainCurrency);
       result.add(
         CategoryProp(
             id: category.id,

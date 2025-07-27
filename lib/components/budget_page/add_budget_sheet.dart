@@ -33,7 +33,7 @@ class AddBudgetSheet extends StatelessWidget {
     int month = startDate.month;
     int year = startDate.year;
     for (int i = 0; i < recurringMonths; i++) {
-      BudgetHelper.addBudget(DateTime(year, month), amount, prop.id);
+      BudgetHelper.addBudget(DateTime(year, month), amount, prop.id, mainCurrency.toString());
       month += 1;
       if (month > 12) {
         month = 1;
