@@ -124,6 +124,9 @@ class TransactionHelper {
   }
 
   static DateTime getEarliestStartDate(List<Transaction> transaction) {
+    if (transaction.isEmpty) {
+      return DateTime.now();
+    }
     DateTime startDate = transaction.first.date;
     for (Transaction t in transaction) {
       if (t.date.isBefore(startDate)) {

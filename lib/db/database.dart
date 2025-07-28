@@ -157,11 +157,10 @@ class DatabaseService {
 
     await db.execute('''
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
-      ('Main Wallet', 0xe850, 1500.50, 0xFF4CAF50, 1, 'My primary cash wallet', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
-      ('Malaysia Account', 0xe850, 3000.50, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'myr', 1),
-      ('Savings Account', 0xe84f, 5000.00, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
-      ('Credit Card', 0xe870, -350.75, 0xFFF44336, 0, 'Visa credit card', 1, 'debts', 'sgd', 3), -- credit_card, Red
-      ('Investment Fund', 0xe8e5, 10000.00, 0xFFFF9800, 0, 'Stock market investments', 0, 'savings', 'sgd', 4); -- trending_up, Orange (Exclude from total)
+      ('Main Account', 0xe850, 0.0, 0xFF4CAF50, 1, 'My active account', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
+      ('Cash', 0xe850, 0.0, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'sgd', 1),
+      ('Savings Account', 0xe84f, 0.0, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
+      ('Credit Card', 0xe870, 0.0, 0xFFF44336, 0, 'Visa credit card', 1, 'debts', 'sgd', 3) -- credit_card, Red
     ''');
 
 
@@ -173,50 +172,6 @@ class DatabaseService {
       ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1), -- gamepad, Cyan
       ('Grocery', 3, 0xe8cc, 0xFF4CAF50, 1), -- shopping_cart, Green
       ('Sport', 4, 0xe566, 0xFF2196F3, 1); -- directions_run, Blue
-    ''');
-
-
-    await db.execute('''
-      INSERT INTO fast_notes (note, icon, category_id) VALUES
-      ('Groceries', 0xe8cc, 1), -- shopping_cart (Belongs to Food)
-      ('Restaurants', 0xe561, 1), -- restaurant_menu (Belongs to Food)
-      ('Public Transport', 0xe535, 2), -- directions_transit (Belongs to Transport)
-      ('Fuel', 0xe546, 2), -- local_gas_station (Belongs to Transport)
-      ('Monthly Salary', 0xe227, 3), -- attach_money (Belongs to Salary) - Using same icon as main category for simplicity
-      ('Movies', 0xe02c, 4), -- movie (Belongs to Leisure)
-      ('Hobbies', 0xe021, 4); -- games (Belongs to Leisure)
-    ''');
-
-
-    await db.execute('''
-      INSERT INTO transactions (date, type, from_account_id, to_account_id, to_category_id, amount, currency, note) VALUES
-      ('2025-04-29', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
-      -- Expense: Groceries from Main Wallet
-      ('2025-05-13', 'expense', 1, NULL, 1, 55.20, 'SGD', 'Weekly groceries'),
-      -- Expense: Restaurant from Credit Card
-      ('2025-05-14', 'expense', 3, NULL, 1, 30.50, 'SGD', 'Dinner with friends'),
-      -- Income: Monthly Salary to Savings Account
-      ('2025-05-15', 'income', 2, NULL, 3, 3500.00, 'SGD', 'May salary'),
-      -- Transfer: From Main Wallet to Savings Account
-      ('2025-05-15', 'transfer', 1, 3, NULL, 500.00, 'SGD', 'Transfer to savings'),
-      -- Expense: Public Transport from Main Wallet
-      ('2025-05-15', 'expense', 1, NULL, 2, 3.80, 'SGD', 'Bus fare'),
-      -- Expense: Movie from Main Wallet (using Leisure category)
-      ('2025-05-15', 'expense', 1, NULL, 4, 33.00, 'MYR','Go jb'),
-      ('2025-05-15', 'expense', 1, NULL, 4, 15.00, 'SGD', 'Movie ticket'),
-      -- Transfer: 'From Savings Account to Main Wallet
-      ('2025-05-30', 'transfer', 3, 1, NULL, 100.00, 'SGD', 'Transfer to Main Wallet'),
-      -- Transfer: 'From Investment Account to Savings Account'
-      ('2025-05-30', 'transfer', 5, 3, NULL, 100.00, 'SGD', 'Transfer to Savings Account');
-      
-    ''');
-
-    await db.execute('''
-      INSERT INTO budgets (amount, month, year, currency, category_id) VALUES
-      (400.00, 4, 2025, 'SGD', 1), -- Food budget for April
-      (500.00, 5, 2025, 'SDG', 1), -- Food budget for May 
-      (300.00, 5, 2025, 'SGD', 2), -- Transport budget for May
-      (3500.00, 5, 2025, 'SGD', 3); -- Income budget for May
     ''');
 
     await db.execute('''

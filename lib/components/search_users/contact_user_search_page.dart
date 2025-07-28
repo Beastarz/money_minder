@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user_contact.dart';
-import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 
@@ -74,36 +73,13 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
   @override
   Widget build(BuildContext context) {
     _filteredContacts.sort((contact, other) => contact.nickname.compareTo(other.nickname));
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Search user'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                showMenu(
-                    context: context,
-                    position: RelativeRect.fromLTRB(1, 0, 0, 0),
-                    items: [
-                      PopupMenuItem(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => BlockedUsersPage(onContactsReload: _fetchContacts,))
-                          );
-                        },
-                        child: Text('Blocked Users'),
-                      ),
-                    ]
-                );
-              },
-              icon: Icon(Icons.more_vert),
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Search user'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

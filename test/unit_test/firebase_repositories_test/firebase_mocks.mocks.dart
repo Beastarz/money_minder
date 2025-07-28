@@ -516,7 +516,6 @@ class MockFirebaseFirestore extends _i1.Mock implements _i4.FirebaseFirestore {
 /// A class which mocks [CollectionReference].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockCollectionReference extends _i1.Mock
     implements _i4.CollectionReference<Map<String, dynamic>> {
   @override
@@ -1083,7 +1082,6 @@ class MockCollectionReference extends _i1.Mock
 /// A class which mocks [DocumentReference].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockDocumentReference extends _i1.Mock
     implements _i4.DocumentReference<Map<String, dynamic>> {
   @override
@@ -1327,7 +1325,6 @@ class MockDocumentSnapshot extends _i1.Mock
 /// A class which mocks [Query].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
 class MockQuery extends _i1.Mock implements _i4.Query<Map<String, dynamic>> {
   @override
   _i4.FirebaseFirestore get firestore =>
