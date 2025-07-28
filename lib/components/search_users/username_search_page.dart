@@ -92,14 +92,13 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     } else {
       message = '';
     }
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Find User'),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Find User'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(

@@ -54,8 +54,8 @@ class Chart extends StatefulWidget {
 
 class _ChartState extends State<Chart> {
 
-  late List<Transaction> incomeTransactions;
-  late List<Transaction> expenseTransactions;
+  List<Transaction> incomeTransactions = [];
+  List<Transaction> expenseTransactions = [];
 
   void load() {
     setState(() {

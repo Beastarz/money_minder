@@ -75,36 +75,35 @@ class _ContactsPageState extends State<ContactsPage> {
   @override
   Widget build(BuildContext context) {
     _filteredContacts.sort((contact, other) => contact.nickname.compareTo(other.nickname));
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Contacts'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                showMenu(
-                  context: context,
-                  position: RelativeRect.fromLTRB(1, 0, 0, 0),
-                  items: [
-                    PopupMenuItem(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => BlockedUsersPage(onContactsReload: _fetchContacts,))
-                        );
-                      },
-                      child: Text('Blocked Users'),
-                    ),
-                  ]
-                );
-              },
-              icon: Icon(Icons.more_vert),
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Contacts'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(1, 0, 0, 0),
+                items: [
+                  PopupMenuItem(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BlockedUsersPage(onContactsReload: _fetchContacts,))
+                      );
+                    },
+                    child: Text('Blocked Users'),
+                  ),
+                ]
+              );
+            },
+            icon: Icon(Icons.more_vert),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
