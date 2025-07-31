@@ -23,7 +23,7 @@ class Chart extends StatefulWidget {
     super.key,
     required this.isExpense,
     required this.isExpanded,
-    required this.shrinkChart,
+    // required this.shrinkChart,
     required this.chartType,
     required this.currency,
     required this.dateFilterType,
@@ -31,8 +31,6 @@ class Chart extends StatefulWidget {
     this.transactions,
     this.startDate,
     this.endDate,
-    this.showIndividual = false,
-    this.onChangeType,
   });
 
   final bool isExpense;
@@ -42,11 +40,9 @@ class Chart extends StatefulWidget {
   final DateFilterType dateFilterType;
   final DateTime? startDate;
   final DateTime? endDate;
-  final bool showIndividual;
-  final void Function()? onChangeType;
   final List<CategoryProp> categories;
   final List<Transaction>? transactions;
-  final void Function()? shrinkChart;
+  // final void Function()? shrinkChart;
 
   @override
   State<Chart> createState() => _ChartState();
@@ -56,6 +52,13 @@ class _ChartState extends State<Chart> {
 
   List<Transaction> incomeTransactions = [];
   List<Transaction> expenseTransactions = [];
+  bool showIndividual = false;
+
+  void onChangeType() {
+    setState(() {
+      showIndividual = !showIndividual;
+    });
+  }
 
   void load() {
     setState(() {
@@ -77,8 +80,7 @@ class _ChartState extends State<Chart> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.transactions != null
         && widget.transactions != null
-        && (oldWidget.transactions != widget.transactions
-        || oldWidget.showIndividual != widget.showIndividual)) {
+        && oldWidget.transactions != widget.transactions) {
       load();
     }
   }
@@ -116,8 +118,8 @@ class _ChartState extends State<Chart> {
             startDate: widget.startDate!,
             endDate: widget.endDate!,
             type: widget.dateFilterType,
-            showIndividual: widget.showIndividual,
-            onChangeType: widget.onChangeType!,
+            showIndividual: showIndividual,
+            onChangeType: onChangeType,
             catList: smallCatList,
             transactions: widget.isExpense ? expenseTransactions : incomeTransactions,
           );
@@ -160,7 +162,7 @@ class _ChartState extends State<Chart> {
                     ),
                     borderRadius: BorderRadius.circular(AppSize.borderRadius),
                   ),
-                  child: !widget.showIndividual && widget.chartType == ChartType.categoryLineChart
+                  child: !showIndividual && widget.chartType == ChartType.categoryLineChart
                       ? SummaryTable(
                     startDate: widget.startDate!,
                     endDate: widget.endDate!,
@@ -182,7 +184,7 @@ class _ChartState extends State<Chart> {
           child: IconButton(
             onPressed: () {
               Navigator.pop(context);
-              widget.shrinkChart!();
+              // widget.shrinkChart!();
             },
             icon: const Icon(Icons.fullscreen_exit_outlined,
                 size: 30
