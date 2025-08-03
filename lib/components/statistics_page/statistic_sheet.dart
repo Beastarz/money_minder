@@ -55,9 +55,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   SortOptions _currentSortOption = SortOptions.percentage;
   List<CategoryProp> _category = [];
   List<double> _percentages = [];
-  int _currentPage = 0;
-  bool isExpanded = false;
-  bool _showIndividual = false;
 
   void catTileOnPressed(CategoryProp prop) {
     CategoryHelper.showCategoryCard(
@@ -82,18 +79,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
       StatisticsHelper.sortCategories(
           _category, _isAscending, _currentSortOption,
           widget.totalAmounts[widget.isExpense ? 0 : 1]);
-    });
-  }
-
-  void shrinkChart() {
-    setState(() {
-      isExpanded = false;
-    });
-  }
-
-  void updateCurrentPage(int index) {
-    setState(() {
-      _currentPage = index;
     });
   }
 
@@ -148,7 +133,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                         : Text('Income'),
                   ),
                   centerTitle: true, // Center the title in the flexible space.
-                  background: isExpanded ? null : ChartPages(
+                  background: ChartPages(
                       isExpanded: false,
                       isExpense: widget.isExpense,
                       categories: _category,
@@ -157,14 +142,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                       dateFilterType: widget.dateFilterType,
                       startDate: widget.startDate,
                       endDate: widget.endDate,
-                      currentPage: _currentPage,
-                      showIndividual: _showIndividual,
-                      lineChartChangeType: () {
-                        setState(() {
-                          _showIndividual = !_showIndividual;
-                        });
-                      },
-                      updateCurrentPage: updateCurrentPage,
                   )
                 );
               },
@@ -174,12 +151,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
               IconButton(
               icon: const Icon(Icons.fullscreen),
               onPressed: () {
-                setState(() {
-                  isExpanded = true;
-                });
                 showDialog(
                   context: context,
-                  barrierDismissible: false,
                   builder: (BuildContext context) {
                     return StatefulBuilder(
                       builder: (BuildContext statefulBuilderContext, StateSetter dialogSetState) => Dialog(
@@ -188,22 +161,12 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                               child: ChartPages(
                                   isExpanded: true,
                                   isExpense: widget.isExpense,
-                                  shrinkChart: shrinkChart,
                                   categories: _category,
                                   currency: widget.mainCurrency,
                                   transactions: widget.transactions,
                                   dateFilterType: widget.dateFilterType,
                                   startDate: widget.startDate,
                                   endDate: widget.endDate,
-                                  currentPage: _currentPage,
-                                  showIndividual: _showIndividual,
-                                  lineChartChangeType: () {
-                                    setState(() {
-                                      _showIndividual = !_showIndividual;
-                                    });
-                                    dialogSetState(() {});
-                                  },
-                                  updateCurrentPage: updateCurrentPage,
                               )
                           )
                       ),
@@ -290,7 +253,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                     totalAmount: widget.totalAmounts[widget.isExpense ? 0 : 1],
                     percentage: _percentages[_category[index].position],
                 );
-                //     return StatisticsCatTile(prop: category[index]);
               },
               childCount: _category.length, // Number of items in the list
             ),
