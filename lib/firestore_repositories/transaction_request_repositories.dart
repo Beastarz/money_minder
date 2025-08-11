@@ -21,7 +21,7 @@ class TransactionRequestRepositories {
       String myUid) async {
     try {
       DocumentReference myRef = db.collection('users').doc(myUid);
-      final res = await db.collection('transaction_requests').where(
+      final res = await myRef.collection('transactionRequests').where(
           'sender', isEqualTo: myRef).get();
       if (res.docs.isEmpty) {
         return [];
@@ -51,7 +51,7 @@ class TransactionRequestRepositories {
       String myUid) async {
     try {
       DocumentReference myRef = db.collection('users').doc(myUid);
-      final res = await db.collection('transaction_requests').where(
+      final res = await myRef.collection('transactionRequests').where(
           'receiver', isEqualTo: myRef).get();
       if (res.docs.isEmpty) {
         return [];
@@ -78,17 +78,33 @@ class TransactionRequestRepositories {
     }
   }
 
+  // Future<void> submitTransactionRequest(Map<String, dynamic> map) async {
+  //   late String id;
+  //   try {
+  //     await db.collection('transaction_requests').add(map).then((value) => id = value.id);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
   Future<void> submitTransactionRequest(Map<String, dynamic> map) async {
+    String senderUid = map['sender'].id;
+    String receiverUid = map['receiver'].id;
+    late String id;
     try {
-      await db.collection('transaction_requests').add(map);
+      await db.collection('users').doc(senderUid).collection('transactionRequests').add(map).then((value) => id = value.id);
+      await db.collection('users').doc(receiverUid).collection('transactionRequests').doc(id).set(map);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> acceptTransactionRequest(String id) async {
+  Future<void> acceptTransactionRequest(String id, String senderId, String receiverId) async {
     try {
-      await db.collection('transaction_requests').doc(id).update({
+      await db.collection('users').doc(senderId).collection('transactionRequests').doc(id).update({
+        'status': 'accepted',
+      });
+      await db.collection('users').doc(receiverId).collection('transactionRequests').doc(id).update({
         'status': 'accepted',
       });
     } catch (e) {
@@ -96,9 +112,12 @@ class TransactionRequestRepositories {
     }
   }
 
-  Future<void> rejectTransactionRequest(String id) async {
+  Future<void> rejectTransactionRequest(String id, String senderId, String receiverId) async {
     try {
-      await db.collection('transaction_requests').doc(id).update({
+      await db.collection('users').doc(senderId).collection('transactionRequests').doc(id).update({
+        'status': 'rejected',
+      });
+      await db.collection('users').doc(receiverId).collection('transactionRequests').doc(id).update({
         'status': 'rejected',
       });
     } catch (e) {
@@ -106,9 +125,13 @@ class TransactionRequestRepositories {
     }
   }
 
-  Future<void> deleteTransactionRequest(String id) async {
+  Future<void> deleteAllTransactionRequest(String uid) async {
     try {
-      await db.collection('transaction_requests').doc(id).delete();
+      final snapshot = await db.collection('users').doc(uid).collection(
+          'transactionRequests').get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
     } catch (e) {
       rethrow;
     }
