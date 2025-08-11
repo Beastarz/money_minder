@@ -23,14 +23,18 @@ class RequestListTile extends StatefulWidget {
 class _RequestListTileState extends State<RequestListTile> {
 
   void _handleAccept() async {
-    await TransactionRequestRepositories.instance.acceptTransactionRequest(widget.transactionRequest.id);
+    final senderId = widget.transactionRequest.sender.uid;
+    final receiverId = widget.transactionRequest.receiver.uid;
+    await TransactionRequestRepositories.instance.acceptTransactionRequest(widget.transactionRequest.id, senderId, receiverId);
     setState(() {
       widget.transactionRequest.status = RequestStatus.accepted;
     });
   }
 
   void _handleReject() async {
-    await TransactionRequestRepositories.instance.rejectTransactionRequest(widget.transactionRequest.id);
+    final senderId = widget.transactionRequest.sender.uid;
+    final receiverId = widget.transactionRequest.receiver.uid;
+    await TransactionRequestRepositories.instance.rejectTransactionRequest(widget.transactionRequest.id, senderId, receiverId);
     setState(() {
       widget.transactionRequest.status = RequestStatus.rejected;
     });
