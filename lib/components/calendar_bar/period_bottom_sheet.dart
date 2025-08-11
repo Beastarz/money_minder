@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_size.dart';
 
@@ -18,21 +19,21 @@ class _PeriodBottomSheetState extends State<PeriodBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(AppSize.bigPadding),
+      padding: EdgeInsets.all(AppSize.bigPadding.r),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             widget.title,
             style: TextStyle(
-                fontSize: AppSize.heading1,
+                fontSize: AppSize.heading1.sp,
                 fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 12,
-            runSpacing: 12,
+            spacing: 12.r,
+            runSpacing: 12.r,
             children: widget.children,
           ),
         ],

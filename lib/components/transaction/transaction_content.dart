@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/transaction/transaction_tile.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/recurrence.dart';
@@ -26,7 +27,7 @@ class TransactionsContent extends StatelessWidget {
     List<List<Transaction>> groupedRecurrencesByDate = groupTransactionsByDate(recurrences.reversed.toList());
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.03, vertical: 16.w),
       child: Column(
         spacing: 8,
         children: <Widget> [
@@ -38,15 +39,15 @@ class TransactionsContent extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   color: AppColor.secondary
                 ),
                 width: MediaQuery.of(context).size.width * 0.40,
-                height: 80,
+                height: 80.h,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Starting Balance'),
+                    Text('Starting Balance', style: TextStyle(fontSize: 14.sp),),
                     BalanceText(
                       balance: initialBalance,
                       size: 19,
@@ -58,15 +59,15 @@ class TransactionsContent extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   color: AppColor.secondary
                 ),
                 width: MediaQuery.of(context).size.width * 0.40,
-                height: 80,
+                height: 80.h,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Ending Balance'),
+                      Text('Ending Balance', style: TextStyle(fontSize: 14.sp),),
                       Flexible(
                         child: BalanceText(
                           balance: finalBalance,
@@ -82,12 +83,12 @@ class TransactionsContent extends StatelessWidget {
           ),
           /// Recurrence
           recurrences.isEmpty ? Container() : ExpansionTile(
-            title: Text("Upcoming Transactions (${recurrences.length})", style: TextStyle(fontSize: 16),),
-            minTileHeight: 20,
+            title: Text("Upcoming Transactions (${recurrences.length})", style: TextStyle(fontSize: 16.sp),),
+            minTileHeight: 20.h,
             children: groupedRecurrencesByDate.map((r) => RecurrenceTile(recurrences: List.castFrom<Transaction, Recurrence>(r), onTransactionReload: onTransactionReload,)).toList(),
           )
           /// Transactions
-        ] + List<Widget>.from(transactions.isEmpty ? [Center(child: Text('No Transactions Here'),)] : groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),)
+        ] + List<Widget>.from(transactions.isEmpty ? [Center(child: Text('No Transactions Here', style: TextStyle(fontSize: 16.sp),),)] : groupedTransactionsByDate.map((t) => TransactionTile(transactions: t, onTransactionReload: onTransactionReload,)).toList(),)
       ),
     );
   }

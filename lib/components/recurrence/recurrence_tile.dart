@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/recurrence/recurrence_detail_sheet.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/utils/balance_text.dart';
@@ -18,13 +19,13 @@ class RecurrenceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0,8, 0, 8),
+      padding: EdgeInsets.fromLTRB(0,8.h, 0, 8.h),
       child: recurrences.isEmpty ? Container() :
       Container(
         width: MediaQuery.of(context).size.width*0.9,
-        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 8.h, 0, 0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: AppColor.secondary),
         ),
         child: Column(
@@ -34,17 +35,17 @@ class RecurrenceTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(8.w, 0, 0, 0),
                   child: Text(
                     formatDate(recurrences[0].date, [dd, ' ', MM.toUpperCase(),' ', yyyy],),
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Colors.black54
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                  padding: EdgeInsets.fromLTRB(0, 0, 16.w, 0),
                   child: BalanceText(
                     balance: _getTransactionBalance(),
                     currencyName: recurrences[0].mainCurrency.toString(),
@@ -63,13 +64,14 @@ class RecurrenceTile extends StatelessWidget {
                   Recurrence recurrence = recurrences[index];
                   return ListTile(
                     leading: recurrence.toCategory == null
-                        ? MainIcon(icon: recurrence.toAccount!.icon, color: recurrence.toAccount!.color.withValues(alpha: 0.7), isRound: false, size: 36,)
-                        : MainIcon(icon: recurrence.toCategory!.icon, color: recurrence.toCategory!.color.withValues(alpha: 0.7), size: 36,),
+                        ? MainIcon(icon: recurrence.toAccount!.icon, color: recurrence.toAccount!.color.withValues(alpha: 0.7), isRound: false, size: 36.sp,)
+                        : MainIcon(icon: recurrence.toCategory!.icon, color: recurrence.toCategory!.color.withValues(alpha: 0.7), size: 36.sp,),
                     title: Text(
                       recurrence.toCategory == null ? recurrence.toAccount!.name : recurrence.toCategory!.name,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: TextStyle(
+                        fontSize: 16.sp,
                         color: Colors.black54
                       ),
                     ),
@@ -80,13 +82,14 @@ class RecurrenceTile extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           spacing: 2,
                           children: [
-                            Icon(recurrence.fromAccount.icon.icon, size: 17,),
+                            Icon(recurrence.fromAccount.icon.icon, size: 17.sp,),
                             Flexible(
                               child: Text(
                                 recurrence.fromAccount.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
+                                  fontSize: 14.sp,
                                   color: Colors.black54
                                 ),
                               ),
@@ -106,7 +109,7 @@ class RecurrenceTile extends StatelessWidget {
                               'Recurrence: ${recurrence.recurrenceType.name}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Colors.black54),
+                              style: TextStyle(color: Colors.black54, fontSize: 13.sp),
                             )
                       ],
                     ),

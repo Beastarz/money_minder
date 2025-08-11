@@ -2,6 +2,7 @@ import 'package:date_format/date_format.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/categories_selection_sheet.dart';
 import 'package:money_minder/components/transaction/add_expense_sheet.dart';
 import 'package:money_minder/models/category.dart';
@@ -27,27 +28,27 @@ class RequestDetailsDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Sender: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-            Flexible(child: Text('@${request.sender.username}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+            Text('Sender: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+            Flexible(child: Text('@${request.sender.username}', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
           ],
         ),
         request.sender.phoneNumber.isEmpty ? SizedBox.shrink():
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(child: Text('Phone: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),)),
+            Flexible(child: Text('Phone: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),)),
             Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Flexible(child: Text(request.sender.phoneNumber, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                Flexible(child: Text(request.sender.phoneNumber, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                 Flexible(
                   child: SizedBox(
-                    height: 30,
-                    width: 30,
+                    height: 30.h,
+                    width: 30.r,
                     child: IconButton(
                       padding: EdgeInsets.zero,
-                      iconSize: 18,
+                      iconSize: 18.sp,
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: request.receiver.phoneNumber));
                         AppMessage.showMessage(context, 'copied!');
@@ -69,27 +70,27 @@ class RequestDetailsDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Receiver: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-            Flexible(child: Text('@${request.receiver.username}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+            Text('Receiver: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+            Flexible(child: Text('@${request.receiver.username}', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
           ],
         ),
         request.receiver.phoneNumber.isEmpty ? SizedBox.shrink():
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Phone: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+            Text('Phone: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
             Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Flexible(child: Text(request.receiver.phoneNumber, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                Flexible(child: Text(request.receiver.phoneNumber, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                 Flexible(
                   child: SizedBox(
-                    height: 30,
-                    width: 30,
+                    height: 30.h,
+                    width: 30.w,
                     child: IconButton(
                         padding: EdgeInsets.zero,
-                        iconSize: 18,
+                        iconSize: 18.sp,
                         onPressed: () {
                           Clipboard.setData(ClipboardData(text: request.receiver.phoneNumber));
                           AppMessage.showMessage(context, 'copied!');
@@ -107,58 +108,58 @@ class RequestDetailsDialog extends StatelessWidget {
 
     return Dialog(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Text('Request Details', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),)),
-            SizedBox(height: 16,),
+            Center(child: Text('Request Details', style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),)),
+            SizedBox(height: 16.h,),
             ConstrainedBox(
               constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.6
               ),
               child: SingleChildScrollView(
                 child: Column(
-                  spacing: 4,
+                  spacing: 4.h,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     isSender ? receiverDetail : senderDetail,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Amount: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                        Flexible(child: Text('${request.currency} ${request.amount.toStringAsFixed(2)}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                        Text('Amount: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text('${request.currency} ${request.amount.toStringAsFixed(2)}', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Request Type: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                        Flexible(child: Text(request.requestType.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                        Text('Request Type: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(request.requestType.name, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Status: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                        Flexible(child: Text(request.status.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                        Text('Status: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(request.status.name, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Date: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                        Flexible(child: Text(formatDate(request.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),)),
+                        Text('Date: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+                        Flexible(child: Text(formatDate(request.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),)),
                       ],
                     ),
-                    SizedBox(height: 8,),
+                    SizedBox(height: 8.h,),
                     Flexible(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Message: ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                          Flexible(child: Text(request.message, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400,),)),
+                          Text('Message: ', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),),
+                          Flexible(child: Text(request.message, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400,),)),
                         ],
                       ),
                     ),
@@ -166,7 +167,7 @@ class RequestDetailsDialog extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16,),
+            SizedBox(height: 16.h,),
             Stack(
               children: [
                 Row(
@@ -248,7 +249,7 @@ class RequestDetailsDialog extends StatelessWidget {
                           }
                       );
                     },
-                    child: Text('Create Transactions'),
+                    child: Text('Create Transactions', style: TextStyle(fontSize: 16.sp),),
                   ),
                 ),
               ],

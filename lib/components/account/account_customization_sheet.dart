@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -36,10 +37,10 @@ class AccountCustomizationSheet extends StatelessWidget {
                 icon: Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
                 color: Color(colorValue),
                 isRound: false,),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Expanded(
                   child: Container(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0.w),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppSize.borderRadius),
                         border: Border.all(
@@ -83,7 +84,7 @@ class AccountCustomizationSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text("Select"),
-                        SizedBox(width: AppSize.smallPadding),
+                        SizedBox(width: AppSize.smallPadding.w),
                         Icon(IconData(codePoint, fontFamily: "MaterialSymbolsOutlined")),
                       ]
                   )

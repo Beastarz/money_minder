@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/add_contact_page.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/blocked_users_page.dart';
@@ -8,6 +9,7 @@ import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.
 import 'package:money_minder/pages/online_pages/request_pages/send_money_page.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
+import 'package:money_minder/style/app_size.dart';
 
 import '../../../components/search_users/username_search_page.dart';
 import '../../../firestore_repositories/user_contacts_repositories.dart';
@@ -93,12 +95,12 @@ class _ContactsPageState extends State<ContactsPage> {
                           MaterialPageRoute(builder: (context) => BlockedUsersPage(onContactsReload: _fetchContacts,))
                       );
                     },
-                    child: Text('Blocked Users'),
+                    child: Text('Blocked Users', style: TextStyle(fontSize: 14.sp),),
                   ),
                 ]
               );
             },
-            icon: Icon(Icons.more_vert),
+            icon: Icon(Icons.more_vert, size: AppSize.bigIcon.sp,),
           ),
         ],
       ),
@@ -111,14 +113,15 @@ class _ContactsPageState extends State<ContactsPage> {
               children: <Widget>[
                 SearchBar(
                   controller: _searchController,
-                  leading: Icon(Icons.search),
+                  leading: Icon(Icons.search, size: AppSize.bigIcon.sp,),
                   hintText: 'Search @username or Nickname',
+                  textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 16.sp)),
                   backgroundColor: WidgetStateProperty.all(AppColor.secondary),
                   elevation: WidgetStateProperty.all(2),
                 ),
                 ListTile(
-                  leading: Icon(Icons.add),
-                  title: Text('Add Contacts'),
+                  leading: Icon(Icons.add, size: AppSize.bigIcon.sp,),
+                  title: Text('Add Contacts', style: TextStyle(fontSize: 16.sp),),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onUsernameSelection: _onUsernameSelection)));
                   }
@@ -130,10 +133,12 @@ class _ContactsPageState extends State<ContactsPage> {
                       title: Text(
                         contact.nickname,
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16.sp),
                       ),
                       subtitle: Text(
                         '@${contact.username}',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14.sp),
                       ),
                       onTap: () {
                         showDialog(
@@ -150,13 +155,13 @@ class _ContactsPageState extends State<ContactsPage> {
                               onPressed: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => SendMoneyPage(defaultUser: contact.toUserModel(),)));
                               },
-                              icon: Icon(Icons.upload_outlined, color: Colors.green[800],)
+                              icon: Icon(Icons.upload_outlined, color: Colors.green[800], size: AppSize.bigIcon.sp,)
                           ),
                           IconButton(
                               onPressed: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => AskMoneyPage(defaultUser: contact.toUserModel(),)));
                               },
-                              icon: Icon(Icons.download_outlined, color: Colors.red[800],)
+                              icon: Icon(Icons.download_outlined, color: Colors.red[800], size: AppSize.bigIcon.sp,)
                           ),
                         ],
                       ),

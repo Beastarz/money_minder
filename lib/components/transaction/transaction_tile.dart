@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/transaction/transaction_detail_sheet.dart';
 import 'package:money_minder/utils/balance_text.dart';
 import 'package:money_minder/utils/main_icon.dart';
@@ -19,9 +20,9 @@ class TransactionTile extends StatelessWidget {
     return transactions.isEmpty ? Container() :
       Container(
         width: MediaQuery.of(context).size.width*0.9,
-        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 8.h, 0, 0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: AppColor.secondary),
         ),
         child: Column(
@@ -31,17 +32,17 @@ class TransactionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(8.w, 0, 0, 0),
                   child: Text(
                     formatDate(transactions[0].date, [dd, ' ', MM.toUpperCase(),' ', yyyy],),
                     style: TextStyle(
-                      fontSize: 16
+                      fontSize: 16.sp
                     ),
                   ),
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 16.w, 0),
                     child: BalanceText(
                       balance: _getTransactionBalance(),
                       currencyName: transactions[0].mainCurrency.toString(),
@@ -67,21 +68,25 @@ class TransactionTile extends StatelessWidget {
                     transaction.toCategory == null ? transaction.toAccount!.name : transaction.toCategory!.name,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisSize: MainAxisSize.min,
-                        spacing: 2,
+                        spacing: 2.w,
                         children: [
-                          Icon(transaction.fromAccount.icon.icon, size: 17,),
+                          Icon(transaction.fromAccount.icon.icon, size: 17.sp,),
                           Flexible(
                             child: Text(
                               transaction.fromAccount.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 14.sp,
+                              ),
                             ),
                           ),
                         ],
@@ -92,7 +97,8 @@ class TransactionTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 12,
+                              color: Colors.black54,
+                              fontSize: 13.sp,
                             ),
                           ),
                     ],

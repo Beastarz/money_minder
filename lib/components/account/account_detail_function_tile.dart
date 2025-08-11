@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -35,11 +36,11 @@ class AccountDetailFunctionTile extends StatelessWidget {
       child: Column(
         children: [
           icon,
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             label,
             style: TextStyle(
-                fontSize: AppSize.heading2
+                fontSize: AppSize.heading2.sp
             ),
             textAlign: TextAlign.center,
           ),

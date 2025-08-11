@@ -41,8 +41,8 @@ class CategoryTopCard extends StatelessWidget {
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-          topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+          topLeft: Radius.circular(topLeft ? AppSize.borderRadius.r : 0),
+          topRight: Radius.circular(topRight ? AppSize.borderRadius.r : 0),
         ),
       ),
       color: category.color,
@@ -63,8 +63,8 @@ class CategoryTopCard extends StatelessWidget {
             decoration: BoxDecoration(
                 color : Colors.transparent,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius.r : 0),
+                  topRight: Radius.circular(topRight ? AppSize.borderRadius.r : 0),
               ),
             ),
             child: Column(

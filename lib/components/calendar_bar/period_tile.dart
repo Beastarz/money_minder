@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -31,7 +32,6 @@ class PeriodTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return MaterialButton(
       onPressed: onPressed,
@@ -40,23 +40,19 @@ class PeriodTile extends StatelessWidget {
       padding: EdgeInsets.all(AppSize.smallPadding),
       color: isSelected ? AppColor.tertiary : AppColor.primary,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSize.borderRadius),
+        borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
       ),
       child: Column(
         children: [
           Icon(
             icon,
-            size: isSmallScreen
-              ? AppSize.smallIcon
-              : AppSize.bigIcon
+            size: AppSize.bigIcon.sp
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             label,
             style: TextStyle(
-                fontSize: isSmallScreen
-                  ? AppSize.heading3
-                  : AppSize.heading2
+              fontSize: AppSize.heading2.sp
             ),
             textAlign: TextAlign.center,
           ),
@@ -65,9 +61,7 @@ class PeriodTile extends StatelessWidget {
           : Text(
             selected ?? '',
             style: TextStyle(
-              fontSize: isSmallScreen
-              ? AppSize.paragraph
-              : AppSize.heading2,
+              fontSize: AppSize.heading2.sp,
               fontWeight: FontWeight.w200,
             ),
             textAlign: TextAlign.center,

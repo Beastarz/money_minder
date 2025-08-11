@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/online/user.dart' as model;
+import 'package:money_minder/style/app_size.dart';
 
 import '../../../components/search_users/contact_user_search_page.dart';
 import '../../../firestore_repositories/transaction_request_repositories.dart';
@@ -191,11 +193,11 @@ class _SplitBillPageState extends State<SplitBillPage> {
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.attach_money),
+                  leading: Icon(Icons.attach_money, size: AppSize.bigIcon.sp,),
                   // Placeholder icon
-                  title: Text('Currency'),
-                  subtitle: Text(_currency.fullName),
-                  trailing: Icon(Icons.chevron_right),
+                  title: Text('Currency', style: TextStyle(fontSize: 16.sp),),
+                  subtitle: Text(_currency.fullName, style: TextStyle(fontSize: 14.sp),),
+                  trailing: Icon(Icons.chevron_right, size: AppSize.bigIcon.sp,),
                   onTap: () => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -215,22 +217,22 @@ class _SplitBillPageState extends State<SplitBillPage> {
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.description_outlined), // Placeholder icon
+                  leading: Icon(Icons.description_outlined, size: AppSize.bigIcon.sp),
                   title: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
-                      label: Text('Group Message'),
+                      label: Text('Group Message', style: TextStyle(fontSize: 16.sp),),
                     ),
                     minLines: 1,
                     maxLines: 5,
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.splitscreen_rounded),
+                  leading: Icon(Icons.splitscreen_rounded, size: AppSize.bigIcon.sp,),
                   // Placeholder icon
-                  title: Text('Split Type'),
-                  subtitle: Text(_splitType.name[0].toUpperCase() + _splitType.name.substring(1)),
-                  trailing: Icon(Icons.chevron_right),
+                  title: Text('Split Type', style: TextStyle(fontSize: 16.sp),),
+                  subtitle: Text(_splitType.name[0].toUpperCase() + _splitType.name.substring(1), style: TextStyle(fontSize: 14.sp),),
+                  trailing: Icon(Icons.chevron_right, size: AppSize.bigIcon.sp,),
                   onTap: () => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -258,8 +260,8 @@ class _SplitBillPageState extends State<SplitBillPage> {
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text('Include Myself'),
+                  leading: Icon(Icons.person, size: AppSize.bigIcon.sp,),
+                  title: Text('Include Myself', style: TextStyle(fontSize: 16.sp),),
                   trailing: Switch(
                     value: _isIncludeMyself,
                     onChanged: (value) {
@@ -285,30 +287,30 @@ class _SplitBillPageState extends State<SplitBillPage> {
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Recipients', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),),
+                  child: Text('Recipients', style: TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w600),),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(height: 8.h,),
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0.r),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(height: 8,),
+                        SizedBox(height: 8.h,),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('Total: ${_currency.toString()} ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),),
+                            Text('Total: ${_currency.toString()} ', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),),
                             _splitType == SplitType.custom
-                                ? Text(_totalController.text.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),)
+                                ? Text(_totalController.text.toString(), style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),)
                                 : SizedBox(
                                     width: MediaQuery.of(context).size.width * 0.3,
                                     child: TextField(
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,color: Colors.black87),
+                                      style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500,color: Colors.black87),
                                       controller: _totalController,
                                       textAlign: TextAlign.end,
                                       decoration: InputDecoration(contentPadding: EdgeInsets.all(0)),
@@ -337,10 +339,10 @@ class _SplitBillPageState extends State<SplitBillPage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8,),
+                        SizedBox(height: 8.h,),
                         Column(
                           mainAxisSize: MainAxisSize.min,
-                          spacing: 8,
+                          spacing: 8.h,
                           children: _users.indexed.map((item) {
                             final model.User? user = item.$2;
                             final index = item.$1;
@@ -350,21 +352,21 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(8.0.r),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Stack(
                                       children: [
-                                        Center(child: Text(_isIncludeMyself && index == 0 ? 'Myself' : 'Recipient ${index+1}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
+                                        Center(child: Text(_isIncludeMyself && index == 0 ? 'Myself' : 'Recipient ${index+1}', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),)),
                                         _users.length == 1 && index == 0 || _isIncludeMyself && index == 0  || _isIncludeMyself && _users.length == 2 && index == 1 ? Container() :
                                         Align(
                                           alignment: Alignment.centerRight,
                                           child: Padding(
-                                            padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
+                                            padding: EdgeInsets.fromLTRB(0, 0, 12.w, 0),
                                             child: SizedBox(
-                                              width: 30,
-                                              height: 30,
+                                              width: 30.w,
+                                              height: 30.h,
                                               child: IconButton(
                                                 color: Colors.red,
                                                 padding: EdgeInsets.all(0),
@@ -380,7 +382,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                                     calculateSplit();
                                                   }
                                                 },
-                                                icon: Icon(Icons.remove, size: 30,),
+                                                icon: Icon(Icons.remove, size: 30.sp,),
                                               ),
                                             ),
                                           ),
@@ -388,29 +390,29 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                       ],
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.person_outline),
-                                      title: Text('To: ${user == null ? 'Select a user' : '@${user.username}'}', style: TextStyle(fontSize: 18),),
+                                      leading: Icon(Icons.person_outline, size: AppSize.bigIcon.sp,),
+                                      title: Text('To: ${user == null ? 'Select a user' : '@${user.username}'}', style: TextStyle(fontSize: 18.sp),),
                                       trailing: _isIncludeMyself && index == 0 ? SizedBox.shrink() : IconButton(
                                           onPressed: () {
                                             Navigator.push(context,
                                                 MaterialPageRoute(builder: (context) =>
                                                     ContactUserSearchPage(onUserSelection: (user) => onUsernameSelection(user, index))));
                                           },
-                                          icon: Icon(Icons.search)
+                                          icon: Icon(Icons.search, size: AppSize.bigIcon.sp,)
                                       ),
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.attach_money_outlined),
-                                      title: Text('Amount', style: TextStyle(fontSize: 18),),
+                                      leading: Icon(Icons.attach_money_outlined, size: AppSize.bigIcon.sp,),
+                                      title: Text('Amount', style: TextStyle(fontSize: 18.sp),),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(_currency.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                                          Text(_currency.toString(), style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),),
                                           SizedBox(
                                             width: MediaQuery.of(context).size.width * 0.3,
                                             child: TextField(
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black87),
+                                              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500, color: Colors.black87),
                                               controller: _amountControllers[index],
                                               textAlign: TextAlign.end,
                                               inputFormatters: <TextInputFormatter>[
@@ -440,12 +442,12 @@ class _SplitBillPageState extends State<SplitBillPage> {
                                       ),
                                     ),
                                     _splitType != SplitType.ratio ?  SizedBox.shrink() : ListTile(
-                                      leading: Icon(Icons.horizontal_split_outlined),
-                                      title: Text('Ratio', style: TextStyle(fontSize: 18),),
+                                      leading: Icon(Icons.horizontal_split_outlined, size: AppSize.bigIcon.sp,),
+                                      title: Text('Ratio', style: TextStyle(fontSize: 18.sp),),
                                       trailing: SizedBox(
                                         width: MediaQuery.of(context).size.width * 0.3,
                                         child: TextField(
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black87),
+                                          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500, color: Colors.black87),
                                           controller: _ratioControllers[index],
                                           textAlign: TextAlign.end,
                                           inputFormatters: <TextInputFormatter>[
@@ -476,7 +478,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                             );
                           }).toList(),
                         ),
-                        SizedBox(height: 8,),
+                        SizedBox(height: 8.h,),
                         TextButton(
                           onPressed: () {
                             setState(() {
@@ -496,7 +498,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.add),
-                              Text('Add Recipient'),
+                              Text('Add Recipient', style: TextStyle(fontSize: 16.sp),),
                             ],
                           ),
                         ),
@@ -504,11 +506,11 @@ class _SplitBillPageState extends State<SplitBillPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 _isLoading ? CircularProgressIndicator() :
                 ElevatedButton(
                   onPressed: _handleSubmit,
-                  child: Text('Send'),
+                  child: Text('Send', style: TextStyle(fontSize: 16.sp),),
                 ),
               ]
             ),

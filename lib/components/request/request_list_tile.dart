@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/request/request_details_dialog.dart';
 import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/utils/balance_text.dart';
@@ -49,6 +50,7 @@ class _RequestListTileState extends State<RequestListTile> {
           color: widget.transactionRequest.requestType == TransactionRequestType.send
               ? Colors.green
               : Colors.red,
+          size: 35,
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -56,7 +58,7 @@ class _RequestListTileState extends State<RequestListTile> {
             Flexible(
               child: Text(
                 widget.transactionRequest.requestType == TransactionRequestType.send ? 'Send: ' : 'Ask: ',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18.sp),
               ),
             ),
             Flexible(
@@ -64,7 +66,7 @@ class _RequestListTileState extends State<RequestListTile> {
                 widget.displayName,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
               )
             ),
           ],
@@ -76,19 +78,19 @@ class _RequestListTileState extends State<RequestListTile> {
             BalanceText(
               balance: widget.transactionRequest.amount,
               currencyName: widget.transactionRequest.currency.toString(),
-              size: 18,
+              size: 18.sp,
               fontColor: widget.transactionRequest.requestType == TransactionRequestType.send
                   ? Colors.green
                   : Colors.red,
             ),
-            Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14,)),
+            Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14.sp,)),
           ],
         ),
         trailing: widget.transactionRequest.status ==  RequestStatus.accepted
-            ? Text('Accepted', style: TextStyle(fontSize: 16, color: Colors.green),)
+            ? Text('Accepted', style: TextStyle(fontSize: 16.sp, color: Colors.green),)
             : widget.transactionRequest.status == RequestStatus.rejected
-            ? Text('Rejected', style: TextStyle(fontSize: 16, color: Colors.red))
-            : Text('Pending', style: TextStyle(fontSize: 16, color: Colors.amber)),
+            ? Text('Rejected', style: TextStyle(fontSize: 16.sp, color: Colors.red))
+            : Text('Pending', style: TextStyle(fontSize: 16.sp, color: Colors.amber)),
         onTap: () {
           showDialog(context: context, builder: (context) =>
               RequestDetailsDialog(request: widget.transactionRequest, onReload: widget.onReload, isSender: widget.isSender, onUserBlocked: widget.onUserBlocked,));
@@ -102,6 +104,7 @@ class _RequestListTileState extends State<RequestListTile> {
         color: widget.transactionRequest.requestType == TransactionRequestType.send
             ? Colors.green
             : Colors.red,
+        size: 35,
       ),
       title: Row(
         mainAxisSize: MainAxisSize.min,
@@ -109,7 +112,7 @@ class _RequestListTileState extends State<RequestListTile> {
           Flexible(
             child: Text(
               widget.transactionRequest.requestType == TransactionRequestType.send ? 'Received: ' : 'Asked: ',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18.sp),
             ),
           ),
           Flexible(
@@ -117,7 +120,7 @@ class _RequestListTileState extends State<RequestListTile> {
                 widget.displayName,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
               )
           ),
         ],
@@ -129,18 +132,18 @@ class _RequestListTileState extends State<RequestListTile> {
           BalanceText(
             balance: widget.transactionRequest.amount,
             currencyName: widget.transactionRequest.currency.toString(),
-            size: 18,
+            size: 18.sp,
             fontColor: widget.transactionRequest.requestType == TransactionRequestType.send
                 ? Colors.green
                 : Colors.red,
           ),
-          Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14,)),
+          Text(formatDate(widget.transactionRequest.date.toDate(), [d, ' ', M, ', ', yyyy]), style: TextStyle(fontSize: 14.sp,)),
         ],
       ),
       trailing: widget.transactionRequest.status ==  RequestStatus.accepted
-          ? Text('Accepted', style: TextStyle(fontSize: 16, color: Colors.green),)
+          ? Text('Accepted', style: TextStyle(fontSize: 16.sp, color: Colors.green),)
           : widget.transactionRequest.status == RequestStatus.rejected
-          ? Text('Rejected', style: TextStyle(fontSize: 16, color: Colors.red))
+          ? Text('Rejected', style: TextStyle(fontSize: 16.sp, color: Colors.red))
           : Row(
           mainAxisSize: MainAxisSize.min,
           children: [

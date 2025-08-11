@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/recurrence/edit_recurrence_sheet.dart';
 import 'package:money_minder/repositories/transaction_helper.dart';
 import 'package:money_minder/models/recurrence.dart';
@@ -74,7 +75,7 @@ class RecurrenceDetailSheet extends StatelessWidget {
               ),
             ),
             Container(
-                padding: EdgeInsets.all(AppSize.bigPadding),
+                padding: EdgeInsets.all(AppSize.bigPadding.r),
                 child: Column(
                   children: [
                     BalanceText(
@@ -85,24 +86,24 @@ class RecurrenceDetailSheet extends StatelessWidget {
                     recurrence.recurrenceType == RecurrenceType.none ? SizedBox.shrink() :
                       Text('Recurrence: ${recurrence.recurrenceType.name}'),
                     recurrence.note == '' ? Container() : Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0.r),
                       child: Text(
                           recurrence.note,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                           )
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0 ,8, 0, 8),
+                      padding: EdgeInsets.fromLTRB(0 ,8.h, 0, 8.h),
                       child: Wrap(
                         alignment: WrapAlignment.center,
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: 8.w,
+                        runSpacing: 8.h,
                         children: [
                           TransactionDetailTile(
                               label: 'Edit',
-                              icon: Icon(Icons.edit, color: Colors.amber,),
+                              icon: Icon(Icons.edit, color: Colors.amber, size: 32.sp,),
                               onPressed: () {
                                 Navigator.pop(context);
                                 showModalBottomSheet(
@@ -116,7 +117,7 @@ class RecurrenceDetailSheet extends StatelessWidget {
                           ),
                           TransactionDetailTile(
                               label: 'Delete',
-                              icon: Icon(Icons.delete, color: Colors.redAccent,),
+                              icon: Icon(Icons.delete, color: Colors.redAccent, size: 32.sp,),
                               onPressed: () {
                                 showDialog(
                                     context: context,
@@ -160,7 +161,7 @@ class RecurrenceDetailSheet extends StatelessWidget {
                           ),
                           recurrence.recurrenceType == RecurrenceType.none ? SizedBox.shrink() : TransactionDetailTile(
                             label: 'Skip',
-                            icon: Icon(Icons.skip_next_outlined),
+                            icon: Icon(Icons.skip_next_outlined, size: 32.sp,),
                             onPressed: () {
                               () async {
                                 await RecurrenceRepositories.instance.updateRecurrence(recurrence.increment());
@@ -171,7 +172,7 @@ class RecurrenceDetailSheet extends StatelessWidget {
                           ),
                           TransactionDetailTile(
                               label: 'Add Now',
-                              icon: Icon(Icons.download_outlined),
+                              icon: Icon(Icons.download_outlined, size: 32.sp,),
                               onPressed: () {
                                 () async {
                                   if (recurrence.type == TransactionType.transfer) {
@@ -192,7 +193,7 @@ class RecurrenceDetailSheet extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text(formatDate(recurrence.date, [DD, ', ', dd, ' ', M,' ', yyyy]),)
+                    Text(formatDate(recurrence.date, [DD, ', ', dd, ' ', M,' ', yyyy]), style: TextStyle(fontSize: AppSize.heading3.sp),)
                   ],
                 )
             )

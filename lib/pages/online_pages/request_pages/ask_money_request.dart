@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/search_users/contact_user_search_page.dart';
 import 'package:money_minder/firestore_repositories/transaction_request_repositories.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
@@ -8,6 +9,7 @@ import 'package:money_minder/models/online/transaction_request.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
+import 'package:money_minder/style/app_size.dart';
 import 'package:money_minder/utils/loading_screen.dart';
 
 import '../../../models/currency.dart';
@@ -123,20 +125,20 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
               Card(
                 color: AppColor.secondary,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 16.0),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16.0.h, vertical: 16.0.w),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Amount', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                      Text('Amount', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(_currency.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+                          Text(_currency.toString(), style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: TextField(
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
                               controller: _amountController,
                               textAlign: TextAlign.end,
                               inputFormatters: <TextInputFormatter>[
@@ -167,21 +169,22 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.person_outline),
-                title: Text('To: ${_targetUser == null ? 'Select a user' : '@${_targetUser!.username}'}', style: TextStyle(fontSize: 18),),
+                leading: Icon(Icons.person_outline, size: AppSize.bigIcon.sp,),
+                title: Text('To: ${_targetUser == null ? 'Select a user' : '@${_targetUser!.username}'}', style: TextStyle(fontSize: 18.sp),),
                 trailing: IconButton(
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ContactUserSearchPage(onUserSelection: onUsernameSelection)));
                     },
+                    iconSize: AppSize.bigIcon.sp,
                     icon: Icon(Icons.search)
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.attach_money),
+                leading: Icon(Icons.attach_money, size: AppSize.bigIcon.sp,),
                 // Placeholder icon
-                title: Text('Currency'),
-                subtitle: Text(_currency.fullName),
-                trailing: Icon(Icons.chevron_right),
+                title: Text('Currency', style: TextStyle(fontSize: 16.sp),),
+                subtitle: Text(_currency.fullName, style: TextStyle(fontSize: 14.sp),),
+                trailing: Icon(Icons.chevron_right, size: AppSize.bigIcon.sp,),
                 onTap: () => showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -201,21 +204,21 @@ class _AskMoneyPageState extends State<AskMoneyPage> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.description_outlined), // Placeholder icon
+                leading: Icon(Icons.description_outlined, size: AppSize.bigIcon.sp,), // Placeholder icon
                 title: TextField(
                   controller: _messageController,
                   decoration: InputDecoration(
-                    label: Text('Message'),
+                    label: Text('Message', style: TextStyle(fontSize: 16.sp),),
                   ),
                   minLines: 1,
                   maxLines: 5,
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 16.h),
               _isSubmitting ? CircularProgressIndicator() :
               ElevatedButton(
                 onPressed: _handleSubmit,
-                child: Text('Send'),
+                child: Text('Send', style: TextStyle(fontSize: 16.sp),),
               ),
             ],
           ),
