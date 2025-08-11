@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
 
 import '../../../models/currency.dart';
@@ -40,7 +41,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
         BarChartRodData(
           toY: value,
           color: color,
-          width: 6,
+          width: 6.w,
         ),
       ],
       showingTooltipIndicators: touchedGroupIndex == x ? [0] : [],
@@ -77,11 +78,11 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
             'Category Total ${widget.isExpense ? "Expenses" : "Income"}',
             style: TextStyle(
               color: AppColor.darkText,
-              fontSize: 16,
+              fontSize: 16.sp,
             ),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5.h),
         AspectRatio(
           aspectRatio: widget.aspectRatio,
           child: BarChart(
@@ -106,7 +107,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                           meta.formattedValue,
                           style: TextStyle(
                             color: AppColor.darkText,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
@@ -140,7 +141,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) => FlLine(
                   color: Colors.black.withValues(alpha: 0.2),
-                  strokeWidth: 1,
+                  strokeWidth: 1.w,
                 ),
               ),
               barGroups: widget.catList.asMap().entries.map((e) {
@@ -172,7 +173,7 @@ class _CategoryBarChartState extends State<CategoryBarChart> {
                       TextStyle(
                         fontWeight: FontWeight.bold,
                         color: rod.color,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                       ),
                     );
                   },

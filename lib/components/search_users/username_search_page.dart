@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
@@ -100,7 +101,7 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.sp),
             child: Column(
               spacing: 16,
               children: [

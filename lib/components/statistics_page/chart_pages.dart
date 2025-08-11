@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../models/currency.dart';
@@ -163,7 +164,6 @@ class PageIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -171,7 +171,7 @@ class PageIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TabPageSelector(
-            indicatorSize: isSmallScreen ? 6 : 8,
+            indicatorSize: 8.sp,
             controller: tabController,
             color: colorScheme.surface,
             selectedColor: colorScheme.primary,

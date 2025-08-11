@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/budget_page/budget_circular_bar.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
@@ -36,7 +37,7 @@ class CategoryCard extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.all(AppSize.smallPadding),
+        padding: EdgeInsets.all(AppSize.smallPadding.sp),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppSize.borderRadius),
           color: AppColor.secondary,
@@ -57,7 +58,7 @@ class CategoryCard extends StatelessWidget {
               disabledTextColor: AppColor.darkText,
               disabledColor: AppColor.secondary,
               child: Container(
-                padding: EdgeInsets.only(top: AppSize.smallPadding),
+                padding: EdgeInsets.only(top: AppSize.smallPadding.sp),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppSize.borderRadius),
                 ),
@@ -81,7 +82,7 @@ class CategoryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("Add Transaction"),
-                  SizedBox(width: AppSize.smallPadding),
+                  SizedBox(width: AppSize.smallPadding.w),
                   Icon(Icons.list_alt_outlined),
                 ]
               )
@@ -98,7 +99,7 @@ class CategoryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text("View Transactions"),
-                      SizedBox(width: AppSize.smallPadding),
+                      SizedBox(width: AppSize.smallPadding.w),
                       Icon(Icons.remove_red_eye_outlined),
                     ]
                 )
@@ -117,7 +118,7 @@ class CategoryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text("Edit Category"),
-                      SizedBox(width: AppSize.smallPadding),
+                      SizedBox(width: AppSize.smallPadding.w),
                       Icon(Icons.edit),
                     ]
                 )

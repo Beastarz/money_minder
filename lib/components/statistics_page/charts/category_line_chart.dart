@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/models/date_filter.dart';
 
@@ -119,8 +120,8 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
                 child: Padding(
                   padding: EdgeInsets.zero,
                   child: SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 24.w,
+                    height: 24.h,
                     child: Center(
                       child: Icon(
                         Icons.refresh_outlined,
@@ -138,13 +139,13 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
               : 'Total ${widget.isExpense ? "Expenses" : "Income"} x Period',
               style: TextStyle(
                 color: AppColor.darkText,
-                fontSize: 16,
+                fontSize: 16.sp,
               ),
             ),
             const Spacer(),
           ],
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5.h),
         AspectRatio(
           aspectRatio: widget.aspectRatio,
           child: LineChart(
@@ -156,8 +157,8 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 12,
+    TextStyle style = TextStyle(
+      fontSize: 12.sp,
     );
     Widget text;
     if (value.truncateToDouble() == value) {
@@ -183,8 +184,8 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 12,
+    TextStyle style = TextStyle(
+      fontSize: 12.sp,
     );
 
     double maxY = _showIndividual ? individualChartMaxY : sumChartMaxY;
@@ -225,7 +226,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
         if (tmp.any((yVal) => (yVal - value).abs() < 0.01)) {
           return FlLine(
             color: Colors.grey,
-            strokeWidth: 1,
+            strokeWidth: 1.w,
           );
         } else {
           return const FlLine(
@@ -237,7 +238,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
       getDrawingVerticalLine: (value) {
         return FlLine(
           color: Colors.grey,
-          strokeWidth: 1,
+          strokeWidth: 1.w,
         );
       },
     );
@@ -322,7 +323,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
           gradient: LinearGradient(
             colors: gradientColors,
           ),
-          barWidth: 2,
+          barWidth: 2.w,
           dotData: const FlDotData(
             show: false,
           ),
@@ -348,7 +349,7 @@ class _CategoryLineChartState extends State<CategoryLineChart> {
           isCurved: true,
           preventCurveOverShooting: true,
           color: color,
-          barWidth: 2,
+          barWidth: 2.w,
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,

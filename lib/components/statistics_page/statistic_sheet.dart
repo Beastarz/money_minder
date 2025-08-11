@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/statistics_page/statistics_cat_tile.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
 
@@ -97,8 +98,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    double expandedHeight = isSmallScreen ? 145 : 200;
+    double expandedHeight = 200.sp;
 
     return Scaffold(
       body: CustomScrollView(
@@ -179,7 +179,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
           SliverToBoxAdapter(
             child: Padding( // Added Padding for better visual separation
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -27,8 +28,6 @@ class CenterPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     bool isEmpty = true;
     // generate PieData for the pie chart
@@ -57,10 +56,10 @@ class CenterPieChart extends StatelessWidget {
               showTitle: isTouched,
               title: "${percentage.toStringAsFixed(2)}%",
               titleStyle: TextStyle(
-                fontSize: isSmallScreen ? 10 : AppSize.paragraph,
+                fontSize: AppSize.paragraph.sp,
               ),
               titlePositionPercentageOffset: 2,
-              radius: isTouched ? (isSmallScreen ? 20 : 25) : 15,
+              radius: (isTouched ? 25 : 15).w,
             );
     }).toList();
 
@@ -79,12 +78,8 @@ class CenterPieChart extends StatelessWidget {
 
     return Center(
       child: SizedBox(
-        height: MediaQuery.of(context).size.width * (
-          isSmallScreen ? 0.4 : 0.5
-        ),
-        width: MediaQuery.of(context).size.width * (
-          isSmallScreen ? 0.4 : 0.5
-        ),
+        height: MediaQuery.of(context).size.width * 0.5,
+        width: MediaQuery.of(context).size.width * 0.5,
         child: PieChart(
           PieChartData(
             sections: pieData,

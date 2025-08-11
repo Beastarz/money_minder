@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -34,8 +35,8 @@ class BudgetTopCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Widget buttonContent = SizedBox(
-        width: 40,
-        height: 40,
+        width: 40.w,
+        height: 40.h,
         child: icon
     );
 
@@ -44,8 +45,8 @@ class BudgetTopCard extends StatelessWidget {
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-          topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+          topLeft: Radius.circular(topLeft ? AppSize.borderRadius.r : 0),
+          topRight: Radius.circular(topRight ? AppSize.borderRadius.r : 0),
         ),
       ),
       color: backgroundColor,
@@ -66,7 +67,7 @@ class BudgetTopCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(AppSize.smallPadding),
+                    padding: EdgeInsets.all(AppSize.smallPadding.sp),
                     child: title,
                   ),
                   content,

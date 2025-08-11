@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/auth/auth_service.dart';
 import 'package:money_minder/components/lock_screen/passcode_tile.dart';
 import 'package:money_minder/pages/setting_pages/profile_page.dart';
@@ -36,7 +37,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
     Widget signInTile = ListTile(
       title: Text(
         'Not Signed In',
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontSize: 18.sp),
       ),
       trailing: isLoading ? CircularProgressIndicator() : TextButton(
         onPressed: () async {
@@ -64,7 +65,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
         child: Text(
           "Google Sign In",
           style: TextStyle(
-              fontSize: 16
+              fontSize: 16.sp
           ),
         ),
       ),
@@ -75,7 +76,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
       title: Text(
         widget.userData == null ? '_empty' : '@${widget.userData!.username}',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -92,15 +93,15 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
           padding: EdgeInsets.zero,
           children: [
             SizedBox(
-              height: 125,
+              height: 125.h,
               child: DrawerHeader(
                 decoration: BoxDecoration(
                   color: AppColor.secondary,
                 ),
-                child: const Text(
+                child: Text(
                   'MoneyMinder',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 22.sp,
                   ),
                 ),
               ),
@@ -108,7 +109,7 @@ class _AppbarDrawerState extends State<AppbarDrawer> {
             widget.user != null ? signOutTile : signInTile,
             Divider(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
               child: Text('Settings'),
             ),
             // ListTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../repositories/currency_repositories.dart';
@@ -38,7 +39,7 @@ class _CurrencySettingDialogState extends State<CurrencySettingDialog> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.sp),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -48,7 +49,7 @@ class _CurrencySettingDialogState extends State<CurrencySettingDialog> {
             spacing: 12,
             children: [
               Icon(Icons.currency_exchange_outlined),
-              Text('Main Currency', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+              Text('Main Currency', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18.sp)),
             ],
           ),
           DropdownButtonHideUnderline(

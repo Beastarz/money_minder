@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/utils/restart_widget.dart';
@@ -43,7 +44,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.sp),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,13 +54,13 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 'Set your username and phone number',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             Flexible(child: Text('You cannot change your username afterwards.')),
-            SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Form(
               key: _usernameFormKey,
               child: SizedBox(
@@ -90,7 +91,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 ),
               ),
             ),
-            SizedBox(height: 16,),
+            SizedBox(height: 16.h,),
             Flexible(
               child: Form(
                 key: _phoneNumberFormKey,
@@ -118,7 +119,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.h),
             isLoading ? CircularProgressIndicator() :
             ElevatedButton(
                 onPressed: () {
@@ -135,7 +136,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                 },
                 child: Text('Create')
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.h),
             errorText.isEmpty ? Container() :
                 Text(errorText, style: TextStyle(color: Colors.red),),
           ],

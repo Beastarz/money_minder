@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 import 'package:money_minder/components/statistics_page/side_table/category_table.dart';
 import 'package:money_minder/components/statistics_page/side_table/summary_table.dart';
@@ -23,7 +24,6 @@ class Chart extends StatefulWidget {
     super.key,
     required this.isExpense,
     required this.isExpanded,
-    // required this.shrinkChart,
     required this.chartType,
     required this.currency,
     required this.dateFilterType,
@@ -42,7 +42,6 @@ class Chart extends StatefulWidget {
   final DateTime? endDate;
   final List<CategoryProp> categories;
   final List<Transaction>? transactions;
-  // final void Function()? shrinkChart;
 
   @override
   State<Chart> createState() => _ChartState();
@@ -88,10 +87,10 @@ class _ChartState extends State<Chart> {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+    // final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double height = widget.isExpanded
         ? MediaQuery.of(context).size.width * 0.8
-        : isSmallScreen ? 145 : 200 - AppSize.smallPadding;
+        : (200 - AppSize.smallPadding).sp;
     double width = widget.isExpanded
         ? MediaQuery.of(context).size.height * 0.6
         : MediaQuery.of(context).size.width * 0.9;
@@ -145,7 +144,7 @@ class _ChartState extends State<Chart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppSize.smallPadding),
+                padding: EdgeInsets.all(AppSize.smallPadding.sp),
                 height: height,
                 width: width,
                 child: child(),
@@ -154,7 +153,7 @@ class _ChartState extends State<Chart> {
                   ? SizedBox.shrink()
                   : Expanded(
                 child: Container(
-                  margin: EdgeInsets.all(AppSize.smallPadding),
+                  margin: EdgeInsets.all(AppSize.smallPadding.sp),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,

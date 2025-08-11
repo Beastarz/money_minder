@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/category.dart';
 import 'package:money_minder/repositories/category_repositories.dart';
 import 'package:money_minder/utils/main_icon.dart';
@@ -56,11 +57,11 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(AppSize.smallPadding),
+                          padding: EdgeInsets.all(AppSize.smallPadding.sp),
                           child: Text(
                               'Select Category',
                               style: TextStyle(
-                                fontSize: AppSize.heading1,
+                                fontSize: AppSize.heading1.sp,
                               )
                           ),
                         ),
@@ -78,7 +79,7 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                     child: Text(
                       widget.isExpense ? 'Expenses' : 'Incomes',
                       style: TextStyle(
-                        fontSize: AppSize.heading2,
+                        fontSize: AppSize.heading2.sp,
                         fontWeight: FontWeight.bold,
                         color: AppColor.darkText,
                       ),
@@ -106,7 +107,7 @@ class _CategoriesSelectionSheetState extends State<CategoriesSelectionSheet> {
                             widget.onSelect(expense);
                           },
                         ),
-                        Text(expense.name, style: TextStyle(fontSize: 12),)
+                        Text(expense.name, style: TextStyle(fontSize: 12.sp),)
                       ],
                     )).toList(),
                   ),

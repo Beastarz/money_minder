@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/pages/tutorial_pages/account_tutorial.dart';
 import 'package:money_minder/pages/tutorial_pages/ask_send_tutorial.dart';
 import 'package:money_minder/pages/tutorial_pages/category_tutorial.dart';
@@ -92,7 +93,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
         appBar: AppBar(
           automaticallyImplyLeading: false,
           flexibleSpace: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8.0.h),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -121,14 +122,14 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
                                       _updateCurrentPageIndex(index);
                                       Navigator.pop(context);
                                     },
-                                    child: Text(s, style: TextStyle(fontSize: 18),),
+                                    child: Text(s, style: TextStyle(fontSize: 18.sp),),
                                   );
                               }).toList(),
                           );
                         }
                       );
                     },
-                    height: 50,
+                    height: 50.h,
                     color: AppColor.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSize.borderRadius),
@@ -139,10 +140,10 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
                           _tabTitles[_currentPageIndex],
                           style: TextStyle(
                             color: AppColor.darkText,
-                            fontSize: AppSize.heading3,
+                            fontSize: AppSize.heading3.sp,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Icon(
                           Icons.keyboard_arrow_down,
                           color: AppColor.darkIcon,
