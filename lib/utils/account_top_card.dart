@@ -65,8 +65,8 @@ class AccountTopCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color : Colors.transparent,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius.r : 0),
+                  topRight: Radius.circular(topRight ? AppSize.borderRadius.r : 0),
                 ),
               ),
               child: Column(
@@ -78,6 +78,7 @@ class AccountTopCard extends StatelessWidget {
                         '${topLeft ? "From" : "To"} Account',
                         textAlign: TextAlign.left,
                         style: TextStyle(
+                          fontSize: AppSize.heading3.sp,
                         )
                     ),
                   ),

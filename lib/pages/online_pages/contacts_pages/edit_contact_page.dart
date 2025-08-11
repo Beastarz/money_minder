@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -77,7 +78,7 @@ class _EditContactPageState extends State<EditContactPage> {
         },
         child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
-            child: Center(child: Text('Block', style: TextStyle(color: Colors.white),))
+            child: Center(child: Text('Block', style: TextStyle(color: Colors.white, fontSize: 16.sp),))
         )
     );
 
@@ -124,7 +125,7 @@ class _EditContactPageState extends State<EditContactPage> {
         },
         child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
-            child: Center(child: Text('Unblock', style: TextStyle(color: Colors.white),))
+            child: Center(child: Text('Unblock', style: TextStyle(color: Colors.white, fontSize: 18.sp),))
         )
     );
 
@@ -139,7 +140,7 @@ class _EditContactPageState extends State<EditContactPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               AppBar(
-                title: Text('Edit Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
+                title: Text('Edit Contact', style: TextStyle(fontSize:24.sp, fontWeight: FontWeight.w500),),
                 centerTitle: true,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
@@ -152,7 +153,7 @@ class _EditContactPageState extends State<EditContactPage> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
                   child: Column(
-                    spacing: 16,
+                    spacing: 16.h,
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -166,7 +167,7 @@ class _EditContactPageState extends State<EditContactPage> {
                                 child: Text(
                                   'Username: @$username${widget.contact.isBlocked ? ' (Blocked)' : ''}',
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.w600
                                   ),
                                 ),
@@ -180,7 +181,7 @@ class _EditContactPageState extends State<EditContactPage> {
                                 child: Text(
                                   'Phone Number: $phoneNumber',
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.w600
                                   ),
                                 ),
@@ -189,7 +190,7 @@ class _EditContactPageState extends State<EditContactPage> {
                                 onPressed: () {
                                   Clipboard.setData(ClipboardData(text: phoneNumber));
                                 },
-                                icon: Icon(Icons.copy_all_outlined,)
+                                icon: Icon(Icons.copy_all_outlined, size: 22.sp,)
                               )
                             ],
                           ),
@@ -235,7 +236,7 @@ class _EditContactPageState extends State<EditContactPage> {
                         ),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.9,
-                          child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                          child: Center(child: Text('Save', style: TextStyle(color: Colors.white, fontSize: 16.sp),))
                         ),
                       ),
                       widget.contact.isBlocked ? unblockButton : blockButton,
@@ -283,10 +284,10 @@ class _EditContactPageState extends State<EditContactPage> {
                         },
                         child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.9,
-                            child: Center(child: Text('Delete', style: TextStyle(color: Colors.white),))
+                            child: Center(child: Text('Delete', style: TextStyle(color: Colors.white, fontSize: 16.sp),))
                         )
                       ),
-                      _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
+                      _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red, fontSize: 14.sp),),
                     ],
                   ),
                 ),

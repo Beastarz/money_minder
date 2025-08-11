@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -32,31 +33,24 @@ class InputFormButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final isSmallScreen = MediaQuery.of(context).size.width <= 360;
-
     return Material(
       color: props.backgroundColor,
-      borderRadius: BorderRadius.circular(AppSize.borderRadius),
+      borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
       child: InkWell(
         splashColor: AppColor.tertiary,
         highlightColor: AppColor.tertiary,
-        borderRadius: BorderRadius.circular(AppSize.borderRadius),
+        borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
         onTap: onPressed,
         child: Center(
           child: props.icon != null
               ? Icon(
                 props.icon,
-                size: isSmallScreen
-                  ? AppSize.heading2 * 1.2
-                  : AppSize.heading2 * 1.5
+                size: (AppSize.heading2 * 1.5).sp
           )
               : Text(
             props.text,
             style: TextStyle(
-              fontSize: isSmallScreen
-                ? AppSize.heading2
-                : AppSize.heading2 * 1.5,
+              fontSize: (AppSize.heading2 * 1.5).sp,
               fontWeight: FontWeight.normal, // Adjusted for the screenshot
               // color: AppColor.darkText,
             ),

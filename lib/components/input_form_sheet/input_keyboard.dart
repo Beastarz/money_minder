@@ -1,6 +1,7 @@
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/budget_page/budget_settings_page.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
@@ -114,13 +115,12 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
     List<InputFormButtonProps> buttonProps = widget.buttonProps;
     final String currency = widget.mainCurrency.toString(); // Default currency symbol
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Container(
-      padding: EdgeInsets.all(4),
+      padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSize.borderRadius)
+            top: Radius.circular(AppSize.borderRadius.r)
         ),
       ),
       child: Center(
@@ -132,9 +132,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
               child: ReverseEllipsisText(
                 '$currency $_currentAmount',
                 style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? AppSize.heading1
-                      : AppSize.heading1 * 1.5,
+                  fontSize: (AppSize.heading1 * 1.5).sp,
                   fontWeight: FontWeight.bold,
                   color: AppColor.darkText,
                 ),
@@ -146,13 +144,12 @@ class _InputKeyboardState extends State<InputKeyboard> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.red,
-                  fontSize: isSmallScreen
-                      ? AppSize.paragraph
-                      : AppSize.paragraph * 1.2),
+                  fontSize: (AppSize.paragraph * 1.2).sp,
+              )
             )
             : SizedBox.shrink(),
 
-            SizedBox(height: AppSize.smallPadding), // small padding
+            SizedBox(height: AppSize.smallPadding.h), // small padding
 
             // Notes input
             !widget.showNotes
@@ -162,19 +159,19 @@ class _InputKeyboardState extends State<InputKeyboard> {
               decoration: InputDecoration(
                 hintText: 'Notes...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSize.borderRadius),
+                  borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: AppColor.primary,
-                contentPadding: EdgeInsets.all(AppSize.smallPadding),
+                contentPadding: EdgeInsets.all(AppSize.smallPadding.r),
               ),
-              style: TextStyle(fontSize: isSmallScreen
-                  ? AppSize.heading3
-                  : AppSize.heading3 * 1.5),
+              style: TextStyle(
+                  fontSize: (AppSize.heading3 * 1.5).sp
+              ),
             ),
 
-            SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
+            SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding.h), // small padding
 
             // show fast notes
             widget.category == null
@@ -193,17 +190,17 @@ class _InputKeyboardState extends State<InputKeyboard> {
               }
             ),
 
-            SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding), // small padding
+            SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding.h), // small padding
             // Input Form Grid
             GridView.builder(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 5,
                 childAspectRatio: 1.2, // Adjust aspect ratio for button size
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
               ),
               itemCount: 20,
               itemBuilder: (context, index) {
@@ -230,7 +227,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
             // show setting at the bottom
             _message.isEmpty
                 ? SizedBox.shrink()
-                : SizedBox(height: 4), // small padding
+                : SizedBox(height: 4.h), // small padding
 
             _message.isEmpty
               ? SizedBox.shrink()
@@ -238,9 +235,8 @@ class _InputKeyboardState extends State<InputKeyboard> {
                   _recurrenceType == RecurrenceType.none ? _message : '$_message, ${_recurrenceType.name[0].toUpperCase()}${_recurrenceType.name.substring(1)}',
                   style: TextStyle(
                       color: AppColor.darkText,
-                      fontSize: isSmallScreen
-                          ? AppSize.heading3
-                          : AppSize.heading3 * 1.2),
+                      fontSize: (AppSize.heading3 * 1.2).sp
+                  ),
                 )
           ],
         ),

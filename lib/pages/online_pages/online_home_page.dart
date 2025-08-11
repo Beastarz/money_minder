@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/pages/online_pages/contacts_pages/contacts_page.dart';
 import 'package:money_minder/pages/online_pages/request_pages/ask_money_request.dart';
 import 'package:money_minder/pages/online_pages/request_pages/manage_requests_page.dart';
@@ -32,7 +33,7 @@ class OnlineHomePage extends StatelessWidget {
                 Text(
                   'Welcome! @${userdata.username}',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

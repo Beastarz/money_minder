@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/firestore_repositories/blocked_users_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
+import 'package:money_minder/style/app_size.dart';
 
 import '../../../components/search_users/username_search_page.dart';
 import '../../../firestore_repositories/user_contacts_repositories.dart';
@@ -62,26 +64,27 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Blocked Users'),
+        title: Text('Blocked Users', style: TextStyle(fontSize: 16.sp),),
         centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             child: Column(
-              spacing: 4,
+              spacing: 4.h,
               children: <Widget>[
                 SearchBar(
                   controller: _searchController,
-                  leading: Icon(Icons.search),
+                  leading: Icon(Icons.search, size: AppSize.bigIcon.sp,),
                   hintText: 'Search @username or Nickname',
+                  textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 16.sp)),
                   backgroundColor: WidgetStateProperty.all(AppColor.secondary),
                   elevation: WidgetStateProperty.all(2),
                 ),
                 ListTile(
-                    leading: Icon(Icons.add),
-                    title: Text('Add a user'),
+                    leading: Icon(Icons.add, size: AppSize.bigIcon.sp,),
+                    title: Text('Add a user', style: TextStyle(fontSize: 16.sp),),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => UsernameSearchPage(onUsernameSelection: _onSelectUsername)));
                     }
@@ -93,6 +96,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                   title: Text(
                     _selectedUsername,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 16.sp),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -104,7 +108,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                             });
                           },
                           color: Colors.redAccent,
-                          icon: Icon(Icons.close)
+                          icon: Icon(Icons.close, size: AppSize.bigIcon.sp,)
                       ),
                       IconButton(
                           onPressed: () {
@@ -142,7 +146,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                             );
                           },
                           color: Colors.green,
-                          icon: Icon(Icons.check,)
+                          icon: Icon(Icons.check, size: AppSize.bigIcon.sp,)
                       ),
                     ],
                   ),
@@ -154,6 +158,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                   title: Text(
                     username,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 16.sp),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -190,7 +195,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                                 )
                             );
                           },
-                          icon: Icon(Icons.close)
+                          icon: Icon(Icons.close, size: AppSize.bigIcon.sp,)
                       ),
                     ],
                   ),

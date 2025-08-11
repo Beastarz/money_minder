@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/models/date_filter.dart';
 import 'package:money_minder/components/calendar_bar/period_tile.dart';
@@ -55,7 +56,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
     return AppBar(
       automaticallyImplyLeading: false,
       flexibleSpace: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0.w),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -73,6 +74,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                 },
                 icon: Icon(
                   Icons.keyboard_double_arrow_left_rounded,
+                  size: AppSize.bigIcon.sp,
                 ),
               ),
 
@@ -258,10 +260,10 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                       }
                   );
                 },
-                height: 50,
+                height: 50.h,
                 color: AppColor.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSize.borderRadius),
+                  borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -269,21 +271,21 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                     Icon(
                       Icons.calendar_today,
                       color: AppColor.darkIcon,
-                      size: AppSize.smallIcon,
+                      size: AppSize.smallIcon.sp,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8.w),
                     Text(
                       widget.dateString,
                       style: TextStyle(
                         color: AppColor.darkText,
-                        fontSize: AppSize.heading3,
+                        fontSize: AppSize.heading3.sp,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8.w),
                     Icon(
                       Icons.keyboard_arrow_down,
                       color: AppColor.darkIcon,
-                      size: 20,
+                      size: 20.sp,
                     ),
                   ],
                 ),
@@ -302,6 +304,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                 },
                 icon: Icon(
                   Icons.keyboard_double_arrow_right_rounded,
+                  size: AppSize.bigIcon.sp,
                 ),
               ),
             ]

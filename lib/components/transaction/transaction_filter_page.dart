@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/transaction.dart';
 import 'package:money_minder/models/transaction_filter.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -65,7 +66,7 @@ class _TransactionFilterPageState extends State<TransactionFilterPage> {
                     Icons.check,
                     color: AppColor.darkText,
                   ),
-                  const SizedBox(width: 5,),
+                  SizedBox(width: 5.w,),
                   Text(
                       'Apply',
                       style: TextStyle(

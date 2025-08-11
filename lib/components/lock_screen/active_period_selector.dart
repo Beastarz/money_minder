@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../repositories/passcode_repositories.dart';
 import '../../style/app_color.dart';
@@ -48,9 +49,9 @@ class _ActivePeriodSelectorState extends State<ActivePeriodSelector> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.password, size: 30),
-                SizedBox(width: AppSize.smallPadding),
-                Text('Required Passcode', style: TextStyle(fontSize: 20)),
+                Icon(Icons.password, size: 30.sp),
+                SizedBox(width: AppSize.smallPadding.w),
+                Text('Required Passcode', style: TextStyle(fontSize: 20.sp)),
               ],
             ),
             Divider(),
@@ -78,8 +79,8 @@ class _ActivePeriodSelectorState extends State<ActivePeriodSelector> {
               title: Text("After 15 minute"),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(AppSize.borderRadius),
-                    bottomRight: Radius.circular(AppSize.borderRadius)
+                    bottomLeft: Radius.circular(AppSize.borderRadius.r),
+                    bottomRight: Radius.circular(AppSize.borderRadius.r)
                 ),
               ),
               tileColor: _defaultActivePeriod == 900 ? AppColor.primary : AppColor.secondary,

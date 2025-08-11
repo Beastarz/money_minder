@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/account.dart';
 
 import '../../repositories/accounts_repositories.dart';
@@ -60,11 +61,11 @@ class _AccountSelectionSheetState extends State<AccountSelectionSheet> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(AppSize.smallPadding),
+                        padding: EdgeInsets.all(AppSize.smallPadding.r),
                         child: Text(
                             'Select Account',
                             style: TextStyle(
-                              fontSize: AppSize.heading1,
+                              fontSize: AppSize.heading1.sp,
                             )
                         ),
                       ),
@@ -81,11 +82,11 @@ class _AccountSelectionSheetState extends State<AccountSelectionSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 8, 0),
+                        padding: EdgeInsets.fromLTRB(10.w, 10.h, 8.w, 0),
                         child: Text(
                           accountType.name[0].toUpperCase() + accountType.name.substring(1),
                           style: TextStyle(
-                            fontSize: AppSize.heading2,
+                            fontSize: AppSize.heading2.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColor.darkText,
                           ),

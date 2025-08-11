@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
@@ -38,7 +39,7 @@ class _AddContactPageState extends State<AddContactPage> {
                     top: Radius.circular(16),
                   ),
                 ),
-                title: Text('Add Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
+                title: Text('Add Contact', style: TextStyle(fontSize:24.sp, fontWeight: FontWeight.w500),),
                 centerTitle: true,
               ),
               Padding(
@@ -46,7 +47,7 @@ class _AddContactPageState extends State<AddContactPage> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
                   child: Column(
-                    spacing: 16,
+                    spacing: 16.h,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -54,7 +55,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         child: Text(
                             'Username: @${widget.user.username}',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w600
                             ),
                         ),
@@ -63,7 +64,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         child: Text(
                           'Phone Number: @${widget.user.phoneNumber}',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w600
                           ),
                         ),
@@ -71,7 +72,7 @@ class _AddContactPageState extends State<AddContactPage> {
                       TextField(
                         controller: _nickNameController,
                         decoration: InputDecoration(
-                          label: Text('Nickname'),
+                          label: Text('Nickname', style: TextStyle(fontSize: 14.sp),),
                           border: OutlineInputBorder()
                         ),
                       ),
@@ -109,7 +110,7 @@ class _AddContactPageState extends State<AddContactPage> {
                           ),
                           child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.9,
-                              child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                              child: Center(child: Text('Save', style: TextStyle(color: Colors.white, fontSize: 14.sp),))
                           ),
                         ),
                       ),

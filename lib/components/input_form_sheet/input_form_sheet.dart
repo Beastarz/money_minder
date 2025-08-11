@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -38,7 +39,7 @@ class InputFormSheet extends StatelessWidget {
               children: [
                 topContent,
                 Container(
-                  padding: EdgeInsets.all(AppSize.smallPadding),
+                  padding: EdgeInsets.all(AppSize.smallPadding.r),
                   child: inputForm,
                 )
               ],
