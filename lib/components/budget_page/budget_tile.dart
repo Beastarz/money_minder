@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../models/currency.dart';
@@ -35,8 +36,8 @@ class _BudgetTileState extends State<BudgetTile> {
     if (_myWidgetKey.currentContext != null) {
       final RenderBox renderBox = _myWidgetKey.currentContext!.findRenderObject() as RenderBox;
       setState(() {
-        _widgetHeight = renderBox.size.height;
-        _widgetWidth = renderBox.size.width;
+        _widgetHeight = (renderBox.size.height).h;
+        _widgetWidth = (renderBox.size.width).w;
       });
     }
   }
@@ -96,10 +97,10 @@ class _BudgetTileState extends State<BudgetTile> {
             ),
 
             ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 5),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: 5.w),
               leading: Container(
-                padding: const EdgeInsets.all(5),
+                padding: EdgeInsets.all(5.w),
                 decoration: BoxDecoration(
                   shape:  BoxShape.circle,
                   color: widget.prop.color,

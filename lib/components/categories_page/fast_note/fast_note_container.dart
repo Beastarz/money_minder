@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:money_minder/repositories/fast_note_repositories.dart';
 
@@ -93,14 +94,14 @@ class _FastNoteContainerState extends State<FastNoteContainer> {
       children: [
         Expanded(
           child: Container(
-            height: 50,
-            padding: EdgeInsets.all(5),
+            height: 50.h,
+            padding: EdgeInsets.all(5.sp),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: CategoryHelper.lightenColor(widget.color, 0.96),
               border: Border.all(
                 color: Colors.transparent,
-                width: 1,
+                width: 1.w,
               ),
             ),
             child: FutureBuilder<List<FastNote>>(

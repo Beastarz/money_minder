@@ -1,5 +1,6 @@
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../models/currency.dart';
@@ -40,8 +41,8 @@ class BudgetCircularBar extends StatelessWidget {
       sweepAngle: 270,
       foregroundColor: prop.color,
       backgroundColor: AppColor.tertiary,
-      foregroundStrokeWidth: 15,
-      backgroundStrokeWidth: 15,
+      foregroundStrokeWidth: 15.sp,
+      backgroundStrokeWidth: 15.sp,
       animation: true,
       seekSize: 6,
       seekColor: AppColor.primary,
@@ -58,7 +59,7 @@ class BudgetCircularBar extends StatelessWidget {
                   style: TextStyle(
                       color: AppColor.darkText,
                       fontWeight: FontWeight.w300,
-                      fontSize: isSmallScreen ? 25 : 40
+                      fontSize: (isSmallScreen ? 25 : 40).sp
                   ),
                 ),
 

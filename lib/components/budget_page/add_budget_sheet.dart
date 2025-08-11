@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/budget_page/budget_helper.dart';
 import 'package:money_minder/models/recurrence.dart';
 
@@ -51,8 +52,7 @@ class AddBudgetSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    final double titleSize = (isSmallScreen ? AppSize.heading3 : AppSize.heading1) * 1.5;
+    final double titleSize = (AppSize.heading1 * 1.5).sp;
 
     return InputFormSheet(
       // Define the button layout as seen in the image

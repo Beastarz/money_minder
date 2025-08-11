@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -42,8 +43,8 @@ class StatisticsCatTile extends StatelessWidget {
         : prop.actualAmount < prop.budget) && prop.budget != 0;
 
     Widget categoryIcon = Container(
-        height: 40,
-        width: 40,
+        height: 40.h,
+        width: 40.w,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
@@ -53,7 +54,7 @@ class StatisticsCatTile extends StatelessWidget {
           ),
           border: Border.all(
             color: prop.color,
-            width: 2.0,
+            width: 2.0.w,
           ),
           shape: BoxShape.circle,
         ),
@@ -65,31 +66,31 @@ class StatisticsCatTile extends StatelessWidget {
       color: CategoryHelper.lightenColor(prop.color, 0.9),
       child: MaterialButton(
         onPressed: () {onPressed(prop);},
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0.sp),
         splashColor: CategoryHelper.lightenColor(prop.color, 0.75),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.borderRadius),
         ),
         child: LinearPercentIndicator(
           animation: true,
-          lineHeight: 20.0,
+          lineHeight: 20.0.h,
           percent: percentage,
           backgroundColor: AppColor.tertiary,
           progressColor: CategoryHelper.lightenColor(prop.color, 0.5),
           center: Text(
             "${(shownPercentage * 100).toStringAsFixed(2)}%",
-            style: TextStyle(fontSize: 12.0),
+            style: TextStyle(fontSize: 12.0.sp),
           ),
           leading: Column(
             children: [
               categoryIcon,
               SizedBox(
-                width: 50,
+                width: 50.w,
                 child: Text(
                   prop.label,
                   style: TextStyle(
                     color: prop.color,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -98,7 +99,7 @@ class StatisticsCatTile extends StatelessWidget {
             ],
           ),
           trailing: SizedBox(
-            width: 100,
+            width: 100.w,
             child: Column(
               children: [
                 BalanceText(

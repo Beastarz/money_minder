@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user.dart';
@@ -60,13 +61,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: AppColor.secondary
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           spacing: 16,
                           children: [
                             Text('Edit Phone Number', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                            Text('Please enter your new phone number', style: TextStyle(fontSize: 14),),
+                            Text('Please enter your new phone number', style: TextStyle(fontSize: 14.sp),),
                             Text('Old Number: ${widget.userData.phoneNumber}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                             Flexible(
                               child: Form(
@@ -141,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: Icon(Icons.edit_outlined)
             ),
           ),
-          SizedBox(height: 16,),
+          SizedBox(height: 16.h,),
           MaterialButton(
             color: Colors.red,
             minWidth: MediaQuery.of(context).size.width * 0.9,

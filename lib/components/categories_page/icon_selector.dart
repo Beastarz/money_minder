@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_symbols_icons/get.dart';
 
 import '../../style/app_color.dart';
@@ -72,7 +73,7 @@ class _IconSelectorState extends State<IconSelector> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 16),
+      padding: EdgeInsets.only(top: 16.h),
       child: Column(
         children: [
           TextField(
@@ -89,7 +90,7 @@ class _IconSelectorState extends State<IconSelector> {
             child: _codePoints.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : GridView.builder(
-              padding: const EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(10.0.h),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 6, // Adjust as needed
                 crossAxisSpacing: 10.0,

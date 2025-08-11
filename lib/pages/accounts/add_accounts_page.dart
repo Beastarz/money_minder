@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/account/account_customization_sheet.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/currency.dart';
@@ -90,7 +91,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
         title: Text('New account'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: EdgeInsets.only(right: 12.0.w),
             child: TextButton(
               onPressed: _handleSubmit,
               style: TextButton.styleFrom(
@@ -104,7 +105,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 'Create',
                 style: TextStyle(
                   color: Colors.white, // Or your desired color
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ),
@@ -112,7 +113,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -173,18 +174,18 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               'Account',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
                     .primaryColorDark, // Matches the section header color
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ListTile(
               leading: Icon(Icons.account_balance_wallet_outlined),
               // Placeholder icon
@@ -268,21 +269,21 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               'Balance',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
                     .primaryColorDark, // Matches the section header color
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 16.0.w, vertical: 8.0.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -290,7 +291,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(_mainCurrency.toString() + (_accountType == AccountType.debts ? ' ( - )' : ''), style: TextStyle(fontSize: 18),),
+                      Text(_mainCurrency.toString() + (_accountType == AccountType.debts ? ' ( - )' : ''), style: TextStyle(fontSize: 18.sp),),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3, // Adjust width as needed
                         child: TextField(
@@ -323,7 +324,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 ],
               ),
             ),
-            Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1.h, indent: 16, endIndent: 16),
             SwitchListTile(
               title: Text('Include in total balance'),
               value: _includeInTotalBalance,
