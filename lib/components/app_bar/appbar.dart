@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/transaction/transaction_filter_page.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
@@ -91,7 +92,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
               'My Accounts',
               style: TextStyle(
                 color: Colors.grey[800],
-                fontSize: 14,
+                fontSize: 14.sp,
               )
             ),
             BalanceText(

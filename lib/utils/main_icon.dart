@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/style/app_color.dart';
 
 // For displaying icons for accounts and categories
@@ -18,22 +19,22 @@ class MainIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size * 1.5,
-      width: size * 1.5,
+      height: (size * 1.5).sp,
+      width: (size * 1.5).sp,
       decoration: BoxDecoration(
         borderRadius: isRound ? null : BorderRadius.circular(12),
         shape: isRound ? BoxShape.circle : BoxShape.rectangle,
         color: color,
         border: Border.all(
           color: Colors.transparent,
-          width: 2,
+          width: 2.w,
         ),
       ),
       child: Center(
         child: Icon(
           icon.icon,
           color: AppColor.lightIcon,
-          size: size,
+          size: size.sp,
         ),
       ),
     );

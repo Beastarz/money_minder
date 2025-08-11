@@ -1,3 +1,5 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 /// A central class to manage size for the app.
 class AppSize {
   AppSize._();

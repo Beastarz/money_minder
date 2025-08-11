@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/lock_screen/lock_screen.dart';
 import 'package:money_minder/repositories/passcode_repositories.dart';
 import 'package:money_minder/utils/loading_screen.dart';
@@ -177,29 +178,37 @@ class _MoneyMinderState extends State<MoneyMinder> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery.withClampedTextScaling(
-      minScaleFactor: 0.8,
-      maxScaleFactor: 1.1,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppThemes.lightTheme,
-        darkTheme: AppThemes.darkTheme,
-        themeMode: _themeMode,
-        navigatorKey: _navigatorKey,
-        home: _isLocked
-            ? Scaffold(
-          body: LockScreen(
-            onUnlocked: () {
-              setState(() {
-                _isLocked = false;
-                _isAuthenticating = false;
-              });
-            },
-            salt: _salt,
-            encryptedPasscode: _encryptedPasscode,
-          ),
-        )
-            : _buildMainApp(),
+    const defaultWidth = 426.6666666666667;
+    const defaultHeight = 952.0;
+
+    return ScreenUtilInit(
+      designSize: const Size(defaultWidth, defaultHeight),
+      minTextAdapt: true, // Adapt text size to prevent overflow
+      splitScreenMode: true, // Support split screen (optional)
+      child: MediaQuery.withClampedTextScaling(
+        minScaleFactor: 0.8,
+        maxScaleFactor: 1.1,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
+          themeMode: _themeMode,
+          navigatorKey: _navigatorKey,
+          home: _isLocked
+              ? Scaffold(
+            body: LockScreen(
+              onUnlocked: () {
+                setState(() {
+                  _isLocked = false;
+                  _isAuthenticating = false;
+                });
+              },
+              salt: _salt,
+              encryptedPasscode: _encryptedPasscode,
+            ),
+          )
+              : _buildMainApp(),
+        ),
       ),
     );
   }

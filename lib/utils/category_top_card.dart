@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/categories_selection_sheet.dart';
 
 import '../models/category.dart';
@@ -31,9 +32,9 @@ class CategoryTopCard extends StatelessWidget {
     Category category = initialCategory;
 
     Widget buttonContent = SizedBox(
-      width: 40,
-      height: 40,
-      child: category.icon
+      width: 40.w,
+      height: 40.h,
+      child: Icon(category.icon.icon, size: AppSize.bigIcon.sp,)
     );
 
     return MaterialButton(
@@ -70,26 +71,26 @@ class CategoryTopCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(AppSize.smallPadding),
+                  padding: EdgeInsets.all(AppSize.smallPadding.r),
                   child: Text(
                       '${topLeft ? "From" : "To"} Category',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: AppSize.heading3,
+                        fontSize: AppSize.heading3.sp,
                       )
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    left: AppSize.smallPadding,
-                    right: AppSize.smallPadding,
-                    bottom: AppSize.smallPadding,
+                    left: AppSize.smallPadding.w,
+                    right: AppSize.smallPadding.w,
+                    bottom: AppSize.smallPadding.h,
                   ),
                   child: Text(
                       category.name,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: AppSize.heading1 * 1.15,
+                        fontSize: (AppSize.heading1 * 1.15).sp,
                         fontWeight: FontWeight.bold,
                         overflow: TextOverflow.ellipsis,
                       )

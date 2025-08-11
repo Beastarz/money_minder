@@ -61,6 +61,7 @@ dependencies:
   file_picker: ^10.2.0
   flutter_timezone: ^4.1.1
   docx_to_text: ^1.0.1
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_test:
