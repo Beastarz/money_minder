@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../models/fast_note.dart';
 import '../../../style/app_color.dart';
@@ -101,7 +102,7 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
 
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 8.0),
+        padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w, top: 16.0.h, bottom: 8.0.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppSize.borderRadius),
           color: AppColor.secondary,
@@ -116,13 +117,13 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                       spacing: 10,
                       children: [
                         Container(
-                          height: 50,
-                          width: 50,
+                          height: 50.h,
+                          width: 50.w,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: widget.color,
-                                width: 1,
+                                width: 1.w,
                               )
                           ),
                           child: Icon(
@@ -147,9 +148,9 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                               ),
                               filled: true,
                               fillColor: AppColor.primary,
-                              contentPadding: EdgeInsets.all(5),
+                              contentPadding: EdgeInsets.all(5.sp),
                             ),
-                            style: const TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 20.sp),
                             controller: fastNoteController,
                           ),
                         )
@@ -157,12 +158,12 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                   ),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                      padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w, bottom: 8.0.h),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppSize.borderRadius),
                         border: Border.all(
                           color: AppColor.darkText,
-                          width: 2,
+                          width: 2.w,
                         )
                       ),
                       child: Scaffold(
@@ -190,7 +191,7 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                             Text(!widget.isEditing
                                 ? note == "" ? "Add Fast Note" : "Add $note"
                                 : note == "" ? "Edit Category" : "Change to $note"),
-                            SizedBox(width: AppSize.smallPadding),
+                            SizedBox(width: AppSize.smallPadding.w),
                             Icon(IconData(selectedCodePoint, fontFamily: "MaterialSymbolsOutlined")),
                           ]
                       )
@@ -230,7 +231,7 @@ class _EditFastNotePageState extends State<EditFastNotePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(note == "" ? "Delete Fast Note" : "Delete $note"),
-                            SizedBox(width: AppSize.smallPadding),
+                            SizedBox(width: AppSize.smallPadding.w),
                             Icon(Icons.delete),
                           ]
                       )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -47,7 +48,7 @@ class _AccountsPageState extends State<AccountsPage> {
           children: AccountType.values.map((accountType) {
             List<Account> acc = accounts.where((acc) => acc.type == accountType).toList();
             return Padding(
-              padding: const EdgeInsets.all(14.0),
+              padding: EdgeInsets.all(14.0.sp),
               child: Container(
                 decoration:BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -59,13 +60,13 @@ class _AccountsPageState extends State<AccountsPage> {
                       children: [
                         Center(
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 8, 0, 4),
+                            padding: EdgeInsets.fromLTRB(0, 8.h, 0, 4.h),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text('Total:',
                                   style: TextStyle(
-                                    fontSize: AppSize.heading3,
+                                    fontSize: AppSize.heading3.sp,
                                     color: Colors.grey[700],
                                   ),
                                 ),
@@ -114,7 +115,7 @@ class _AccountsPageState extends State<AccountsPage> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -123,7 +124,7 @@ class _AccountsPageState extends State<AccountsPage> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: AppSize.paragraph,
+                                    fontSize: AppSize.paragraph.sp,
                                     color: Colors.grey[700],
                                   ),
                                 ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/style/app_color.dart';
@@ -81,7 +82,7 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.sp),
             child: Column(
               spacing: 4,
               children: <Widget>[
@@ -96,7 +97,7 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
                 Card(
                   color: AppColor.secondary,
                   child: Padding(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12.sp),
                     child: ListTile(
                       title: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -136,7 +137,7 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
                 ),
                 ListTile(
                   leading: SizedBox(),
-                  minLeadingWidth: 8,
+                  minLeadingWidth: 8.w,
                   title: Text('non_user'),
                   subtitle: Text('select this if user are not registered'),
                   onTap: () {
@@ -147,7 +148,7 @@ class _ContactUserSearchPageState extends State<ContactUserSearchPage> {
               ] + _filteredContacts.map((contact) {
                 return ListTile(
                   leading: SizedBox(),
-                  minLeadingWidth: 8,
+                  minLeadingWidth: 8.w,
                   title: Text(
                     contact.nickname,
                     overflow: TextOverflow.ellipsis,

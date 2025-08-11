@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/currency.dart';
@@ -46,11 +47,11 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
   Widget build(BuildContext context) {
 
     final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    final double fontSize = isSmallScreen ? 12 : 16;
+    final double fontSize = (isSmallScreen ? 12 : 16).sp;
 
     return SafeArea(
       child: Container(
-          padding: EdgeInsets.all(AppSize.bigPadding),
+          padding: EdgeInsets.all(AppSize.bigPadding.sp),
           decoration: BoxDecoration(
             color: AppColor.primary,
             borderRadius: BorderRadius.vertical(
@@ -150,7 +151,7 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                             });
                           },
                           borderRadius: BorderRadius.circular(AppSize.borderRadius),
-                          menuMaxHeight: 200.0, // Adjust as needed
+                          menuMaxHeight: 200.0.h, // Adjust as needed
                           items: List.generate(12, (index) {
                             int number = index + 1;
                             return DropdownMenuItem<int>(
@@ -213,7 +214,7 @@ class _BudgetSettingsPageState extends State<BudgetSettingsPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(Icons.delete_outline),
-                    SizedBox(width: 10),
+                    SizedBox(width: 10.w),
                     Text("Delete Budget",
                       style: TextStyle(
                           color: Colors.red

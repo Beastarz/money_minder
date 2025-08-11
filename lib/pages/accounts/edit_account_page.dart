@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 
 import '../../components/account/account_customization_sheet.dart';
@@ -104,7 +105,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 'Edit',
                 style: TextStyle(
                   color: Colors.white, // Or your desired color
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ),
@@ -173,18 +174,18 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               'Account',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
                     .primaryColorDark, // Matches the section header color
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ListTile(
                 leading: Icon(Icons.account_balance_wallet_outlined),
                 // Placeholder icon
@@ -267,18 +268,18 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               'Balance',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Theme
                     .of(context)
                     .primaryColorDark, // Matches the section header color
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
@@ -286,7 +287,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 children: [
                   Expanded(child: Text('Account balance')),
                   SizedBox(
-                    width: 100, // Adjust width as needed
+                    width: 100.w, // Adjust width as needed
                     child: TextField(
                       controller: _accountBalanceController,
                       textAlign: TextAlign.end,
@@ -316,7 +317,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 ],
               ),
             ),
-            Divider(height: 1, indent: 16, endIndent: 16),
+            Divider(height: 1.h, indent: 16, endIndent: 16),
             SwitchListTile(
               title: Text('Include in total balance'),
               value: _account.isIncludesInTotal,

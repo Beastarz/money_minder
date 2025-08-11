@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
 
@@ -85,7 +86,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
                               Icons.check,
                               color: AppColor.darkText,
                             ),
-                            const SizedBox(width: 5,),
+                            SizedBox(width: 5.w,),
                             Text(
                                 'Apply',
                                 style: TextStyle(
@@ -106,7 +107,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
                       'Accounts Filter',
                       style: TextStyle(
                           color: AppColor.darkText,
-                          fontSize: AppSize.heading1,
+                          fontSize: AppSize.heading1.sp,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -129,7 +130,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
                     child: Text(
                       accountType.name[0].toUpperCase() + accountType.name.substring(1),
                       style: TextStyle(
-                        fontSize: AppSize.heading2,
+                        fontSize: AppSize.heading2.sp,
                         fontWeight: FontWeight.bold,
                         color: AppColor.darkText,
                       ),
@@ -148,7 +149,7 @@ class _AccountsFilterState extends State<AccountsFilter> {
                     childAspectRatio: 2.5,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10.w),
                     children: accounts.where((acc) => acc.type == accountType).map((account) {
                       return AccountTile(
                         account: account,

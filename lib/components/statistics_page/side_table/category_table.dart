@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../../style/app_size.dart';
@@ -14,15 +15,13 @@ class CategoryTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-
     if (catList.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: const Text(
+        padding: EdgeInsets.all(8.0.sp),
+        child: Text(
             'No categories yet...',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w300,
             ),
           ),
@@ -32,7 +31,7 @@ class CategoryTable extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(AppSize.smallPadding),
+      padding: EdgeInsets.all(AppSize.smallPadding.sp),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: catList.length <= 6 ? 1 : 2,
         crossAxisSpacing: 4.0,
@@ -45,16 +44,16 @@ class CategoryTable extends StatelessWidget {
             Icon(
               catList[index].icon.icon,
               color: catList[index].color,
-              size: isSmallScreen ? 16 : 20,
+              size: 20.sp,
             ),
-            SizedBox(width: 5),
+            SizedBox(width: 5.w),
             Flexible(
               child: Text(
                 catList[index].label,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: catList[index].color,
-                  fontSize: isSmallScreen ? 12 : 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/currency.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
@@ -86,11 +87,9 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // check if screen is small
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.only(top: 8.0.h),
       child: ReorderableGridView.count(
         onReorder: (int fromPosition, int toPosition) {
           setState(() {
@@ -102,7 +101,7 @@ class _CategoriesSheetState extends State<CategoriesSheet> {
           widget.resetPieIndex();
         },
         controller: _scrollController,
-        crossAxisCount: isSmallScreen ? 3 : 4,
+        crossAxisCount: 4,
         crossAxisSpacing: 4.0,
         childAspectRatio: 0.8,
         shrinkWrap: true,
