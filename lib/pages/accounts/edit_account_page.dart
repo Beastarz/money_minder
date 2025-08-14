@@ -26,6 +26,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
   late Account _account;
   late int _codePoint;
   late int _colorValue;
+  late bool isNegative;
   final List<Currency> _currencies = Currency.currencies;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -35,11 +36,12 @@ class _EditAccountPageState extends State<EditAccountPage> {
   @override
   void initState() {
     _account = widget.account;
+    isNegative = _account.balance.isNegative;
     _codePoint = _account.icon.icon!.codePoint;
     _colorValue = _account.color.toARGB32();
     _nameController.text = _account.name;
     _descriptionController.text = _account.description;
-    _accountBalanceController.text = _account.balance.toString();
+    _accountBalanceController.text = _account.balance.abs().toString();
     super.initState();
   }
 
@@ -68,7 +70,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
       icon: Icon(IconData(_codePoint, fontFamily: "MaterialSymbolsOutlined")),
       color: Color(_colorValue),
       description: _descriptionController.text,
-      balance: double.parse(_accountBalanceController.text),
+      balance: double.parse(_accountBalanceController.text) * (isNegative ? -1 : 1),
     );
     () async {
       await AccountsRepositories.instance.updateAccount(updatedAccount);
@@ -280,6 +282,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
               ),
             ),
             SizedBox(height: 8.h),
+            ListTile(
+              title: Text('Negative Balance', style: TextStyle(fontSize: 16.sp),),
+              trailing: Switch(value: isNegative, onChanged: (value) => setState(() => isNegative = value)),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0),
@@ -287,7 +293,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                 children: [
                   Expanded(child: Text('Account balance')),
                   SizedBox(
-                    width: 100.w, // Adjust width as needed
+                    width: 180.w, // Adjust width as needed
                     child: TextField(
                       controller: _accountBalanceController,
                       textAlign: TextAlign.end,
@@ -309,7 +315,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                         FocusScope.of(context).unfocus();
                       },
                       decoration: InputDecoration(
-                        prefixText: _account.currency.toString(),
+                        prefixText: _account.currency.toString() + (isNegative ? '(-)' : ''),
                         border: InputBorder.none,
                       ),
                     ),
@@ -326,7 +332,6 @@ class _EditAccountPageState extends State<EditAccountPage> {
                   _account = _account.copyWith(isIncludesInTotal: value);
                 });
               },
-              activeColor: Colors.blueAccent, // Color of the switch when on
             ),
             _account.isMain
               ? Container()
