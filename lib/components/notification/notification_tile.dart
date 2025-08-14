@@ -95,9 +95,6 @@ class _NotificationTileState extends State<NotificationTile> {
             NotificationTimeRepositories.instance.deleteNotificationTime();
             NotificationService.cancelAllNotifications();
           }
-          // setState(() {
-          //   enabledNotification = enabled;
-          // });
         },
       ),
     );
