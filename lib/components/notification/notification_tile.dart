@@ -35,6 +35,9 @@ class _NotificationTileState extends State<NotificationTile> {
       if (mounted) {
         AppMessage.showMessage(context, 'Notification permissions not granted');
         await NotificationService.showPermissionDialog(context);
+        setState(() {
+          enabledNotification = false;
+        });
         return;
       }
     }
@@ -87,13 +90,14 @@ class _NotificationTileState extends State<NotificationTile> {
             AppMessage.showMessage(context, 'Daily notification is disabled.');
             setState(() {
               _pickedTime = null;
+              enabledNotification = false;
             });
             NotificationTimeRepositories.instance.deleteNotificationTime();
             NotificationService.cancelAllNotifications();
           }
-          setState(() {
-            enabledNotification = enabled;
-          });
+          // setState(() {
+          //   enabledNotification = enabled;
+          // });
         },
       ),
     );
