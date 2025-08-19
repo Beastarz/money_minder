@@ -75,6 +75,12 @@ class _SplitBillPageState extends State<SplitBillPage> {
       setState(() {
         double sum = _ratioControllers.map((t) => t.text.isEmpty ? 1.0 : double.parse(t.text))
             .reduce((x, y) => x + y);
+        if (sum == 0) {
+          for (int i = 0; i < _ratioControllers.length; i++) {
+            _amountControllers[i].text = '0.00';
+          }
+          return;
+        }
         for (int i = 0; i < _ratioControllers.length; i++) {
           double total = _totalController.text.isEmpty ? 0 : double.parse(
               _totalController.text);
@@ -104,7 +110,7 @@ class _SplitBillPageState extends State<SplitBillPage> {
       }
       double amount = double.parse(amountController.text);
       double total = double.parse(_totalController.text);
-      if (amount <= 0 && mounted) {
+      if ((amount <= 0 || amount.isNaN) && mounted) {
         AppMessage.showMessage(context, 'Amount must be greater than 0');
         return;
       }
