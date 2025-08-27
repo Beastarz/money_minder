@@ -1,5 +1,6 @@
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/repositories/accounts_repositories.dart';
+import 'package:money_minder/repositories/recurrence_repositories.dart';
 import 'package:money_minder/repositories/transactions_repositories.dart';
 
 import '../models/category.dart';
@@ -59,8 +60,11 @@ class TransactionHelper {
     await proceedExpense(date, fromAccountId, toCategory, amount, currency, note);
   }
 
-  static Future<void> deleteExpense(Transaction oldTransaction) async {
+  static Future<void> deleteExpense(Transaction oldTransaction, {bool isRecurrence = false}) async {
     await undoTransaction(oldTransaction);
+    if (isRecurrence) {
+      await RecurrenceRepositories.instance.deleteRecurrence(oldTransaction.id);
+    }
     await TransactionsRepositories.instance.deleteTransaction(oldTransaction.id);
   }
 
@@ -118,8 +122,11 @@ class TransactionHelper {
     AccountsRepositories.instance.updateAccount(toAccount.copyWith(balance: toAccount.balance - balanceTo));
   }
 
-  static Future<void> deleteTransfer(Transaction oldTransaction) async {
+  static Future<void> deleteTransfer(Transaction oldTransaction, {bool isRecurrence = false}) async {
     await undoTransfer(oldTransaction);
+    if (isRecurrence) {
+      await RecurrenceRepositories.instance.deleteRecurrence(oldTransaction.id);
+    }
     await TransactionsRepositories.instance.deleteTransaction(oldTransaction.id);
   }
 
