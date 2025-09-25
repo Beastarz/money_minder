@@ -374,7 +374,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                     onPressed: () {
                       widget.onSubmit(
                         DateTime(_currDate.year, _currDate.month, _currDate.day),
-                        double.parse(_currentAmount),
+                        (double.parse(_currentAmount) * 100).round() / 100.0,
                         _noteController.text,
                         _recurringMonths,
                         _recurrenceType,

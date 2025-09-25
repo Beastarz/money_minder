@@ -123,11 +123,11 @@ class RecurrenceDetailSheet extends StatelessWidget {
                                     context: context,
                                     builder: (context) {
                                       return SimpleDialog(
-                                          title: Text('Delete Transaction'),
+                                          title: Text('Delete Recurrence'),
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
-                                              child: Text('Are you sure you want to delete this transaction?'),
+                                              child: Text('Are you sure you want to delete this Recurrence?'),
                                             ),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -142,8 +142,8 @@ class RecurrenceDetailSheet extends StatelessWidget {
                                                     onPressed: () {
                                                       () async {
                                                         await (recurrence.type == TransactionType.transfer
-                                                            ? TransactionHelper.deleteTransfer(recurrence)
-                                                            : TransactionHelper.deleteExpense(recurrence));
+                                                            ? TransactionHelper.deleteTransfer(recurrence, isRecurrence: true)
+                                                            : TransactionHelper.deleteExpense(recurrence, isRecurrence: true));
                                                         onEditTransactionReload();
                                                       }();
                                                       Navigator.pop(context);
