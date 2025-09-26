@@ -157,21 +157,21 @@ class DatabaseService {
 
     await db.execute('''
       INSERT INTO accounts (name, icon, balance, color, is_main, description, includes_in_total, type, currency, position) VALUES
-      ('Main Account', 0xe850, 0.0, 0xFF4CAF50, 1, 'My active account', 1, 'accounts', 'sgd', 0), -- account_balance_wallet, Green
-      ('Cash', 0xe850, 0.0, 0xFF4CAF80, 0, 'My primary cash wallet', 1, 'accounts', 'sgd', 1),
-      ('Savings Account', 0xe84f, 0.0, 0xFF2196F3, 0, 'Bank savings account', 1, 'savings', 'sgd', 2), -- account_balance, Blue
-      ('Credit Card', 0xe870, 0.0, 0xFFF44336, 0, 'Visa credit card', 1, 'debts', 'sgd', 3) -- credit_card, Red
+      ('Main Account', 0xe850, 0.0, 0xFF48A8A8, 1, 'My active account', 1, 'accounts', 'sgd', 0), 
+      ('Cash', 0xe850, 0.0, 0xFF708090, 0, 'My primary cash wallet', 1, 'accounts', 'sgd', 1),
+      ('Savings Account', 0xe84f, 0.0, 0xFFF3C2B4, 0, 'Bank savings account', 1, 'savings', 'sgd', 2),
+      ('Credit Card', 0xe870, 0.0, 0xFF800000, 0, 'Visa credit card', 1, 'debts', 'sgd', 3);
     ''');
 
 
     await db.execute('''
       INSERT INTO categories (name, position, icon, color, is_expense) VALUES
-      ('Food', 2, 0xe56c, 0xFFFF5722, 1), -- restaurant, Deep Orange
-      ('Transport', 0, 0xe530, 0xFF673AB7, 1), -- directions_bus, Deep Purple
-      ('Salary', 0, 0xe227, 0xFF8BC34A, 0), -- attach_money, Light Green (Income category)
-      ('Leisure', 1,  0xe30f, 0xFF00BCD4, 1), -- gamepad, Cyan
-      ('Grocery', 3, 0xe8cc, 0xFF4CAF50, 1), -- shopping_cart, Green
-      ('Sport', 4, 0xe566, 0xFF2196F3, 1); -- directions_run, Blue
+      ('Food', 2, 0xe56c, 0xFFA57D8E, 1), 
+      ('Transport', 0, 0xe530, 0xFF5C7991, 1),
+      ('Salary', 0, 0xe227, 0xFF5A785A, 0),
+      ('Leisure', 1,  0xe30f, 0xFFD2B48C, 1),
+      ('Grocery', 3, 0xe8cc, 0xFF8E6B8E, 1),
+      ('Sport', 4, 0xe566, 0xFFE97451, 1);
     ''');
 
     await db.execute('''
