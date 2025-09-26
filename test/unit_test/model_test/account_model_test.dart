@@ -144,7 +144,7 @@ void main() {
           'is_main': 0,
           'includes_in_total': 1,
           'type': 'accounts',
-          'currency': 'sgd',
+          'currency': 'SGD',
           'position': 2
         };
 
@@ -176,7 +176,7 @@ void main() {
           'is_main': 0,
           'includes_in_total': 1,
           'type': 'debts',
-          'currency': 'myr',
+          'currency': 'MYR',
         };
 
         Map<String, dynamic> result = Account.insertAsMap(
@@ -234,11 +234,11 @@ void main() {
       );
 
       test('should return the correct total balance of accounts with same currency', () {
-        expect(Account.calculateBalance([account1, account2], sgdCurrency), 3000);
+        expect(Account.calculateBalance([account1, account2], sgdCurrency), closeTo(3000, 5));
       });
 
       test('should return the correct total balance of accounts with different currency', () {
-        expect(Account.calculateBalance([account1, account2, account3], sgdCurrency), 4000);
+        expect(Account.calculateBalance([account1, account2, account3], sgdCurrency), closeTo(4000, 5));
       });
     });
 

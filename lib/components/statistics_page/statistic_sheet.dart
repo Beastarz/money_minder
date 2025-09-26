@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/statistics_page/statistics_cat_tile.dart';
 import 'package:money_minder/components/statistics_page/statistics_helper.dart';
 
@@ -56,9 +56,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   SortOptions _currentSortOption = SortOptions.percentage;
   List<CategoryProp> _category = [];
   List<double> _percentages = [];
-  int _currentPage = 0;
-  bool isExpanded = false;
-  bool _showIndividual = false;
 
   void catTileOnPressed(CategoryProp prop) {
     CategoryHelper.showCategoryCard(
@@ -86,18 +83,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
     });
   }
 
-  void shrinkChart() {
-    setState(() {
-      isExpanded = false;
-    });
-  }
-
-  void updateCurrentPage(int index) {
-    setState(() {
-      _currentPage = index;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -113,8 +98,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-    double expandedHeight = isSmallScreen ? 145 : 200;
+    double expandedHeight = 200.sp;
 
     return Scaffold(
       body: CustomScrollView(
@@ -133,9 +117,9 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                final double currentExtent = constraints.biggest.height;
-                final double toolbarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
-                final double expandedRange = expandedHeight - toolbarHeight;
+                final double currentExtent = (constraints.biggest.height).h;
+                final double toolbarHeight = (MediaQuery.of(context).padding.top + kToolbarHeight).h;
+                final double expandedRange = (expandedHeight - toolbarHeight).h;
 
                 final double t = 1.0 - ((currentExtent - toolbarHeight) / expandedRange).clamp(0.0, 1.0);
 
@@ -149,7 +133,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                         : Text('Income'),
                   ),
                   centerTitle: true, // Center the title in the flexible space.
-                  background: isExpanded ? null : ChartPages(
+                  background: ChartPages(
                       isExpanded: false,
                       isExpense: widget.isExpense,
                       categories: _category,
@@ -158,14 +142,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                       dateFilterType: widget.dateFilterType,
                       startDate: widget.startDate,
                       endDate: widget.endDate,
-                      currentPage: _currentPage,
-                      showIndividual: _showIndividual,
-                      lineChartChangeType: () {
-                        setState(() {
-                          _showIndividual = !_showIndividual;
-                        });
-                      },
-                      updateCurrentPage: updateCurrentPage,
                   )
                 );
               },
@@ -175,12 +151,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
               IconButton(
               icon: const Icon(Icons.fullscreen),
               onPressed: () {
-                setState(() {
-                  isExpanded = true;
-                });
                 showDialog(
                   context: context,
-                  barrierDismissible: false,
                   builder: (BuildContext context) {
                     return StatefulBuilder(
                       builder: (BuildContext statefulBuilderContext, StateSetter dialogSetState) => Dialog(
@@ -189,22 +161,12 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                               child: ChartPages(
                                   isExpanded: true,
                                   isExpense: widget.isExpense,
-                                  shrinkChart: shrinkChart,
                                   categories: _category,
                                   currency: widget.mainCurrency,
                                   transactions: widget.transactions,
                                   dateFilterType: widget.dateFilterType,
                                   startDate: widget.startDate,
                                   endDate: widget.endDate,
-                                  currentPage: _currentPage,
-                                  showIndividual: _showIndividual,
-                                  lineChartChangeType: () {
-                                    setState(() {
-                                      _showIndividual = !_showIndividual;
-                                    });
-                                    dialogSetState(() {});
-                                  },
-                                  updateCurrentPage: updateCurrentPage,
                               )
                           )
                       ),
@@ -217,7 +179,7 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
           SliverToBoxAdapter(
             child: Padding( // Added Padding for better visual separation
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -264,8 +226,8 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                   ),
                   IconButton(
                     icon: _isAscending
-                        ? const Icon(CupertinoIcons.sort_up) // Consistent sorting icon
-                        : const Icon(CupertinoIcons.sort_down), // Consistent sorting icon
+                        ? const Icon(Icons.arrow_upward) // Consistent sorting icon
+                        : const Icon(Icons.arrow_downward), // Consistent sorting icon
                     onPressed: () {
                       setState(() {
                         _isAscending = !_isAscending;
@@ -291,7 +253,6 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
                     totalAmount: widget.totalAmounts[widget.isExpense ? 0 : 1],
                     percentage: _percentages[_category[index].position],
                 );
-                //     return StatisticsCatTile(prop: category[index]);
               },
               childCount: _category.length, // Number of items in the list
             ),

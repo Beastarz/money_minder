@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:money_minder/models/currency.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 
 import 'test.mocks.dart';
@@ -27,31 +28,24 @@ void main() {
   group('currencyRepositories', () {
     final sgdMap = {
       'name': 'sgd',
-      'is_main': 1,
     };
-    final myrMap = {
-      'name': 'myr',
-      'is_main': 0,
-    };
-
-    test('getCurrencies return all list of currencies', () async {
-      when(mockDatabase.query('currencies')).thenAnswer((_) async => [sgdMap, myrMap]);
-
-      final res = await currencyRepositories.getCurrencies();
-
-      verify(mockDatabase.query('currencies')).called(1);
-
-      expect(res[0].currency().name, 'sgd');
-    });
 
     test('getMainCurrency should return main currency', () async {
-      when(mockDatabase.query('currencies', where: 'is_main = 1')).thenAnswer((_) async => [sgdMap]);
+      when(mockDatabase.query('main_currency')).thenAnswer((_) async => [sgdMap]);
 
       final res = await currencyRepositories.getMainCurrency();
 
-      verify(mockDatabase.query('currencies', where: 'is_main = 1')).called(1);
+      verify(mockDatabase.query('main_currency',)).called(1);
 
-      expect(res.currency().name, 'sgd');
+      expect(res.name, 'SGD');
+    });
+
+    test('setMainCurrency should set a new main currency', () async {
+      when(mockDatabase.update('main_currency', {'name': 'MYR'})).thenAnswer((_) async => 1);
+
+      await currencyRepositories.setMainCurrency(Currency.of('MYR'));
+
+      verify(mockDatabase.update('main_currency', {'name': 'MYR'})).called(1);
     });
   });
 }

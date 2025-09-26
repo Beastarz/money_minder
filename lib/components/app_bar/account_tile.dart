@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../models/account.dart';
 import '../../style/app_color.dart';
@@ -44,15 +45,15 @@ class _AccountTileState extends State<AccountTile> {
         ),
         splashColor: Colors.transparent,
         child: Container(
-          height: 65,
+          height: 65.h,
           width: MediaQuery.of(context).size.width * 0.42 ,
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.w),
           decoration: BoxDecoration(
             color: _isSelected ? widget.account.color : Colors.transparent,
             borderRadius: BorderRadius.circular(AppSize.borderRadius),
             border: Border.all(
               color: _isSelected ? Colors.transparent : widget.account.color,
-              width: 2,
+              width: 2.w,
             ),
           ),
           child: Row(
@@ -62,9 +63,9 @@ class _AccountTileState extends State<AccountTile> {
               Icon(
                 widget.account.icon.icon,
                 color: _isSelected ? AppColor.lightText : widget.account.color,
-                size: AppSize.bigIcon,
+                size: AppSize.bigIcon.sp,
               ),
-              SizedBox(width: 8,),
+              SizedBox(width: 8.w,),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.25,
                 child: Column(
@@ -77,7 +78,7 @@ class _AccountTileState extends State<AccountTile> {
                       maxLines: 1,
                       style: TextStyle(
                           color: _isSelected ? AppColor.lightText : widget.account.color,
-                          fontSize: AppSize.heading3
+                          fontSize: AppSize.heading3.sp
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -87,7 +88,7 @@ class _AccountTileState extends State<AccountTile> {
                       maxLines: 1,
                       style: TextStyle(
                           color: _isSelected ? AppColor.lightText : widget.account.color,
-                          fontSize: AppSize.heading3 * 1.05
+                          fontSize: AppSize.heading3.sp * 1.05
                       ),
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/statistics_page/statistic_sheet.dart';
 
 import '../../models/currency.dart';
@@ -59,7 +60,7 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(AppSize.smallPadding),
+      padding: EdgeInsets.all(AppSize.smallPadding.sp),
       child: Column(
         children: [
           BudgetTile(
@@ -81,7 +82,7 @@ class _StatisticsPageContentState extends State<StatisticsPageContent> {
               });
             }
           ),
-          SizedBox(height: AppSize.smallPadding),
+          SizedBox(height: AppSize.smallPadding.h),
           Expanded(
             child: StatisticsSheet(
               isExpense: _isExpense,

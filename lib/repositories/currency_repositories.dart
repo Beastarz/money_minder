@@ -30,27 +30,16 @@ class CurrencyRepositories {
     _testInstance = null;
   }
 
-  Future<List<Currency>> getCurrencies() async {
-    Database db = await _dbService.database;
-    final result = await db.query('currencies');
-    return result.map((e) => Currency.of(e['name'] as String)).toList();
-  }
-
   Future<Currency> getMainCurrency() async {
     Database db = await _dbService.database;
-    final result = await db.query('currencies', where: 'is_main = 1');
+    final result = await db.query('main_currency',);
     return Currency.of(result.first['name'] as String);
   }
 
   Future<void> setMainCurrency(Currency currency) async {
     Database db = await _dbService.database;
     try {
-      await db.update('currencies', {'is_main': 0});
-      await db.update(
-          'currencies', {'is_main': 1}, where: 'name = ?', whereArgs: [currency
-          .currency()
-          .name
-      ]);
+      await db.update('main_currency', {'name': currency.name});
     } catch (e) {
       return;
     }

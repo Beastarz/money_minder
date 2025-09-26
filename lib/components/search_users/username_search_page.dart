@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/firestore_repositories/users_repositories.dart';
 import 'package:money_minder/models/online/user.dart' as model;
 import 'package:money_minder/style/app_color.dart';
@@ -51,23 +52,27 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     });
   }
 
-  void _fetchUsernames(String prefix) async {
-    if (prefix.isEmpty) {
+  void _fetchUsernames(String username) async {
+    if (username.isEmpty) {
       setState(() {
         _users = [];
         message = 'Search for users!';
       });
       return;
     }
-    if (prefix.startsWith('@')) {
-      prefix = prefix.substring(1);
+    if (username.startsWith('@')) {
+      username = username.substring(1);
     }
     setState(() {
       isLoading = true;
     });
-    final res = await UsersRepositories.instance.getUsernameByPrefix(prefix);
+    final res = await UsersRepositories.instance.getUserByUsername(username);
     setState(() {
-      _users = res;
+      if (res != null) {
+        _users = [res];
+      } else {
+        _users = [];
+      }
       isLoading = false;
     });
   }
@@ -88,16 +93,15 @@ class _UsernameSearchPageState extends State<UsernameSearchPage> {
     } else {
       message = '';
     }
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Find User'),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Find User'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.sp),
             child: Column(
               spacing: 16,
               children: [

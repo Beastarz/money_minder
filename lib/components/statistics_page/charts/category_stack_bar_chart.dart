@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../../models/currency.dart';
@@ -77,8 +78,8 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 12,
+    TextStyle style = TextStyle(
+      fontSize: 12.sp,
     );
     Widget text;
     int i = showDateIndex.indexOf(value.toInt());
@@ -105,7 +106,7 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
+    TextStyle style = TextStyle(
       fontSize: 12,
     );
     return SideTitleWidget(
@@ -130,11 +131,11 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
             'Stacked ${widget.isExpense ? "Expense" : "Income"} x Period',
             style: TextStyle(
               color: AppColor.darkText,
-              fontSize: 16,
+              fontSize: 16.sp,
             ),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5.h),
         AspectRatio(
           aspectRatio: widget.aspectRatio,
           child: LayoutBuilder(
@@ -230,7 +231,7 @@ class CategoryStackBarChartState extends State<CategoryStackBarChart> {
                     show: true,
                     getDrawingHorizontalLine: (value) => FlLine(
                       color: Colors.grey,
-                      strokeWidth: 1,
+                      strokeWidth: 1.w,
                     ),
                     drawVerticalLine: false,
                   ),

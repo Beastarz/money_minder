@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 import 'package:money_minder/components/statistics_page/side_table/category_table.dart';
 import 'package:money_minder/components/statistics_page/side_table/summary_table.dart';
@@ -23,7 +24,6 @@ class Chart extends StatefulWidget {
     super.key,
     required this.isExpense,
     required this.isExpanded,
-    required this.shrinkChart,
     required this.chartType,
     required this.currency,
     required this.dateFilterType,
@@ -31,8 +31,6 @@ class Chart extends StatefulWidget {
     this.transactions,
     this.startDate,
     this.endDate,
-    this.showIndividual = false,
-    this.onChangeType,
   });
 
   final bool isExpense;
@@ -42,11 +40,8 @@ class Chart extends StatefulWidget {
   final DateFilterType dateFilterType;
   final DateTime? startDate;
   final DateTime? endDate;
-  final bool showIndividual;
-  final void Function()? onChangeType;
   final List<CategoryProp> categories;
   final List<Transaction>? transactions;
-  final void Function()? shrinkChart;
 
   @override
   State<Chart> createState() => _ChartState();
@@ -54,8 +49,15 @@ class Chart extends StatefulWidget {
 
 class _ChartState extends State<Chart> {
 
-  late List<Transaction> incomeTransactions;
-  late List<Transaction> expenseTransactions;
+  List<Transaction> incomeTransactions = [];
+  List<Transaction> expenseTransactions = [];
+  bool showIndividual = false;
+
+  void onChangeType() {
+    setState(() {
+      showIndividual = !showIndividual;
+    });
+  }
 
   void load() {
     setState(() {
@@ -77,8 +79,7 @@ class _ChartState extends State<Chart> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.transactions != null
         && widget.transactions != null
-        && (oldWidget.transactions != widget.transactions
-        || oldWidget.showIndividual != widget.showIndividual)) {
+        && oldWidget.transactions != widget.transactions) {
       load();
     }
   }
@@ -86,10 +87,10 @@ class _ChartState extends State<Chart> {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
+    // final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
     double height = widget.isExpanded
         ? MediaQuery.of(context).size.width * 0.8
-        : isSmallScreen ? 145 : 200 - AppSize.smallPadding;
+        : (200 - AppSize.smallPadding).sp;
     double width = widget.isExpanded
         ? MediaQuery.of(context).size.height * 0.6
         : MediaQuery.of(context).size.width * 0.9;
@@ -116,8 +117,8 @@ class _ChartState extends State<Chart> {
             startDate: widget.startDate!,
             endDate: widget.endDate!,
             type: widget.dateFilterType,
-            showIndividual: widget.showIndividual,
-            onChangeType: widget.onChangeType!,
+            showIndividual: showIndividual,
+            onChangeType: onChangeType,
             catList: smallCatList,
             transactions: widget.isExpense ? expenseTransactions : incomeTransactions,
           );
@@ -143,7 +144,7 @@ class _ChartState extends State<Chart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(AppSize.smallPadding),
+                padding: EdgeInsets.all(AppSize.smallPadding.sp),
                 height: height,
                 width: width,
                 child: child(),
@@ -152,7 +153,7 @@ class _ChartState extends State<Chart> {
                   ? SizedBox.shrink()
                   : Expanded(
                 child: Container(
-                  margin: EdgeInsets.all(AppSize.smallPadding),
+                  margin: EdgeInsets.all(AppSize.smallPadding.sp),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
@@ -160,7 +161,7 @@ class _ChartState extends State<Chart> {
                     ),
                     borderRadius: BorderRadius.circular(AppSize.borderRadius),
                   ),
-                  child: !widget.showIndividual && widget.chartType == ChartType.categoryLineChart
+                  child: !showIndividual && widget.chartType == ChartType.categoryLineChart
                       ? SummaryTable(
                     startDate: widget.startDate!,
                     endDate: widget.endDate!,
@@ -182,7 +183,7 @@ class _ChartState extends State<Chart> {
           child: IconButton(
             onPressed: () {
               Navigator.pop(context);
-              widget.shrinkChart!();
+              // widget.shrinkChart!();
             },
             icon: const Icon(Icons.fullscreen_exit_outlined,
                 size: 30

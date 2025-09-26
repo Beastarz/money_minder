@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/account/account_detail_function_tile.dart';
 import 'package:money_minder/components/account/account_selection_sheet.dart';
 import 'package:money_minder/components/transaction/add_transfer_sheet.dart';
@@ -37,15 +38,14 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
             borderRadius: BorderRadius.circular(16),
             color: AppColor.secondary
         ),
-        height: 500,
         width: MediaQuery.of(context).size.width,
         child: Column(
-          spacing: 12,
+          spacing: 12.h,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
+              padding: EdgeInsets.fromLTRB(8.w, 24.h, 8.w, 0),
               child: Container(
-                height: 150,
+                height: 150.h,
                 width: MediaQuery.of(context).size.width * 0.9,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -56,7 +56,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     Flexible(
                       flex: 2,
                       child: Center(
-                          child: MainIcon(icon: widget.account.icon, color: widget.account.color, isRound: false, size: 50,)),
+                          child: MainIcon(icon: widget.account.icon, color: widget.account.color, isRound: false, size: 50.sp,)),
                     ),
                     Flexible(
                       flex: 3,
@@ -67,7 +67,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                           Text(
                             widget.account.name,
                             style: TextStyle(
-                              fontSize: AppSize.heading1,
+                              fontSize: AppSize.heading1.sp,
                               color: Colors.white,
                             ),
                           ),
@@ -76,7 +76,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: AppSize.paragraph,
+                              fontSize: AppSize.paragraph.sp,
                               color: Colors.white,
                             )
                           ),
@@ -84,7 +84,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                           BalanceText(
                             balance: widget.account.balance,
                             currencyName: widget.account.currency.toString(),
-                            size: 26,
+                            size: 26.sp,
                             isLight: true,
                           ),
                         ],
@@ -96,13 +96,13 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
             ),
             Wrap(
               alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 12,
+              spacing: 12.w,
+              runSpacing: 12.h,
               children: [
                 AccountDetailFunctionTile(
                   parentContext: context,
                   label: 'Receive',
-                  icon: Icon(Icons.arrow_downward, color: Colors.green[400],),
+                  icon: Icon(Icons.arrow_downward, color: Colors.green[400], size: 32.sp,),
                   onPressed: () {
                     Navigator.pop(context);
                     showModalBottomSheet(
@@ -133,7 +133,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                 AccountDetailFunctionTile(
                     parentContext: context,
                     label: 'Transfer',
-                    icon: Icon(Icons.arrow_upward, color: Colors.redAccent,),
+                    icon: Icon(Icons.arrow_upward, color: Colors.redAccent, size: 32.sp,),
                     onPressed: () {
                       Navigator.pop(context);
                       showModalBottomSheet(
@@ -164,7 +164,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                 AccountDetailFunctionTile(
                     parentContext: context,
                     label: 'Transactions',
-                    icon: Icon(Icons.list_alt, color: Colors.blueAccent,),
+                    icon: Icon(Icons.list_alt, color: Colors.blueAccent, size: 32.sp,),
                     onPressed: () {
                         Navigator.pop(context);
                         widget.onShowAccountTransactions(widget.account.id);
@@ -173,7 +173,7 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                 AccountDetailFunctionTile(
                     parentContext: context,
                     label: 'Edit',
-                    icon: Icon(Icons.edit_outlined, color: Colors.deepOrangeAccent,),
+                    icon: Icon(Icons.edit_outlined, color: Colors.deepOrangeAccent, size: 32.sp,),
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -189,12 +189,15 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                 AccountDetailFunctionTile(
                     parentContext: context,
                     label: isMain ? 'Main' : 'Set Main',
-                    icon: Icon(isMain ? Icons.star : Icons.star_outline, color: Colors.amber,),
+                    icon: Icon(isMain ? Icons.star : Icons.star_outline, color: Colors.amber, size: 32.sp,),
                     onPressed: () {
                       if(!isMain) {
                         () async {
                           await AccountsRepositories.instance.updateMainAccount(widget.account);
                           widget.onReload();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
                         }();
                         setState(() {
                           isMain = true;
@@ -203,7 +206,8 @@ class _AccountDetailSheetState extends State<AccountDetailSheet> {
                     }
                 ),
               ],
-            )
+            ),
+            SizedBox(height: 8.h,)
           ],
         )
     );

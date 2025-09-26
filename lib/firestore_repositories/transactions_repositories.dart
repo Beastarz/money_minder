@@ -3,14 +3,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../repositories/transactions_repositories.dart';
 
 class FirebaseTransactionsRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseTransactionsRepositories._privateConstructor();
+  FirebaseTransactionsRepositories._(this._db);
 
-  static final FirebaseTransactionsRepositories _instance = FirebaseTransactionsRepositories
-      ._privateConstructor();
+  static FirebaseTransactionsRepositories? _instance;
 
-  static FirebaseTransactionsRepositories get instance => _instance;
+  static FirebaseTransactionsRepositories get instance {
+    _instance ??= FirebaseTransactionsRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseTransactionsRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getAllTransactions(String uid) async {
     try {

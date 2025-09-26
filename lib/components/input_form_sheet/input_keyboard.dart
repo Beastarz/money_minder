@@ -1,13 +1,13 @@
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/budget_page/budget_settings_page.dart';
 import 'package:money_minder/components/input_form_sheet/input_keyboard_button.dart';
 import 'package:money_minder/components/input_form_sheet/reverse_ellipsis_text.dart';
 import 'package:money_minder/components/calendar_bar/period_bottom_sheet.dart';
 import 'package:money_minder/models/recurrence.dart';
 import 'package:money_minder/repositories/budget_repositories.dart';
-import 'package:money_minder/repositories/currency_repositories.dart';
 import 'package:money_minder/style/app_color.dart';
 
 import '../../models/category.dart';
@@ -36,6 +36,7 @@ class InputKeyboard extends StatefulWidget {
   final bool showNotes; // show notes input
   final Category? category;
   final double defaultValue; // default value of the input
+  final String? defaultNote;
   final DateTime? defaultDate; // default date of the input
   final RecurrenceType? defaultRecurrence; // default recurrence of the input
   final Currency mainCurrency; // default currency of the input
@@ -61,6 +62,7 @@ class InputKeyboard extends StatefulWidget {
     this.defaultDate,
     this.defaultRecurrence,
     this.onDeleteBudget,
+    this.defaultNote,
   });
 
   @override
@@ -81,7 +83,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
   bool isRecurringBudget = false;
   bool _showError = false; // show error when user submit negative amount
   final TextEditingController _noteController = TextEditingController(text: '');
-  List<Currency> _currencies = [];
+  final List<Currency> _currencies = Currency.currencies;
 
   @override
   void initState() {
@@ -97,6 +99,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
       widget.defaultDate == null ? _currDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day) : _currDate = widget.defaultDate!;
       widget.defaultDate == null ? _datePrefix = 'Today' : _datePrefix = formatDate(_currDate, [DD]);
       widget.defaultRecurrence == null ? _recurrenceType = RecurrenceType.none : _recurrenceType = widget.defaultRecurrence!;
+      widget.defaultNote == null ? _noteController.text = '' : _noteController.text = widget.defaultNote!;
 
       // if showNotes == true, it is a budget input form, else transaction input form
       if (!widget.showNotes) {
@@ -105,14 +108,6 @@ class _InputKeyboardState extends State<InputKeyboard> {
         _message = '$_datePrefix, ${formatDate(_currDate, [dd, ' ', M, ' ', yyyy])}';
       }
     });
-    _fetchCurrencies();
-  }
-
-  _fetchCurrencies() async {
-    List<Currency> res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      _currencies = res;
-    });
   }
 
   @override
@@ -120,18 +115,12 @@ class _InputKeyboardState extends State<InputKeyboard> {
 
     List<InputFormButtonProps> buttonProps = widget.buttonProps;
     final String currency = widget.mainCurrency.toString(); // Default currency symbol
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Container(
-      height: MediaQuery.of(context).size.height * (isSmallScreen
-          ? widget.showNotes ? 0.65 : 0.50
-          : widget.showNotes ? 0.50 : 0.45)
-          + 15
-          + (widget.category == null ? 0 : 40),
+      padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
-        color: AppColor.secondary,
         borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSize.borderRadius)
+            top: Radius.circular(AppSize.borderRadius.r)
         ),
       ),
       child: Center(
@@ -143,28 +132,24 @@ class _InputKeyboardState extends State<InputKeyboard> {
               child: ReverseEllipsisText(
                 '$currency $_currentAmount',
                 style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? AppSize.heading1
-                      : AppSize.heading1 * 1.5,
+                  fontSize: (AppSize.heading1 * 1.5).sp,
                   fontWeight: FontWeight.bold,
                   color: AppColor.darkText,
                 ),
               ),
             ),
-
             _showError
             ? Text(
               "Please enter valid amount",
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.red,
-                  fontSize: isSmallScreen
-                      ? AppSize.paragraph
-                      : AppSize.paragraph * 1.2),
+                  fontSize: (AppSize.paragraph * 1.2).sp,
+              )
             )
             : SizedBox.shrink(),
 
-            SizedBox(height: AppSize.smallPadding), // small padding
+            SizedBox(height: AppSize.smallPadding.h), // small padding
 
             // Notes input
             !widget.showNotes
@@ -174,19 +159,19 @@ class _InputKeyboardState extends State<InputKeyboard> {
               decoration: InputDecoration(
                 hintText: 'Notes...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSize.borderRadius),
+                  borderRadius: BorderRadius.circular(AppSize.borderRadius.r),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: AppColor.primary,
-                contentPadding: EdgeInsets.all(AppSize.smallPadding),
+                contentPadding: EdgeInsets.all(AppSize.smallPadding.r),
               ),
-              style: TextStyle(fontSize: isSmallScreen
-                  ? AppSize.heading3
-                  : AppSize.heading3 * 1.5),
+              style: TextStyle(
+                  fontSize: (AppSize.heading3 * 1.5).sp
+              ),
             ),
 
-            SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding), // small padding
+            SizedBox(height: !widget.showNotes ? 0 : AppSize.smallPadding.h), // small padding
 
             // show fast notes
             widget.category == null
@@ -205,17 +190,17 @@ class _InputKeyboardState extends State<InputKeyboard> {
               }
             ),
 
-            SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding), // small padding
+            SizedBox(height: widget.category == null ? 0 : AppSize.smallPadding.h), // small padding
             // Input Form Grid
             GridView.builder(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 5,
                 childAspectRatio: 1.2, // Adjust aspect ratio for button size
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
               ),
               itemCount: 20,
               itemBuilder: (context, index) {
@@ -242,7 +227,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
             // show setting at the bottom
             _message.isEmpty
                 ? SizedBox.shrink()
-                : SizedBox(height: 4), // small padding
+                : SizedBox(height: 4.h), // small padding
 
             _message.isEmpty
               ? SizedBox.shrink()
@@ -250,9 +235,8 @@ class _InputKeyboardState extends State<InputKeyboard> {
                   _recurrenceType == RecurrenceType.none ? _message : '$_message, ${_recurrenceType.name[0].toUpperCase()}${_recurrenceType.name.substring(1)}',
                   style: TextStyle(
                       color: AppColor.darkText,
-                      fontSize: isSmallScreen
-                          ? AppSize.heading3
-                          : AppSize.heading3 * 1.2),
+                      fontSize: (AppSize.heading3 * 1.2).sp
+                  ),
                 )
           ],
         ),
@@ -390,7 +374,7 @@ class _InputKeyboardState extends State<InputKeyboard> {
                     onPressed: () {
                       widget.onSubmit(
                         DateTime(_currDate.year, _currDate.month, _currDate.day),
-                        double.parse(_currentAmount),
+                        (double.parse(_currentAmount) * 100).round() / 100.0,
                         _noteController.text,
                         _recurringMonths,
                         _recurrenceType,

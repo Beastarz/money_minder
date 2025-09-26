@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../style/app_size.dart';
 
@@ -57,10 +58,11 @@ class BalanceText extends StatelessWidget {
                   currencyName,
                   style: TextStyle(
                     color: color,
-                    fontSize: size - 4,
+                    fontSize: (size - 4).sp,
+                    fontWeight: FontWeight.w500
                   )
               ),
-              const SizedBox(width: 4,),
+              SizedBox(width: 4.w,),
               ConstrainedBox(
                 constraints: BoxConstraints(
                   maxWidth: width,
@@ -70,8 +72,8 @@ class BalanceText extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: color,
-                      fontWeight: FontWeight.w500,
-                      fontSize: size,
+                      fontWeight: FontWeight.w600,
+                      fontSize: size.sp,
                     )
                 ),
               ),

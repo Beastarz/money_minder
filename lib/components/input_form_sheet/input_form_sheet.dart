@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../style/app_color.dart';
 import '../../style/app_size.dart';
@@ -21,22 +22,29 @@ class InputFormSheet extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColor.secondary,
-          borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppSize.borderRadius)
-          ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.95,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            topContent,
-            Container(
-              padding: EdgeInsets.all(AppSize.smallPadding),
-              child: inputForm,
-            )
-          ],
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColor.secondary,
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppSize.borderRadius)
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                topContent,
+                Container(
+                  padding: EdgeInsets.all(AppSize.smallPadding.r),
+                  child: inputForm,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

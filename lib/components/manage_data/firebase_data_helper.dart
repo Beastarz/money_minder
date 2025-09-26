@@ -111,6 +111,7 @@ class FirebaseDataHelper {
         amount: budget['amount'],
         month: budget['month'],
         year: budget['year'],
+        currency: budget['currency'],
         categoryId: budget['category_id'],
       ));
     }

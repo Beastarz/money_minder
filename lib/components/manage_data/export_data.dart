@@ -49,7 +49,7 @@ class _ExportDataState extends State<ExportData> {
           transaction.fromAccount.name,
           transaction.toAccount != null ? transaction.toAccount!.name : transaction.toCategory!.name,
           transaction.amount,
-          transaction.currency.currency().name.toUpperCase(),
+          transaction.currency.name,
           transaction.note,
         ]
       );
@@ -70,7 +70,7 @@ class _ExportDataState extends State<ExportData> {
           account.name,
           CSVGenerator.accountTypeToString[account.type],
           account.balance,
-          account.currency.currency().name.toUpperCase(),
+          account.currency.name,
           account.description,
         ]
       );
@@ -82,8 +82,8 @@ class _ExportDataState extends State<ExportData> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: const Text('Export Data'),
-        leading: const Icon(Icons.download_outlined),
+        title: const Text('Export Data (.csv)'),
+        leading: const Icon(Icons.upload_outlined),
         onTap: () async {
 
           accounts = await AccountsRepositories.instance.getAllAccounts();

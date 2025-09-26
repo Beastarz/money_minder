@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 
 import '../../models/currency.dart';
@@ -12,32 +13,26 @@ class ChartPages extends StatefulWidget {
     super.key,
     required this.isExpanded,
     required this.isExpense,
-    this.shrinkChart,
     required this.categories,
     required this.currency,
     required this.transactions,
     required this.dateFilterType,
     required this.startDate,
     required this.endDate,
-    required this.currentPage,
-    required this.showIndividual,
-    required this.lineChartChangeType,
-    required this.updateCurrentPage,
+    // required this.currentPage,
+    // required this.showIndividual,
+    // required this.lineChartChangeType,
+    // required this.updateCurrentPage,
   });
 
   final bool isExpanded;
   final bool isExpense;
-  final void Function()? shrinkChart;
   final List<CategoryProp> categories;
   final List<Transaction> transactions;
   final Currency currency;
   final DateFilterType dateFilterType;
   final DateTime startDate;
   final DateTime endDate;
-  final int currentPage;
-  final bool showIndividual;
-  final void Function() lineChartChangeType;
-  final void Function(int) updateCurrentPage;
 
   @override
   State<ChartPages> createState() => _ChartPagesState();
@@ -56,16 +51,14 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
-    widget.updateCurrentPage(index);
+    // widget.updateCurrentPage(index);
   }
 
   void load() {
     totalPages = widget.endDate.difference(widget.startDate).inDays == 0 ? 1 : 3;
-    _pageViewController = PageController(initialPage: widget.currentPage == 0
-        ? totalPages * 1000
-        : widget.currentPage);
+    _pageViewController = PageController(initialPage:totalPages * 1000);
     _tabController = TabController(length: totalPages, vsync: this);
-    _tabController.index = widget.currentPage % totalPages;
+    _tabController.index = 0;
   }
 
   @override
@@ -92,33 +85,34 @@ class _ChartPagesState extends State<ChartPages> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
 
     final pages = [
+
+      /// category bar chart
       Chart(
         isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
-        shrinkChart: widget.shrinkChart,
         currency: widget.currency,
         dateFilterType: widget.dateFilterType,
         chartType: ChartType.categoryBarChart,
         categories: widget.categories,
       ),
+
+      /// line chart
       Chart(
         isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
-        shrinkChart: widget.shrinkChart,
         currency: widget.currency,
         dateFilterType: widget.dateFilterType,
         startDate: widget.startDate,
         endDate: widget.endDate,
         chartType: ChartType.categoryLineChart,
-        showIndividual: widget.showIndividual,
-        onChangeType: widget.lineChartChangeType,
         categories: widget.categories,
         transactions: widget.transactions,
       ),
+
+      /// stack bar chart
       Chart(
         isExpense: widget.isExpense,
         isExpanded: widget.isExpanded,
-        shrinkChart: widget.shrinkChart,
         currency: widget.currency,
         dateFilterType: widget.dateFilterType,
         startDate: widget.startDate,
@@ -170,7 +164,6 @@ class PageIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -178,7 +171,7 @@ class PageIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TabPageSelector(
-            indicatorSize: isSmallScreen ? 6 : 8,
+            indicatorSize: 8.sp,
             controller: tabController,
             color: colorScheme.surface,
             selectedColor: colorScheme.primary,

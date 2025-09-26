@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../style/app_color.dart';
@@ -157,8 +158,8 @@ class _CategoryButtonState extends State<CategoryButton>
     // button background color gradient reflect the portion of
     // expense over budget
     Widget buttonContent = Container(
-      width: 50,
-      height: 50,
+      width: 50.w,
+      height: 50.h,
       decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [topColor, topColor, bottomColor, bottomColor], // Define the colors for the gradient
@@ -174,7 +175,7 @@ class _CategoryButtonState extends State<CategoryButton>
           )
               : Border.all(
             color: prop.color,
-            width: 2.0,
+            width: 2.0.w,
           )
       ),
       child: Material(
@@ -216,7 +217,7 @@ class _CategoryButtonState extends State<CategoryButton>
             ? DottedBorder(
             options: CircularDottedBorderOptions(
               dashPattern: [6, 3],
-              strokeWidth: 2,
+              strokeWidth: 2.w,
               padding: EdgeInsets.zero,
               color: AppColor.tertiary,
             ),
@@ -230,10 +231,10 @@ class _CategoryButtonState extends State<CategoryButton>
       mainAxisSize: MainAxisSize.min,
       children: [
         button,
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
           prop.label,
-          style: TextStyle(fontSize: 12),
+          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
@@ -241,12 +242,12 @@ class _CategoryButtonState extends State<CategoryButton>
         !prop.isAddButton ?
         Column(
           children: [
-            const SizedBox(height: 2),
+            SizedBox(height: 2.h),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               decoration: BoxDecoration(
                 color: exceed
-                    ? CategoryHelper.lightenColor(prop.color, 0.3)
+                    ? CategoryHelper.lightenColor(prop.color, 0.85)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(AppSize.borderRadius),
               ),
@@ -254,8 +255,7 @@ class _CategoryButtonState extends State<CategoryButton>
                 '${widget.mainCurrency.toString()} ${prop.actualAmount.toStringAsFixed(2)}',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                style: TextStyle(fontSize: 10),
+                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600),
               ),
             ),
           ],

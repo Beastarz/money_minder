@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/utils/balance_text.dart';
 
 import '../../models/currency.dart';
@@ -29,16 +29,10 @@ class CenterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-
     return Center( // Center the button horizontally
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * (
-          isSmallScreen ? 0.2 : 0.3
-        ),
-        height: MediaQuery.of(context).size.width * (
-          isSmallScreen ? 0.2 : 0.3
-        ),
+        width: MediaQuery.of(context).size.width * 0.3,
+        height: MediaQuery.of(context).size.width * 0.3,
         child: MaterialButton(
           onPressed: centerButtonOnPressed,
           padding: EdgeInsets.zero,
@@ -47,13 +41,13 @@ class CenterButton extends StatelessWidget {
           highlightColor: Colors.transparent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: isSmallScreen ? 5 : AppSize.gap,
+            spacing: AppSize.gap.w,
             children: [
               Text(
                 isExpense ? 'Expenses' : 'Income',
                 style: TextStyle(
                   color: AppColor.darkText,
-                  fontSize: isSmallScreen ? 15 : AppSize.heading1,
+                  fontSize: AppSize.heading1.sp,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -67,19 +61,19 @@ class CenterButton extends StatelessWidget {
                   showColor: true,
                   fontColor: isExpense
                       ? Colors.redAccent
-                      : CupertinoColors.activeGreen,
+                      : Colors.green,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  size: isSmallScreen ? 12 : AppSize.heading2,
+                  size: AppSize.heading2,
               ),
               BalanceText(
                   balance: isExpense ? totalIncome : totalExpense,
                   currencyName: mainCurrency.toString(),
                   showColor: true,
                   fontColor: isExpense
-                      ? CupertinoColors.activeGreen
+                      ? Colors.green
                       : Colors.redAccent,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  size: isSmallScreen ? 10 : AppSize.heading3,
+                  size: AppSize.heading3,
               ),
             ],
           ),

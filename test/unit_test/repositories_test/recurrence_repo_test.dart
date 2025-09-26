@@ -252,7 +252,7 @@ void main() {
           'type': 'expense',
           'recurrence_type': 'none',
           'note': note,
-          'currency': sgdCurrency.currency().name,
+          'currency': sgdCurrency.name,
         };
 
         when(mockDatabase.query('recurrence'))
@@ -289,7 +289,7 @@ void main() {
           'type': 'expense',
           'recurrence_type': 'daily',
           'note': 'Invalid recurrence',
-          'currency': sgdCurrency.currency().name,
+          'currency': sgdCurrency.name,
         };
 
         when(mockDatabase.query('recurrence'))

@@ -57,8 +57,8 @@ class _ResetState extends State<Reset> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: Text('Reset'),
-                  content: Text('All data will be lost unless you have a backup.'
+                  title: Text('Reset: Warning'),
+                  content: Text('If you did not back up your data, you will lose all your data. '
                       'This action is irreversible.'),
                   actions: [
                     TextButton(

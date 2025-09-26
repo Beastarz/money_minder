@@ -1,3 +1,4 @@
+
 /// A central class to manage size for the app.
 class AppSize {
   AppSize._();

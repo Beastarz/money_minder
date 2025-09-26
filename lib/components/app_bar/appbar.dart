@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/transaction/transaction_filter_page.dart';
 import 'package:money_minder/models/account.dart';
 import 'package:money_minder/models/category.dart';
@@ -88,10 +89,10 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         child: Column(
           children: [
             Text(
-              'My Accounts',
+              'Account Balance▼',
               style: TextStyle(
                 color: Colors.grey[800],
-                fontSize: 15,
+                fontSize: 14.sp,
               )
             ),
             BalanceText(
@@ -129,7 +130,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
             }
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OnlineHomePage(username: userData!.username))
+                MaterialPageRoute(builder: (context) => OnlineHomePage(userdata: userData!, onReload: onReload,))
             );
           },
         )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/account/account_selection_sheet.dart';
 
 import '../models/account.dart';
@@ -31,9 +32,9 @@ class AccountTopCard extends StatelessWidget {
     Account account = initialAccount;
 
     Widget buttonContent = SizedBox(
-        width: 40,
-        height: 40,
-        child: account.icon
+        width: 40.w,
+        height: 40.h,
+        child: Icon(account.icon.icon, size: AppSize.bigIcon.sp,)
     );
 
     return MaterialButton(
@@ -64,34 +65,34 @@ class AccountTopCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color : Colors.transparent,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius : 0),
-                  topRight: Radius.circular(topRight ? AppSize.borderRadius : 0),
+                  topLeft: Radius.circular(topLeft ? AppSize.borderRadius.r : 0),
+                  topRight: Radius.circular(topRight ? AppSize.borderRadius.r : 0),
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(AppSize.smallPadding),
+                    padding: EdgeInsets.all(AppSize.smallPadding.r),
                     child: Text(
                         '${topLeft ? "From" : "To"} Account',
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontSize: AppSize.heading3,
+                          fontSize: AppSize.heading3.sp,
                         )
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                      left: AppSize.smallPadding,
-                      right: AppSize.smallPadding,
-                      bottom: AppSize.smallPadding,
+                      left: AppSize.smallPadding.w,
+                      right: AppSize.smallPadding.w,
+                      bottom: AppSize.smallPadding.h,
                     ),
                     child: Text(
                         account.name,
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontSize: AppSize.heading1 * 1.15,
+                          fontSize: (AppSize.heading1 * 1.15).sp,
                           fontWeight: FontWeight.bold,
                           overflow: TextOverflow.ellipsis,
                         )

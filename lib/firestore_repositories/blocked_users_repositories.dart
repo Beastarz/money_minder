@@ -1,14 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BlockedUsersRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  BlockedUsersRepositories._privateConstructor();
+  // Private constructor with optional db parameter for injection
+  BlockedUsersRepositories._privateConstructor([FirebaseFirestore? db])
+      : _db = db ?? FirebaseFirestore.instance;
 
-  static final BlockedUsersRepositories _instance = BlockedUsersRepositories._privateConstructor();
-
+  static BlockedUsersRepositories _instance = BlockedUsersRepositories._privateConstructor();
 
   static BlockedUsersRepositories get instance => _instance;
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = BlockedUsersRepositories._privateConstructor(mockDb);
+  }
 
   Future<List<String>> getBlockedUsernames(String uid) async {
     try {

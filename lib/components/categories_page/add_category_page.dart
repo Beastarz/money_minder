@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/categories_page/category_button.dart';
 import 'package:money_minder/components/categories_page/category_helper.dart';
 import 'package:money_minder/repositories/budget_repositories.dart';
@@ -96,19 +97,19 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     Navigator.pop(context); // pop add category page
     Navigator.pop(context); // pop category card
 
-    // delete the category
-    await CategoryHelper.deleteCategory(prop.id, prop.position, widget.categories);
-
     // delete relevant transactions
     await TransactionsRepositories.instance.deleteTransactionByCategoryId(prop.id);
+
+    // delete the category
+    await CategoryHelper.deleteCategory(prop.id, prop.position, widget.categories);
 
     // delete relevant budgets
     await BudgetRepositories.instance.deleteBudgetById(prop.id);
 
     // fetch new data
-    await widget.onCategoryReload();
     await widget.onTransactionReload();
     await widget.onBudgetReload();
+    await widget.onCategoryReload();
   }
 
   @override
@@ -144,12 +145,10 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   @override
   Widget build(BuildContext context) {
 
-    final bool isSmallScreen = MediaQuery.of(context).size.width <= 360;
-
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 8.0),
+      padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w, top: 16.0.h, bottom: 8.0.h),
       child: SizedBox(
-          height: MediaQuery.of(context).size.height * (isSmallScreen ? 0.8 : 0.6),
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -159,8 +158,8 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                 spacing: 10,
                 children: [
                   Container(
-                    height: 50,
-                    width: 50,
+                    height: 50.h,
+                    width: 50.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Color(selectedColorValue)
@@ -211,12 +210,12 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
               ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0.sp),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppSize.borderRadius),
                     border: Border.all(
                       color: AppColor.darkText,
-                      width: 2,
+                      width: 2.w,
                     ),
                   ),
                   child: DefaultTabController(
@@ -266,7 +265,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                             name == "" ? "Add Category" : "Add $name",
                             overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(width: AppSize.smallPadding),
+                        SizedBox(width: AppSize.smallPadding.w),
                         Icon(IconData(selectedCodePoint, fontFamily: "MaterialSymbolsOutlined")),
                       ]
                   )
@@ -280,7 +279,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(name == "" ? "Edit Category" : "Change to $name"),
-                        SizedBox(width: AppSize.smallPadding),
+                        SizedBox(width: AppSize.smallPadding.w),
                         Icon(IconData(selectedCodePoint, fontFamily: "MaterialSymbolsOutlined")),
                       ]
                   )
@@ -317,7 +316,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(name == "" ? "Delete Category" : "Delete $name"),
-                        SizedBox(width: AppSize.smallPadding),
+                        SizedBox(width: AppSize.smallPadding.w),
                         Icon(Icons.delete),
                       ]
                   )

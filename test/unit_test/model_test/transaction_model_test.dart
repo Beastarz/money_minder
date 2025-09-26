@@ -150,7 +150,7 @@ void main() {
       expect(transaction.toAccount, isNull);
       expect(transaction.toCategory, category);
       expect(transaction.amount, 200.0);
-      expect(transaction.currency.currency().name, 'sgd');
+      expect(transaction.currency.name, 'SGD');
       expect(transaction.mainCurrency, mainCurrency);
       expect(transaction.note, 'Freelance payment');
     });
@@ -179,7 +179,7 @@ void main() {
       expect(map['to_account_id'], toAccount.id);
       expect(map['to_category_id'], isNull);
       expect(map['amount'], 150.0);
-      expect(map['currency'], 'sgd');
+      expect(map['currency'], 'SGD');
       expect(map['note'], 'Transfer to savings');
     });
 
@@ -204,7 +204,7 @@ void main() {
         expect(map['to_account_id'], 2);
         expect(map['to_category_id'], isNull);
         expect(map['amount'], 100.0);
-        expect(map['currency'], 'sgd');
+        expect(map['currency'], 'SGD');
         expect(map['note'], 'Transfer funds');
       });
 
@@ -227,7 +227,7 @@ void main() {
         expect(map['to_account_id'], isNull);
         expect(map['to_category_id'], 101);
         expect(map['amount'], 50.0);
-        expect(map['currency'], 'sgd');
+        expect(map['currency'], 'SGD');
         expect(map['note'], 'Bought coffee');
       });
 

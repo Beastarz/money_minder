@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../models/fast_note.dart';
 import '../category_helper.dart';
@@ -24,13 +25,13 @@ class FastNoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: EdgeInsets.all(5.sp),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: color,
-          width: 1,
+          width: 1.w,
         ),
       ),
       child: Material(
@@ -67,12 +68,12 @@ class FastNoteCard extends StatelessWidget {
                 color: color,
                 size: 20
               ),
-              SizedBox(width: 5),
+              SizedBox(width: 5.w),
               Text(
                 fastNote.note,
                 style: TextStyle(
                   color: color,
-                  fontSize: 14
+                  fontSize: 14.sp
                 ),
               ),
             ],

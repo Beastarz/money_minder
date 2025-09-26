@@ -66,11 +66,11 @@ class RecurrenceRepositories {
         while (curr.isOverdue) {
           switch(curr.type) {
             case TransactionType.expense:
-              TransactionHelper.proceedExpense(curr.date, curr.fromAccount.id, curr.toCategory!, curr.amount, curr.currency, curr.note);
+              await TransactionHelper.proceedExpense(curr.date, curr.fromAccount.id, curr.toCategory!, curr.amount, curr.currency, curr.note);
             case TransactionType.income:
-              TransactionHelper.proceedIncome(curr.date, curr.fromAccount.id, curr.toCategory!, curr.amount, curr.currency, curr.note);
+              await TransactionHelper.proceedIncome(curr.date, curr.fromAccount.id, curr.toCategory!, curr.amount, curr.currency, curr.note);
             case TransactionType.transfer:
-              TransactionHelper.proceedTransfer(curr.date, curr.fromAccount.id, curr.toAccount!.id, curr.amount, curr.currency, curr.note);
+              await TransactionHelper.proceedTransfer(curr.date, curr.fromAccount.id, curr.toAccount!.id, curr.amount, curr.currency, curr.note);
           }
           if (curr.isNone) {
             break;

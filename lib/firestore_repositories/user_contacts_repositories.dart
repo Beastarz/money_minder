@@ -2,14 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 
 class UserContactsRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  UserContactsRepositories._privateConstructor();
+  UserContactsRepositories._(this._db);
 
-  static final UserContactsRepositories _instance = UserContactsRepositories._privateConstructor();
+  static UserContactsRepositories? _instance;
 
+  static UserContactsRepositories get instance {
+    _instance ??= UserContactsRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
 
-  static UserContactsRepositories get instance => _instance;
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = UserContactsRepositories._(mockDb);
+  }
 
   Future<List<UserContact>> getUserContact(String uid) async {
     try {
@@ -20,9 +27,9 @@ class UserContactsRepositories {
     }
   }
 
-  Future<void> addUserContact(String uid, Map<String, dynamic> map) async {
+  Future<void> addUserContact(String uid, String targetUserUid ,Map<String, dynamic> map) async {
     try {
-      await _db.collection('users').doc(uid).collection('contacts').add(map);
+      await _db.collection('users').doc(uid).collection('contacts').doc(targetUserUid).set(map);
     } catch (e) {
       rethrow;
     }
@@ -31,7 +38,7 @@ class UserContactsRepositories {
   Future<void> updateUserContact(String uid, UserContact userContact) async {
     try {
       final snapshot = _db.collection('users').doc(uid).collection(
-          'contacts').doc(userContact.id);
+          'contacts').doc(userContact.uid);
       await snapshot.set(userContact.toMap());
     } catch (e) {
       rethrow;
@@ -41,7 +48,11 @@ class UserContactsRepositories {
   Future<void> blockContact(String uid, String username) async {
     try {
       final ref = _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username);
-      await ref.get().then((snapshot) => snapshot.docs.first.reference.update({'isBlocked': true}));
+      await ref.get().then((snapshot) => {
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.first.reference.update({'isBlocked': true})
+        }
+      });
     } catch (e) {
       rethrow;
     }
@@ -50,7 +61,11 @@ class UserContactsRepositories {
   Future<void> unblockContact(String uid, String username) async {
     try {
       final ref = _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username);
-      await ref.get().then((snapshot) => snapshot.docs.first.reference.update({'isBlocked': false}));
+      await ref.get().then((snapshot) => {
+        if (snapshot.docs.isNotEmpty) {
+          snapshot.docs.first.reference.update({'isBlocked': false})
+        }
+      });
     } catch (e) {
       rethrow;
     }
@@ -66,6 +81,18 @@ class UserContactsRepositories {
           .delete();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<UserContact?> getUserContactById(String uid, String username) async {
+    try {
+      final snapshot = await _db.collection('users').doc(uid).collection('contacts').where('username', isEqualTo: username).get();
+      if (snapshot.docs.isEmpty) {
+        return null;
+      }
+      return UserContact.fromMap(snapshot.docs.first.id, snapshot.docs.first.data());
+    } catch (e) {
+      return null;
     }
   }
 

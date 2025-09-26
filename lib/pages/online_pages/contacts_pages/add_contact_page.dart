@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/online/user_contact.dart';
 import 'package:money_minder/style/app_color.dart';
 import 'package:money_minder/models/online/user.dart' as model;
@@ -28,95 +29,98 @@ class _AddContactPageState extends State<AddContactPage> {
           borderRadius: BorderRadius.circular(16),
           color: AppColor.secondary
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppBar(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                 ),
+                title: Text('Add Contact', style: TextStyle(fontSize:24.sp, fontWeight: FontWeight.w500),),
+                centerTitle: true,
               ),
-              title: Text('Add Contact', style: TextStyle(fontSize:24, fontWeight: FontWeight.w500),),
-              centerTitle: true,
-            ),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Column(
-                  spacing: 16,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                          'Username: @${widget.user.username}',
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: Column(
+                    spacing: 16.h,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                            'Username: @${widget.user.username}',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600
+                            ),
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          'Phone Number: @${widget.user.phoneNumber}',
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600
                           ),
-                      ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        'Phone Number: @${widget.user.phoneNumber}',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400
                         ),
                       ),
-                    ),
-                    TextField(
-                      controller: _nickNameController,
-                      decoration: InputDecoration(
-                        label: Text('Nickname'),
-                        border: OutlineInputBorder()
+                      TextField(
+                        controller: _nickNameController,
+                        decoration: InputDecoration(
+                          label: Text('Nickname', style: TextStyle(fontSize: 14.sp),),
+                          border: OutlineInputBorder()
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () async {
-                          if (_nickNameController.text.isEmpty) {
-                            setState(() {
-                              _message = 'Please enter a nickname';
-                            });
-                            return;
-                          }
-                          try {
-                            await UserContactsRepositories.instance
-                                .addUserContact(
-                                FirebaseAuth.instance.currentUser!.uid,
-                                UserContact.insertAsMap(
-                                    username: widget.user.username,
-                                    phoneNumber: widget.user.phoneNumber,
-                                    nickname: _nickNameController.text
-                                ));
-                            widget.onContactsReload();
-                            if (context.mounted) {
-                              Navigator.pop(context);
+                      Center(
+                        child: TextButton(
+                          onPressed: () async {
+                            if (_nickNameController.text.isEmpty) {
+                              setState(() {
+                                _message = 'Please enter a nickname';
+                              });
+                              return;
                             }
-                          } catch (e) {
-                            setState(() {
-                              _message = 'Failed to add contact';
-                            });
-                          }
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
-                        ),
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            child: Center(child: Text('Save', style: TextStyle(color: Colors.white),))
+                            try {
+                              await UserContactsRepositories.instance
+                                  .addUserContact(
+                                  FirebaseAuth.instance.currentUser!.uid,
+                                  widget.user.uid,
+                                  UserContact.insertAsMap(
+                                      username: widget.user.username,
+                                      phoneNumber: widget.user.phoneNumber,
+                                      nickname: _nickNameController.text
+                                  ));
+                              widget.onContactsReload();
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            } catch (e) {
+                              setState(() {
+                                _message = 'Failed to add contact';
+                              });
+                            }
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
+                          ),
+                          child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: Center(child: Text('Save', style: TextStyle(color: Colors.white, fontSize: 14.sp),))
+                          ),
                         ),
                       ),
-                    ),
-                    _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
-                  ],
+                      _message.isEmpty ? SizedBox.shrink(): Text(_message, style: TextStyle(color: Colors.red),),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

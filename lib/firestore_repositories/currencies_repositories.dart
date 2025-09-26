@@ -2,14 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:money_minder/repositories/currency_repositories.dart';
 
 class FirebaseCurrencyRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseCurrencyRepositories._privateConstructor();
+  FirebaseCurrencyRepositories._(this._db);
 
-  static final FirebaseCurrencyRepositories _instance = FirebaseCurrencyRepositories
-      ._privateConstructor();
+  static FirebaseCurrencyRepositories? _instance;
 
-  static FirebaseCurrencyRepositories get instance => _instance;
+  static FirebaseCurrencyRepositories get instance {
+    _instance ??= FirebaseCurrencyRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseCurrencyRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getMainCurrency(String uid) async {
     try {

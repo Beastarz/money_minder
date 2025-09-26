@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/models/currency.dart';
 
 import '../../repositories/currency_repositories.dart';
@@ -14,13 +15,12 @@ class CurrencySettingDialog extends StatefulWidget {
 }
 
 class _CurrencySettingDialogState extends State<CurrencySettingDialog> {
-  List<Currency> currencies = [];
+  List<MapEntry<String, String>> currencies = Currency.currencyToFullName.entries.toList();
   Currency _selectedCurrency = Currency.of('sgd');
 
   @override
   void initState() {
     super.initState();
-    _fetchAllCurrency();
     _fetchMainCurrency();
   }
 
@@ -31,45 +31,44 @@ class _CurrencySettingDialogState extends State<CurrencySettingDialog> {
     });
   }
 
-  Future<void> _fetchAllCurrency() async {
-    final res = await CurrencyRepositories.instance.getCurrencies();
-    setState(() {
-      currencies = res;
-    });
-  }
-
   Future<void> _setMainCurrency(Currency currency) async {
     await CurrencyRepositories.instance.setMainCurrency(currency);
-    await _fetchAllCurrency();
     widget.onReload();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
-      child: Row(
+      padding: EdgeInsets.all(16.sp),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text('Main Currency'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 12,
+            children: [
+              Icon(Icons.currency_exchange_outlined),
+              Text('Main Currency', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18.sp)),
+            ],
+          ),
           DropdownButtonHideUnderline(
-            child: DropdownButton<Currency>(
-                value: _selectedCurrency,
-                onChanged: (Currency? newCurrency) {
-                  newCurrency = newCurrency ?? _selectedCurrency;
+            child: DropdownButton<String>(
+                value: _selectedCurrency.name,
+                onChanged: (String? newCurrency) {
+                  newCurrency ??= 'sgd';
                   setState(() {
-                    _selectedCurrency = newCurrency!;
+                    _selectedCurrency = Currency.of(newCurrency!);
                   });
-                  _setMainCurrency(newCurrency);
+                  _setMainCurrency(_selectedCurrency);
                 },
                 borderRadius: BorderRadius.circular(AppSize.borderRadius),
-                menuMaxHeight: 200.0, // Adjust as needed
+                menuMaxHeight: MediaQuery.of(context).size.height * 0.6,
                 items: List.generate(currencies.length, (index) {
-                  Currency currency = currencies[index];
-                  return DropdownMenuItem<Currency>(
-                    value: currency,
+                  return DropdownMenuItem<String>(
+                    value: currencies[index].key,
                     child: Text(
-                      currency.currency().name.toUpperCase(),
+                      currencies[index].value,
                     ),
                   );
                 }).toList()

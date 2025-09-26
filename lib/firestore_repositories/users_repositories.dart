@@ -1,14 +1,33 @@
  import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:money_minder/firestore_repositories/transaction_request_repositories.dart';
+import 'package:money_minder/firestore_repositories/transactions_repositories.dart';
 import 'package:money_minder/firestore_repositories/user_contacts_repositories.dart';
 import 'package:money_minder/models/online/user.dart';
 
+import 'accounts_repositories.dart';
 import 'blocked_users_repositories.dart';
+import 'budgets_repositories.dart';
+import 'categories_repositories.dart';
+import 'currencies_repositories.dart';
+import 'fast_notes_repositories.dart';
 
 class UsersRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  static final UsersRepositories instance = UsersRepositories._();
-  UsersRepositories._();
+  UsersRepositories._(this._db);
+
+  static UsersRepositories? _instance;
+
+  static UsersRepositories get instance {
+    _instance ??= UsersRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = UsersRepositories._(mockDb);
+  }
+
 
   Future<void> createUsername(String uid, String phoneNumber, String username) async {
     try {
@@ -49,29 +68,40 @@ class UsersRepositories {
     try {
       await UserContactsRepositories.instance.deleteAllContact(uid);
       await BlockedUsersRepositories.instance.deleteAllBlockedUsers(uid);
+      await FirebaseAccountsRepositories.instance.deleteAllAccounts(uid);
+      await FirebaseBudgetsRepositories.instance.deleteAllBudgets(uid);
+      await FirebaseCategoriesRepositories.instance.deleteAllCategories(uid);
+      await FirebaseCurrencyRepositories.instance.deleteMainCurrency(uid);
+      await FirebaseTransactionsRepositories.instance.deleteAllTransactions(uid);
+      await FirebaseFastNotesRepositories.instance.deleteAllFastNotes(uid);
+      await TransactionRequestRepositories.instance.deleteAllTransactionRequest(uid);
       await _db.collection('users').doc(uid).delete();
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<User>> getUsernameByPrefix(String prefix) async {
-    if (prefix.isEmpty) {
-      return [];
+  Future<User?> getUserByUsername(String username) async {
+    if (username.isEmpty) {
+      return null;
     }
     try {
-      prefix = prefix.toLowerCase();
+      username = username.toLowerCase();
       final QuerySnapshot snapshot = await _db.collection('users')
-          .where('username', isGreaterThanOrEqualTo: prefix)
-          .where('username', isLessThan: '$prefix\uf8ff')
+          .where('username', isEqualTo: username)
           .get();
       if (snapshot.docs.isEmpty) {
-        return [];
+        return null;
       }
-      return snapshot.docs.map((doc) => User.fromMap(doc.data() as Map<String, dynamic>, doc.id),).toList();
+      final res = snapshot.docs.first;
+      return User.fromMap(res.data() as Map<String, dynamic>, res.id);
     } catch (e) {
       rethrow;
     }
+  }
+
+  DocumentReference getUserReference(String uid) {
+    return _db.collection('users').doc(uid);
   }
 
   Future<bool> checkUsernameExist(String username) async {
@@ -83,6 +113,4 @@ class UsersRepositories {
       rethrow;
     }
   }
-
-
 }

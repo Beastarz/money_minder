@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_minder/components/transaction/edit_expense_sheet.dart';
 import 'package:money_minder/components/transaction/edit_transfer_sheet.dart';
 import 'package:money_minder/repositories/transaction_helper.dart';
@@ -73,7 +74,7 @@ class TransactionDetailSheet extends StatelessWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(AppSize.bigPadding),
+              padding: EdgeInsets.all(AppSize.bigPadding.r),
               child: Column(
                 children: [
                   BalanceText(
@@ -81,21 +82,29 @@ class TransactionDetailSheet extends StatelessWidget {
                     currencyName: transaction.currency.toString(),
                     size: 30,
                   ),
-                  transaction.note == '' ? Container() : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      transaction.note,
-                      style: TextStyle(
-                        fontSize: 18,
-                      )
+                  transaction.note == '' ? Container() :
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 200.h
+                    ),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0.r),
+                        child: Text(
+                          transaction.note,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                          )
+                        ),
+                      ),
                     ),
                   ),
                   Wrap(
-                    spacing: 16,
+                    spacing: 16.w,
                     children: [
                       TransactionDetailTile(
                           label: 'Edit',
-                          icon: Icon(Icons.edit, color: Colors.amber,),
+                          icon: Icon(Icons.edit, color: Colors.amber, size: 32.sp,),
                           onPressed: () {
                             Navigator.pop(context);
                             showModalBottomSheet(
@@ -116,7 +125,7 @@ class TransactionDetailSheet extends StatelessWidget {
                       ),
                       TransactionDetailTile(
                           label: 'Delete',
-                          icon: Icon(Icons.delete, color: Colors.redAccent,),
+                          icon: Icon(Icons.delete, color: Colors.redAccent, size: 32.sp),
                           onPressed: () {
                             showDialog(
                                 context: context,
@@ -152,7 +161,7 @@ class TransactionDetailSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Text(formatDate(transaction.date, [DD, ', ', dd, ' ', M,' ', yyyy]),)
+                  Text(formatDate(transaction.date, [DD, ', ', dd, ' ', M,' ', yyyy]), style: TextStyle(fontSize: 14.sp),)
                 ],
               )
             )

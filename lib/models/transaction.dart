@@ -66,9 +66,7 @@ class Transaction {
       'to_account_id': toAccount?.id,
       'to_category_id': toCategory?.id,
       'amount': amount,
-      'currency': currency
-          .currency()
-          .name,
+      'currency': currency.name,
       'note': note,
     };
   }
@@ -95,9 +93,7 @@ class Transaction {
       'to_account_id': toAccountId,
       'to_category_id': toCategoryId,
       'amount': amount,
-      'currency': currency
-          .currency()
-          .name,
+      'currency': currency.name,
       'note': note,
     };
   }

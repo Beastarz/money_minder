@@ -1,14 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseCategoriesRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
-  FirebaseCategoriesRepositories._privateConstructor();
+  FirebaseCategoriesRepositories._(this._db);
 
-  static final FirebaseCategoriesRepositories _instance = FirebaseCategoriesRepositories
-      ._privateConstructor();
+  static FirebaseCategoriesRepositories? _instance ;
 
-  static FirebaseCategoriesRepositories get instance => _instance;
+  static FirebaseCategoriesRepositories get instance {
+    _instance ??= FirebaseCategoriesRepositories._(FirebaseFirestore.instance);
+    return _instance!;
+  }
+
+  /// Use this in tests to inject a mock Firestore instance
+  static void injectInstance(FirebaseFirestore mockDb) {
+    _instance = FirebaseCategoriesRepositories._(mockDb);
+  }
 
   Future<List<Map<String, dynamic>>> getAllCategories(String uid) async {
     try {
