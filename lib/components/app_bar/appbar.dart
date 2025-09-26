@@ -89,7 +89,7 @@ class MMAppBar extends StatelessWidget implements PreferredSizeWidget{
         child: Column(
           children: [
             Text(
-              'My Accounts',
+              'Account Balance▼',
               style: TextStyle(
                 color: Colors.grey[800],
                 fontSize: 14.sp,
