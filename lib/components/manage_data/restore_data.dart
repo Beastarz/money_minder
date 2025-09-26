@@ -22,11 +22,22 @@ class RestoreData extends StatelessWidget {
 
     AppMessage.showMessage(context, "Fetching data from server...");
 
-    await Reset.deleteAllData();
-
     /// store the accounts and categories first
     List<Map<String, dynamic>> accounts = await FirebaseAccountsRepositories.instance.getAllAccounts(user!.uid);
     List<Map<String, dynamic>> categories = await FirebaseCategoriesRepositories.instance.getAllCategories(user!.uid);
+
+    if (accounts.isEmpty || categories.isEmpty) {
+      print("Account is empty: ${accounts.isEmpty}");
+      print("Category is empty: ${categories.isEmpty}");
+      if (context.mounted) {
+        AppMessage.showMessage(context, "No data to restore");
+        Navigator.of(context).pop();
+      }
+      return;
+    }
+
+    Reset.deleteAllData();
+
     await FirebaseDataHelper.addAccounts(accounts);
     await FirebaseDataHelper.addCategories(categories);
 
@@ -41,6 +52,11 @@ class RestoreData extends StatelessWidget {
     await FirebaseDataHelper.addBudgets(categoryMap, user!);
     await FirebaseDataHelper.addFastNotes(categoryMap, user!);
     await FirebaseDataHelper.setMainCurrency(user!);
+
+    if (context.mounted) {
+      RestartWidget.restartApp(context, 'Your data has been successfully restored. Restarting app...');
+      Navigator.of(context).pop(); // pop the alert dialog
+    }
   }
 
   @override
@@ -76,10 +92,6 @@ class RestoreData extends StatelessWidget {
                         TextButton(
                           onPressed: () async {
                             await restoreData(context);
-                            if (context.mounted) {
-                              RestartWidget.restartApp(context, 'Your data has been successfully restored. Restarting app...');
-                              Navigator.of(context).pop(); // pop the alert dialog
-                            }
                           },
                           child: Text('Confirm'),
                         )
