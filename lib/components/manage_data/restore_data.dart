@@ -26,9 +26,7 @@ class RestoreData extends StatelessWidget {
     List<Map<String, dynamic>> accounts = await FirebaseAccountsRepositories.instance.getAllAccounts(user!.uid);
     List<Map<String, dynamic>> categories = await FirebaseCategoriesRepositories.instance.getAllCategories(user!.uid);
 
-    if (accounts.isEmpty || categories.isEmpty) {
-      print("Account is empty: ${accounts.isEmpty}");
-      print("Category is empty: ${categories.isEmpty}");
+    if (accounts.isEmpty) {
       if (context.mounted) {
         AppMessage.showMessage(context, "No data to restore");
         Navigator.of(context).pop();
@@ -36,7 +34,7 @@ class RestoreData extends StatelessWidget {
       return;
     }
 
-    Reset.deleteAllData();
+    await Reset.deleteAllData();
 
     await FirebaseDataHelper.addAccounts(accounts);
     await FirebaseDataHelper.addCategories(categories);
