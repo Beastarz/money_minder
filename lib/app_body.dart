@@ -94,6 +94,8 @@ class _AppBodyState extends State<AppBody> {
     await _fetchTransactions(); // Depends on _filteredAccounts and _dateFilter ans _recurrence
     await _fetchCategories();
     await _fetchBudgets(); // Depends on _dateFilter
+    await _fetchAccounts();
+
 
     if (!mounted) return;
     // After all fetches complete, set loading to false
