@@ -117,9 +117,9 @@ class _StatisticsSheetState extends State<StatisticsSheet> {
 
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                final double currentExtent = constraints.biggest.height;
-                final double toolbarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
-                final double expandedRange = expandedHeight - toolbarHeight;
+                final double currentExtent = (constraints.biggest.height).h;
+                final double toolbarHeight = (MediaQuery.of(context).padding.top + kToolbarHeight).h;
+                final double expandedRange = (expandedHeight - toolbarHeight).h;
 
                 final double t = 1.0 - ((currentExtent - toolbarHeight) / expandedRange).clamp(0.0, 1.0);
 
